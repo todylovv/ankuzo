@@ -223,37 +223,36 @@ footer{border-top:1px solid var(--border);padding:44px 48px;display:flex;justify
 @keyframes runeFloat{0%{transform:translateY(110vh) rotate(0deg);opacity:0}8%{opacity:1}92%{opacity:1}100%{transform:translateY(-15vh) rotate(360deg);opacity:0}}
 
 /* ── RESPONSIVE ── */
+.gen-section{padding:110px 48px;max-width:1200px;margin:0 auto;}
+
 @media(max-width:900px){
-  nav{padding:20px 24px;}
-  nav.scrolled{padding:14px 24px;}
+  nav{padding:20px 20px;}
+  nav.scrolled{padding:14px 20px;}
   .nav-links{display:none;}
   .nav-burger{display:flex;}
-  .hero{padding:100px 24px 70px;}
-  .scroll-hint{left:24px;bottom:28px;}
-  section{padding:80px 24px;}
-  .section-divider{margin:0 24px;}
-  .about-grid{grid-template-columns:1fr;gap:48px;}
-  .skills-grid{grid-template-columns:1fr;gap:2px;}
-  .game-row{grid-template-columns:1fr auto;gap:16px;}
+  .hero{padding:100px 20px 70px;}
+  .scroll-hint{left:20px;bottom:28px;}
+  section,.gen-section{padding:60px 20px;max-width:100%;width:100%;}
+  .section-divider{margin:0 20px;}
+  .about-grid{grid-template-columns:1fr;gap:40px;}
+  .skills-grid{grid-template-columns:1fr;gap:8px;}
+  .game-row{grid-template-columns:1fr auto;gap:12px;}
   .game-era{display:none;}
   .game-row::before,.game-row::after{display:none;}
-  footer{padding:32px 24px;flex-direction:column;align-items:flex-start;gap:16px;}
+  footer{padding:28px 20px;flex-direction:column;align-items:flex-start;gap:14px;}
   .hero-pills{gap:8px;}
-  .pill{padding:6px 14px;font-size:9px;}
-  /* force all animated elements visible on mobile */
+  .pill{padding:6px 12px;font-size:9px;}
   .reveal,.reveal-left,.reveal-right,.reveal-scale{opacity:1;transform:none;}
-  #genRow{grid-template-columns:1fr;gap:8px;}
-  #genLayout{grid-template-columns:1fr;gap:20px;}
-  #genLayout > div:first-child{order:2;}
-  #genLayout > div:last-child{order:1;}
-  #genPreview{min-height:220px;}
-  #genOutput{grid-template-columns:repeat(4,1fr)!important;}
+  #genLayout{display:flex!important;flex-direction:column!important;gap:20px;width:100%;}
+  #genPreview{width:100%;aspect-ratio:3/2;min-height:unset;}
+  #genOutput{grid-template-columns:repeat(3,1fr)!important;}
+  .discord-hero{font-size:10px;padding:10px 16px;}
 }
 @media(max-width:480px){
-  .hero-name{font-size:clamp(60px,18vw,100px);}
+  .hero-name{font-size:clamp(56px,15vw,100px);}
   .game-row{grid-template-columns:1fr;gap:8px;}
   .game-badge{align-self:flex-start;}
-  .skills-grid{gap:8px;}
+  #genOutput{grid-template-columns:repeat(2,1fr)!important;}
 }
 </style>
 </head>
@@ -414,7 +413,7 @@ footer{border-top:1px solid var(--border);padding:44px 48px;display:flex;justify
 <hr class="section-divider">
 
 <!-- CRYSTAL -->
-<section id="crystal" style="padding:80px 48px;max-width:1200px;margin:0 auto;">
+<section id="crystal" class="gen-section">
   <div class="section-label" style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.3em;color:rgba(255,255,255,.25);text-transform:uppercase;margin-bottom:48px;display:flex;align-items:center;gap:20px;">
     03 — Объект
     <span style="flex:1;height:1px;background:rgba(240,237,232,0.1);display:block;"></span>
@@ -479,12 +478,12 @@ footer{border-top:1px solid var(--border);padding:44px 48px;display:flex;justify
 
 <!-- GENERATOR -->
 <hr class="section-divider">
-<section id="generator" style="padding:110px 48px;max-width:1200px;margin:0 auto;">
+<section id="generator" class="gen-section">
   <div class="section-label">05 — Генератор</div>
   <div class="reveal">
 
     <!-- main layout: big image left, controls right -->
-    <div style="display:grid;grid-template-columns:1fr 380px;gap:40px;align-items:start;" id="genLayout">
+    <div style="display:grid;grid-template-columns:minmax(0,1fr) clamp(260px,30vw,380px);gap:40px;align-items:start;" id="genLayout">
 
       <!-- LEFT: big image preview -->
       <div id="genPreview" style="position:relative;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.1);aspect-ratio:3/2;display:flex;align-items:center;justify-content:center;overflow:hidden;" id="genPreview">
