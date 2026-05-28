@@ -893,7 +893,7 @@ _initAll();
         `https://api-inference.huggingface.co/models/${model}`,
         {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer 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' },
           body: JSON.stringify({
             inputs: prompt,
             parameters: { num_inference_steps: 4, width: 768, height: 512 }
@@ -908,7 +908,7 @@ _initAll();
           await new Promise(r=>setTimeout(r,20000));
           const retry = await fetch(
             `https://api-inference.huggingface.co/models/${model}`,
-            { method:'POST', headers:{'Content-Type':'application/json'},
+            { method:'POST', headers:{'Content-Type':'application/json','Authorization':'Bearer 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'},
               body:JSON.stringify({inputs:prompt, parameters:{num_inference_steps:4,width:768,height:512}}) }
           );
           if(!retry.ok) throw new Error('Модель недоступна, попробуй позже');
