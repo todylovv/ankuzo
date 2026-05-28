@@ -1,0 +1,1161 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>ANKUZO DRIFT</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=JetBrains+Mono:wght@300;400;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --bg:#07070a;
+  --fg:#f0ede8;
+  --dim:rgba(240,237,232,0.4);
+  --border:rgba(240,237,232,0.08);
+  --accent:#f0ede8;
+}
+html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);}
+body{font-family:'JetBrains Mono',monospace;color:var(--fg);touch-action:none;}
+
+/* ── SCREENS ── */
+.screen{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:10;background:var(--bg);}
+.screen.hidden{display:none;}
+
+/* ── MENU ── */
+#menuScreen{gap:0;}
+.menu-bg-canvas{position:absolute;inset:0;z-index:0;}
+.menu-content{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;gap:0;}
+.menu-logo{font-family:'Bebas Neue',sans-serif;font-size:clamp(72px,18vw,160px);line-height:.85;letter-spacing:.05em;color:var(--fg);text-align:center;}
+.menu-logo .sub{font-family:'JetBrains Mono',monospace;font-size:clamp(10px,2vw,14px);letter-spacing:.5em;color:var(--dim);display:block;margin-top:8px;}
+.menu-divider{width:1px;height:40px;background:var(--border);margin:32px 0;}
+.menu-btn{font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.3em;text-transform:uppercase;color:var(--fg);background:none;border:1px solid rgba(240,237,232,.2);padding:14px 48px;cursor:pointer;transition:all .2s;margin-bottom:12px;}
+.menu-btn:hover{background:rgba(240,237,232,.06);border-color:rgba(240,237,232,.5);}
+.menu-btn.primary{border-color:var(--fg);}
+.menu-hint{font-size:9px;letter-spacing:.2em;color:rgba(240,237,232,.2);text-transform:uppercase;margin-top:24px;}
+
+/* ── HUD ── */
+#hud{position:fixed;inset:0;z-index:5;pointer-events:none;}
+.hud-top{position:absolute;top:0;left:0;right:0;padding:20px 24px;display:flex;justify-content:space-between;align-items:flex-start;}
+.hud-score{font-family:'Bebas Neue',sans-serif;font-size:clamp(36px,8vw,72px);letter-spacing:.05em;line-height:1;}
+.hud-score-label{font-size:9px;letter-spacing:.3em;color:var(--dim);text-transform:uppercase;}
+.hud-level{text-align:right;}
+.hud-level-name{font-family:'Bebas Neue',sans-serif;font-size:clamp(18px,4vw,32px);letter-spacing:.1em;}
+.hud-level-num{font-size:9px;letter-spacing:.3em;color:var(--dim);text-transform:uppercase;}
+.hud-speed{position:absolute;bottom:120px;right:24px;text-align:right;}
+.hud-speed-val{font-family:'Bebas Neue',sans-serif;font-size:clamp(28px,6vw,52px);letter-spacing:.05em;line-height:1;}
+.hud-speed-unit{font-size:9px;letter-spacing:.2em;color:var(--dim);text-transform:uppercase;}
+.hud-lives{position:absolute;top:20px;left:50%;transform:translateX(-50%);display:flex;gap:8px;}
+.hud-life{width:8px;height:8px;border-radius:50%;background:var(--fg);}
+.hud-life.lost{background:transparent;border:1px solid rgba(240,237,232,.25);}
+.hud-nitro{position:absolute;bottom:120px;left:24px;}
+.hud-nitro-bar-wrap{width:4px;height:60px;background:rgba(240,237,232,.1);border-radius:2px;overflow:hidden;}
+.hud-nitro-bar{width:100%;background:var(--fg);border-radius:2px;transition:height .1s;transform-origin:bottom;}
+.hud-nitro-label{font-size:8px;letter-spacing:.2em;color:var(--dim);text-transform:uppercase;writing-mode:vertical-lr;margin-top:6px;}
+
+/* ── MOBILE CONTROLS ── */
+#mobileControls{position:fixed;bottom:0;left:0;right:0;height:110px;z-index:6;display:flex;align-items:center;justify-content:space-between;padding:0 20px 20px;pointer-events:none;}
+.ctrl-zone{width:80px;height:80px;border-radius:12px;border:1px solid rgba(240,237,232,.12);background:rgba(240,237,232,.04);display:flex;align-items:center;justify-content:center;pointer-events:all;user-select:none;-webkit-user-select:none;transition:background .1s,border-color .1s;}
+.ctrl-zone:active,.ctrl-zone.pressed{background:rgba(240,237,232,.12);border-color:rgba(240,237,232,.4);}
+.ctrl-arrow{font-size:24px;color:rgba(240,237,232,.5);}
+.ctrl-center{display:flex;gap:16px;}
+.ctrl-gas{width:70px;height:70px;border-radius:50%;border:1px solid rgba(240,237,232,.2);background:rgba(240,237,232,.06);pointer-events:all;user-select:none;display:flex;align-items:center;justify-content:center;font-size:9px;letter-spacing:.15em;color:rgba(240,237,232,.5);flex-direction:column;gap:2px;transition:all .1s;}
+.ctrl-gas:active,.ctrl-gas.pressed{background:rgba(240,237,232,.15);border-color:rgba(240,237,232,.6);}
+.ctrl-brake{width:56px;height:56px;border-radius:50%;border:1px solid rgba(240,237,232,.12);background:rgba(240,237,232,.03);pointer-events:all;user-select:none;display:flex;align-items:center;justify-content:center;font-size:8px;letter-spacing:.1em;color:rgba(240,237,232,.35);transition:all .1s;}
+.ctrl-brake:active,.ctrl-brake.pressed{background:rgba(240,237,232,.1);border-color:rgba(240,237,232,.35);}
+
+/* ── GAME CANVAS ── */
+#gameCanvas{position:fixed;inset:0;width:100%;height:100%;}
+
+/* ── PAUSE / OVERLAY ── */
+.overlay{position:fixed;inset:0;z-index:8;background:rgba(7,7,10,.85);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;}
+.overlay.hidden{display:none;}
+.overlay-title{font-family:'Bebas Neue',sans-serif;font-size:clamp(52px,12vw,110px);letter-spacing:.08em;line-height:.9;text-align:center;}
+.overlay-sub{font-size:10px;letter-spacing:.35em;color:var(--dim);text-transform:uppercase;margin:20px 0 36px;}
+.overlay-score{font-family:'Bebas Neue',sans-serif;font-size:clamp(36px,8vw,72px);color:var(--fg);margin-bottom:4px;}
+.overlay-score-label{font-size:9px;letter-spacing:.3em;color:var(--dim);text-transform:uppercase;margin-bottom:32px;}
+.overlay-best{font-size:10px;letter-spacing:.2em;color:rgba(240,237,232,.3);margin-bottom:40px;}
+
+/* ── LEVEL FLASH ── */
+#levelFlash{position:fixed;inset:0;z-index:7;display:flex;align-items:center;justify-content:center;pointer-events:none;opacity:0;transition:opacity .3s;}
+.level-flash-text{font-family:'Bebas Neue',sans-serif;font-size:clamp(48px,14vw,140px);letter-spacing:.1em;color:var(--fg);}
+</style>
+</head>
+<body>
+
+<!-- MENU -->
+<div class="screen" id="menuScreen">
+  <canvas class="menu-bg-canvas" id="menuBgCanvas"></canvas>
+  <div class="menu-content">
+    <div class="menu-logo">
+      ANKUZO<br>DRIFT
+      <span class="sub">// top-down · cyberpunk · 2025</span>
+    </div>
+    <div class="menu-divider"></div>
+    <button class="menu-btn primary" id="btnPlay">Начать игру</button>
+    <button class="menu-btn" id="btnLeaderboard">Рекорды</button>
+    <div class="menu-hint" id="menuUserLine">// гость — рекорды не сохраняются</div>
+    <div class="menu-hint">WASD / стрелки · мобилка — кнопки на экране</div>
+  </div>
+</div>
+
+<!-- GAME CANVAS -->
+<canvas id="gameCanvas" class="hidden"></canvas>
+
+<!-- HUD -->
+<div id="hud" class="hidden">
+  <div class="hud-top">
+    <div>
+      <div class="hud-score-label">Score</div>
+      <div class="hud-score" id="hudScore">0</div>
+    </div>
+    <div class="hud-lives" id="hudLives"></div>
+    <div class="hud-level">
+      <div class="hud-level-num" id="hudLevelNum">Level 01</div>
+      <div class="hud-level-name" id="hudLevelName">NEON GRID</div>
+    </div>
+  </div>
+  <div class="hud-nitro">
+    <div class="hud-nitro-bar-wrap"><div class="hud-nitro-bar" id="nitroBar" style="height:100%"></div></div>
+    <div class="hud-nitro-label">NOS</div>
+  </div>
+  <div class="hud-speed">
+    <div class="hud-speed-val" id="hudSpeed">0</div>
+    <div class="hud-speed-unit">km/h</div>
+  </div>
+</div>
+
+<!-- MOBILE CONTROLS -->
+<div id="mobileControls" class="hidden">
+  <div class="ctrl-zone" id="ctrlLeft"><span class="ctrl-arrow">←</span></div>
+  <div class="ctrl-center">
+    <div class="ctrl-brake" id="ctrlBrake"><span style="font-size:8px;letter-spacing:.1em;color:rgba(240,237,232,.4);">BRAKE</span></div>
+    <div class="ctrl-gas" id="ctrlGas">
+      <span style="font-size:16px;">▲</span>
+      <span>GAS</span>
+    </div>
+  </div>
+  <div class="ctrl-zone" id="ctrlRight"><span class="ctrl-arrow">→</span></div>
+</div>
+
+<!-- LEVEL FLASH -->
+<div id="levelFlash"><div class="level-flash-text" id="levelFlashText"></div></div>
+
+<!-- GAME OVER -->
+<div class="overlay hidden" id="overlayGameOver">
+  <div class="overlay-title">GAME<br>OVER</div>
+  <div class="overlay-sub">// система уничтожена</div>
+  <div class="overlay-score" id="goScore">0</div>
+  <div class="overlay-score-label">финальный счёт</div>
+  <div class="overlay-best" id="goBest"></div>
+  <button class="menu-btn primary" id="btnRestart">Снова</button>
+  <button class="menu-btn" id="btnMenu">Меню</button>
+</div>
+
+<!-- LEADERBOARD -->
+<div class="overlay hidden" id="overlayLeaderboard">
+  <div class="overlay-title" style="font-size:clamp(40px,10vw,90px);">РЕКОРДЫ</div>
+  <div class="overlay-sub">// ankuzo drift · all time</div>
+  <div id="lbContent" style="width:min(340px,90vw);margin-bottom:32px;"></div>
+  <button class="menu-btn" id="btnLbBack">Назад</button>
+</div>
+
+<!-- AUTH OVERLAY -->
+<div class="overlay hidden" id="overlayAuth">
+  <div class="overlay-title" style="font-size:clamp(32px,8vw,72px)" id="authTitle">ВХОД</div>
+  <div class="overlay-sub" id="authSub">// введи ник и пароль</div>
+  <div style="width:min(320px,88vw);display:flex;flex-direction:column;gap:12px;margin-bottom:8px;">
+    <input id="authLogin" type="text" placeholder="ник (латиница, без пробелов)"
+      autocorrect="off" autocapitalize="off" spellcheck="false" maxlength="20"
+      style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.08em;
+      background:rgba(240,237,232,.04);border:1px solid rgba(240,237,232,.2);
+      color:#f0ede8;padding:14px 16px;outline:none;width:100%;transition:border-color .2s;"
+      onfocus="this.style.borderColor='rgba(240,237,232,.6)'"
+      onblur="this.style.borderColor='rgba(240,237,232,.2)'">
+    <input id="authPass" type="password" placeholder="пароль (мин. 4 символа)"
+      maxlength="32"
+      style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.08em;
+      background:rgba(240,237,232,.04);border:1px solid rgba(240,237,232,.2);
+      color:#f0ede8;padding:14px 16px;outline:none;width:100%;transition:border-color .2s;"
+      onfocus="this.style.borderColor='rgba(240,237,232,.6)'"
+      onblur="this.style.borderColor='rgba(240,237,232,.2)'"
+      onkeydown="if(event.key==='Enter')authSubmit()">
+    <div id="authError" style="font-size:10px;letter-spacing:.15em;color:rgba(220,100,100,.8);text-transform:uppercase;min-height:16px;text-align:center;"></div>
+  </div>
+  <button class="menu-btn primary" id="btnAuthSubmit" onclick="authSubmit()">Войти / Зарегистрироваться</button>
+  <div style="font-size:9px;letter-spacing:.15em;color:rgba(240,237,232,.2);text-transform:uppercase;margin-top:16px;text-align:center;max-width:280px;line-height:1.8;">
+    Новый ник — регистрация.<br>Существующий + верный пароль — вход.
+  </div>
+  <button class="menu-btn" id="btnAuthSkip" onclick="authSkip()" style="margin-top:8px;border-color:rgba(240,237,232,.08);color:rgba(240,237,232,.3);">Играть без сохранения</button>
+</div>
+
+<script>
+// ══════════════════════════════════════════
+// ANKUZO DRIFT — Game Engine
+// ══════════════════════════════════════════
+
+const C = {
+  BG: '#07070a',
+  FG: '#f0ede8',
+  DIM: 'rgba(240,237,232,0.15)',
+  ROAD: '#0f0f12',
+  ROAD2: '#111116',
+  LANE: 'rgba(240,237,232,0.07)',
+  BARRIER: '#1a1a1f',
+  BARRIER2: '#222228',
+};
+
+const LEVELS = [
+  {name:'NEON GRID',    speed:3.2, traffic:0.012, color:'#f0ede8', scoreTarget:800},
+  {name:'SIGNAL BREACH',speed:4.2, traffic:0.018, color:'#c8c5c0', scoreTarget:2000},
+  {name:'GHOST PROTOCOL',speed:5.4,traffic:0.026, color:'#a0a09a', scoreTarget:4000},
+  {name:'ZERO DAY',     speed:6.8, traffic:0.036, color:'#787870', scoreTarget:7000},
+  {name:'ANKUZO MODE',  speed:8.5, traffic:0.048, color:'#f0ede8', scoreTarget:Infinity},
+];
+
+// ── State ──
+let state='menu', paused=false;
+let score=0, lives=3, nitro=100, level=0, dist=0;
+let gameSpeed=0, targetSpeed=0;
+let score_anim=0;
+
+// ── Canvas ──
+const canvas = document.getElementById('gameCanvas');
+const ctx = canvas.getContext('2d');
+let W, H, DPR;
+
+function resize(){
+  DPR = Math.min(window.devicePixelRatio||1,2);
+  W = window.innerWidth;
+  H = window.innerHeight;
+  canvas.width = Math.floor(W*DPR);
+  canvas.height = Math.floor(H*DPR);
+  canvas.style.width = W+'px';
+  canvas.style.height = H+'px';
+  ctx.setTransform(DPR,0,0,DPR,0,0);
+  if(player) player.reset();
+}
+window.addEventListener('resize', ()=>{ resize(); buildMenuBg(); });
+
+// ── Road ──
+const ROAD_W = ()=> Math.min(W*0.55, 320);
+const LANE_W = ()=> ROAD_W()/3;
+
+// ── Particles / effects ──
+let particles=[], exhaustParts=[], skidMarks=[];
+
+// ── Player Car ──
+const player = {
+  x:0, y:0, angle:0, vx:0, vy:0, speed:0,
+  w:28, h:52,
+  drift:0, driftAngle:0,
+  invincible:0,
+  reset(){
+    this.x = W/2;
+    this.y = H*0.72;
+    this.angle = 0;
+    this.vx = 0; this.vy = 0;
+    this.speed = 0;
+    this.drift = 0;
+    this.driftAngle = 0;
+    this.invincible = 0;
+  }
+};
+
+// ── Traffic ──
+let traffic = [];
+const CARS = [
+  {w:26,h:44,color:'#5a5a6a'},{w:30,h:48,color:'#4a4a58'},
+  {w:24,h:38,color:'#686878'},{w:32,h:54,color:'#3e3e50'},
+];
+
+function spawnTraffic(){
+  const lv = LEVELS[level];
+  if(Math.random()<lv.traffic * (gameSpeed/lv.speed)){
+    const lanes = [-1,0,1];
+    const lane = lanes[Math.floor(Math.random()*3)];
+    const rx = W/2 + lane*LANE_W();
+    const spread = LANE_W()*0.3;
+    const x = rx + (Math.random()-0.5)*spread;
+    const type = CARS[Math.floor(Math.random()*CARS.length)];
+    const oncoming = Math.random()<0.3;
+    traffic.push({
+      x, y:-type.h-20,
+      w:type.w, h:type.h,
+      color:type.color,
+      speed: oncoming ? -(gameSpeed*0.3+Math.random()*1.5) : gameSpeed*0.25+Math.random()*1,
+      oncoming,
+      id:Math.random()
+    });
+  }
+}
+
+// ── Road decorations ──
+let roadLines = [];
+let roadDecos = []; // roadside buildings
+let scrollY = 0;
+
+function initRoadLines(){
+  roadLines = [];
+  const count = Math.ceil(H/60)+2;
+  for(let i=0;i<count;i++) roadLines.push(-i*60);
+  roadDecos = [];
+  for(let i=0;i<30;i++){
+    roadDecos.push({
+      side: Math.random()<0.5?-1:1,
+      x: Math.random()*60+8,
+      y: Math.random()*H*3-H,
+      w: Math.random()*40+20,
+      h: Math.random()*80+30,
+      opacity: Math.random()*0.4+0.05,
+    });
+  }
+}
+
+// ── Input ──
+const keys = {};
+const touch = {left:false,right:false,gas:false,brake:false};
+
+document.addEventListener('keydown', e=>{ keys[e.code]=true; e.preventDefault(); },{passive:false});
+document.addEventListener('keyup',   e=>{ keys[e.code]=false;});
+
+function setupTouchControls(){
+  const el = (id)=>document.getElementById(id);
+  function bindBtn(id, prop){
+    const btn = el(id);
+    btn.addEventListener('touchstart',e=>{e.preventDefault();touch[prop]=true;btn.classList.add('pressed');},{passive:false});
+    btn.addEventListener('touchend',  e=>{e.preventDefault();touch[prop]=false;btn.classList.remove('pressed');},{passive:false});
+    btn.addEventListener('touchcancel',e=>{touch[prop]=false;btn.classList.remove('pressed');});
+  }
+  bindBtn('ctrlLeft','left');
+  bindBtn('ctrlRight','right');
+  bindBtn('ctrlGas','gas');
+  bindBtn('ctrlBrake','brake');
+}
+
+function inputLeft()  { return keys['ArrowLeft']||keys['KeyA']||touch.left; }
+function inputRight() { return keys['ArrowRight']||keys['KeyD']||touch.right; }
+function inputGas()   { return keys['ArrowUp']||keys['KeyW']||touch.gas; }
+function inputBrake() { return keys['ArrowDown']||keys['KeyS']||touch.brake; }
+function inputNitro() { return keys['ShiftLeft']||keys['ShiftRight']; }
+
+// ── Drawing functions ──
+
+function drawPlayerCar(x, y, angle, alpha=1, glow=false){
+  ctx.save();
+  ctx.translate(x, y);
+  ctx.rotate(angle);
+  ctx.globalAlpha = alpha;
+
+  const w = player.w, h = player.h;
+
+  // shadow
+  ctx.save();
+  ctx.shadowColor = 'rgba(0,0,0,0.6)';
+  ctx.shadowBlur = 12;
+  ctx.shadowOffsetY = 4;
+
+  // body
+  ctx.fillStyle = '#e8e5e0';
+  ctx.beginPath();
+  ctx.roundRect(-w/2, -h/2, w, h, [4,4,4,4]);
+  ctx.fill();
+  ctx.restore();
+
+  // roof panel
+  ctx.fillStyle = '#c8c5c0';
+  ctx.beginPath();
+  ctx.roundRect(-w/2+5, -h/2+10, w-10, h*0.45, 3);
+  ctx.fill();
+
+  // windshield
+  ctx.fillStyle = '#1a1a20';
+  ctx.beginPath();
+  ctx.roundRect(-w/2+6, -h/2+12, w-12, 16, 2);
+  ctx.fill();
+
+  // rear window
+  ctx.fillStyle = '#141418';
+  ctx.beginPath();
+  ctx.roundRect(-w/2+6, h/2-20, w-12, 12, 2);
+  ctx.fill();
+
+  // headlights
+  ctx.fillStyle = 'rgba(240,237,232,0.95)';
+  ctx.fillRect(-w/2+3, -h/2+3, 7, 4);
+  ctx.fillRect(w/2-10, -h/2+3, 7, 4);
+
+  // headlight glow
+  if(glow){
+    ctx.save();
+    ctx.globalAlpha = 0.3;
+    const gl = ctx.createRadialGradient(0,-h/2,0,0,-h/2,40);
+    gl.addColorStop(0,'rgba(240,237,232,0.8)');
+    gl.addColorStop(1,'transparent');
+    ctx.fillStyle = gl;
+    ctx.fillRect(-30,-h/2-30,60,50);
+    ctx.restore();
+  }
+
+  // taillights
+  ctx.fillStyle = 'rgba(200,180,180,0.8)';
+  ctx.fillRect(-w/2+3, h/2-5, 7, 3);
+  ctx.fillRect(w/2-10, h/2-5, 7, 3);
+
+  // wheels
+  ctx.fillStyle = '#0a0a0d';
+  const wheels = [[-w/2-2,-h/3],[w/2-5,-h/3],[-w/2-2,h/4],[w/2-5,h/4]];
+  wheels.forEach(([wx,wy])=>{
+    ctx.fillRect(wx, wy, 7, 10);
+    ctx.strokeStyle = '#333';
+    ctx.lineWidth = 0.5;
+    ctx.strokeRect(wx, wy, 7, 10);
+  });
+
+  // door lines
+  ctx.strokeStyle = 'rgba(0,0,0,0.4)';
+  ctx.lineWidth = 0.7;
+  ctx.beginPath();
+  ctx.moveTo(-w/2+5, -h/2+26);
+  ctx.lineTo(w/2-5, -h/2+26);
+  ctx.stroke();
+
+  // nitro flame
+  if(inputNitro() && nitro>0){
+    ctx.save();
+    ctx.globalAlpha = 0.7+Math.random()*0.3;
+    ctx.fillStyle = '#f0ede8';
+    const fw = 6+Math.random()*4;
+    const fh = 12+Math.random()*10;
+    ctx.beginPath();
+    ctx.moveTo(-fw/2, h/2+2);
+    ctx.lineTo(fw/2, h/2+2);
+    ctx.lineTo(0, h/2+2+fh);
+    ctx.closePath();
+    ctx.fill();
+    ctx.restore();
+  }
+
+  ctx.restore();
+}
+
+function drawTrafficCar(car){
+  ctx.save();
+  ctx.translate(car.x, car.y);
+  if(car.oncoming) ctx.rotate(Math.PI);
+
+  const w=car.w, h=car.h;
+
+  // shadow
+  ctx.shadowColor='rgba(0,0,0,0.5)';
+  ctx.shadowBlur=8;
+
+  // body
+  ctx.fillStyle = car.color;
+  ctx.beginPath();
+  ctx.roundRect(-w/2,-h/2,w,h,[3,3,3,3]);
+  ctx.fill();
+  ctx.shadowBlur=0;
+
+  // body outline — key for visibility on dark road
+  ctx.strokeStyle='rgba(240,237,232,0.22)';
+  ctx.lineWidth=1.2;
+  ctx.beginPath();
+  ctx.roundRect(-w/2,-h/2,w,h,[3,3,3,3]);
+  ctx.stroke();
+
+  // roof panel darker
+  ctx.fillStyle='rgba(0,0,0,0.35)';
+  ctx.beginPath();
+  ctx.roundRect(-w/2+4,-h/2+10,w-8,h*0.4,2);
+  ctx.fill();
+
+  // windshield — lighter so it reads as glass
+  ctx.fillStyle='rgba(20,22,35,0.9)';
+  ctx.beginPath();
+  ctx.roundRect(-w/2+5,-h/2+12,w-10,13,2);
+  ctx.fill();
+  ctx.strokeStyle='rgba(240,237,232,0.1)';
+  ctx.lineWidth=0.5;
+  ctx.stroke();
+
+  // headlights (front = top after rotate)
+  if(car.oncoming){
+    // oncoming = bright white headlights toward player
+    ctx.fillStyle='rgba(255,250,230,1)';
+    ctx.fillRect(-w/2+2,-h/2+3,7,4);
+    ctx.fillRect(w/2-9,-h/2+3,7,4);
+    // headlight glow
+    ctx.save();
+    ctx.globalAlpha=0.18;
+    const gl=ctx.createRadialGradient(0,-h/2-2,0,0,-h/2-2,28);
+    gl.addColorStop(0,'rgba(255,250,200,1)');
+    gl.addColorStop(1,'transparent');
+    ctx.fillStyle=gl;
+    ctx.fillRect(-28,-h/2-20,56,32);
+    ctx.restore();
+  } else {
+    // same direction — show taillights (red-ish)
+    ctx.fillStyle='rgba(220,140,140,0.9)';
+    ctx.fillRect(-w/2+2,-h/2+3,7,4);
+    ctx.fillRect(w/2-9,-h/2+3,7,4);
+  }
+
+  // rear lights
+  ctx.fillStyle= car.oncoming ? 'rgba(200,80,80,0.7)' : 'rgba(255,250,230,0.6)';
+  ctx.fillRect(-w/2+2,h/2-6,7,3);
+  ctx.fillRect(w/2-9,h/2-6,7,3);
+
+  // wheels — light rim
+  ctx.fillStyle='#1a1a22';
+  [[-w/2-1,-h/3],[w/2-5,-h/3],[-w/2-1,h/4],[w/2-5,h/4]].forEach(([wx,wy])=>{
+    ctx.fillRect(wx,wy,6,8);
+    ctx.strokeStyle='rgba(240,237,232,0.25)';
+    ctx.lineWidth=0.7;
+    ctx.strokeRect(wx,wy,6,8);
+  });
+
+  // door line
+  ctx.strokeStyle='rgba(0,0,0,0.5)';
+  ctx.lineWidth=0.6;
+  ctx.beginPath();
+  ctx.moveTo(-w/2+4,-h/2+25);
+  ctx.lineTo(w/2-4,-h/2+25);
+  ctx.stroke();
+
+  ctx.restore();
+}
+
+function drawRoad(){
+  const rw = ROAD_W();
+  const rx = W/2-rw/2;
+
+  // outer area (buildings/sidewalk)
+  ctx.fillStyle = C.BG;
+  ctx.fillRect(0,0,W,H);
+
+  // sidewalks
+  ctx.fillStyle = '#0d0d10';
+  ctx.fillRect(rx-30,0,30,H);
+  ctx.fillRect(rx+rw,0,30,H);
+
+  // road surface
+  ctx.fillStyle = C.ROAD;
+  ctx.fillRect(rx,0,rw,H);
+
+  // road subtle gradient overlay
+  const rg = ctx.createLinearGradient(rx,0,rx+rw,0);
+  rg.addColorStop(0,'rgba(0,0,0,0.3)');
+  rg.addColorStop(0.5,'rgba(0,0,0,0)');
+  rg.addColorStop(1,'rgba(0,0,0,0.3)');
+  ctx.fillStyle=rg;
+  ctx.fillRect(rx,0,rw,H);
+
+  // center divider
+  ctx.strokeStyle='rgba(240,237,232,0.12)';
+  ctx.lineWidth=1.5;
+  ctx.setLineDash([30,20]);
+  ctx.lineDashOffset = -scrollY % 50;
+  ctx.beginPath();
+  ctx.moveTo(W/2,0);
+  ctx.lineTo(W/2,H);
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  // lane markings
+  ctx.strokeStyle='rgba(240,237,232,0.05)';
+  ctx.lineWidth=1;
+  ctx.setLineDash([20,30]);
+  ctx.lineDashOffset = -scrollY % 50;
+  [-1,1].forEach(s=>{
+    ctx.beginPath();
+    ctx.moveTo(W/2+s*LANE_W(),0);
+    ctx.lineTo(W/2+s*LANE_W(),H);
+    ctx.stroke();
+  });
+  ctx.setLineDash([]);
+
+  // barriers
+  ctx.fillStyle=C.BARRIER;
+  const bw=8;
+  // left barrier segments
+  for(let y=(-scrollY%60)-60;y<H+60;y+=60){
+    ctx.fillStyle=(Math.floor((y+scrollY)/60)%2===0)?C.BARRIER:C.BARRIER2;
+    ctx.fillRect(rx-28,y,bw,28);
+  }
+  for(let y=(-scrollY%60)-60;y<H+60;y+=60){
+    ctx.fillStyle=(Math.floor((y+scrollY)/60)%2===0)?C.BARRIER:C.BARRIER2;
+    ctx.fillRect(rx+rw+20,y,bw,28);
+  }
+
+  // road edge lines
+  ctx.strokeStyle='rgba(240,237,232,0.15)';
+  ctx.lineWidth=2;
+  ctx.beginPath();
+  ctx.moveTo(rx,0); ctx.lineTo(rx,H);
+  ctx.moveTo(rx+rw,0); ctx.lineTo(rx+rw,H);
+  ctx.stroke();
+}
+
+function drawDecorations(){
+  const rw=ROAD_W();
+  const rx=W/2-rw/2;
+  roadDecos.forEach(d=>{
+    const sx = d.side<0 ? rx-30-d.x-d.w : rx+rw+30+d.x;
+    const sy = (d.y + scrollY*0.6)%( H*3)-H;
+    ctx.fillStyle=`rgba(240,237,232,${d.opacity})`;
+    ctx.fillRect(sx, sy, d.w, d.h);
+    // window lights
+    ctx.fillStyle=`rgba(240,237,232,${d.opacity*0.5})`;
+    const cols=Math.floor(d.w/8);
+    const rows=Math.floor(d.h/10);
+    for(let r=0;r<rows;r++) for(let c=0;c<cols;c++){
+      if(Math.random()>0.6) ctx.fillRect(sx+c*8+2,sy+r*10+2,4,5);
+    }
+  });
+}
+
+function drawSkidMarks(){
+  ctx.save();
+  skidMarks.forEach(s=>{
+    ctx.globalAlpha = s.alpha * 0.3;
+    ctx.fillStyle='rgba(240,237,232,1)';
+    ctx.beginPath();
+    ctx.arc(s.x,s.y,2,0,Math.PI*2);
+    ctx.fill();
+  });
+  ctx.restore();
+}
+
+function drawParticles(){
+  particles.forEach(p=>{
+    ctx.save();
+    ctx.globalAlpha=p.alpha;
+    ctx.fillStyle=p.color;
+    ctx.beginPath();
+    ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+    ctx.fill();
+    ctx.restore();
+  });
+}
+
+function spawnCollisionParticles(x,y){
+  for(let i=0;i<18;i++){
+    const a=Math.random()*Math.PI*2;
+    const sp=Math.random()*5+2;
+    particles.push({
+      x,y,
+      vx:Math.cos(a)*sp, vy:Math.sin(a)*sp,
+      alpha:1, r:Math.random()*4+1,
+      color:'rgba(240,237,232,1)',
+      life:1
+    });
+  }
+}
+
+// ── Collision ──
+function checkCollisions(){
+  if(player.invincible>0) return;
+  const pw=player.w*0.7, ph=player.h*0.7;
+  for(let car of traffic){
+    const cw=car.w*0.8, ch=car.h*0.8;
+    if(Math.abs(player.x-car.x)<(pw+cw)/2 && Math.abs(player.y-car.y)<(ph+ch)/2){
+      spawnCollisionParticles(player.x,player.y);
+      lives--;
+      player.invincible=180;
+      updateLives();
+      if(lives<=0){ endGame(); return; }
+    }
+  }
+  // road boundary
+  const rw=ROAD_W();
+  const rx=W/2-rw/2;
+  if(player.x-player.w/2 < rx+4 || player.x+player.w/2 > rx+rw-4){
+    if(player.invincible<=0){
+      spawnCollisionParticles(player.x,player.y);
+      lives--;
+      player.invincible=180;
+      updateLives();
+      if(lives<=0){ endGame(); return; }
+      player.x = Math.max(rx+player.w/2+4, Math.min(rx+rw-player.w/2-4, player.x));
+    }
+  }
+}
+
+// ── HUD update ──
+function updateHUD(){
+  document.getElementById('hudScore').textContent = Math.floor(score_anim);
+  document.getElementById('hudSpeed').textContent = Math.floor(gameSpeed*18);
+  document.getElementById('nitroBar').style.height = nitro+'%';
+}
+
+function updateLives(){
+  const el=document.getElementById('hudLives');
+  el.innerHTML='';
+  for(let i=0;i<3;i++){
+    const d=document.createElement('div');
+    d.className='hud-life'+(i>=lives?' lost':'');
+    el.appendChild(d);
+  }
+}
+
+function updateLevelHUD(){
+  const lv=LEVELS[level];
+  document.getElementById('hudLevelNum').textContent=`Level 0${level+1}`;
+  document.getElementById('hudLevelName').textContent=lv.name;
+}
+
+// ── Level up ──
+function checkLevelUp(){
+  if(level<LEVELS.length-1 && score>=LEVELS[level].scoreTarget){
+    level++;
+    targetSpeed=LEVELS[level].speed;
+    updateLevelHUD();
+    showLevelFlash(LEVELS[level].name);
+    nitro=Math.min(100,nitro+40);
+  }
+}
+
+function showLevelFlash(name){
+  const el=document.getElementById('levelFlash');
+  document.getElementById('levelFlashText').textContent=name;
+  el.style.opacity='1';
+  setTimeout(()=>el.style.opacity='0',1600);
+}
+
+// ── Exhaust particles ──
+let exhaustTimer=0;
+function spawnExhaust(){
+  if(++exhaustTimer%3!==0) return;
+  const ex=player.x + Math.sin(player.angle)*player.w*0.3;
+  const ey=player.y + Math.cos(player.angle)*player.h*0.5;
+  exhaustParts.push({x:ex,y:ey,vx:(Math.random()-0.5)*0.8,vy:gameSpeed*0.4+Math.random(),alpha:0.4,r:Math.random()*3+1});
+}
+
+// ── Game Loop ──
+let rafId;
+let lastTime=0;
+
+function gameLoop(ts){
+  if(state!=='playing'){ rafId=null; return; }
+  rafId=requestAnimationFrame(gameLoop);
+  const dt=Math.min((ts-lastTime)/16.67,3); lastTime=ts;
+
+  if(paused) return;
+
+  // ── Update ──
+
+  // speed
+  targetSpeed = LEVELS[level].speed;
+  if(inputNitro() && nitro>0){
+    targetSpeed*=1.6;
+    nitro=Math.max(0,nitro-0.8);
+  } else {
+    nitro=Math.min(100,nitro+0.15);
+  }
+  if(inputBrake()) targetSpeed*=0.4;
+  if(!inputGas()) targetSpeed*=0.6;
+  gameSpeed += (targetSpeed-gameSpeed)*0.04*dt;
+
+  // scroll
+  scrollY += gameSpeed*dt*4;
+  dist += gameSpeed*dt;
+
+  // player steering
+  const turnSpeed = 0.06 * dt;
+  const maxDrift=0.35;
+  if(inputLeft())  { player.angle-=turnSpeed; player.drift=Math.max(-maxDrift,player.drift-0.02*dt); }
+  else if(inputRight()){ player.angle+=turnSpeed; player.drift=Math.min(maxDrift,player.drift+0.02*dt); }
+  else { player.drift*=Math.pow(0.88,dt); player.angle*=Math.pow(0.94,dt); }
+
+  player.x += Math.sin(player.angle+player.drift)*gameSpeed*dt*2.5;
+  player.y += (Math.cos(player.angle)-0.5)*gameSpeed*dt*0.2;
+  player.y = Math.max(H*0.65,Math.min(H*0.8,player.y));
+
+  // skid marks when drifting
+  if(Math.abs(player.drift)>0.1 && Math.random()>0.5){
+    skidMarks.push({x:player.x+(Math.random()-0.5)*player.w*0.4,y:player.y+player.h*0.3,alpha:0.8});
+    if(skidMarks.length>300) skidMarks.shift();
+  }
+
+  // traffic
+  spawnTraffic();
+  traffic.forEach(car=>{ car.y+=gameSpeed*dt*4+car.speed*dt*2; });
+  traffic=traffic.filter(c=>c.y<H+100);
+
+  // particles
+  spawnExhaust();
+  [...particles,...exhaustParts].forEach(p=>{
+    p.x+=p.vx*dt; p.y+=p.vy*dt;
+    p.alpha-=0.02*dt;
+  });
+  particles=particles.filter(p=>p.alpha>0);
+  exhaustParts=exhaustParts.filter(p=>p.alpha>0);
+  skidMarks.forEach(s=>s.alpha-=0.003*dt);
+  skidMarks=skidMarks.filter(s=>s.alpha>0);
+
+  // invincibility flicker
+  if(player.invincible>0) player.invincible-=dt;
+
+  // score
+  score+=gameSpeed*dt*0.15;
+  score_anim+=(score-score_anim)*0.12*dt;
+  checkLevelUp();
+  checkCollisions();
+  updateHUD();
+
+  // ── Draw ──
+  ctx.clearRect(0,0,W,H);
+  drawRoad();
+  drawDecorations();
+  drawSkidMarks();
+
+  // traffic
+  traffic.forEach(car=>drawTrafficCar(car));
+
+  // exhaust
+  exhaustParts.forEach(p=>{
+    ctx.save();
+    ctx.globalAlpha=p.alpha*0.6;
+    ctx.fillStyle='rgba(240,237,232,0.5)';
+    ctx.beginPath();
+    ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+    ctx.fill();
+    ctx.restore();
+  });
+
+  // player (flicker when invincible)
+  const showPlayer = player.invincible<=0 || Math.floor(player.invincible/8)%2===0;
+  if(showPlayer) drawPlayerCar(player.x, player.y, player.angle, 1, true);
+
+  drawParticles();
+
+  // vignette
+  const vg=ctx.createRadialGradient(W/2,H/2,H*0.2,W/2,H/2,H*0.85);
+  vg.addColorStop(0,'transparent');
+  vg.addColorStop(1,'rgba(0,0,0,0.55)');
+  ctx.fillStyle=vg;
+  ctx.fillRect(0,0,W,H);
+
+  // speed lines at high speed
+  if(gameSpeed>5.5){
+    ctx.save();
+    ctx.globalAlpha=(gameSpeed-5.5)/8*0.25;
+    ctx.strokeStyle='rgba(240,237,232,0.4)';
+    ctx.lineWidth=1;
+    for(let i=0;i<8;i++){
+      const lx=Math.random()*W;
+      const len=Math.random()*60+20;
+      ctx.beginPath();
+      ctx.moveTo(lx,0);
+      ctx.lineTo(lx,len);
+      ctx.stroke();
+    }
+    ctx.restore();
+  }
+}
+
+// ── Menu Background ──
+const menuCanvas=document.getElementById('menuBgCanvas');
+const mctx=menuCanvas.getContext('2d');
+let mW,mH,mParts=[];
+
+function buildMenuBg(){
+  mW=window.innerWidth; mH=window.innerHeight;
+  menuCanvas.width=mW; menuCanvas.height=mH;
+  mParts=[];
+  for(let i=0;i<40;i++){
+    mParts.push({x:Math.random()*mW,y:Math.random()*mH,
+      vy:Math.random()*1.5+0.5, alpha:Math.random()*0.3+0.05,
+      w:1+Math.random()*2, h:Math.random()*40+10});
+  }
+}
+
+function menuLoop(){
+  if(state!=='menu'){ return; }
+  requestAnimationFrame(menuLoop);
+  mctx.clearRect(0,0,mW,mH);
+  // animated speed lines
+  mParts.forEach(p=>{
+    p.y+=p.vy;
+    if(p.y>mH+p.h){ p.y=-p.h; p.x=Math.random()*mW; }
+    mctx.globalAlpha=p.alpha;
+    mctx.fillStyle='#f0ede8';
+    mctx.fillRect(p.x,p.y,p.w,p.h);
+  });
+}
+
+// ── Game start / end ──
+function startGame(){
+  state='playing';
+  score=0; score_anim=0; lives=3; nitro=100; level=0; dist=0;
+  gameSpeed=0; targetSpeed=LEVELS[0].speed;
+  traffic=[]; particles=[]; exhaustParts=[]; skidMarks=[];
+  scrollY=0;
+
+  document.getElementById('menuScreen').classList.add('hidden');
+  document.getElementById('overlayGameOver').classList.add('hidden');
+  document.getElementById('overlayLeaderboard').classList.add('hidden');
+  document.getElementById('gameCanvas').classList.remove('hidden');
+  document.getElementById('hud').classList.remove('hidden');
+
+  const isMobile = ('ontouchstart' in window)||window.innerWidth<768;
+  document.getElementById('mobileControls').classList.toggle('hidden',!isMobile);
+
+  resize();
+  initRoadLines();
+  player.reset();
+  updateLives();
+  updateLevelHUD();
+
+  // force gas on start
+  lastTime=performance.now();
+  rafId=requestAnimationFrame(gameLoop);
+  showLevelFlash(LEVELS[0].name);
+}
+
+function endGame(){
+  state='ended';
+  if(rafId){ cancelAnimationFrame(rafId); rafId=null; }
+
+  const finalScore = Math.floor(score);
+  document.getElementById('goScore').textContent = finalScore.toLocaleString();
+
+  // если залогинен — сохраняем в Supabase
+  if(currentUser){
+    SB.submitScore(currentUser, finalScore).then(isNew=>{
+      document.getElementById('goBest').textContent =
+        isNew ? '🏆 новый рекорд!' : 'Рекорд: ' + (currentUser.best_score||0).toLocaleString();
+    });
+  } else {
+    document.getElementById('goBest').textContent = 'Войди чтобы сохранить рекорд';
+  }
+
+  setTimeout(()=>{
+    document.getElementById('hud').classList.add('hidden');
+    document.getElementById('mobileControls').classList.add('hidden');
+    document.getElementById('overlayGameOver').classList.remove('hidden');
+  },600);
+}
+
+function backToMenu(){
+  state='menu';
+  if(rafId){ cancelAnimationFrame(rafId); rafId=null; }
+  document.getElementById('gameCanvas').classList.add('hidden');
+  document.getElementById('hud').classList.add('hidden');
+  document.getElementById('mobileControls').classList.add('hidden');
+  document.getElementById('overlayGameOver').classList.add('hidden');
+  document.getElementById('overlayLeaderboard').classList.add('hidden');
+  document.getElementById('overlayAuth').classList.add('hidden');
+  document.getElementById('menuScreen').classList.remove('hidden');
+  buildMenuBg();
+  menuLoop();
+}
+
+async function showLeaderboard(){
+  document.getElementById('overlayLeaderboard').classList.remove('hidden');
+  const el = document.getElementById('lbContent');
+  el.innerHTML = '<div style="text-align:center;color:rgba(240,237,232,.25);font-size:11px;letter-spacing:.2em;padding:20px">загрузка...</div>';
+
+  const rows = await SB.getLeaderboard();
+  if(!rows || rows.length===0){
+    el.innerHTML='<div style="text-align:center;color:rgba(240,237,232,.25);font-size:11px;letter-spacing:.2em;padding:20px">нет рекордов</div>';
+    return;
+  }
+  el.innerHTML = rows.map((r,i)=>{
+    const isMe = currentUser && r.username===currentUser.username;
+    return `<div style="display:flex;align-items:center;gap:0;padding:10px 0;border-bottom:1px solid rgba(240,237,232,0.06);${isMe?'color:#f0ede8;':'color:rgba(240,237,232,0.45);'}">
+      <span style="font-size:10px;letter-spacing:.2em;min-width:28px">#${i+1}</span>
+      <span style="font-size:11px;letter-spacing:.15em;flex:1;${isMe?'color:#f0ede8':''}">
+        ${r.username}${isMe?' ←':''}
+      </span>
+      <span style="font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:.08em">${(r.best_score||0).toLocaleString()}</span>
+    </div>`;
+  }).join('');
+}
+
+// ── Buttons ──
+document.getElementById('btnPlay').onclick = ()=>{
+  if(!currentUser){
+    showAuth(()=>startGame());
+  } else {
+    startGame();
+  }
+};
+document.getElementById('btnLeaderboard').onclick = showLeaderboard;
+document.getElementById('btnLbBack').onclick = ()=>{ document.getElementById('overlayLeaderboard').classList.add('hidden'); };
+document.getElementById('btnRestart').onclick = startGame;
+document.getElementById('btnMenu').onclick = backToMenu;
+
+document.addEventListener('keydown',e=>{
+  if(e.code==='Escape' && state==='playing') paused=!paused;
+  if(e.code==='KeyR' && state==='ended') startGame();
+});
+
+canvas.addEventListener('touchstart',e=>{
+  if(e.touches.length>0 && state==='playing') touch.gas=true;
+},{passive:true});
+canvas.addEventListener('touchend',()=>{ touch.gas=false; },{passive:true});
+
+// ══════════════════════════════════════════
+// SUPABASE AUTH + LEADERBOARD
+// ══════════════════════════════════════════
+
+const SUPABASE_URL = 'https://okuizqzhcffnisxpullu.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_TAfo1qQk8-HQLyH5h67ogg_sgnVcKti';
+
+// простое хеширование пароля (SHA-256 через SubtleCrypto)
+async function hashPass(pass){
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(pass));
+  return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
+}
+
+const SB = {
+  async req(method, path, body){
+    const res = await fetch(SUPABASE_URL+'/rest/v1/'+path, {
+      method,
+      headers:{
+        'apikey': SUPABASE_KEY,
+        'Authorization': 'Bearer '+SUPABASE_KEY,
+        'Content-Type': 'application/json',
+        'Prefer': method==='POST' ? 'return=representation' : ''
+      },
+      body: body ? JSON.stringify(body) : undefined
+    });
+    if(!res.ok){
+      const err = await res.text();
+      throw new Error(err);
+    }
+    const text = await res.text();
+    return text ? JSON.parse(text) : null;
+  },
+
+  async getUser(username){
+    const data = await this.req('GET',
+      `leaderboard?username=eq.${encodeURIComponent(username)}&select=username,password_hash,best_score`
+    );
+    return data && data[0] ? data[0] : null;
+  },
+
+  async register(username, passwordHash){
+    const data = await this.req('POST', 'leaderboard', {
+      username, password_hash: passwordHash, best_score: 0
+    });
+    return data && data[0] ? data[0] : null;
+  },
+
+  async submitScore(user, score){
+    if(score <= (user.best_score||0)) return false;
+    await this.req('PATCH',
+      `leaderboard?username=eq.${encodeURIComponent(user.username)}`,
+      { best_score: score }
+    );
+    user.best_score = score;
+    return true;
+  },
+
+  async getLeaderboard(){
+    return await this.req('GET',
+      'leaderboard?select=username,best_score&order=best_score.desc&limit=15'
+    );
+  }
+};
+
+// ── Auth state ──
+let currentUser = null;
+let afterAuthCallback = null;
+
+// restore session
+try{
+  const saved = localStorage.getItem('ankuzo_session');
+  if(saved) currentUser = JSON.parse(saved);
+}catch(e){}
+
+function updateMenuUserLine(){
+  const el = document.getElementById('menuUserLine');
+  if(!el) return;
+  if(currentUser){
+    el.textContent = '// вошёл как ' + currentUser.username;
+    el.style.color = 'rgba(240,237,232,.5)';
+  } else {
+    el.textContent = '// гость — рекорды не сохраняются';
+    el.style.color = 'rgba(240,237,232,.2)';
+  }
+}
+
+function showAuth(callback){
+  afterAuthCallback = callback || null;
+  document.getElementById('authLogin').value = '';
+  document.getElementById('authPass').value = '';
+  document.getElementById('authError').textContent = '';
+  document.getElementById('authTitle').textContent = 'ВХОД';
+  document.getElementById('overlayAuth').classList.remove('hidden');
+  setTimeout(()=>document.getElementById('authLogin').focus(), 100);
+}
+
+async function authSubmit(){
+  const login = document.getElementById('authLogin').value.trim();
+  const pass  = document.getElementById('authPass').value;
+  const errEl = document.getElementById('authError');
+  const btn   = document.getElementById('btnAuthSubmit');
+
+  errEl.textContent = '';
+
+  if(!login || !/^[a-zA-Z0-9_\-]{2,20}$/.test(login)){
+    errEl.textContent = 'ник: 2-20 символов, только a-z 0-9 _ -';
+    return;
+  }
+  if(pass.length < 4){
+    errEl.textContent = 'пароль: минимум 4 символа';
+    return;
+  }
+
+  btn.textContent = 'подключаюсь...';
+  btn.disabled = true;
+
+  try{
+    const hash = await hashPass(pass);
+    let user = await SB.getUser(login);
+
+    if(!user){
+      // регистрация
+      document.getElementById('authTitle').textContent = 'РЕГИСТРАЦИЯ';
+      user = await SB.register(login, hash);
+      if(!user) throw new Error('не удалось создать аккаунт');
+    } else {
+      // вход — проверяем пароль
+      if(user.password_hash !== hash){
+        errEl.textContent = 'неверный пароль';
+        btn.textContent = 'Войти / Зарегистрироваться';
+        btn.disabled = false;
+        return;
+      }
+    }
+
+    currentUser = user;
+    localStorage.setItem('ankuzo_session', JSON.stringify(user));
+    document.getElementById('overlayAuth').classList.add('hidden');
+    updateMenuUserLine();
+
+    if(afterAuthCallback){ afterAuthCallback(); afterAuthCallback=null; }
+
+  } catch(e){
+    errEl.textContent = 'ошибка: ' + e.message.substring(0,60);
+    btn.textContent = 'Войти / Зарегистрироваться';
+    btn.disabled = false;
+  }
+}
+
+function authSkip(){
+  document.getElementById('overlayAuth').classList.add('hidden');
+  if(afterAuthCallback){ afterAuthCallback(); afterAuthCallback=null; }
+}
+
+// ── Init ──
+setupTouchControls();
+buildMenuBg();
+resize();
+menuLoop();
+updateMenuUserLine();
+</script>
+</body>
+</html>
