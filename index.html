@@ -140,7 +140,67 @@ footer{border-top:1px solid var(--border);padding:44px 48px;display:flex;justify
 .cctrl{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:rgba(240,237,232,.35);background:none;border:1px solid rgba(240,237,232,.1);padding:7px 16px;cursor:pointer;transition:color .2s,border-color .2s;}
 .cctrl:hover,.cctrl.on{color:rgba(240,237,232,.88);border-color:rgba(240,237,232,.38);}
 
-/* ── ANIMATIONS ── */
+/* ── DISCORD LOADER ── */
+#discordLoader{
+  position:fixed;inset:0;z-index:99999;
+  background:#07070a;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:28px;
+  transition:opacity .6s ease, visibility .6s;
+}
+#discordLoader.hidden{opacity:0;visibility:hidden;pointer-events:none;}
+.ds-spinner{
+  width:64px;height:64px;position:relative;
+}
+.ds-spinner svg{
+  animation:dsSpin 1.4s linear infinite;
+  width:64px;height:64px;
+}
+.ds-spinner circle{
+  fill:none;stroke:rgba(255,255,255,0.15);stroke-width:5;
+  stroke-dasharray:150;stroke-dashoffset:0;
+  stroke-linecap:round;
+  animation:dsArc 1.4s ease-in-out infinite;
+}
+@keyframes dsSpin{to{transform:rotate(360deg);}}
+@keyframes dsArc{
+  0%{stroke-dashoffset:150;stroke:rgba(255,255,255,0.9);}
+  50%{stroke-dashoffset:30;stroke:rgba(255,255,255,0.5);}
+  100%{stroke-dashoffset:150;stroke:rgba(255,255,255,0.9);}
+}
+.ds-label{
+  font-family:'JetBrains Mono',monospace;font-size:10px;
+  letter-spacing:.3em;color:rgba(255,255,255,.25);text-transform:uppercase;
+  animation:dsPulse 1.4s ease-in-out infinite;
+}
+@keyframes dsPulse{0%,100%{opacity:.25}50%{opacity:.7}}
+
+/* ── DISCORD HERO BADGE ── */
+.discord-hero{
+  display:inline-flex;align-items:center;gap:12px;
+  margin-top:40px;
+  background:rgba(255,255,255,.06);
+  border:1px solid rgba(255,255,255,.18);
+  border-radius:100px;padding:12px 24px;
+  font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.15em;
+  color:rgba(255,255,255,.85);text-decoration:none;text-transform:uppercase;
+  backdrop-filter:blur(16px);
+  transition:background .3s,border-color .3s,transform .2s;
+  opacity:0;animation:fadeUp .7s .9s both;
+}
+.discord-hero:hover{
+  background:rgba(255,255,255,.12);
+  border-color:rgba(255,255,255,.4);
+  transform:translateY(-2px);
+}
+.discord-hero-dot{
+  width:8px;height:8px;border-radius:50%;
+  background:#fff;opacity:.7;
+  animation:discordPulse 2s ease-in-out infinite;
+}
+@keyframes discordPulse{
+  0%,100%{box-shadow:0 0 0 0 rgba(255,255,255,.4);opacity:.7;}
+  50%{box-shadow:0 0 0 6px rgba(255,255,255,0);opacity:1;}
+}
 @keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
 @media(prefers-reduced-motion:reduce){
   .hero-eyebrow,.hero-name .solid,.hero-name .outline,.hero-tagline,.hero-pills,.scroll-hint{opacity:1;animation:none;transform:none;}
@@ -183,6 +243,11 @@ footer{border-top:1px solid var(--border);padding:44px 48px;display:flex;justify
   /* force all animated elements visible on mobile */
   .reveal,.reveal-left,.reveal-right,.reveal-scale{opacity:1;transform:none;}
   #genRow{grid-template-columns:1fr;gap:8px;}
+  #genLayout{grid-template-columns:1fr;gap:20px;}
+  #genLayout > div:first-child{order:2;}
+  #genLayout > div:last-child{order:1;}
+  #genPreview{min-height:220px;}
+  #genOutput{grid-template-columns:repeat(4,1fr)!important;}
 }
 @media(max-width:480px){
   .hero-name{font-size:clamp(60px,18vw,100px);}
@@ -196,6 +261,16 @@ footer{border-top:1px solid var(--border);padding:44px 48px;display:flex;justify
 
 <div id="cur"></div>
 <div id="cur2"></div>
+
+<!-- DISCORD LOADER -->
+<div id="discordLoader">
+  <div class="ds-spinner">
+    <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="32" cy="32" r="26"/>
+    </svg>
+  </div>
+  <div class="ds-label">загрузка</div>
+</div>
 <canvas id="lightningCanvas"></canvas>
 
 <div class="rune" style="font-size:110px;left:4%;animation-duration:30s;animation-delay:0s;">彼岸</div>
@@ -244,6 +319,11 @@ footer{border-top:1px solid var(--border);padding:44px 48px;display:flex;justify
       <div class="pill"><div class="pill-dot"></div>CS2 · 2500 ELO</div>
       <div class="pill"><div class="pill-dot"></div>PC + PS5</div>
     </div>
+    <a href="https://discord.com/users/ankuz0" target="_blank" class="discord-hero">
+      <div class="discord-hero-dot"></div>
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" style="opacity:.75;flex-shrink:0;"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057c.002.022.015.043.032.055a19.9 19.9 0 0 0 5.993 3.03.077.077 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03z"/></svg>
+      ankuz0
+    </a>
   </div>
   <div class="scroll-hint"><div class="scroll-line"></div>scroll</div>
 </div>
@@ -402,34 +482,60 @@ footer{border-top:1px solid var(--border);padding:44px 48px;display:flex;justify
 <section id="generator" style="padding:110px 48px;max-width:1200px;margin:0 auto;">
   <div class="section-label">05 — Генератор</div>
   <div class="reveal">
-    <p style="font-size:13px;color:rgba(255,255,255,.45);letter-spacing:.06em;line-height:1.8;margin-bottom:48px;max-width:480px;">
-      Введи промт — получишь изображение. Генерируется на лету, только для тебя. При следующем заходе чисто.
-    </p>
 
-    <div style="display:grid;grid-template-columns:1fr auto;gap:12px;max-width:640px;margin-bottom:24px;" id="genRow">
-      <input id="genPrompt" type="text" placeholder="опиши что хочешь увидеть..."
-        style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.06em;
-        background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.15);
-        color:#f0ede8;padding:14px 18px;outline:none;border-radius:0;width:100%;
-        transition:border-color .2s;"
-        onfocus="this.style.borderColor='rgba(255,255,255,.4)'"
-        onblur="this.style.borderColor='rgba(255,255,255,.15)'"
-        onkeydown="if(event.key==='Enter')genImage()">
-      <button onclick="genImage()" id="genBtn"
-        style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.2em;
-        text-transform:uppercase;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.2);
-        color:#f0ede8;padding:14px 24px;cursor:pointer;white-space:nowrap;
-        transition:background .2s,border-color .2s;"
-        onmouseenter="this.style.background='rgba(255,255,255,.12)';this.style.borderColor='rgba(255,255,255,.4)'"
-        onmouseleave="this.style.background='rgba(255,255,255,.06)';this.style.borderColor='rgba(255,255,255,.2)'">
-        Создать
-      </button>
+    <!-- main layout: big image left, controls right -->
+    <div style="display:grid;grid-template-columns:1fr 380px;gap:40px;align-items:start;" id="genLayout">
+
+      <!-- LEFT: big image preview -->
+      <div id="genPreview" style="position:relative;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.1);aspect-ratio:3/2;display:flex;align-items:center;justify-content:center;overflow:hidden;" id="genPreview">
+        <div id="genPlaceholder" style="text-align:center;padding:20px;">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.25em;color:rgba(255,255,255,.15);text-transform:uppercase;">здесь появится<br>изображение</div>
+        </div>
+        <img id="genMainImg" src="" style="display:none;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .6s;">
+        <div id="genLoader" style="display:none;position:absolute;inset:0;align-items:center;justify-content:center;background:rgba(7,7,10,.75);">
+          <div style="text-align:center;">
+            <div style="width:36px;height:36px;margin:0 auto 12px;"><svg viewBox="0 0 36 36" style="animation:dsSpin 1.2s linear infinite;width:36px;height:36px;"><circle cx="18" cy="18" r="14" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="3"/><circle cx="18" cy="18" r="14" fill="none" stroke="rgba(255,255,255,0.8)" stroke-width="3" stroke-dasharray="60" stroke-dashoffset="45" stroke-linecap="round"/></svg></div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.2em;color:rgba(255,255,255,.4);text-transform:uppercase;" id="genLoaderText">генерирую...</div>
+          </div>
+        </div>
+        <a id="genSaveBtn" href="#" download="ankuzo-gen.jpg" target="_blank"
+          style="display:none;position:absolute;bottom:10px;right:10px;font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.15em;color:rgba(255,255,255,.7);background:rgba(0,0,0,.7);border:1px solid rgba(255,255,255,.2);padding:5px 12px;text-decoration:none;text-transform:uppercase;">
+          save
+        </a>
+      </div>
+
+      <!-- RIGHT: controls + history -->
+      <div style="display:flex;flex-direction:column;gap:14px;">
+        <p style="font-family:'JetBrains Mono',monospace;font-size:10px;color:rgba(255,255,255,.28);letter-spacing:.06em;line-height:1.8;">
+          Введи промт — получишь изображение.<br>Только для тебя, при перезагрузке чисто.
+        </p>
+
+        <input id="genPrompt" type="text" placeholder="опиши что хочешь увидеть..."
+          style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.04em;
+          background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.15);
+          color:#f0ede8;padding:13px 16px;outline:none;width:100%;
+          transition:border-color .2s;"
+          onfocus="this.style.borderColor='rgba(255,255,255,.4)'"
+          onblur="this.style.borderColor='rgba(255,255,255,.15)'"
+          onkeydown="if(event.key==='Enter')genImage()">
+
+        <button onclick="genImage()" id="genBtn"
+          style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.2em;
+          text-transform:uppercase;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.2);
+          color:#f0ede8;padding:13px;cursor:pointer;width:100%;
+          transition:background .2s,border-color .2s;"
+          onmouseenter="this.style.background='rgba(255,255,255,.12)';this.style.borderColor='rgba(255,255,255,.4)'"
+          onmouseleave="this.style.background='rgba(255,255,255,.06)';this.style.borderColor='rgba(255,255,255,.2)'">
+          Создать →
+        </button>
+
+        <div id="genStatus" style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.15em;color:rgba(255,255,255,.25);text-transform:uppercase;min-height:14px;"></div>
+
+        <div style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.2em;color:rgba(255,255,255,.18);text-transform:uppercase;margin-top:4px;">История сессии</div>
+        <div id="genOutput" style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;"></div>
+      </div>
     </div>
 
-    <div id="genStatus" style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.15em;
-      color:rgba(255,255,255,.3);text-transform:uppercase;margin-bottom:20px;min-height:16px;"></div>
-
-    <div id="genOutput" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px;max-width:820px;"></div>
   </div>
 </section>
 
@@ -451,6 +557,22 @@ function toggleMenu(){
   const m=document.getElementById('mobileNav');
   m.classList.toggle('open');
 }
+
+// ── DISCORD LOADER — hide after 1.2s or when page ready ──
+(function(){
+  const loader = document.getElementById('discordLoader');
+  if(!loader) return;
+  function hideLoader(){
+    loader.classList.add('hidden');
+    setTimeout(()=>{ loader.style.display='none'; }, 650);
+  }
+  // hide after max 1.8s regardless
+  const maxTimer = setTimeout(hideLoader, 1800);
+  window.addEventListener('load', ()=>{
+    clearTimeout(maxTimer);
+    setTimeout(hideLoader, 400);
+  });
+})();
 
 // ── CURSOR ──
 const cur=document.getElementById('cur'),cur2=document.getElementById('cur2');
@@ -857,7 +979,11 @@ _initAll();
 
   try {
     const saved = sessionStorage.getItem('genImages');
-    if(saved){ JSON.parse(saved).forEach(item => addImageToOutput(item.src, item.prompt)); }
+    if(saved){
+      const items = JSON.parse(saved);
+      if(items.length > 0) showMain(items[0].src, items[0].prompt);
+      items.forEach(item => addThumb(item.src, item.prompt));
+    }
   } catch(e){}
 
   window.genImage = async function(){
@@ -867,11 +993,15 @@ _initAll();
     generating = true;
     const btn = document.getElementById('genBtn');
     btn.textContent = '...'; btn.style.opacity = '.5';
+    const loader = document.getElementById('genLoader');
+    if(loader) loader.style.display='flex';
 
     let dotCount = 0;
     const dotTimer = setInterval(()=>{
       dotCount=(dotCount+1)%4;
       setStatus('генерирую'+'.'.repeat(dotCount+1));
+      const lt = document.getElementById('genLoaderText');
+      if(lt) lt.textContent = 'генерирую'+'.'.repeat(dotCount+1);
     }, 700);
 
     try {
@@ -887,7 +1017,8 @@ _initAll();
         img.src = src;
       });
 
-      addImageToOutput(src, prompt);
+      showMain(src, prompt);
+      addThumb(src, prompt);
 
       try {
         const saved = JSON.parse(sessionStorage.getItem('genImages')||'[]');
@@ -903,32 +1034,42 @@ _initAll();
       setStatus('ошибка: ' + err.message);
     } finally {
       clearInterval(dotTimer);
+      if(loader) loader.style.display='none';
       generating = false;
-      btn.textContent = 'Создать'; btn.style.opacity = '1';
+      btn.textContent = 'Создать →'; btn.style.opacity = '1';
     }
   };
 
-  function addImageToOutput(src, prompt){
+  function showMain(src, prompt){
+    const placeholder = document.getElementById('genPlaceholder');
+    const mainImg = document.getElementById('genMainImg');
+    const saveBtn = document.getElementById('genSaveBtn');
+    if(!mainImg) return;
+    mainImg.style.opacity = '0';
+    mainImg.style.display = 'block';
+    mainImg.onload = ()=>{ mainImg.style.opacity='1'; };
+    mainImg.src = src;
+    if(placeholder) placeholder.style.display = 'none';
+    if(saveBtn){ saveBtn.style.display='block'; saveBtn.href=src; }
+    const loader = document.getElementById('genLoader');
+    if(loader) loader.style.display = 'none';
+  }
+
+  function addThumb(src, prompt){
     const out = document.getElementById('genOutput');
     if(!out) return;
+    const existing = out.querySelectorAll('img');
+    for(let img of existing){ if(img.src===src) return; }
     const wrap = document.createElement('div');
-    wrap.style.cssText = 'position:relative;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.1);overflow:hidden;';
+    wrap.style.cssText = 'position:relative;cursor:pointer;border:1px solid rgba(255,255,255,.08);overflow:hidden;aspect-ratio:3/2;background:#111;transition:border-color .2s;';
     const img = document.createElement('img');
     img.src = src;
-    img.style.cssText = 'width:100%;display:block;opacity:0;transition:opacity .6s;';
+    img.style.cssText = 'width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .4s;display:block;';
     img.onload = ()=>{ img.style.opacity='1'; };
+    wrap.onclick = ()=>showMain(src, prompt);
+    wrap.onmouseenter = ()=>{ wrap.style.borderColor='rgba(255,255,255,.3)'; };
+    wrap.onmouseleave = ()=>{ wrap.style.borderColor='rgba(255,255,255,.08)'; };
     wrap.appendChild(img);
-    if(prompt){
-      const label = document.createElement('div');
-      label.style.cssText = 'padding:10px 12px;font-family:"JetBrains Mono",monospace;font-size:9px;letter-spacing:.08em;color:rgba(255,255,255,.35);line-height:1.5;border-top:1px solid rgba(255,255,255,.08);';
-      label.textContent = prompt.length>60 ? prompt.slice(0,60)+'...' : prompt;
-      wrap.appendChild(label);
-    }
-    const dl = document.createElement('a');
-    dl.href = src; dl.download = 'ankuzo-gen.jpg'; dl.target = '_blank';
-    dl.style.cssText = 'position:absolute;top:8px;right:8px;font-family:"JetBrains Mono",monospace;font-size:8px;letter-spacing:.12em;color:rgba(255,255,255,.6);background:rgba(0,0,0,.6);border:1px solid rgba(255,255,255,.2);padding:4px 10px;text-decoration:none;text-transform:uppercase;';
-    dl.textContent = 'save';
-    wrap.appendChild(dl);
     out.insertBefore(wrap, out.firstChild);
   }
 
@@ -937,6 +1078,7 @@ _initAll();
     if(el) el.textContent = msg;
   }
 })();
+
 
 
 </script>
