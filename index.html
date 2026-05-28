@@ -254,6 +254,21 @@ footer{border-top:1px solid var(--border);padding:44px 48px;display:flex;justify
   .game-badge{align-self:flex-start;}
   #genOutput{grid-template-columns:repeat(2,1fr)!important;}
 }
+
+/* MOBILE FIX */
+@media(max-width:700px){
+
+  #enterText{
+    bottom:40px;
+    font-size:9px;
+    letter-spacing:.3em;
+  }
+
+  #asciiCanvas{
+    transform:scale(1.02);
+  }
+}
+
 </style>
 </head>
 <body>
@@ -1196,13 +1211,19 @@ function buildText(){
   temp.height = H;
 
   tctx.fillStyle = '#fff';
-  tctx.font = `900 ${Math.min(W*0.18,220)}px Bebas Neue`;
+  tctx.font = `900 ${textSize}px Bebas Neue`;
   tctx.textAlign = 'center';
   tctx.textBaseline = 'middle';
   tctx.fillText(TEXT,W/2,H/2);
 
   const img = tctx.getImageData(0,0,W,H).data;
-  const gap = window.innerWidth < 700 ? 8 : 10;
+  const isMobile = window.innerWidth < 700;
+
+  const gap = isMobile ? 5 : 10;
+
+  const textSize = isMobile
+    ? Math.min(W * 0.28, 120)
+    : Math.min(W * 0.18, 220);
 
   for(let y=0;y<H;y+=gap){
     for(let x=0;x<W;x+=gap){
