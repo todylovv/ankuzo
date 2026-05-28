@@ -736,6 +736,8 @@ let rafId;
 let lastTime=0;
 
 function gameLoop(ts){
+  if(gameOver) return;
+  if(!ctx) return;
   if(!ctx || !canvas) return;
   if(state!=='playing'){ rafId=null; return; }
   rafId=requestAnimationFrame(gameLoop);
@@ -887,40 +889,44 @@ function menuLoop(){
 
 // ── Game start / end ──
 function startGame(){
+
+  cancelAnimationFrame(rafId);
+
   paused = false;
+  gameOver = false;
 
-  if(!Array.isArray(traffic)) traffic = [];
-  if(!Array.isArray(particles)) particles = [];
-  if(!Array.isArray(exhaustParts)) exhaustParts = [];
-  if(!Array.isArray(skidMarks)) skidMarks = [];
-  if(!Array.isArray(roadDecos)) roadDecos = [];
+  traffic = [];
+  particles = [];
+  exhaustParts = [];
+  skidMarks = [];
+  roadDecos = [];
+  roadLines = [];
 
-  if(typeof roadLines === 'undefined') roadLines = [];
-  state='playing';
-  score=0; score_anim=0; lives=3; nitro=100; level=0; dist=0;
-  gameSpeed=0; targetSpeed=LEVELS[0].speed;
-  traffic=[]; particles=[]; exhaustParts=[]; skidMarks=[];
-  scrollY=0;
+  score = 0;
+  speed = 0;
 
-  document.getElementById('menuScreen').classList.add('hidden');
-  document.getElementById('overlayGameOver').classList.add('hidden');
-  document.getElementById('overlayLeaderboard').classList.add('hidden');
-  document.getElementById('gameCanvas').classList.remove('hidden');
-  document.getElementById('hud').classList.remove('hidden');
+  player = {
+    x: canvas.width * 0.5,
+    y: canvas.height * 0.8,
+    w: 46,
+    h: 82,
+    speed: 0,
+    angle: 0,
+    hp: 100
+  };
 
-  const isMobile = ('ontouchstart' in window)||window.innerWidth<768;
-  document.getElementById('mobileControls').classList.toggle('hidden',!isMobile);
+  const menu = document.getElementById('menuScreen');
+  if(menu) menu.classList.add('hidden');
 
-  resize();
-  initRoadLines();
-  player.reset();
-  updateLives();
-  updateLevelHUD();
+  const canvasWrap = document.getElementById('gameCanvas');
+  if(canvasWrap) canvasWrap.classList.remove('hidden');
 
-  // force gas on start
-  lastTime=performance.now();
+  const hud = document.getElementById('hud');
+  if(hud) hud.classList.remove('hidden');
+
+  lastTime = performance.now();
+
   rafId = requestAnimationFrame(gameLoop);
-  showLevelFlash(LEVELS[0].name);
 }
 
 function endGame(){
