@@ -220,7 +220,7 @@ let score_anim=0;
 
 // ── Canvas ──
 const canvas = document.getElementById('gameCanvas');
-const ctx = canvas.getContext('2d');
+const ctx = canvas.getContext('2d', { alpha:false });
 let W, H, DPR;
 
 function resize(){
@@ -736,6 +736,7 @@ let rafId;
 let lastTime=0;
 
 function gameLoop(ts){
+  if(!ctx || !canvas) return;
   if(state!=='playing'){ rafId=null; return; }
   rafId=requestAnimationFrame(gameLoop);
   const dt=Math.min((ts-lastTime)/16.67,3); lastTime=ts;
@@ -886,6 +887,15 @@ function menuLoop(){
 
 // ── Game start / end ──
 function startGame(){
+  paused = false;
+
+  if(!Array.isArray(traffic)) traffic = [];
+  if(!Array.isArray(particles)) particles = [];
+  if(!Array.isArray(exhaustParts)) exhaustParts = [];
+  if(!Array.isArray(skidMarks)) skidMarks = [];
+  if(!Array.isArray(roadDecos)) roadDecos = [];
+
+  if(typeof roadLines === 'undefined') roadLines = [];
   state='playing';
   score=0; score_anim=0; lives=3; nitro=100; level=0; dist=0;
   gameSpeed=0; targetSpeed=LEVELS[0].speed;
@@ -909,7 +919,7 @@ function startGame(){
 
   // force gas on start
   lastTime=performance.now();
-  rafId=requestAnimationFrame(gameLoop);
+  rafId = requestAnimationFrame(gameLoop);
   showLevelFlash(LEVELS[0].name);
 }
 
@@ -974,13 +984,39 @@ async function showLeaderboard(){
 }
 
 // ── Buttons ──
-document.getElementById('btnPlay').onclick = ()=>{
-  if(!currentUser){
-    showAuth(()=>startGame());
-  } else {
-    startGame();
+window.addEventListener('DOMContentLoaded', ()=>{
+
+  const btnPlay = document.getElementById('btnPlay');
+  const btnLeaderboard = document.getElementById('btnLeaderboard');
+  const btnLbBack = document.getElementById('btnLbBack');
+  const btnRestart = document.getElementById('btnRestart');
+  const btnMenu = document.getElementById('btnMenu');
+
+  if(btnPlay){
+    btnPlay.addEventListener('click', ()=>{
+      startGame();
+    });
   }
-};
+
+  if(btnLeaderboard){
+    btnLeaderboard.addEventListener('click', showLeaderboard);
+  }
+
+  if(btnLbBack){
+    btnLbBack.addEventListener('click', ()=>{
+      document.getElementById('overlayLeaderboard').classList.add('hidden');
+    });
+  }
+
+  if(btnRestart){
+    btnRestart.addEventListener('click', startGame);
+  }
+
+  if(btnMenu){
+    btnMenu.addEventListener('click', backToMenu);
+  }
+
+});
 document.getElementById('btnLeaderboard').onclick = showLeaderboard;
 document.getElementById('btnLbBack').onclick = ()=>{ document.getElementById('overlayLeaderboard').classList.add('hidden'); };
 document.getElementById('btnRestart').onclick = startGame;
@@ -1156,6 +1192,47 @@ buildMenuBg();
 resize();
 menuLoop();
 updateMenuUserLine();
+
+window.addEventListener('load', () => {
+
+  const btn = document.getElementById('btnPlay');
+
+  if (!btn) {
+    console.log('btnPlay not found');
+    return;
+  }
+
+  btn.addEventListener('click', () => {
+
+    console.log('PLAY CLICK');
+
+    // скрываем меню
+    const menu = document.getElementById('menuScreen');
+    if(menu) menu.classList.add('hidden');
+
+    // показываем игру
+    const canvas = document.getElementById('gameCanvas');
+    if(canvas) canvas.classList.remove('hidden');
+
+    const hud = document.getElementById('hud');
+    if(hud) hud.classList.remove('hidden');
+
+    // мобилка
+    const mobileControls = document.getElementById('mobileControls');
+    if (mobileControls && /Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+      mobileControls.classList.remove('hidden');
+    }
+
+    // запускаем игру
+    if (typeof startGame === 'function') {
+      startGame();
+    } else {
+      console.log('startGame function not found');
+    }
+
+  });
+
+});
 </script>
 </body>
 </html>
