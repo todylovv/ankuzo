@@ -851,103 +851,62 @@ if('IntersectionObserver' in window){
 } // end _initAll
 _initAll();
 
-// ── IMAGE GENERATOR ──
-// Uses Hugging Face Inference API — no key needed for public models (rate limited)
-// Results stored only in sessionStorage — clears on tab close
+// ── IMAGE GENERATOR — Pollinations.ai (free, no key, CORS-ok) ──
 (function(){
-  const MODELS = [
-    'black-forest-labs/FLUX.1-schnell',
-    'stabilityai/stable-diffusion-xl-base-1.0',
-  ];
   let generating = false;
 
-  // Restore session images
   try {
     const saved = sessionStorage.getItem('genImages');
-    if(saved){
-      JSON.parse(saved).forEach(src => addImageToOutput(src));
-    }
+    if(saved){ JSON.parse(saved).forEach(item => addImageToOutput(item.src, item.prompt)); }
   } catch(e){}
 
   window.genImage = async function(){
     if(generating) return;
     const prompt = document.getElementById('genPrompt').value.trim();
     if(!prompt){ setStatus('введи промт'); return; }
-
     generating = true;
     const btn = document.getElementById('genBtn');
-    btn.textContent = '...';
-    btn.style.opacity = '.5';
-    setStatus('генерирую · это займёт 10-30 секунд...');
+    btn.textContent = '...'; btn.style.opacity = '.5';
 
-    // Animated dots while waiting
     let dotCount = 0;
     const dotTimer = setInterval(()=>{
-      dotCount = (dotCount+1)%4;
-      setStatus('генерирую' + '.'.repeat(dotCount+1));
-    }, 600);
+      dotCount=(dotCount+1)%4;
+      setStatus('генерирую'+'.'.repeat(dotCount+1));
+    }, 700);
 
     try {
-      const model = MODELS[0];
-      const response = await fetch(
-        `https://api-inference.huggingface.co/models/${model}`,
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer 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' },
-          body: JSON.stringify({
-            inputs: prompt,
-            parameters: { num_inference_steps: 4, width: 768, height: 512 }
-          })
-        }
-      );
+      const seed = Math.floor(Math.random()*999999);
+      const encoded = encodeURIComponent(prompt);
+      const src = 'https://image.pollinations.ai/prompt/'+encoded+'?width=768&height=512&seed='+seed+'&nologo=true&model=flux';
 
-      if(!response.ok){
-        // Model loading — retry once
-        if(response.status === 503){
-          setStatus('модель загружается · повтор через 20 сек...');
-          await new Promise(r=>setTimeout(r,20000));
-          const retry = await fetch(
-            `https://api-inference.huggingface.co/models/${model}`,
-            { method:'POST', headers:{'Content-Type':'application/json','Authorization':'Bearer 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'},
-              body:JSON.stringify({inputs:prompt, parameters:{num_inference_steps:4,width:768,height:512}}) }
-          );
-          if(!retry.ok) throw new Error('Модель недоступна, попробуй позже');
-          const blob2 = await retry.blob();
-          handleBlob(blob2, prompt);
-        } else {
-          throw new Error('Ошибка ' + response.status);
-        }
-      } else {
-        const blob = await response.blob();
-        handleBlob(blob, prompt);
-      }
+      await new Promise((resolve, reject) => {
+        const img = new window.Image();
+        const timeout = setTimeout(()=>reject(new Error('таймаут — попробуй ещё раз')), 90000);
+        img.onload = ()=>{ clearTimeout(timeout); resolve(); };
+        img.onerror = ()=>{ clearTimeout(timeout); reject(new Error('не удалось загрузить')); };
+        img.src = src;
+      });
+
+      addImageToOutput(src, prompt);
+
+      try {
+        const saved = JSON.parse(sessionStorage.getItem('genImages')||'[]');
+        saved.unshift({src, prompt});
+        if(saved.length > 6) saved.pop();
+        sessionStorage.setItem('genImages', JSON.stringify(saved));
+      } catch(e){}
+
+      setStatus('готово ↓');
+      setTimeout(()=>setStatus(''), 3000);
+
     } catch(err){
       setStatus('ошибка: ' + err.message);
     } finally {
       clearInterval(dotTimer);
       generating = false;
-      btn.textContent = 'Создать';
-      btn.style.opacity = '1';
+      btn.textContent = 'Создать'; btn.style.opacity = '1';
     }
   };
-
-  function handleBlob(blob, prompt){
-    const url = URL.createObjectURL(blob);
-    addImageToOutput(url, prompt);
-    // Save to session (base64 for persistence within tab)
-    const reader = new FileReader();
-    reader.onload = ()=>{
-      try {
-        const saved = JSON.parse(sessionStorage.getItem('genImages')||'[]');
-        saved.unshift(reader.result);
-        if(saved.length > 6) saved.pop(); // keep last 6
-        sessionStorage.setItem('genImages', JSON.stringify(saved));
-      } catch(e){}
-    };
-    reader.readAsDataURL(blob);
-    setStatus('готово ↓');
-    setTimeout(()=>setStatus(''),3000);
-  }
 
   function addImageToOutput(src, prompt){
     const out = document.getElementById('genOutput');
@@ -956,19 +915,18 @@ _initAll();
     wrap.style.cssText = 'position:relative;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.1);overflow:hidden;';
     const img = document.createElement('img');
     img.src = src;
-    img.style.cssText = 'width:100%;display:block;opacity:0;transition:opacity .5s;';
+    img.style.cssText = 'width:100%;display:block;opacity:0;transition:opacity .6s;';
     img.onload = ()=>{ img.style.opacity='1'; };
     wrap.appendChild(img);
     if(prompt){
       const label = document.createElement('div');
       label.style.cssText = 'padding:10px 12px;font-family:"JetBrains Mono",monospace;font-size:9px;letter-spacing:.08em;color:rgba(255,255,255,.35);line-height:1.5;border-top:1px solid rgba(255,255,255,.08);';
-      label.textContent = prompt.length > 60 ? prompt.slice(0,60)+'...' : prompt;
+      label.textContent = prompt.length>60 ? prompt.slice(0,60)+'...' : prompt;
       wrap.appendChild(label);
     }
-    // Download button
     const dl = document.createElement('a');
-    dl.href = src; dl.download = 'ankuzo-gen.png';
-    dl.style.cssText = 'position:absolute;top:8px;right:8px;font-family:"JetBrains Mono",monospace;font-size:8px;letter-spacing:.12em;color:rgba(255,255,255,.5);background:rgba(0,0,0,.5);border:1px solid rgba(255,255,255,.15);padding:4px 8px;text-decoration:none;text-transform:uppercase;';
+    dl.href = src; dl.download = 'ankuzo-gen.jpg'; dl.target = '_blank';
+    dl.style.cssText = 'position:absolute;top:8px;right:8px;font-family:"JetBrains Mono",monospace;font-size:8px;letter-spacing:.12em;color:rgba(255,255,255,.6);background:rgba(0,0,0,.6);border:1px solid rgba(255,255,255,.2);padding:4px 10px;text-decoration:none;text-transform:uppercase;';
     dl.textContent = 'save';
     wrap.appendChild(dl);
     out.insertBefore(wrap, out.firstChild);
@@ -979,6 +937,7 @@ _initAll();
     if(el) el.textContent = msg;
   }
 })();
+
 
 </script>
 </body>
