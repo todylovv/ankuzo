@@ -1038,7 +1038,7 @@ ASCII INTRO — ANKUZO
     };
     requestAnimationFrame(run);
   }
-  fetch('steam-data.json?_='+Date.now())
+  fetch('/ankuzo/steam-data.json?_='+Date.now())
     .then(r=>r.json())
     .then(data=>{
       const gEl=document.getElementById('stGames');
