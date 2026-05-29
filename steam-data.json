@@ -1,5 +1,5 @@
 {
-  "updated": "2026-05-29T11:53:20.312559Z",
+  "updated": "2026-05-29T14:49:05.194949Z",
   "accounts": [
     {
       "name": "b1",
@@ -12,16 +12,16 @@
     {
       "name": "b2",
       "avatar": "https://avatars.steamstatic.com/719bc8ea7c3e382348fd1909400257c0d49497f3_full.jpg",
-      "status": "online",
-      "online": true,
+      "status": "offline",
+      "online": false,
       "gameextrainfo": "",
       "gameid": ""
     }
   ],
   "stats": {
     "total_games": 190,
-    "total_hours": 4943,
-    "hours_2weeks": 21.9
+    "total_hours": 4945,
+    "hours_2weeks": 23.6
   },
   "top3_banners": [
     {
@@ -33,7 +33,7 @@
     {
       "appid": 1172470,
       "name": "Apex Legends",
-      "hours": 520.0,
+      "hours": 521.7,
       "banner": "https://cdn.akamai.steamstatic.com/steam/apps/1172470/header.jpg"
     },
     {
@@ -52,7 +52,7 @@
     {
       "appid": 1172470,
       "name": "Apex Legends",
-      "hours": 520.0
+      "hours": 521.7
     },
     {
       "appid": 252950,
