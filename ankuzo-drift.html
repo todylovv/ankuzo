@@ -92,6 +92,7 @@ body{font-family:'JetBrains Mono',monospace;color:var(--fg);touch-action:none;}
     </div>
     <div class="menu-divider"></div>
     <button class="menu-btn primary" id="btnPlay">Начать игру</button>
+    <button class="menu-btn" id="btnLogin">Войти / Регистрация</button>
     <button class="menu-btn" id="btnLeaderboard">Рекорды</button>
     <div class="menu-hint" id="menuUserLine">// гость — рекорды не сохраняются</div>
     <div class="menu-hint">WASD / стрелки · мобилка — кнопки на экране</div>
@@ -989,48 +990,17 @@ async function showLeaderboard(){
   }).join('');
 }
 
-// ── Buttons ──
-window.addEventListener('DOMContentLoaded', ()=>{
-
-  const btnPlay = document.getElementById('btnPlay');
-  const btnLeaderboard = document.getElementById('btnLeaderboard');
-  const btnLbBack = document.getElementById('btnLbBack');
-  const btnRestart = document.getElementById('btnRestart');
-  const btnMenu = document.getElementById('btnMenu');
-
-  if(btnPlay){
-    btnPlay.addEventListener('click', ()=>{
-      startGame();
-    });
-  }
-
-  if(btnLeaderboard){
-    btnLeaderboard.addEventListener('click', showLeaderboard);
-  }
-
-  if(btnLbBack){
-    btnLbBack.addEventListener('click', ()=>{
-      document.getElementById('overlayLeaderboard').classList.add('hidden');
-    });
-  }
-
-  if(btnRestart){
-    btnRestart.addEventListener('click', startGame);
-  }
-
-  if(btnMenu){
-    btnMenu.addEventListener('click', backToMenu);
-  }
-
-});
+// ── Buttons — единственное место привязки ──
+document.getElementById('btnPlay').onclick        = startGame;
+document.getElementById('btnLogin').onclick       = ()=>showAuth(null);
 document.getElementById('btnLeaderboard').onclick = showLeaderboard;
-document.getElementById('btnLbBack').onclick = ()=>{ document.getElementById('overlayLeaderboard').classList.add('hidden'); };
-document.getElementById('btnRestart').onclick = startGame;
-document.getElementById('btnMenu').onclick = backToMenu;
+document.getElementById('btnLbBack').onclick      = ()=>document.getElementById('overlayLeaderboard').classList.add('hidden');
+document.getElementById('btnRestart').onclick     = startGame;
+document.getElementById('btnMenu').onclick        = backToMenu;
 
 document.addEventListener('keydown',e=>{
   if(e.code==='Escape' && state==='playing') paused=!paused;
-  if(e.code==='KeyR' && state==='ended') startGame();
+  if(e.code==='KeyR'   && state==='ended')   startGame();
 });
 
 canvas.addEventListener('touchstart',e=>{
@@ -1198,47 +1168,6 @@ buildMenuBg();
 resize();
 menuLoop();
 updateMenuUserLine();
-
-window.addEventListener('load', () => {
-
-  const btn = document.getElementById('btnPlay');
-
-  if (!btn) {
-    console.log('btnPlay not found');
-    return;
-  }
-
-  btn.addEventListener('click', () => {
-
-    console.log('PLAY CLICK');
-
-    // скрываем меню
-    const menu = document.getElementById('menuScreen');
-    if(menu) menu.classList.add('hidden');
-
-    // показываем игру
-    const canvas = document.getElementById('gameCanvas');
-    if(canvas) canvas.classList.remove('hidden');
-
-    const hud = document.getElementById('hud');
-    if(hud) hud.classList.remove('hidden');
-
-    // мобилка
-    const mobileControls = document.getElementById('mobileControls');
-    if (mobileControls && /Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
-      mobileControls.classList.remove('hidden');
-    }
-
-    // запускаем игру
-    if (typeof startGame === 'function') {
-      startGame();
-    } else {
-      console.log('startGame function not found');
-    }
-
-  });
-
-});
 </script>
 </body>
 </html>
