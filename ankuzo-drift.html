@@ -735,11 +735,9 @@ function spawnExhaust(){
 // ── Game Loop ──
 let rafId;
 let lastTime=0;
+let gameOver=false;
 
 function gameLoop(ts){
-  if(gameOver) return;
-  if(!ctx) return;
-  if(!ctx || !canvas) return;
   if(state!=='playing'){ rafId=null; return; }
   rafId=requestAnimationFrame(gameLoop);
   const dt=Math.min((ts-lastTime)/16.67,3); lastTime=ts;
@@ -890,44 +888,51 @@ function menuLoop(){
 
 // ── Game start / end ──
 function startGame(){
-
   cancelAnimationFrame(rafId);
 
+  // ── reset state ──
+  state = 'playing';
   paused = false;
   gameOver = false;
+  score = 0; score_anim = 0;
+  lives = 3; nitro = 100;
+  level = 0; dist = 0;
+  gameSpeed = 0; targetSpeed = LEVELS[0].speed;
+  scrollY = 0;
 
-  traffic = [];
-  particles = [];
-  exhaustParts = [];
-  skidMarks = [];
-  roadDecos = [];
-  roadLines = [];
+  traffic = []; particles = []; exhaustParts = []; skidMarks = [];
 
-  score = 0;
-  speed = 0;
+  // ── init road ──
+  initRoadLines();
 
-  player = {
-    x: canvas.width * 0.5,
-    y: canvas.height * 0.8,
-    w: 46,
-    h: 82,
-    speed: 0,
-    angle: 0,
-    hp: 100
-  };
+  // ── reset player ──
+  player.x = W / 2;
+  player.y = H * 0.72;
+  player.angle = 0;
+  player.vx = 0; player.vy = 0;
+  player.speed = 0;
+  player.drift = 0;
+  player.driftAngle = 0;
+  player.invincible = 0;
 
-  const menu = document.getElementById('menuScreen');
-  if(menu) menu.classList.add('hidden');
+  // ── show game UI ──
+  document.getElementById('menuScreen').classList.add('hidden');
+  document.getElementById('overlayGameOver').classList.add('hidden');
+  document.getElementById('overlayLeaderboard').classList.add('hidden');
+  document.getElementById('overlayAuth').classList.add('hidden');
+  document.getElementById('gameCanvas').classList.remove('hidden');
+  document.getElementById('hud').classList.remove('hidden');
 
-  const canvasWrap = document.getElementById('gameCanvas');
-  if(canvasWrap) canvasWrap.classList.remove('hidden');
+  const isMobile = ('ontouchstart' in window) || window.innerWidth < 768;
+  document.getElementById('mobileControls').classList.toggle('hidden', !isMobile);
 
-  const hud = document.getElementById('hud');
-  if(hud) hud.classList.remove('hidden');
+  resize();
+  updateLives();
+  updateLevelHUD();
 
   lastTime = performance.now();
-
   rafId = requestAnimationFrame(gameLoop);
+  showLevelFlash(LEVELS[0].name);
 }
 
 function endGame(){
