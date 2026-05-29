@@ -323,73 +323,31 @@ footer.reveal{
   #genOutput{grid-template-columns:repeat(2,1fr)!important;}
 }
 
-/* ── DRIFT GAME SECTION ── */
-#driftContainer{
-  position:relative;
-  width:100%;
-  aspect-ratio:16/9;
-  background:#07070a;
-  border:1px solid rgba(240,237,232,.08);
-  overflow:hidden;
-  max-height:600px;
-}
-#driftFrame{
-  display:none;
-  width:100%;
-  height:100%;
-  border:none;
-  position:absolute;
-  inset:0;
-}
-@media(max-width:900px){
-  #driftContainer.active{
-    position:fixed;
-    inset:0;
-    z-index:9999;
-    aspect-ratio:unset;
-    max-height:unset;
-    border:none;
-  }
-  #driftContainer.active #driftFrame{
-    width:100%;
-    height:100%;
-  }
-  #driftCloseBtn{
-    display:flex !important;
-  }
-}
-#driftCloseBtn{
-  display:none;
-  position:fixed;
-  top:16px;
-  left:16px;
-  z-index:10000;
-  font-family:'JetBrains Mono',monospace;
-  font-size:9px;
-  letter-spacing:.2em;
-  text-transform:uppercase;
-  color:#f0ede8;
-  background:rgba(7,7,10,.85);
-  border:1px solid rgba(240,237,232,.25);
-  padding:10px 18px;
-  cursor:pointer;
-  backdrop-filter:blur(12px);
-}
-@media(max-width:700px){
-  #enterText{
-    bottom:env(safe-area-inset-bottom, 32px);
-    bottom:calc(32px + env(safe-area-inset-bottom, 0px));
-    font-size:8px;
-    letter-spacing:.25em;
-  }
-  #asciiCanvas{
-    width:100vw;
-    height:100vh;
-  }
-  #asciiOverlay{
-    display:none;
-  }
-}
+/* ── TERMINAL ── */
+#termWrap{background:#07070a;border:1px solid rgba(240,237,232,.1);font-family:'JetBrains Mono',monospace;max-width:760px;margin:0 auto;}
+.term-bar{display:flex;align-items:center;gap:12px;padding:12px 16px;border-bottom:1px solid rgba(240,237,232,.07);background:rgba(240,237,232,.03);}
+.term-dots{display:flex;gap:6px;}
+.term-dots span{width:10px;height:10px;border-radius:50%;background:rgba(240,237,232,.12);}
+.term-title{font-size:10px;letter-spacing:.15em;color:rgba(240,237,232,.25);text-transform:uppercase;}
+#termBody{padding:20px 20px 8px;min-height:220px;max-height:380px;overflow-y:auto;display:flex;flex-direction:column;gap:4px;}
+#termBody::-webkit-scrollbar{width:3px;}
+#termBody::-webkit-scrollbar-thumb{background:rgba(240,237,232,.1);}
+.term-line{font-size:12px;line-height:1.7;letter-spacing:.03em;}
+.term-out{color:rgba(240,237,232,.75);}
+.term-out.dim{color:rgba(240,237,232,.3);}
+.term-out.accent{color:#f0ede8;font-weight:700;}
+.term-out.err{color:rgba(220,100,100,.7);}
+.term-out.green{color:rgba(100,220,130,.7);}
+.term-cmd-hint{color:#f0ede8;cursor:pointer;text-decoration:underline;text-decoration-color:rgba(240,237,232,.2);}
+.term-input-row{display:flex;align-items:center;gap:10px;padding:12px 20px;border-top:1px solid rgba(240,237,232,.07);}
+.term-prompt{font-size:11px;color:rgba(100,180,240,.6);letter-spacing:.04em;white-space:nowrap;flex-shrink:0;}
+#termInput{flex:1;background:none;border:none;outline:none;font-family:'JetBrains Mono',monospace;font-size:12px;color:#f0ede8;letter-spacing:.04em;caret-color:#f0ede8;}
+#termInput::placeholder{color:rgba(240,237,232,.15);}
+
+/* ── GLITCH ── */
+@keyframes glitch1{0%,94%,100%{clip-path:none;transform:none;}95%{clip-path:inset(20% 0 60% 0);transform:translateX(-4px);}96%{clip-path:inset(60% 0 10% 0);transform:translateX(4px);}97%{clip-path:inset(40% 0 40% 0);transform:translateX(-2px);}98%{clip-path:none;transform:translateX(0);}}
+@keyframes glitch2{0%,93%,100%{opacity:1;transform:none;}94%{opacity:.7;transform:translateX(6px) skewX(-2deg);}95%{opacity:.9;transform:translateX(-6px) skewX(2deg);}96%{opacity:1;transform:none;}}
+.hero-name{animation:glitch2 11s infinite;}
 
 /* ── SCROLL TO TOP ── */
 #scrollTop{
@@ -519,8 +477,6 @@ ASCII INTRO — ANKUZO
     <a href="#about">Обо мне</a>
     <a href="#skills">Навыки</a>
     <a href="#games">Игры</a>
-    <a href="#drift">Drift</a>
-    <a href="#generator">Генератор</a>
   </div>
   <div class="nav-burger" id="burger" onclick="toggleMenu()" aria-label="Открыть меню" aria-expanded="false" role="button" tabindex="0">
     <span></span><span></span><span></span>
@@ -530,8 +486,6 @@ ASCII INTRO — ANKUZO
   <a href="#about" onclick="toggleMenu()">Обо мне</a>
   <a href="#skills" onclick="toggleMenu()">Навыки</a>
   <a href="#games" onclick="toggleMenu()">Игры</a>
-  <a href="#drift" onclick="toggleMenu()">Drift</a>
-  <a href="#generator" onclick="toggleMenu()">Генератор</a>
 </div>
 
 <!-- HERO -->
@@ -566,15 +520,39 @@ ASCII INTRO — ANKUZO
 
 <hr class="section-divider">
 
+<!-- TERMINAL -->
+<section id="terminal" class="gen-section">
+  <div class="section-label">01 — Терминал</div>
+  <div class="reveal">
+    <div id="termWrap">
+      <div class="term-bar">
+        <div class="term-dots"><span></span><span></span><span></span></div>
+        <div class="term-title">ankuzo@system ~ </div>
+      </div>
+      <div id="termBody">
+        <div class="term-line"><span class="term-out">Добро пожаловать в систему ANKUZO v1.0</span></div>
+        <div class="term-line"><span class="term-out dim">Введи <span class="term-cmd-hint">help</span> для списка команд.</span></div>
+        <div class="term-spacer"></div>
+      </div>
+      <div class="term-input-row">
+        <span class="term-prompt">ankuzo@system:~$</span>
+        <input id="termInput" type="text" autocomplete="off" autocorrect="off"
+          autocapitalize="off" spellcheck="false" placeholder="введи команду...">
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="section-divider">
+
 <!-- ABOUT -->
 <section id="about">
-  <div class="section-label">01 — О себе</div>
+  <div class="section-label">02 — О себе</div>
   <div class="about-grid">
     <div class="about-text reveal-left">
-      Специализируюсь на трёх вещах, которые обычно не пересекаются:<br><br>
-      <em>Защита систем</em> — понимаю, как ломают, поэтому знаю, как защитить.<br><br>
-      <em>Машинное обучение</em> — от сырых данных до модели, которую не стыдно показать.<br><br>
-      <strong>Данные в любом объёме — это просто задача с решением.</strong>
+      Думаю как атакующий — строю как защитник.<br><br>
+      Занимаюсь тем, где ошибки стоят дорого: нахожу слабые места в системах раньше, чем их найдут другие, строю модели которые решают реальные задачи, работаю с данными в любом масштабе.<br><br>
+      <em>Кибербезопасность, машинное обучение и большие данные</em> — не три отдельных мира, а один способ видеть системы насквозь. Спокойно. Методично. До конца.
     </div>
     <div class="about-right reveal-right">
       <div class="fact-row">
@@ -606,7 +584,7 @@ ASCII INTRO — ANKUZO
 
 <!-- SKILLS -->
 <section id="skills">
-  <div class="section-label">02 — Навыки</div>
+  <div class="section-label">03 — Навыки</div>
   <div class="skills-grid">
     <div class="skill-card" style="transition-delay:.04s">
       <div class="skill-icon">SEC</div>
@@ -713,109 +691,6 @@ ASCII INTRO — ANKUZO
   </div>
 </section>
 
-<!-- GENERATOR -->
-<hr class="section-divider">
-<section id="generator" class="gen-section">
-  <div class="section-label">05 — Генератор</div>
-  <div class="reveal">
-
-    <!-- main layout: big image left, controls right -->
-    <div style="display:grid;grid-template-columns:minmax(0,1fr) clamp(260px,30vw,380px);gap:40px;align-items:start;" id="genLayout">
-
-      <!-- LEFT: big image preview -->
-      <div id="genPreview" style="position:relative;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.1);aspect-ratio:3/2;display:flex;align-items:center;justify-content:center;overflow:hidden;">
-        <div id="genPlaceholder" style="text-align:center;padding:20px;">
-          <div style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.25em;color:rgba(255,255,255,.15);text-transform:uppercase;">здесь появится<br>изображение</div>
-        </div>
-        <img id="genMainImg" src="" style="display:none;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .6s;">
-        <div id="genLoader" style="display:none;position:absolute;inset:0;align-items:center;justify-content:center;background:rgba(7,7,10,.75);">
-          <div style="text-align:center;">
-            <div style="width:36px;height:36px;margin:0 auto 12px;"><svg viewBox="0 0 36 36" style="animation:dsSpin 1.2s linear infinite;width:36px;height:36px;"><circle cx="18" cy="18" r="14" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="3"/><circle cx="18" cy="18" r="14" fill="none" stroke="rgba(255,255,255,0.8)" stroke-width="3" stroke-dasharray="60" stroke-dashoffset="45" stroke-linecap="round"/></svg></div>
-            <div style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.2em;color:rgba(255,255,255,.4);text-transform:uppercase;" id="genLoaderText">генерирую...</div>
-          </div>
-        </div>
-        <a id="genSaveBtn" href="#" download="ankuzo-gen.jpg" rel="noopener noreferrer"
-          style="display:none;position:absolute;bottom:10px;right:10px;font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.15em;color:rgba(255,255,255,.7);background:rgba(0,0,0,.7);border:1px solid rgba(255,255,255,.2);padding:5px 12px;text-decoration:none;text-transform:uppercase;">
-          save
-        </a>
-      </div>
-
-      <!-- RIGHT: controls + history -->
-      <div style="display:flex;flex-direction:column;gap:14px;">
-        <p style="font-family:'JetBrains Mono',monospace;font-size:10px;color:rgba(255,255,255,.28);letter-spacing:.06em;line-height:1.8;">
-          Введи промт — получишь изображение.<br>Только для тебя, при перезагрузке чисто.
-        </p>
-
-        <input id="genPrompt" type="text" placeholder="опиши что хочешь увидеть..."
-          inputmode="text" autocorrect="off" autocapitalize="off" spellcheck="false"
-          style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.04em;
-          background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.15);
-          color:#f0ede8;padding:13px 16px;outline:none;width:100%;
-          transition:border-color .2s;"
-          onfocus="this.style.borderColor='rgba(255,255,255,.4)'"
-          onblur="this.style.borderColor='rgba(255,255,255,.15)'"
-          onkeydown="if(event.key==='Enter')genImage()">
-
-        <button onclick="genImage()" id="genBtn"
-          style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.2em;
-          text-transform:uppercase;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.2);
-          color:#f0ede8;padding:13px;cursor:pointer;width:100%;
-          transition:background .2s,border-color .2s;"
-          onmouseenter="this.style.background='rgba(255,255,255,.12)';this.style.borderColor='rgba(255,255,255,.4)'"
-          onmouseleave="this.style.background='rgba(255,255,255,.06)';this.style.borderColor='rgba(255,255,255,.2)'">
-          Создать →
-        </button>
-
-        <div id="genStatus" style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.15em;color:rgba(255,255,255,.25);text-transform:uppercase;min-height:14px;"></div>
-
-        <div style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.2em;color:rgba(255,255,255,.18);text-transform:uppercase;margin-top:4px;">История сессии</div>
-        <div id="genOutput" style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;"></div>
-      </div>
-    </div>
-
-  </div>
-</section>
-
-<!-- GAME -->
-<hr class="section-divider">
-<section id="drift" class="gen-section">
-  <div class="section-label">06 — Игра</div>
-  <div class="reveal">
-    <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:28px;flex-wrap:wrap;gap:12px;">
-      <div>
-        <div style="font-family:'Bebas Neue',sans-serif;font-size:clamp(28px,6vw,52px);letter-spacing:.08em;line-height:1;">ANKUZO DRIFT</div>
-        <div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.2em;color:rgba(240,237,232,.35);text-transform:uppercase;margin-top:4px;">top-down · киберпанк · 5 уровней</div>
-      </div>
-      <button id="driftLaunchBtn" onclick="launchDrift()" style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.25em;text-transform:uppercase;background:rgba(240,237,232,.06);border:1px solid rgba(240,237,232,.25);color:#f0ede8;padding:12px 28px;cursor:pointer;transition:all .2s;" onmouseenter="this.style.background='rgba(240,237,232,.12)';this.style.borderColor='rgba(240,237,232,.6)'" onmouseleave="this.style.background='rgba(240,237,232,.06)';this.style.borderColor='rgba(240,237,232,.25)'">
-        Запустить →
-      </button>
-    </div>
-
-    <!-- game preview / iframe container -->
-    <div id="driftContainer">
-
-      <!-- close button for mobile fullscreen -->
-      <button id="driftCloseBtn" onclick="closeDrift()">← выйти</button>
-
-      <!-- preview placeholder -->
-      <div id="driftPreview" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;cursor:pointer;" onclick="launchDrift()">
-        <canvas id="driftPreviewCanvas" style="position:absolute;inset:0;width:100%;height:100%;"></canvas>
-        <div style="position:relative;z-index:1;text-align:center;">
-          <div style="font-family:'Bebas Neue',sans-serif;font-size:clamp(40px,8vw,90px);letter-spacing:.08em;line-height:.9;color:#f0ede8;">ANKUZO<br>DRIFT</div>
-          <div style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.3em;color:rgba(240,237,232,.3);text-transform:uppercase;margin-top:12px;">нажми чтобы играть</div>
-        </div>
-        <div style="position:relative;z-index:1;display:flex;gap:20px;flex-wrap:wrap;justify-content:center;">
-          <div style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.15em;color:rgba(240,237,232,.2);text-transform:uppercase;border:1px solid rgba(240,237,232,.08);padding:6px 14px;">WASD / стрелки</div>
-          <div style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.15em;color:rgba(240,237,232,.2);text-transform:uppercase;border:1px solid rgba(240,237,232,.08);padding:6px 14px;">Shift = нитро</div>
-          <div style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.15em;color:rgba(240,237,232,.2);text-transform:uppercase;border:1px solid rgba(240,237,232,.08);padding:6px 14px;">мобилка — кнопки</div>
-        </div>
-      </div>
-
-      <!-- iframe loads on click -->
-      <iframe id="driftFrame" allowfullscreen></iframe>
-    </div>
-  </div>
-</section>
 
 <!-- FOOTER -->
 <footer class="reveal">
@@ -837,129 +712,240 @@ ASCII INTRO — ANKUZO
 </button>
 
 <script>
-// ── FOOTER YEAR ──
-document.getElementById('footerYear').textContent = new Date().getFullYear();
-
-// ── DRIFT GAME ──
+// ── TERMINAL ──
 (function(){
-  // animated preview canvas — speed lines + fake road
-  const pc = document.getElementById('driftPreviewCanvas');
-  if(!pc) return;
-  const pctx = pc.getContext('2d');
-  let pW, pH, pParts=[], pRoadY=0, pRAF;
+  const body = document.getElementById('termBody');
+  const input = document.getElementById('termInput');
+  if(!body || !input) return;
 
-  function previewResize(){
-    pW=pc.offsetWidth; pH=pc.offsetHeight;
-    pc.width=pW; pc.height=pH;
-    pParts=[];
-    for(let i=0;i<50;i++) pParts.push({
-      x:Math.random()*pW, y:Math.random()*pH,
-      vy:Math.random()*3+1.5,
-      w:Math.random()*1.5+0.5,
-      h:Math.random()*50+10,
-      alpha:Math.random()*0.15+0.03
-    });
+  const history = [];
+  let histIdx = -1;
+
+  const COMMANDS = {
+    help(){
+      return [
+        {t:'accent', v:'Доступные команды:'},
+        {t:'dim',    v:'whoami          — кто такой ankuzo'},
+        {t:'dim',    v:'skills          — стек и направления'},
+        {t:'contact         — как связаться'},
+        {t:'dim',    v:'cat manifesto   — философия'},
+        {t:'dim',    v:'ls -la          — файловая система'},
+        {t:'dim',    v:'nmap ankuzo     — скан системы'},
+        {t:'dim',    v:'hack            — попробуй'},
+        {t:'dim',    v:'sudo rm -rf /   — не надо'},
+        {t:'dim',    v:'ping ankuzo     — проверка связи'},
+        {t:'dim',    v:'clear           — очистить терминал'},
+      ];
+    },
+    whoami(){
+      return [
+        {t:'accent', v:'ankuzo'},
+        {t:'', v:'Думаю как атакующий — строю как защитник.'},
+        {t:'', v:'Кибербезопасность · Machine Learning · Big Data'},
+        {t:'dim', v:'Спокойно. Методично. До конца.'},
+      ];
+    },
+    skills(){
+      return [
+        {t:'green', v:'[SEC]  Cybersecurity'},
+        {t:'dim',   v:'       Pentest · OSINT · Forensics · CTF · SIEM'},
+        {t:'green', v:'[ML]   Machine Learning'},
+        {t:'dim',   v:'       Python · PyTorch · sklearn · NLP · CV'},
+        {t:'green', v:'[BIG]  Big Data'},
+        {t:'dim',   v:'       Spark · Kafka · Hadoop · SQL · Airflow'},
+        {t:'dim',   v:'       Linux · Cloud infra · Git'},
+      ];
+    },
+    contact(){
+      return [
+        {t:'', v:'Discord: ankuz0'},
+        {t:'dim', v:'Лучший способ связаться — напрямую в DM.'},
+        {t:'dim', v:'Открыт к интересным предложениям.'},
+      ];
+    },
+    'cat manifesto'(){
+      return [
+        {t:'accent', v:'manifesto.txt'},
+        {t:'dim', v:'─────────────────────────────'},
+        {t:'', v:'Системы ломаются там, где их не ждут.'},
+        {t:'', v:'Данные врут там, где их не проверяют.'},
+        {t:'', v:'Я работаю именно в этих местах —'},
+        {t:'', v:'между тем, что видно,'},
+        {t:'', v:'и тем, что происходит на самом деле.'},
+        {t:'dim', v:'─────────────────────────────'},
+      ];
+    },
+    'ls -la'(){
+      return [
+        {t:'dim', v:'total 1337'},
+        {t:'', v:'drwxr-xr-x  berserk/'},
+        {t:'', v:'-rwxr-xr-x  pentest.sh'},
+        {t:'', v:'-rw-r--r--  models/pytorch_v2.pt'},
+        {t:'', v:'-rwxr-xr-x  darkmode.sh'},
+        {t:'', v:'-rw-r--r--  souls.db'},
+        {t:'', v:'-rwxr-xr-x  ctf_tools/'},
+        {t:'', v:'-rw-------  secrets.enc'},
+        {t:'dim', v:'???????????  ???'},
+      ];
+    },
+    nmap(){
+      return null; // handled async
+    },
+    hack(){
+      return null; // handled async
+    },
+    ping(){
+      return null; // handled async
+    },
+    'sudo rm -rf /'(){
+      return [{t:'err', v:'Permission denied. Nice try.'}];
+    },
+    clear(){
+      return null; // special
+    },
+  };
+
+  function addLine(text, cls=''){
+    const div = document.createElement('div');
+    div.className = 'term-line';
+    const span = document.createElement('span');
+    span.className = 'term-out' + (cls ? ' '+cls : '');
+    span.textContent = text;
+    div.appendChild(span);
+    body.appendChild(div);
+    body.scrollTop = body.scrollHeight;
+    return span;
   }
 
-  function previewLoop(){
-    if(!document.getElementById('driftPreview') ||
-       document.getElementById('driftPreview').style.display==='none') return;
-    pRAF=requestAnimationFrame(previewLoop);
-    pctx.clearRect(0,0,pW,pH);
-
-    // road
-    const rw=Math.min(pW*0.5,260);
-    const rx=pW/2-rw/2;
-    pctx.fillStyle='#0f0f12';
-    pctx.fillRect(rx,0,rw,pH);
-
-    // lane dashes
-    pRoadY=(pRoadY+4)%50;
-    pctx.strokeStyle='rgba(240,237,232,0.08)';
-    pctx.lineWidth=1.5;
-    pctx.setLineDash([24,26]);
-    pctx.lineDashOffset=-pRoadY;
-    pctx.beginPath(); pctx.moveTo(pW/2,0); pctx.lineTo(pW/2,pH); pctx.stroke();
-    pctx.setLineDash([]);
-
-    // barriers
-    pctx.strokeStyle='rgba(240,237,232,0.1)';
-    pctx.lineWidth=1;
-    pctx.beginPath(); pctx.moveTo(rx,0); pctx.lineTo(rx,pH); pctx.stroke();
-    pctx.beginPath(); pctx.moveTo(rx+rw,0); pctx.lineTo(rx+rw,pH); pctx.stroke();
-
-    // speed lines
-    pParts.forEach(p=>{
-      p.y+=p.vy;
-      if(p.y>pH+p.h){ p.y=-p.h; p.x=Math.random()*pW; }
-      pctx.globalAlpha=p.alpha;
-      pctx.fillStyle='#f0ede8';
-      pctx.fillRect(p.x,p.y,p.w,p.h);
-    });
-    pctx.globalAlpha=1;
-
-    // mini player car
-    const cx2=pW/2, cy2=pH*0.72;
-    pctx.fillStyle='#e8e5e0';
-    pctx.beginPath(); pctx.roundRect(cx2-11,cy2-20,22,38,[3]); pctx.fill();
-    pctx.fillStyle='#1a1a20';
-    pctx.beginPath(); pctx.roundRect(cx2-8,cy2-17,16,12,[2]); pctx.fill();
-    pctx.fillStyle='rgba(240,237,232,0.9)';
-    pctx.fillRect(cx2-9,cy2-19,6,3);
-    pctx.fillRect(cx2+3,cy2-19,6,3);
-
-    // vignette
-    const vg=pctx.createRadialGradient(pW/2,pH/2,pH*0.1,pW/2,pH/2,pH*0.7);
-    vg.addColorStop(0,'transparent'); vg.addColorStop(1,'rgba(7,7,10,0.7)');
-    pctx.fillStyle=vg; pctx.fillRect(0,0,pW,pH);
+  function addPromptLine(cmd){
+    const div = document.createElement('div');
+    div.className = 'term-line';
+    div.innerHTML = `<span style="color:rgba(100,180,240,.5);font-size:11px;">ankuzo@system:~$</span> <span class="term-echo">${cmd}</span>`;
+    body.appendChild(div);
   }
 
-  // start preview animation when section scrolls into view
-  const driftSection=document.getElementById('drift');
-  if(driftSection && 'IntersectionObserver' in window){
-    const pio=new IntersectionObserver(entries=>{
-      if(entries[0].isIntersecting){
-        previewResize();
-        previewLoop();
-      } else {
-        if(pRAF) cancelAnimationFrame(pRAF);
-      }
-    },{threshold:0.1});
-    pio.observe(driftSection);
+  async function typeLines(lines, delay=28){
+    for(const l of lines){
+      await new Promise(r=>setTimeout(r, delay));
+      addLine(l.v||l, l.t||'');
+    }
   }
-  window.addEventListener('resize',previewResize);
+
+  async function runNmap(){
+    addLine('Starting Nmap scan on ankuzo...', 'dim');
+    const ports = [
+      {p:22,   s:'open',   svc:'ssh'},
+      {p:80,   s:'open',   svc:'http'},
+      {p:443,  s:'open',   svc:'https'},
+      {p:1337, s:'open',   svc:'elite'},
+      {p:3306, s:'closed', svc:'mysql'},
+      {p:8080, s:'filtered',svc:'???'},
+    ];
+    for(const port of ports){
+      await new Promise(r=>setTimeout(r,120));
+      addLine(
+        `${String(port.p).padEnd(6)} ${port.s.padEnd(10)} ${port.svc}`,
+        port.s==='open'?'green':port.s==='filtered'?'':'err'
+      );
+    }
+    await new Promise(r=>setTimeout(r,200));
+    addLine('Nmap done. 6 ports scanned.', 'dim');
+  }
+
+  async function runHack(){
+    const lines = [
+      'Initializing breach sequence...',
+      'Bypassing firewall... [████████░░] 80%',
+      'Bypassing firewall... [██████████] 100%',
+      'Accessing mainframe...',
+      'Decrypting credentials...',
+      'ERROR: Target system is ankuzo.',
+      'You cannot hack the hacker.',
+    ];
+    for(const l of lines){
+      await new Promise(r=>setTimeout(r,180));
+      addLine(l, l.startsWith('ERROR')?'err':l.includes('100')?'green':'dim');
+    }
+  }
+
+  async function runPing(){
+    addLine('PING ankuzo (127.0.0.1): 56 bytes', 'dim');
+    for(let i=0;i<4;i++){
+      await new Promise(r=>setTimeout(r,400));
+      const ms = (Math.random()*2+0.5).toFixed(3);
+      addLine(`64 bytes from ankuzo: icmp_seq=${i} ttl=64 time=${ms} ms`, 'green');
+    }
+    addLine('--- ankuzo ping statistics ---', 'dim');
+    addLine('4 packets transmitted, 4 received, 0% packet loss', '');
+  }
+
+  async function handleCmd(raw){
+    const cmd = raw.trim().toLowerCase();
+    if(!cmd) return;
+
+    history.unshift(raw);
+    histIdx = -1;
+    addPromptLine(raw);
+
+    if(cmd === 'clear'){
+      body.innerHTML = '';
+      return;
+    }
+    if(cmd === 'nmap ankuzo' || cmd === 'nmap'){
+      await runNmap(); return;
+    }
+    if(cmd === 'hack'){
+      await runHack(); return;
+    }
+    if(cmd === 'ping ankuzo' || cmd === 'ping'){
+      await runPing(); return;
+    }
+
+    const fn = COMMANDS[cmd];
+    if(fn){
+      const lines = fn();
+      if(lines) await typeLines(lines);
+    } else {
+      addLine(`command not found: ${cmd}. Try 'help'`, 'err');
+    }
+    body.scrollTop = body.scrollHeight;
+  }
+
+  input.addEventListener('keydown', async e=>{
+    if(e.key === 'Enter'){
+      const val = input.value;
+      input.value = '';
+      await handleCmd(val);
+    }
+    if(e.key === 'ArrowUp'){
+      e.preventDefault();
+      if(histIdx < history.length-1){ histIdx++; input.value = history[histIdx]||''; }
+    }
+    if(e.key === 'ArrowDown'){
+      e.preventDefault();
+      if(histIdx > 0){ histIdx--; input.value = history[histIdx]||''; }
+      else { histIdx=-1; input.value=''; }
+    }
+    if(e.key==='Tab'){
+      e.preventDefault();
+      const val = input.value.toLowerCase();
+      const match = Object.keys(COMMANDS).find(k=>k.startsWith(val));
+      if(match) input.value = match;
+    }
+  });
+
+  // кликабельные подсказки команд
+  document.querySelectorAll('.term-cmd-hint').forEach(el=>{
+    el.addEventListener('click',()=>{ input.value=el.textContent; input.focus(); });
+  });
+
+  // фокус при клике на терминал
+  document.getElementById('termWrap').addEventListener('click',()=>input.focus());
 })();
 
-window.launchDrift = function(){
-  const preview=document.getElementById('driftPreview');
-  const frame=document.getElementById('driftFrame');
-  const btn=document.getElementById('driftLaunchBtn');
-  const container=document.getElementById('driftContainer');
-  if(!frame || frame.src.includes('ankuzo-drift')) return;
-  if(preview) preview.style.display='none';
-  frame.style.cssText='display:block;width:100%;height:100%;border:none;';
-  frame.src='ankuzo-drift.html';
-  if(btn) btn.textContent='Играю ✓';
+document.getElementById('footerYear').textContent = new Date().getFullYear();
 
-  const isMobile=window.innerWidth<900;
-  if(isMobile){
-    container.classList.add('active');
-    document.body.style.overflow='hidden';
-    window.scrollTo(0,0);
-  }
-};
 
-window.closeDrift = function(){
-  const frame=document.getElementById('driftFrame');
-  const container=document.getElementById('driftContainer');
-  const btn=document.getElementById('driftLaunchBtn');
-  const preview=document.getElementById('driftPreview');
-  if(frame){ frame.style.display='none'; frame.src=''; }
-  container.classList.remove('active');
-  document.body.style.overflow='';
-  if(preview) preview.style.display='flex';
-  if(btn) btn.textContent='Запустить →';
-};
 
 // ── MOBILE MENU ──
 function toggleMenu(){
@@ -1407,111 +1393,7 @@ if('IntersectionObserver' in window){
 } // end _initAll
 _initAll();
 
-// ── IMAGE GENERATOR — Pollinations.ai (free, no key, CORS-ok) ──
-(function(){
-  let generating = false;
 
-  try {
-    const saved = sessionStorage.getItem('genImages');
-    if(saved){
-      const items = JSON.parse(saved);
-      if(items.length > 0) showMain(items[0].src, items[0].prompt);
-      items.forEach(item => addThumb(item.src, item.prompt));
-    }
-  } catch(e){}
-
-  window.genImage = async function(){
-    if(generating) return;
-    const prompt = document.getElementById('genPrompt').value.trim();
-    if(!prompt){ setStatus('введи промт'); return; }
-    generating = true;
-    const btn = document.getElementById('genBtn');
-    btn.textContent = '...'; btn.style.opacity = '.5';
-    const loader = document.getElementById('genLoader');
-    if(loader) loader.style.display='flex';
-
-    let dotCount = 0;
-    const dotTimer = setInterval(()=>{
-      dotCount=(dotCount+1)%4;
-      setStatus('генерирую'+'.'.repeat(dotCount+1));
-      const lt = document.getElementById('genLoaderText');
-      if(lt) lt.textContent = 'генерирую'+'.'.repeat(dotCount+1);
-    }, 700);
-
-    try {
-      const seed = Math.floor(Math.random()*999999);
-      const encoded = encodeURIComponent(prompt);
-      const src = 'https://image.pollinations.ai/prompt/'+encoded+'?width=768&height=512&seed='+seed+'&nologo=true&model=flux-pro';
-
-      await new Promise((resolve, reject) => {
-        const img = new window.Image();
-        const timeout = setTimeout(()=>reject(new Error('таймаут — попробуй ещё раз')), 90000);
-        img.onload = ()=>{ clearTimeout(timeout); resolve(); };
-        img.onerror = ()=>{ clearTimeout(timeout); reject(new Error('не удалось загрузить')); };
-        img.src = src;
-      });
-
-      showMain(src, prompt);
-      addThumb(src, prompt);
-
-      try {
-        const saved = JSON.parse(sessionStorage.getItem('genImages')||'[]');
-        saved.unshift({src, prompt});
-        if(saved.length > 6) saved.pop();
-        sessionStorage.setItem('genImages', JSON.stringify(saved));
-      } catch(e){}
-
-      setStatus('готово ↓');
-      setTimeout(()=>setStatus(''), 3000);
-
-    } catch(err){
-      setStatus('ошибка: ' + err.message);
-    } finally {
-      clearInterval(dotTimer);
-      if(loader) loader.style.display='none';
-      generating = false;
-      btn.textContent = 'Создать →'; btn.style.opacity = '1';
-    }
-  };
-
-  function showMain(src, prompt){
-    const placeholder = document.getElementById('genPlaceholder');
-    const mainImg = document.getElementById('genMainImg');
-    const saveBtn = document.getElementById('genSaveBtn');
-    if(!mainImg) return;
-    mainImg.style.opacity = '0';
-    mainImg.style.display = 'block';
-    mainImg.onload = ()=>{ mainImg.style.opacity='1'; };
-    mainImg.src = src;
-    if(placeholder) placeholder.style.display = 'none';
-    if(saveBtn){ saveBtn.style.display='block'; saveBtn.href=src; }
-    const loader = document.getElementById('genLoader');
-    if(loader) loader.style.display = 'none';
-  }
-
-  function addThumb(src, prompt){
-    const out = document.getElementById('genOutput');
-    if(!out) return;
-    const existing = out.querySelectorAll('img');
-    for(let img of existing){ if(img.src===src) return; }
-    const wrap = document.createElement('div');
-    wrap.style.cssText = 'position:relative;cursor:pointer;border:1px solid rgba(255,255,255,.08);overflow:hidden;aspect-ratio:3/2;background:#111;transition:border-color .2s;';
-    const img = document.createElement('img');
-    img.src = src;
-    img.style.cssText = 'width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .4s;display:block;';
-    img.onload = ()=>{ img.style.opacity='1'; };
-    wrap.onclick = ()=>showMain(src, prompt);
-    wrap.onmouseenter = ()=>{ wrap.style.borderColor='rgba(255,255,255,.3)'; };
-    wrap.onmouseleave = ()=>{ wrap.style.borderColor='rgba(255,255,255,.08)'; };
-    wrap.appendChild(img);
-    out.insertBefore(wrap, out.firstChild);
-  }
-
-  function setStatus(msg){
-    const el = document.getElementById('genStatus');
-    if(el) el.textContent = msg;
-  }
-})();
 
 
 
@@ -1617,7 +1499,14 @@ function buildText(){
   }
 }
 
-buildText();
+// ждём загрузки шрифта — иначе canvas рисует пустоту
+document.fonts.load('900 80px Bebas Neue').then(()=>{
+  buildText();
+  animate();
+}).catch(()=>{
+  buildText();
+  animate();
+});
 
 window.addEventListener('mousemove',e=>{
   mouseX = e.clientX;
@@ -1696,8 +1585,6 @@ function animate(){
 
   requestAnimationFrame(animate);
 }
-
-animate();
 
 function triggerExplode(){
   if(exploded) return;
