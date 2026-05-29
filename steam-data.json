@@ -1,46 +1,73 @@
 {
-  "updated": "2026-05-29T11:33:26.392276Z",
-  "player": {
-    "name": "b1",
-    "avatar": "https://avatars.steamstatic.com/6a30a26c019394587a828b964f6156b6a17e36a2_full.jpg",
-    "status": 0,
-    "gameextrainfo": "",
-    "gameid": ""
-  },
+  "updated": "2026-05-29T11:53:20.312559Z",
+  "accounts": [
+    {
+      "name": "b1",
+      "avatar": "https://avatars.steamstatic.com/6a30a26c019394587a828b964f6156b6a17e36a2_full.jpg",
+      "status": "offline",
+      "online": false,
+      "gameextrainfo": "",
+      "gameid": ""
+    },
+    {
+      "name": "b2",
+      "avatar": "https://avatars.steamstatic.com/719bc8ea7c3e382348fd1909400257c0d49497f3_full.jpg",
+      "status": "online",
+      "online": true,
+      "gameextrainfo": "",
+      "gameid": ""
+    }
+  ],
   "stats": {
-    "total_games": 133,
-    "total_hours": 1551
+    "total_games": 190,
+    "total_hours": 4943,
+    "hours_2weeks": 21.9
   },
-  "recent": [
+  "top3_banners": [
+    {
+      "appid": 730,
+      "name": "Counter-Strike 2",
+      "hours": 3258.2,
+      "banner": "https://cdn.akamai.steamstatic.com/steam/apps/730/header.jpg"
+    },
     {
       "appid": 1172470,
       "name": "Apex Legends",
-      "hours_2weeks": 1.9,
-      "hours_total": 49.6
-    },
-    {
-      "appid": 1808500,
-      "name": "ARC Raiders",
-      "hours_2weeks": 0.1,
-      "hours_total": 67.7
+      "hours": 520.0,
+      "banner": "https://cdn.akamai.steamstatic.com/steam/apps/1172470/header.jpg"
     },
     {
       "appid": 252950,
       "name": "Rocket League",
-      "hours_2weeks": 0.1,
-      "hours_total": 0.2
+      "hours": 188.7,
+      "banner": "https://cdn.akamai.steamstatic.com/steam/apps/252950/header.jpg"
     }
   ],
   "top": [
     {
       "appid": 730,
       "name": "Counter-Strike 2",
-      "hours": 819.4
+      "hours": 3258.2
+    },
+    {
+      "appid": 1172470,
+      "name": "Apex Legends",
+      "hours": 520.0
+    },
+    {
+      "appid": 252950,
+      "name": "Rocket League",
+      "hours": 188.7
     },
     {
       "appid": 1172620,
       "name": "Sea of Thieves",
       "hours": 98.2
+    },
+    {
+      "appid": 739630,
+      "name": "Phasmophobia",
+      "hours": 94.5
     },
     {
       "appid": 629520,
@@ -56,21 +83,6 @@
       "appid": 221100,
       "name": "DayZ",
       "hours": 60.9
-    },
-    {
-      "appid": 1938090,
-      "name": "Call of Duty®",
-      "hours": 51.3
-    },
-    {
-      "appid": 1172470,
-      "name": "Apex Legends",
-      "hours": 49.6
-    },
-    {
-      "appid": 252490,
-      "name": "Rust",
-      "hours": 23.2
     }
   ]
 }
