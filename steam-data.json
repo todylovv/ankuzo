@@ -1,0 +1,76 @@
+{
+  "updated": "2026-05-29T11:33:26.392276Z",
+  "player": {
+    "name": "b1",
+    "avatar": "https://avatars.steamstatic.com/6a30a26c019394587a828b964f6156b6a17e36a2_full.jpg",
+    "status": 0,
+    "gameextrainfo": "",
+    "gameid": ""
+  },
+  "stats": {
+    "total_games": 133,
+    "total_hours": 1551
+  },
+  "recent": [
+    {
+      "appid": 1172470,
+      "name": "Apex Legends",
+      "hours_2weeks": 1.9,
+      "hours_total": 49.6
+    },
+    {
+      "appid": 1808500,
+      "name": "ARC Raiders",
+      "hours_2weeks": 0.1,
+      "hours_total": 67.7
+    },
+    {
+      "appid": 252950,
+      "name": "Rocket League",
+      "hours_2weeks": 0.1,
+      "hours_total": 0.2
+    }
+  ],
+  "top": [
+    {
+      "appid": 730,
+      "name": "Counter-Strike 2",
+      "hours": 819.4
+    },
+    {
+      "appid": 1172620,
+      "name": "Sea of Thieves",
+      "hours": 98.2
+    },
+    {
+      "appid": 629520,
+      "name": "Soundpad",
+      "hours": 89.1
+    },
+    {
+      "appid": 1808500,
+      "name": "ARC Raiders",
+      "hours": 67.7
+    },
+    {
+      "appid": 221100,
+      "name": "DayZ",
+      "hours": 60.9
+    },
+    {
+      "appid": 1938090,
+      "name": "Call of Duty®",
+      "hours": 51.3
+    },
+    {
+      "appid": 1172470,
+      "name": "Apex Legends",
+      "hours": 49.6
+    },
+    {
+      "appid": 252490,
+      "name": "Rust",
+      "hours": 23.2
+    }
+  ]
+}
