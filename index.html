@@ -323,6 +323,31 @@ footer.reveal{
   #genOutput{grid-template-columns:repeat(2,1fr)!important;}
 }
 
+/* ── MARQUEE ── */
+.marquee-wrap{overflow:hidden;white-space:nowrap;padding:18px 0;border-top:1px solid rgba(240,237,232,.06);border-bottom:1px solid rgba(240,237,232,.06);margin:0;}
+.marquee-inner{display:inline-block;animation:marqueeScroll 20s linear infinite;}
+.marquee-inner span{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.3em;text-transform:uppercase;color:rgba(240,237,232,.2);padding:0 20px;}
+.marquee-inner .mdot{color:rgba(240,237,232,.07);padding:0 4px;}
+@keyframes marqueeScroll{0%{transform:translateX(0);}100%{transform:translateX(-50%);}}
+
+/* ── STEAM ── */
+.steam-now{background:rgba(240,237,232,.03);border:1px solid rgba(240,237,232,.08);padding:16px 20px;}
+.steam-now-dot-wrap{display:flex;align-items:center;gap:8px;margin-bottom:4px;}
+.steam-now-dot{width:6px;height:6px;border-radius:50%;background:rgba(100,220,130,.7);animation:steamPulse 1.5s ease-in-out infinite;flex-shrink:0;}
+@keyframes steamPulse{0%,100%{opacity:1;transform:scale(1);}50%{opacity:.3;transform:scale(.8);}}
+.steam-stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}
+.steam-stat{background:rgba(240,237,232,.03);border:1px solid rgba(240,237,232,.06);padding:16px 20px;}
+.steam-stat-num{font-family:'Bebas Neue',sans-serif;font-size:44px;letter-spacing:.03em;line-height:1;color:#f0ede8;}
+.steam-stat-lbl{font-size:8px;letter-spacing:.2em;color:rgba(240,237,232,.25);text-transform:uppercase;margin-top:4px;}
+.steam-game-row{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid rgba(240,237,232,.05);}
+.steam-game-row:last-child{border:none;}
+.steam-game-rank{font-size:10px;color:rgba(240,237,232,.2);width:20px;flex-shrink:0;}
+.steam-game-name{font-size:11px;letter-spacing:.08em;flex:0 0 200px;}
+.steam-game-bar-wrap{flex:1;height:1px;background:rgba(240,237,232,.08);}
+.steam-game-bar{height:100%;background:rgba(240,237,232,.35);transition:width 1s cubic-bezier(.16,1,.3,1);}
+.steam-game-hours{font-size:10px;color:rgba(240,237,232,.35);letter-spacing:.1em;flex-shrink:0;}
+@media(max-width:600px){.steam-stats-row{grid-template-columns:1fr 1fr;}.steam-game-name{flex:0 0 120px;}}
+
 /* ── TERMINAL ── */
 #termWrap{background:#07070a;border:1px solid rgba(240,237,232,.1);font-family:'JetBrains Mono',monospace;max-width:760px;margin:0 auto;}
 .term-bar{display:flex;align-items:center;gap:12px;padding:12px 16px;border-bottom:1px solid rgba(240,237,232,.07);background:rgba(240,237,232,.03);}
@@ -692,8 +717,65 @@ ASCII INTRO — ANKUZO
 </section>
 
 
-<!-- FOOTER -->
-<footer class="reveal">
+<!-- MARQUEE -->
+<div class="marquee-wrap">
+  <div class="marquee-inner">
+    <span>ANKUZO</span><span class="mdot">·</span>
+    <span>CYBERSECURITY</span><span class="mdot">·</span>
+    <span>MACHINE LEARNING</span><span class="mdot">·</span>
+    <span>BIG DATA</span><span class="mdot">·</span>
+    <span>PENTEST</span><span class="mdot">·</span>
+    <span>BERSERK</span><span class="mdot">·</span>
+    <span>ANKUZO</span><span class="mdot">·</span>
+    <span>CYBERSECURITY</span><span class="mdot">·</span>
+    <span>MACHINE LEARNING</span><span class="mdot">·</span>
+    <span>BIG DATA</span><span class="mdot">·</span>
+    <span>PENTEST</span><span class="mdot">·</span>
+    <span>BERSERK</span><span class="mdot">·</span>
+  </div>
+</div>
+
+<hr class="section-divider">
+
+<!-- STEAM -->
+<section id="steam" class="gen-section">
+  <div class="section-label">05 — Игровой профиль</div>
+  <div class="reveal" id="steamSection">
+
+    <!-- NOW PLAYING -->
+    <div id="steamNowPlaying" style="display:none;margin-bottom:20px;">
+      <div class="steam-now">
+        <div class="steam-now-dot-wrap"><span class="steam-now-dot"></span><span style="font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:rgba(100,220,130,.7);">играю сейчас · steam</span></div>
+        <div id="steamNowName" style="font-family:'Bebas Neue',sans-serif;font-size:32px;letter-spacing:.05em;margin-top:4px;"></div>
+      </div>
+    </div>
+
+    <!-- STATS ROW -->
+    <div class="steam-stats-row">
+      <div class="steam-stat">
+        <div class="steam-stat-num" id="stGames">—</div>
+        <div class="steam-stat-lbl">игр в библиотеке</div>
+      </div>
+      <div class="steam-stat">
+        <div class="steam-stat-num" id="stHours">—</div>
+        <div class="steam-stat-lbl">часов всего</div>
+      </div>
+      <div class="steam-stat" id="stRecentWrap" style="display:none;">
+        <div class="steam-stat-num" id="stRecent">—</div>
+        <div class="steam-stat-lbl">часов за 2 недели</div>
+      </div>
+    </div>
+
+    <!-- TOP GAMES -->
+    <div style="margin-top:24px;">
+      <div style="font-size:9px;letter-spacing:.25em;color:rgba(240,237,232,.25);text-transform:uppercase;margin-bottom:12px;">топ по часам</div>
+      <div id="steamTopGames"></div>
+    </div>
+
+    <div id="steamUpdated" style="font-size:9px;letter-spacing:.12em;color:rgba(240,237,232,.15);margin-top:20px;"></div>
+  </div>
+</section>
+
   <div class="footer-left">© <span id="footerYear">2025</span> ANKUZO</div>
   <div class="footer-right" style="display:flex;align-items:center;gap:20px;">
     <div style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.2em;color:rgba(255,255,255,.3);text-transform:uppercase;">Контакт</div>
@@ -941,6 +1023,63 @@ ASCII INTRO — ANKUZO
 
   // фокус при клике на терминал
   document.getElementById('termWrap').addEventListener('click',()=>input.focus());
+})();
+
+// ── STEAM DATA ──
+(function(){
+  function animNum(el,target,dur){
+    let s=null;
+    const run=ts=>{
+      if(!s)s=ts;
+      const p=Math.min((ts-s)/dur,1);
+      const e=1-Math.pow(1-p,3);
+      el.textContent=Math.round(e*target).toLocaleString();
+      if(p<1)requestAnimationFrame(run);
+    };
+    requestAnimationFrame(run);
+  }
+  fetch('steam-data.json?_='+Date.now())
+    .then(r=>r.json())
+    .then(data=>{
+      const gEl=document.getElementById('stGames');
+      const hEl=document.getElementById('stHours');
+      if(gEl&&data.stats)animNum(gEl,data.stats.total_games,1200);
+      if(hEl&&data.stats)animNum(hEl,data.stats.total_hours,1600);
+      if(data.player&&data.player.gameextrainfo){
+        const np=document.getElementById('steamNowPlaying');
+        const nn=document.getElementById('steamNowName');
+        if(np)np.style.display='block';
+        if(nn)nn.textContent=data.player.gameextrainfo;
+      }
+      if(data.recent&&data.recent.length>0){
+        const total2w=data.recent.reduce((s,g)=>s+g.hours_2weeks,0);
+        const rw=document.getElementById('stRecentWrap');
+        const rv=document.getElementById('stRecent');
+        if(rw)rw.style.display='block';
+        if(rv)animNum(rv,Math.round(total2w),1000);
+      }
+      const topEl=document.getElementById('steamTopGames');
+      if(topEl&&data.top&&data.top.length>0){
+        const max=data.top[0].hours||1;
+        topEl.innerHTML=data.top.map((g,i)=>`
+          <div class="steam-game-row">
+            <div class="steam-game-rank">#${i+1}</div>
+            <div class="steam-game-name">${g.name}</div>
+            <div class="steam-game-bar-wrap"><div class="steam-game-bar" style="width:0%" data-w="${Math.round(g.hours/max*100)}"></div></div>
+            <div class="steam-game-hours">${g.hours} ч</div>
+          </div>`).join('');
+        setTimeout(()=>{topEl.querySelectorAll('.steam-game-bar').forEach(b=>{b.style.width=b.dataset.w+'%';});},200);
+      }
+      const upEl=document.getElementById('steamUpdated');
+      if(upEl&&data.updated){
+        const d=new Date(data.updated);
+        upEl.textContent='обновлено: '+d.toLocaleString('ru-RU');
+      }
+    })
+    .catch(()=>{
+      const s=document.getElementById('steamSection');
+      if(s)s.innerHTML='<div style="font-size:11px;letter-spacing:.1em;color:rgba(240,237,232,.2);">данные загружаются...</div>';
+    });
 })();
 
 document.getElementById('footerYear').textContent = new Date().getFullYear();
