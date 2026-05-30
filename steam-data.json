@@ -1,5 +1,5 @@
 {
-  "updated": "2026-05-30T11:15:49.386712Z",
+  "updated": "2026-05-30T13:14:25.186593Z",
   "accounts": [
     {
       "name": "b1",
@@ -21,7 +21,7 @@
   "stats": {
     "total_games": 190,
     "total_hours": 4947,
-    "hours_2weeks": 21.9
+    "hours_2weeks": 21.5
   },
   "top3_banners": [
     {
