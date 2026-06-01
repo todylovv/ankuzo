@@ -275,8 +275,12 @@ body{background:var(--bg);color:var(--fg);font-family:var(--font-mono);min-heigh
       <h2 class="form-title">Поделись музыкой</h2>
 
       <div class="form-group">
-        <label class="form-label">Ссылка на плейлист</label>
-        <input class="form-input" id="fUrl" type="url" placeholder="Spotify или Яндекс Музыка URL...">
+        <label class="form-label">Ссылка или iframe код плейлиста</label>
+        <input class="form-input" id="fUrl" type="text" placeholder="Spotify URL или Яндекс URL / iframe код...">
+        <div style="font-size:9px;letter-spacing:.08em;color:rgba(240,237,232,.25);margin-top:6px;line-height:1.6;">
+          Spotify: вставь ссылку вида <span style="color:rgba(240,237,232,.4);">open.spotify.com/playlist/...</span><br>
+          Яндекс: вставь ссылку <span style="color:rgba(240,237,232,.4);">music.yandex.ru/users/.../playlists/...</span> или iframe код (три точки → Поделиться → HTML-код)
+        </div>
         <div class="error-msg" id="urlErr"></div>
         <!-- preview -->
         <div class="preview-box" id="previewBox">
@@ -847,6 +851,9 @@ async function openModal(id){
     if(p.platform==='spotify' && p.embed_url){
       mEmbed.innerHTML=`<iframe src="${esc(p.embed_url)}" height="152" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>`;
       mEmbed.style.display='block';
+    } else if(p.platform==='yandex' && p.embed_url){
+      mEmbed.innerHTML=`<iframe src="${esc(p.embed_url)}" frameborder="0" allow="clipboard-write" style="width:100%;height:200px;border:none;" loading="lazy"></iframe>`;
+      mEmbed.style.display='block';
     } else {
       mEmbed.innerHTML=''; mEmbed.style.display='none';
     }
@@ -986,13 +993,33 @@ function toggleTag(id,el){
 }
 
 // ── URL PREVIEW ──
-function detectPlatform(url){
-  if(/open\.spotify\.com\/playlist\//.test(url)){
-    const m=url.match(/playlist\/([a-zA-Z0-9]+)/);
+function detectPlatform(input){
+  // Яндекс iframe код — парсим src
+  if(input.includes('<iframe') && input.includes('music.yandex.ru/iframe/playlist')){
+    const srcMatch = input.match(/src="([^"]+)"/);
+    if(srcMatch){
+      const src = srcMatch[1];
+      // https://music.yandex.ru/iframe/playlist/{owner}/{kind}
+      const m = src.match(/iframe\/playlist\/([^\/]+)\/(\d+)/);
+      if(m){
+        const owner=m[1], kind=m[2];
+        const fullUrl=`https://music.yandex.ru/users/${owner}/playlists/${kind}`;
+        return {platform:'yandex', playlist_url:fullUrl, owner, kind, embed_src:src};
+      }
+    }
+  }
+  if(/open\.spotify\.com\/playlist\//.test(input)){
+    const m=input.match(/playlist\/([a-zA-Z0-9]+)/);
     return {platform:'spotify', playlist_id:m?m[1]:null};
   }
-  if(/music\.yandex\.(ru|com)/.test(url) && /playlist/.test(url)){
-    return {platform:'yandex', playlist_url:url};
+  // Полный формат: /users/{owner}/playlists/{kind}
+  if(/music\.yandex\.(ru|com)/.test(input) && /users\/.+\/playlists\/\d+/.test(input)){
+    const m=input.match(/users\/([^\/\?]+)\/playlists\/(\d+)/);
+    return {platform:'yandex', playlist_url:input.split('?')[0], owner:m?m[1]:null, kind:m?m[2]:null};
+  }
+  // Короткий формат: /playlists/{uuid}
+  if(/music\.yandex\.(ru|com)\/playlists\/[a-f0-9-]{36}/.test(input)){
+    return {platform:'yandex', playlist_url:input.split('?')[0], short:true};
   }
   return null;
 }
@@ -1043,10 +1070,185 @@ async function previewUrl(url){
   }
 
   if(detected.platform==='yandex'){
-    // Извлекаем owner и kind из URL
-    // Форматы: /users/{owner}/playlists/{kind}
-    const m = url.match(/users\/([^\/]+)\/playlists\/(\d+)/);
     document.getElementById('yandexFields').style.display='none';
+    document.getElementById('prevPlatform').textContent='● ЯНДЕКС';
+    document.getElementById('prevPlatform').className='preview-platform yandex';
+    document.getElementById('prevTitle').textContent='Загрузка...';
+    document.getElementById('prevAuthor').textContent='';
+    box.classList.add('visible');
+
+    const owner = detected.owner;
+    const kind  = detected.kind;
+    const embedSrc = detected.embed_src || (owner && kind ? `https://music.yandex.ru/iframe/playlist/${owner}/${kind}` : null);
+
+    if(detected.short){
+      // UUID ссылка — пробуем resolve через CORS прокси
+      document.getElementById('prevTitle').textContent='Загрузка...';
+      try{
+        const proxyUrl=`https://api.allorigins.win/get?url=${encodeURIComponent(url.split('?')[0])}`;
+        const res=await fetch(proxyUrl);
+        const data=await res.json();
+        const html=data.contents||'';
+
+        // Ищем iframe src в HTML — Яндекс кладёт его в og:video или в JSON
+        // Паттерн: "playlist/al.semenov22/1000" или owner/kind в JSON
+        let owner=null, kind=null;
+
+        // Ищем в JSON данных страницы
+        const ownerMatch=html.match(/"owner"\s*:\s*\{\s*"uid"\s*:\s*\d+\s*,\s*"login"\s*:\s*"([^"]+)"/);
+        const kindMatch=html.match(/"kind"\s*:\s*(\d+)/);
+        if(ownerMatch) owner=ownerMatch[1];
+        if(kindMatch) kind=kindMatch[1];
+
+        // Ищем в iframe src если есть
+        if(!owner||!kind){
+          const iframeMatch=html.match(/music\.yandex\.ru\/iframe\/playlist\/([^\/\\"]+)\/(\d+)/);
+          if(iframeMatch){ owner=iframeMatch[1]; kind=iframeMatch[2]; }
+        }
+
+        // Ищем в og:url
+        if(!owner||!kind){
+          const ogMatch=html.match(/users\/([^\/\\"]+)\/playlists\/(\d+)/);
+          if(ogMatch){ owner=ogMatch[1]; kind=ogMatch[2]; }
+        }
+
+        if(owner && kind){
+          detected.owner=owner; detected.kind=kind;
+          detected.playlist_url=`https://music.yandex.ru/users/${owner}/playlists/${kind}`;
+          detected.embed_src=`https://music.yandex.ru/iframe/playlist/${owner}/${kind}`;
+          detected.short=false;
+          // Рекурсивно вызываем с полными данными
+          _previewData=null;
+          await previewYandex(detected, url);
+          return;
+        }
+      }catch(e){}
+
+      // Не удалось — ручные поля
+      _previewData={...detected,title:'',author:'Яндекс Музыка',cover_url:'',embed_url:null,track_count:0};
+      document.getElementById('prevTitle').textContent='Заполни поля ниже';
+      document.getElementById('prevAuthor').textContent='Не удалось получить данные автоматически';
+      const yf=document.getElementById('yandexFields');
+      yf.style.display='block';
+      document.getElementById('fYaTitle').oninput=e=>{ _previewData.title=e.target.value.trim(); document.getElementById('prevTitle').textContent=_previewData.title||'Заполни поля ниже'; };
+      document.getElementById('fYaCover').oninput=e=>{ const v=e.target.value.trim(); _previewData.cover_url=v; document.getElementById('prevCover').src=v; };
+      return;
+    }
+
+    if(owner && kind){
+      await previewYandex(detected, url);
+      return;
+    }
+
+    // Fallback
+    _previewData={...detected,title:'',author:'Яндекс Музыка',cover_url:'',embed_url:null,track_count:0};
+    document.getElementById('prevTitle').textContent='Заполни поля ниже';
+    document.getElementById('prevAuthor').textContent='';
+    showYandexManual();
+  }
+}
+
+function showYandexManual(){
+  const yf=document.getElementById('yandexFields');
+  yf.style.display='block';
+  document.getElementById('fYaTitle').oninput=e=>{ _previewData.title=e.target.value.trim(); document.getElementById('prevTitle').textContent=_previewData.title||'Заполни поля ниже'; };
+  document.getElementById('fYaCover').oninput=e=>{ const v=e.target.value.trim(); _previewData.cover_url=v; document.getElementById('prevCover').src=v; };
+}
+
+async function previewYandex(detected, originalUrl){
+  const owner=detected.owner, kind=detected.kind;
+  const embedSrc=detected.embed_src||`https://music.yandex.ru/iframe/playlist/${owner}/${kind}`;
+  try{
+    const apiUrl=`https://music.yandex.ru/handlers/playlist.jsx?owner=${encodeURIComponent(owner)}&kinds=${kind}&light=true&lang=ru&external-domain=music.yandex.ru&overembed=false`;
+    const res=await fetch(apiUrl,{headers:{'X-Retpath-Y':'https://music.yandex.ru/'}});
+    if(res.ok){
+      const data=await res.json();
+      const pl=data?.playlist;
+      const title=pl?.title||'Яндекс плейлист';
+      const pAuthor=pl?.owner?.name||owner;
+      const trackCount=pl?.trackCount||0;
+      let coverUrl='';
+      if(pl?.cover?.uri) coverUrl='https://'+pl.cover.uri.replace('%%','200x200');
+      _previewData={...detected,title,author:pAuthor,cover_url:coverUrl,embed_url:embedSrc,track_count:trackCount};
+      document.getElementById('prevCover').src=coverUrl;
+      document.getElementById('prevTitle').textContent=title;
+      document.getElementById('prevAuthor').textContent=`${pAuthor} · ${trackCount} треков`;
+      document.getElementById('previewBox').classList.add('visible');
+      return;
+    }
+  }catch(e){}
+  // Fallback — есть embed но нет метаданных
+  _previewData={...detected,title:'Яндекс плейлист',author:owner,cover_url:'',embed_url:embedSrc,track_count:0};
+  document.getElementById('prevTitle').textContent='Яндекс плейлист';
+  document.getElementById('prevAuthor').textContent=owner;
+  document.getElementById('previewBox').classList.add('visible');
+
+    // Короткий URL — пробуем получить финальный адрес через fetch
+    if(detected.short){
+      try{
+        const res = await fetch(url, {method:'HEAD', redirect:'follow', mode:'no-cors'});
+        // no-cors не даёт финальный URL, пробуем GET
+      }catch(e){}
+      // Альтернатива: парсим через iframe trick или просто сохраняем короткий URL
+      // и просим пользователя ввести данные
+      _previewData={...detected,title:'',author:'Яндекс Музыка',cover_url:'',embed_url:null,track_count:0};
+      document.getElementById('prevTitle').textContent='Заполни поля ниже';
+      document.getElementById('prevAuthor').textContent='Короткая ссылка — данные недоступны автоматически';
+      const yf=document.getElementById('yandexFields');
+      yf.style.display='block';
+      document.getElementById('fYaTitle').oninput=e=>{
+        _previewData.title=e.target.value.trim();
+        document.getElementById('prevTitle').textContent=_previewData.title||'Заполни поля ниже';
+      };
+      document.getElementById('fYaCover').oninput=e=>{
+        const v=e.target.value.trim();
+        _previewData.cover_url=v;
+        document.getElementById('prevCover').src=v;
+      };
+      return;
+    }
+
+    // Полный URL — извлекаем owner и kind
+    const m = url.match(/users\/([^\/]+)\/playlists\/(\d+)/);
+    if(m){
+      const owner=m[1], kind=m[2];
+      try{
+        const apiUrl=`https://music.yandex.ru/handlers/playlist.jsx?owner=${encodeURIComponent(owner)}&kinds=${kind}&light=true&lang=ru&external-domain=music.yandex.ru&overembed=false`;
+        const res=await fetch(apiUrl,{headers:{'X-Retpath-Y':'https://music.yandex.ru/'}});
+        if(res.ok){
+          const data=await res.json();
+          const pl=data?.playlist;
+          const title=pl?.title||'Яндекс плейлист';
+          const pAuthor=pl?.owner?.name||owner;
+          const trackCount=pl?.trackCount||0;
+          let coverUrl='';
+          if(pl?.cover?.uri) coverUrl='https://'+pl.cover.uri.replace('%%','200x200');
+          else if(pl?.tracks?.[0]?.track?.albums?.[0]?.coverUri) coverUrl='https://'+pl.tracks[0].track.albums[0].coverUri.replace('%%','200x200');
+          _previewData={...detected,title,author:pAuthor,cover_url:coverUrl,embed_url:null,track_count:trackCount};
+          document.getElementById('prevCover').src=coverUrl;
+          document.getElementById('prevTitle').textContent=title;
+          document.getElementById('prevAuthor').textContent=`${pAuthor} · ${trackCount} треков`;
+          return;
+        }
+      }catch(e){}
+    }
+
+    // Fallback — ручные поля
+    _previewData={...detected,title:'',author:'Яндекс Музыка',cover_url:'',embed_url:null,track_count:0};
+    document.getElementById('prevTitle').textContent='Заполни поля ниже';
+    document.getElementById('prevAuthor').textContent='';
+    const yf=document.getElementById('yandexFields');
+    yf.style.display='block';
+    document.getElementById('fYaTitle').oninput=e=>{
+      _previewData.title=e.target.value.trim();
+      document.getElementById('prevTitle').textContent=_previewData.title||'Заполни поля ниже';
+    };
+    document.getElementById('fYaCover').oninput=e=>{
+      const v=e.target.value.trim();
+      _previewData.cover_url=v;
+      document.getElementById('prevCover').src=v;
+    };
+  }
 
     if(m){
       const owner=m[1], kind=m[2];
