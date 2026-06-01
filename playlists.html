@@ -307,6 +307,7 @@ body{background:var(--bg);color:var(--fg);font-family:var(--font-mono);min-heigh
             <div class="preview-author" id="prevAuthor"></div>
           </div>
         </div>
+        <div id="yandexEmbedPreview" style="display:none;margin-top:12px;"></div>
         <!-- Яндекс: ручной ввод -->
         <div id="yandexFields" style="display:none;margin-top:12px;display:none;">
           <div class="form-group" style="margin-bottom:12px;">
@@ -872,6 +873,8 @@ async function openModal(id){
 
     // embed
 	const mEmbed = document.getElementById('mEmbed');
+	const yandexUuid = (p.playlist_url||'').match(/playlists\/([a-f0-9-]{36})/)?.[1];
+	const yandexEmbedUrl = p.embed_url || (yandexUuid?`https://music.yandex.ru/iframe/playlist/${yandexUuid}`:null);
 	if (p.platform === 'spotify') {
 		const embedUrl = p.embed_url || `https://open.spotify.com/embed/playlist/${p.playlist_id}?utm_source=generator`;
 		const isMobile = /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent);
@@ -888,8 +891,8 @@ async function openModal(id){
 			mEmbed.innerHTML = `<iframe style="border-radius:8px;" src="${esc(embedUrl)}" width="100%" height="352" frameBorder="0" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" allowfullscreen loading="lazy"></iframe>`;
 		}
 		mEmbed.style.display = 'block';
-	} else if (p.platform === 'yandex' && p.embed_url) {
-		mEmbed.innerHTML = `<iframe style="border:none;border-radius:8px;" src="${esc(p.embed_url)}" width="100%" height="450" frameBorder="0" allow="autoplay; clipboard-write" loading="lazy"></iframe>`;
+	} else if (p.platform === 'yandex' && yandexEmbedUrl) {
+		mEmbed.innerHTML = `<iframe style="border:none;border-radius:8px;" src="${esc(yandexEmbedUrl)}" width="100%" height="450" frameBorder="0" allow="autoplay; clipboard-write" loading="lazy"></iframe>`;
 		mEmbed.style.display = 'block';
 	} else {
 		mEmbed.innerHTML = '';
@@ -1072,6 +1075,10 @@ function detectPlatform(input){
 async function previewUrl(url){
   const box=document.getElementById('previewBox');
   const err=document.getElementById('urlErr');
+  const yandexEmbedPreview=document.getElementById('yandexEmbedPreview');
+  yandexEmbedPreview.style.display='none';
+  yandexEmbedPreview.innerHTML='';
+  document.getElementById('prevCover').style.display='block';
   if(!url){ box.classList.remove('visible'); return; }
 
   const detected=detectPlatform(url);
@@ -1128,13 +1135,12 @@ async function previewUrl(url){
 
     if(detected.short){
       // UUID share links can be embedded directly on static hosting.
-      _previewData={...detected,title:'',author:'Яндекс Музыка',cover_url:'',embed_url:detected.embed_src,track_count:0};
-      document.getElementById('prevTitle').textContent='Заполни поля ниже';
-      document.getElementById('prevAuthor').textContent='Не удалось получить данные автоматически';
-      const yf=document.getElementById('yandexFields');
-      yf.style.display='block';
-      document.getElementById('fYaTitle').oninput=e=>{ _previewData.title=e.target.value.trim(); document.getElementById('prevTitle').textContent=_previewData.title||'Заполни поля ниже'; };
-      document.getElementById('fYaCover').oninput=e=>{ const v=e.target.value.trim(); _previewData.cover_url=v; document.getElementById('prevCover').src=v; };
+      _previewData={...detected,title:'Яндекс плейлист',author:'Яндекс Музыка',cover_url:'',embed_url:detected.embed_src,track_count:0};
+      document.getElementById('prevCover').style.display='none';
+      document.getElementById('prevTitle').textContent='Яндекс плейлист';
+      document.getElementById('prevAuthor').textContent='Плеер готов к добавлению';
+      yandexEmbedPreview.innerHTML=`<iframe style="border:none;border-radius:8px;" src="${esc(detected.embed_src)}" width="100%" height="450" frameBorder="0" allow="autoplay; clipboard-write" loading="lazy"></iframe>`;
+      yandexEmbedPreview.style.display='block';
       return;
     }
 
@@ -1244,6 +1250,8 @@ async function submitPlaylist(){
     document.getElementById('fYaCover').value='';
     document.getElementById('yandexFields').style.display='none';
     document.getElementById('previewBox').classList.remove('visible');
+    document.getElementById('yandexEmbedPreview').style.display='none';
+    document.getElementById('yandexEmbedPreview').innerHTML='';
     document.querySelectorAll('.cat-btn').forEach(b=>b.classList.remove('selected'));
     document.querySelectorAll('.tag-chip').forEach(b=>b.classList.remove('selected'));
     _selectedCat=null; _selectedTags.clear(); _previewData=null;
