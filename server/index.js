@@ -62,6 +62,14 @@ require('http').createServer(async (req, res) => {
   }
 
   const urlObj = new URL(req.url, `http://localhost:${PORT}`);
+  // debug endpoint
+  if (urlObj.pathname === '/debug') {
+    const testUrl = urlObj.searchParams.get('url') || 'https://music.yandex.ru/iframe/playlist/al.semenov22/1000';
+    const r = await fetchUrl(testUrl);
+    res.writeHead(200, { 'Content-Type': 'text/plain', ...CORS });
+    res.end(`STATUS: ${r.status}\n\n${r.body.slice(0, 3000)}`);
+    return;
+  }
   const rawUrl = urlObj.searchParams.get('url');
 
   if (!rawUrl) {
