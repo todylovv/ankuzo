@@ -1,5 +1,5 @@
 {
-  "updated": "2026-06-01T20:48:29.523013+00:00",
+  "updated": "2026-06-01T20:49:55.424351+00:00",
   "accounts": [
     {
       "name": "b1",
@@ -84,6 +84,8 @@
   "profiles": [],
   "integration_status": {
     "faceit": "403",
-    "apex": "401"
+    "faceit_message": "",
+    "apex": "401",
+    "apex_message": "Invalid authentication credentials"
   }
 }
