@@ -295,7 +295,7 @@ body{background:var(--bg);color:var(--fg);font-family:var(--font-mono);min-heigh
         <input class="form-input" id="fUrl" type="text" placeholder="Яндекс или VK URL / iframe код...">
         <div style="font-size:9px;letter-spacing:.08em;color:rgba(240,237,232,.25);margin-top:6px;line-height:1.6;">
           Яндекс: вставь ссылку <span style="color:rgba(240,237,232,.4);">music.yandex.ru/playlists/...</span> или iframe-код<br>
-          VK: вставь HTML-код виджета из VK. Обычная ссылка покажет подсказку
+          VK: вставь ссылку <span style="color:rgba(240,237,232,.4);">vk.com/music/playlist/...</span> или HTML-код виджета
         </div>
         <div class="error-msg" id="urlErr"></div>
         <!-- preview -->
@@ -1079,6 +1079,8 @@ function detectPlatform(input){
       return {
         platform:'vk',
         playlist_url:`https://vk.com/music/playlist/${owner}_${playlist}${hash?'_'+hash:''}`,
+        embed_src:hash?encodeVkWidgetSpec({owner,playlist,hash}):null,
+        vk_widget:hash?{owner,playlist,hash}:null,
         share_link:true,
       };
     }
@@ -1142,7 +1144,7 @@ async function previewUrl(url){
     document.getElementById('prevPlatform').textContent='● VK';
     document.getElementById('prevPlatform').className='preview-platform vk';
     document.getElementById('prevTitle').textContent=detected.vk_widget?'VK плейлист':'Нужен HTML-код виджета VK';
-    document.getElementById('prevAuthor').textContent=detected.vk_widget?'Плеер готов к добавлению':'Скопируй код виджета со страницы VK для разработчиков';
+    document.getElementById('prevAuthor').textContent=detected.vk_widget?'Плеер готов к добавлению':'В ссылке нет hash. Вставь HTML-код виджета со страницы VK для разработчиков';
     box.classList.add('visible');
     if(detected.vk_widget){
       platformEmbedPreview.innerHTML='<div id="vkPreviewWidget" style="min-height:180px;padding:8px;border:1px solid rgba(39,135,245,.42);border-radius:8px;"></div>';
