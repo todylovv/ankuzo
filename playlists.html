@@ -137,6 +137,22 @@ body{background:var(--bg);color:var(--fg);font-family:var(--font-mono);min-heigh
 .reaction-btn:hover,.reaction-btn.active{border-color:rgba(240,237,232,.2);color:var(--fg);}
 .card-views{font-size:9px;letter-spacing:.1em;color:rgba(240,237,232,.2);}
 
+/* ── MODAL ACTION BUTTONS ── */
+.modal-action-btn{
+  display:inline-flex;align-items:center;gap:10px;
+  font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.15em;text-transform:uppercase;
+  padding:12px 24px;text-decoration:none;border-radius:100px;
+  transition:all .2s;font-weight:700;
+}
+.spotify-btn{
+  background:#1DB954;color:#000;
+}
+.spotify-btn:hover{background:#1ed760;transform:translateY(-1px);}
+.yandex-btn{
+  background:#FF4433;color:#fff;
+}
+.yandex-btn:hover{background:#ff5544;transform:translateY(-1px);}
+
 /* ── MODAL ── */
 .overlay{position:fixed;inset:0;background:rgba(7,7,10,.92);z-index:200;display:none;align-items:center;justify-content:center;padding:24px;}
 .overlay.open{display:flex;}
@@ -841,18 +857,27 @@ async function openModal(id){
     // actions
     const acts=document.getElementById('mActions');
     if(p.platform==='spotify' && p.playlist_id){
-      acts.innerHTML=`<button class="btn primary" onclick="openSpotify('${p.playlist_id}')">🎧 Открыть в Spotify</button>`;
+      acts.innerHTML=`
+        <a href="https://open.spotify.com/playlist/${p.playlist_id}" target="_blank" rel="noopener" class="modal-action-btn spotify-btn" onclick="trackEvent('${p.id}','open_spotify')">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/></svg>
+          Открыть в Spotify
+        </a>`;
     } else if(p.platform==='yandex' && p.playlist_url){
-      acts.innerHTML=`<button class="btn primary" onclick="openYandex('${esc(p.playlist_url)}')">🎵 Открыть в Яндекс Музыке</button>`;
+      acts.innerHTML=`
+        <a href="${esc(p.playlist_url)}" target="_blank" rel="noopener" class="modal-action-btn yandex-btn" onclick="trackEvent('${p.id}','open_yandex')">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm.6 17.4h-1.8v-6.6L8.4 17.4H6.6l-2.4-6.6v6.6H2.4V6.6h1.8l2.7 7.5 2.7-7.5h1.8v10.8h1.2V6.6h2.4c2.4 0 3.6 1.2 3.6 3.3 0 1.8-1.2 3-2.7 3.3l3 4.2h-2.1l-2.7-3.9h-.9v3.9h.1z"/></svg>
+          Открыть в Яндекс Музыке
+        </a>`;
     }
 
     // embed
     const mEmbed=document.getElementById('mEmbed');
-    if(p.platform==='spotify' && p.embed_url){
-      mEmbed.innerHTML=`<iframe src="${esc(p.embed_url)}" height="152" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>`;
+    if(p.platform==='spotify'){
+      const embedUrl=p.embed_url||`https://open.spotify.com/embed/playlist/${p.playlist_id}?utm_source=generator`;
+      mEmbed.innerHTML=`<iframe style="border-radius:8px;" src="${esc(embedUrl)}" width="100%" height="352" frameBorder="0" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>`;
       mEmbed.style.display='block';
     } else if(p.platform==='yandex' && p.embed_url){
-      mEmbed.innerHTML=`<iframe src="${esc(p.embed_url)}" frameborder="0" allow="clipboard-write" style="width:100%;height:200px;border:none;" loading="lazy"></iframe>`;
+      mEmbed.innerHTML=`<iframe src="${esc(p.embed_url)}" frameborder="0" allow="clipboard-write" style="width:100%;height:200px;border:none;border-radius:4px;" loading="lazy"></iframe>`;
       mEmbed.style.display='block';
     } else {
       mEmbed.innerHTML=''; mEmbed.style.display='none';
