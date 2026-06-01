@@ -27,9 +27,6 @@ body.hovering #cur{transform:translate(-50%,-50%) scale(2.5);background:rgba(255
 body.hovering #cur2{transform:translate(-50%,-50%) scale(1.8);border-color:rgba(255,255,255,.5);}
 @media(hover:none){#cur,#cur2{display:none;}body{cursor:auto;}}
 
-/* ── GRAIN ── */
-body::after{content:'';position:fixed;inset:0;z-index:9998;pointer-events:none;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");opacity:.35;}
-
 /* ── LIGHTNING CANVAS ── */
 #lightningCanvas{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:2;}
 @media(max-width:900px){#lightningCanvas{display:none;}}
@@ -434,17 +431,6 @@ body.perf-low .marquee-inner{animation-duration:40s!important;}
 body.perf-mid .rune{animation-duration:30s!important;}
 body.perf-mid .marquee-inner{animation-duration:30s!important;}
 
-/* ── NOISE TEXTURE ── */
-#noiseLayer{
-  position:fixed;
-  inset:0;
-  z-index:9998;
-  pointer-events:none;
-  opacity:.028;
-  will-change:transform;
-}
-@media(max-width:900px){#noiseLayer{display:none;}}
-
 /* ── MAGNETIC ── */
 .mag{transition:transform .2s cubic-bezier(.16,1,.3,1);}
 
@@ -622,8 +608,6 @@ ASCII INTRO — ANKUZO
   <div id="enterText">CLICK TO ENTER</div>
 </div>
 
-
-<canvas id="noiseLayer"></canvas>
 
 <div id="cur"></div>
 <div id="cur2"></div>
@@ -1320,45 +1304,6 @@ ASCII INTRO — ANKUZO
     });
 })();
 
-// ── NOISE TEXTURE ──
-(function(){
-  const canvas = document.getElementById('noiseLayer');
-  if(!canvas) return;
-  const ctx = canvas.getContext('2d');
-  // Рисуем в 4x меньшем разрешении — CSS растянет
-  const SCALE = 4;
-  let W, H, last=0;
-  const FPS = 24; // не нужно 60fps для шума
-  const interval = 1000/FPS;
-
-  canvas.style.imageRendering = 'pixelated';
-
-  function resize(){
-    W = Math.ceil(window.innerWidth/SCALE);
-    H = Math.ceil(window.innerHeight/SCALE);
-    canvas.width = W;
-    canvas.height = H;
-    canvas.style.width = window.innerWidth+'px';
-    canvas.style.height = window.innerHeight+'px';
-  }
-  function draw(ts){
-    requestAnimationFrame(draw);
-    if(ts - last < interval) return;
-    last = ts;
-    const img = ctx.createImageData(W, H);
-    const d = img.data;
-    for(let i=0; i<d.length; i+=4){
-      const v = Math.random()*255|0;
-      d[i]=d[i+1]=d[i+2]=v;
-      d[i+3]=255;
-    }
-    ctx.putImageData(img, 0, 0);
-  }
-  resize();
-  window.addEventListener('resize', resize);
-  requestAnimationFrame(draw);
-})();
-
 // ── MAGNETIC BUTTONS ──
 (function(){
   if(!window.matchMedia('(hover:hover)').matches) return;
@@ -1418,8 +1363,6 @@ function applyPerfLevel(level){
 
   if(level === 'low'){
     // Отключаем тяжёлые эффекты
-    const noise = document.getElementById('noiseLayer');
-    if(noise) noise.style.display = 'none';
     const lightning = document.getElementById('lightningCanvas');
     if(lightning) lightning.style.display = 'none';
     const dcBanner = document.getElementById('dcBannerCanvas');
@@ -1429,8 +1372,6 @@ function applyPerfLevel(level){
   }
 
   if(level === 'mid'){
-    const noise = document.getElementById('noiseLayer');
-    if(noise) noise.style.opacity = '0.015'; // тише шум
     document.body.classList.add('perf-mid');
   }
 }
@@ -1455,26 +1396,12 @@ function applyPerfLevel(level){
     cio.observe(crystalSection);
   }
 
-  // 3. Снижаем качество BG частиц на мобилке
-  if(isMobile){
-    const bg = document.getElementById('bgCanvas');
-    if(bg){
-      // уменьшаем canvas в 2x на мобилке для экономии GPU
-      bg.style.imageRendering = 'pixelated';
-    }
-  }
-
-  // 4. Отключаем noise на слабых устройствах (проверяем hardwareConcurrency)
-  if(navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 4){
-    const noise = document.getElementById('noiseLayer');
-    if(noise) noise.style.display = 'none';
-  }
 })();
 
 // ── DISCORD CARD BANNER ──
 (function(){
   const c = document.getElementById('dcBannerCanvas');
-  if(!c) return;
+  if(!c || _isMobileDevice || window.matchMedia('(prefers-reduced-motion:reduce)').matches) return;
   const ctx = c.getContext('2d');
   let W, H;
   function resize(){ W=c.offsetWidth; H=c.offsetHeight; c.width=W; c.height=H; }
@@ -1488,6 +1415,7 @@ function applyPerfLevel(level){
   }));
 
   function draw(){
+    if(document.hidden){ requestAnimationFrame(draw); return; }
     ctx.clearRect(0,0,W,H);
     ctx.fillStyle='#0d0d14';
     ctx.fillRect(0,0,W,H);
@@ -1638,7 +1566,10 @@ if(_hasMouse && cur && cur2){
 
 // ── createLoop — без лимита FPS ──
 function createLoop(fn){
-  function tick(ts){ fn(ts); requestAnimationFrame(tick); }
+  function tick(ts){
+    if(!document.hidden) fn(ts);
+    requestAnimationFrame(tick);
+  }
   requestAnimationFrame(tick);
 }
 
@@ -1710,7 +1641,6 @@ function _initAll(){
         ctx.strokeStyle=`rgba(255,255,255,${.28*(1-d/linkDist)})`;ctx.lineWidth=.9;ctx.stroke();
       }
     }
-    requestAnimationFrame(frame);
   }
   createLoop(frame);
 })();
@@ -1825,7 +1755,6 @@ function _initAll(){
         ctx.lineWidth=1;ctx.stroke();
       });
     }
-    requestAnimationFrame(frame);
   }
   // Пропускаем на слабых устройствах — applyPerfLevel скроет canvas
   createLoop(frame);
@@ -2069,7 +1998,7 @@ const intro = document.getElementById('asciiIntro');
 const canvas = document.getElementById('asciiCanvas');
 const ctx = canvas.getContext('2d');
 
-const DPR = Math.min(window.devicePixelRatio || 1, 2);
+const DPR = window.innerWidth < 700 ? 1 : Math.min(window.devicePixelRatio || 1, 2);
 
 let W,H;
 
@@ -2097,6 +2026,7 @@ let mouseX = W/2;
 let mouseY = H/2;
 
 let exploded = false;
+let finished = false;
 
 function calcSizes(){
   const isMobile = W < 700;
@@ -2110,7 +2040,7 @@ function calcSizes(){
   const maxW = W * 0.85;
   if(tw > maxW) size = Math.floor(size * (maxW / tw));
   size = Math.max(40, size);
-  const gap = isMobile ? 5 : 9;
+  const gap = isMobile ? 7 : 9;
   const pSize = isMobile ? 9 : 14;
   return {size, gap, pSize, isMobile};
 }
@@ -2182,6 +2112,8 @@ document.getElementById('asciiIntro').addEventListener('touchmove',e=>{
 },{passive:true});
 
 function animate(){
+  if(finished) return;
+  if(document.hidden){ requestAnimationFrame(animate); return; }
 
   ctx.fillStyle = 'rgba(5,5,5,0.18)';
   ctx.fillRect(0,0,W,H);
@@ -2267,6 +2199,7 @@ function triggerExplode(){
   setTimeout(()=>{ flash.style.opacity='0'; },120);
   setTimeout(()=>{ flash.remove(); },400);
   setTimeout(()=>{ intro.classList.add('hide'); },1300);
+  setTimeout(()=>{ finished = true; particles.length = 0; },1800);
 }
 
 window.addEventListener('click', triggerExplode);

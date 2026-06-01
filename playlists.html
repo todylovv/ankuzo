@@ -219,13 +219,20 @@ body{background:var(--bg);color:var(--fg);font-family:var(--font-mono);min-heigh
 @media(max-width:768px){
   .nav,.hero,.container,.divider,.filters-inner{padding-left:20px;padding-right:20px;}
   .hero{padding-top:90px;}
+  .form-wrap{padding:20px;}
   .stats-row{grid-template-columns:1fr 1fr;}
   .cards-grid{grid-template-columns:1fr;}
   .comment-form{flex-wrap:wrap;}
   .comment-nick{width:100%;}
+  .overlay{padding:12px;}
+  .modal{max-height:calc(100dvh - 24px);}
+  .modal-body{padding:20px;}
   .modal-actions{gap:8px;}
   .presence-bar{bottom:70px;}
   .random-btn{bottom:70px;}
+}
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important;}
 }
 </style>
 </head>
@@ -736,9 +743,6 @@ async function loadPlaylists(reset=false){
 
     // show/hide load more
     document.getElementById('loadMoreWrap').style.display = rows.length<_limit?'none':'flex';
-
-    // track views
-    rows.forEach(p=>trackEvent(p.id,'view'));
 
   }catch(e){
     console.warn('load err',e);
