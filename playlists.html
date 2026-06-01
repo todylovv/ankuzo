@@ -295,7 +295,7 @@ body{background:var(--bg);color:var(--fg);font-family:var(--font-mono);min-heigh
         <input class="form-input" id="fUrl" type="text" placeholder="Яндекс или VK URL / iframe код...">
         <div style="font-size:9px;letter-spacing:.08em;color:rgba(240,237,232,.25);margin-top:6px;line-height:1.6;">
           Яндекс: вставь iframe-код (три точки → Поделиться → HTML-код). Обычная ссылка покажет подсказку<br>
-          VK: вставь iframe-код виджета. Обычная ссылка покажет подсказку
+          VK: вставь HTML-код виджета из VK. Обычная ссылка покажет подсказку
         </div>
         <div class="error-msg" id="urlErr"></div>
         <!-- preview -->
@@ -467,6 +467,40 @@ const REACTIONS = [
 
 function platformLabel(platform){ return platform==='vk'?'● VK':'● ЯНДЕКС'; }
 function platformName(platform){ return platform==='vk'?'VK Музыка':'Яндекс Музыка'; }
+let _vkWidgetScriptPromise;
+function loadVkWidgetScript(){
+  if(window.VK?.Widgets?.Playlist) return Promise.resolve();
+  if(_vkWidgetScriptPromise) return _vkWidgetScriptPromise;
+  _vkWidgetScriptPromise=new Promise((resolve,reject)=>{
+    const script=document.createElement('script');
+    script.src='https://vk.com/js/api/openapi.js?173';
+    script.onload=resolve;
+    script.onerror=()=>reject(new Error('Не удалось загрузить VK widget API'));
+    document.head.appendChild(script);
+  });
+  return _vkWidgetScriptPromise;
+}
+function parseVkWidgetSpec(value){
+  const m=String(value||'').match(/VK\.Widgets\.Playlist\(\s*["'][^"']+["']\s*,\s*(-?\d+)\s*,\s*(\d+)\s*,\s*["']([a-zA-Z0-9]+)["']/);
+  return m?{owner:m[1],playlist:m[2],hash:m[3]}:null;
+}
+function encodeVkWidgetSpec(spec){ return `vk-widget:${spec.owner}:${spec.playlist}:${spec.hash}`; }
+function decodeVkWidgetSpec(value){
+  const m=String(value||'').match(/^vk-widget:(-?\d+):(\d+):([a-zA-Z0-9]+)$/);
+  return m?{owner:m[1],playlist:m[2],hash:m[3]}:null;
+}
+async function renderVkWidget(target,spec){
+  const el=typeof target==='string'?document.getElementById(target):target;
+  if(!el||!spec) return;
+  const id=`vk_playlist_${spec.owner}_${spec.playlist}_${Math.random().toString(36).slice(2)}`;
+  el.innerHTML=`<div id="${id}"></div>`;
+  try{
+    await loadVkWidgetScript();
+    VK.Widgets.Playlist(id,Number(spec.owner),Number(spec.playlist),spec.hash);
+  }catch(e){
+    el.innerHTML='<div style="padding:18px;color:rgba(240,237,232,.55);font-size:11px;">Не удалось загрузить виджет VK</div>';
+  }
+}
 
 // ── visitor id ──
 let _vid = localStorage.getItem('_ankuzo_vid');
@@ -883,8 +917,9 @@ async function openModal(id){
 		mEmbed.innerHTML = `<iframe style="border:1px solid rgba(255,204,0,.38);border-radius:8px;" src="${esc(yandexEmbedUrl)}" width="100%" height="450" frameBorder="0" allow="autoplay; clipboard-write" loading="lazy"></iframe>`;
 		mEmbed.style.display = 'block';
 	} else if (p.platform === 'vk' && p.embed_url) {
-		mEmbed.innerHTML = `<iframe style="border:1px solid rgba(39,135,245,.42);border-radius:8px;" src="${esc(p.embed_url)}" width="100%" height="450" frameBorder="0" allow="autoplay; encrypted-media" loading="lazy"></iframe>`;
+		mEmbed.innerHTML = '<div id="vkModalWidget" style="min-height:180px;padding:8px;border:1px solid rgba(39,135,245,.42);border-radius:8px;"></div>';
 		mEmbed.style.display = 'block';
+		renderVkWidget('vkModalWidget',decodeVkWidgetSpec(p.embed_url));
 	} else {
 		mEmbed.innerHTML = '';
 		mEmbed.style.display = 'none';
@@ -1026,17 +1061,14 @@ function toggleTag(id,el){
 // ── URL PREVIEW ──
 function detectPlatform(input){
   const decodedInput=input.replace(/&amp;/g,'&');
-  if(decodedInput.includes('vk.com/widget_playlist.php')){
-    const srcMatch=decodedInput.match(/(?:src=["']([^"']+)["']|https?:\/\/vk\.com\/widget_playlist\.php[^\s"'<>]*)/);
-    if(srcMatch){
-      const src=srcMatch[1]||srcMatch[0];
-      const parsed=new URL(src);
-      const owner=parsed.searchParams.get('owner_id');
-      const playlist=parsed.searchParams.get('playlist_id');
-      if(owner&&playlist){
-        return {platform:'vk',playlist_url:`https://vk.com/music/playlist/${owner}_${playlist}`,embed_src:src};
-      }
-    }
+  const vkWidget=parseVkWidgetSpec(decodedInput);
+  if(vkWidget){
+    return {
+      platform:'vk',
+      playlist_url:`https://vk.com/music/playlist/${vkWidget.owner}_${vkWidget.playlist}`,
+      embed_src:encodeVkWidgetSpec(vkWidget),
+      vk_widget:vkWidget,
+    };
   }
   if(/vk\.com\/(?:music\/playlist\/|audio\?z=audio_playlist)/.test(decodedInput)){
     const normalized=decodeURIComponent(decodedInput);
@@ -1104,16 +1136,17 @@ async function previewUrl(url){
   document.getElementById('yandexFields').style.display='none';
 
   if(detected.platform==='vk'){
-    _previewData={...detected,title:detected.embed_src?'VK плейлист':'',author:'VK Музыка',cover_url:'',embed_url:detected.embed_src||null,track_count:0};
+    _previewData={...detected,title:detected.vk_widget?'VK плейлист':'',author:'VK Музыка',cover_url:'',embed_url:detected.embed_src||null,track_count:0};
     document.getElementById('prevCover').style.display='none';
     document.getElementById('prevPlatform').textContent='● VK';
     document.getElementById('prevPlatform').className='preview-platform vk';
-    document.getElementById('prevTitle').textContent=detected.embed_src?'VK плейлист':'Нужен iframe-код VK';
-    document.getElementById('prevAuthor').textContent=detected.embed_src?'Плеер готов к добавлению':'Вставь HTML-код виджета плейлиста VK';
+    document.getElementById('prevTitle').textContent=detected.vk_widget?'VK плейлист':'Нужен HTML-код виджета VK';
+    document.getElementById('prevAuthor').textContent=detected.vk_widget?'Плеер готов к добавлению':'Скопируй код виджета со страницы VK для разработчиков';
     box.classList.add('visible');
-    if(detected.embed_src){
-      platformEmbedPreview.innerHTML=`<iframe style="border:1px solid rgba(39,135,245,.42);border-radius:8px;" src="${esc(detected.embed_src)}" width="100%" height="450" frameBorder="0" allow="autoplay; encrypted-media" loading="lazy"></iframe>`;
+    if(detected.vk_widget){
+      platformEmbedPreview.innerHTML='<div id="vkPreviewWidget" style="min-height:180px;padding:8px;border:1px solid rgba(39,135,245,.42);border-radius:8px;"></div>';
       platformEmbedPreview.style.display='block';
+      renderVkWidget('vkPreviewWidget',detected.vk_widget);
     }
     return;
   }
