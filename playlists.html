@@ -572,6 +572,22 @@ document.addEventListener('DOMContentLoaded',async()=>{
 
   // build UI
   buildCategories();
+
+  // Keep local form interactions independent from Supabase response time.
+  let urlTimer;
+  const urlInput=document.getElementById('fUrl');
+  urlInput.addEventListener('input',e=>{
+    clearTimeout(urlTimer);
+    urlTimer=setTimeout(()=>previewUrl(e.target.value.trim()),300);
+  });
+  if(urlInput.value.trim()) previewUrl(urlInput.value.trim());
+
+  let searchTimer;
+  document.getElementById('searchInput').addEventListener('input',e=>{
+    clearTimeout(searchTimer);
+    searchTimer=setTimeout(()=>{ _search=e.target.value.trim(); _page=0; loadPlaylists(true); },350);
+  });
+
   await loadTags();
   buildTagChips();
 
@@ -581,20 +597,6 @@ document.addEventListener('DOMContentLoaded',async()=>{
   // load my reactions from localStorage
   const saved = localStorage.getItem('_ankuzo_reactions');
   if(saved) try{ Object.assign(_myReactions, JSON.parse(saved)); }catch(e){}
-
-  // search debounce
-  let searchTimer;
-  document.getElementById('searchInput').addEventListener('input',e=>{
-    clearTimeout(searchTimer);
-    searchTimer=setTimeout(()=>{ _search=e.target.value.trim(); _page=0; loadPlaylists(true); },350);
-  });
-
-  // url preview
-  let urlTimer;
-  document.getElementById('fUrl').addEventListener('input',e=>{
-    clearTimeout(urlTimer);
-    urlTimer=setTimeout(()=>previewUrl(e.target.value.trim()),600);
-  });
 
   // realtime
   initRealtime();
