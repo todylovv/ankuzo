@@ -37,6 +37,8 @@ jobs:
           curl --fail --silent --show-error "https://api.steampowered.com/IPlayerService/GetOwnedGames/v1/?key=${STEAM_KEY}&steamid=${STEAM_ID2}&include_appinfo=true&include_played_free_games=true" > /tmp/owned2.json
           echo '{}' > /tmp/faceit.json
           echo '{}' > /tmp/apex.json
+          FACEIT_KEY="$(printf '%s' "${FACEIT_KEY:-}" | tr -d '[:space:]')"
+          TRN_KEY="$(printf '%s' "${TRN_KEY:-}" | tr -d '[:space:]')"
           faceit_status=missing
           apex_status=missing
           if [ -n "${FACEIT_KEY:-}" ]; then
