@@ -294,7 +294,7 @@ body{background:var(--bg);color:var(--fg);font-family:var(--font-mono);min-heigh
         <label class="form-label">Ссылка или iframe код плейлиста</label>
         <input class="form-input" id="fUrl" type="text" placeholder="Яндекс или VK URL / iframe код...">
         <div style="font-size:9px;letter-spacing:.08em;color:rgba(240,237,232,.25);margin-top:6px;line-height:1.6;">
-          Яндекс: вставь iframe-код (три точки → Поделиться → HTML-код). Обычная ссылка покажет подсказку<br>
+          Яндекс: вставь ссылку <span style="color:rgba(240,237,232,.4);">music.yandex.ru/playlists/...</span> или iframe-код<br>
           VK: вставь HTML-код виджета из VK. Обычная ссылка покажет подсказку
         </div>
         <div class="error-msg" id="urlErr"></div>
@@ -444,6 +444,7 @@ body{background:var(--bg);color:var(--fg);font-family:var(--font-mono);min-heigh
 // ══════════════════════════════════════════════════════════════
 const SB_URL = 'https://ppurfykznriopzxrafox.supabase.co';
 const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBwdXJmeWt6bnJpb3B6eHJhZm94Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAzMDgyNTMsImV4cCI6MjA5NTg4NDI1M30.uqPWzd_xLaJm12ViYZCVlYnxIdv80ZZoibmZH1DPdkg';
+const YANDEX_RESOLVER_URL = `${SB_URL}/functions/v1/resolve-yandex-playlist`;
 
 const CATEGORIES = [
   {icon:'🎮',name:'Для игр',slug:'games'},
@@ -1108,7 +1109,7 @@ function detectPlatform(input){
     return {
       platform:'yandex',
       playlist_url:input.split('?')[0],
-      embed_src:uuid?`https://music.yandex.ru/iframe/playlist/${uuid}`:null,
+      uuid,
       short:true,
     };
   }
@@ -1164,12 +1165,25 @@ async function previewUrl(url){
     const embedSrc = detected.embed_src || (owner && kind ? `https://music.yandex.ru/iframe/playlist/${owner}/${kind}` : null);
 
     if(detected.short){
-      // GitHub Pages cannot resolve UUID share links through Yandex API because
-      // the API blocks cross-origin browser requests. Ask for the official iframe.
-      _previewData={...detected,title:'',author:'Яндекс Музыка',cover_url:'',embed_url:null,track_count:0};
       document.getElementById('prevCover').style.display='none';
-      document.getElementById('prevTitle').textContent='Нужен iframe-код Яндекса';
-      document.getElementById('prevAuthor').textContent='В плейлисте нажми три точки → Поделиться → HTML-код';
+      document.getElementById('prevTitle').textContent='Получаем данные Яндекса...';
+      document.getElementById('prevAuthor').textContent='';
+      try{
+        const resolved=await resolveYandexUuid(detected.uuid);
+        _previewData={...detected,...resolved};
+        document.getElementById('prevTitle').textContent=resolved.title;
+        document.getElementById('prevAuthor').textContent=`${resolved.author} · ${resolved.track_count} треков`;
+        if(resolved.cover_url){
+          document.getElementById('prevCover').src=resolved.cover_url;
+          document.getElementById('prevCover').style.display='block';
+        }
+        platformEmbedPreview.innerHTML=`<iframe style="border:1px solid rgba(255,204,0,.38);border-radius:8px;" src="${esc(resolved.embed_url)}" width="100%" height="450" frameBorder="0" allow="autoplay; clipboard-write" loading="lazy"></iframe>`;
+        platformEmbedPreview.style.display='block';
+      }catch(e){
+        _previewData=null;
+        document.getElementById('prevTitle').textContent='Не удалось получить данные Яндекса';
+        document.getElementById('prevAuthor').textContent='Проверь resolver в Supabase Functions';
+      }
       return;
     }
 
@@ -1184,6 +1198,15 @@ async function previewUrl(url){
     document.getElementById('prevAuthor').textContent='';
     showYandexManual();
   }
+}
+
+async function resolveYandexUuid(uuid){
+  const res=await fetch(`${YANDEX_RESOLVER_URL}?uuid=${encodeURIComponent(uuid)}`,{
+    headers:{apikey:SB_KEY,Authorization:'Bearer '+SB_KEY},
+  });
+  const data=await res.json().catch(()=>({}));
+  if(!res.ok) throw new Error(data?.error||`Resolver ${res.status}`);
+  return data;
 }
 
 function showYandexManual(){
