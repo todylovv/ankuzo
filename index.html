@@ -2110,8 +2110,8 @@ const TEXT = "ANKUZO";
 const chars = "アァカサタナハマヤャラワ0123456789@#$%&*+=-:.▓▒░";
 const particles = [];
 
-let mouseX = W/2;
-let mouseY = H/2;
+let mouseX = -9999;
+let mouseY = -9999;
 
 let exploded = false;
 let finished = false;
@@ -2193,12 +2193,6 @@ window.addEventListener('mousemove',e=>{
   mouseY = e.clientY;
 });
 
-// touch repulsion for mobile
-document.getElementById('asciiIntro').addEventListener('touchmove',e=>{
-  mouseX = e.touches[0].clientX;
-  mouseY = e.touches[0].clientY;
-},{passive:true});
-
 function animate(){
   if(finished) return;
   if(document.hidden){ requestAnimationFrame(animate); return; }
@@ -2257,13 +2251,15 @@ function animate(){
 
   });
 
-  const glowR = Math.min(W, H) * 0.22;
-  const glow = ctx.createRadialGradient(W/2,H/2,0,W/2,H/2,glowR);
-  glow.addColorStop(0,'rgba(255,255,255,0.03)');
-  glow.addColorStop(1,'rgba(255,255,255,0)');
+  if(W >= 700){
+    const glowR = Math.min(W, H) * 0.22;
+    const glow = ctx.createRadialGradient(W/2,H/2,0,W/2,H/2,glowR);
+    glow.addColorStop(0,'rgba(255,255,255,0.03)');
+    glow.addColorStop(1,'rgba(255,255,255,0)');
 
-  ctx.fillStyle = glow;
-  ctx.fillRect(0,0,W,H);
+    ctx.fillStyle = glow;
+    ctx.fillRect(0,0,W,H);
+  }
 
   requestAnimationFrame(animate);
 }
@@ -2271,12 +2267,18 @@ function animate(){
 function triggerExplode(){
   if(exploded) return;
   exploded = true;
+  const mobile = W < 700;
 
   particles.forEach(p=>{
-    const angle = Math.random() * Math.PI * 2;
-    const power = Math.random() * 25;
-    p.vx = Math.cos(angle) * power;
-    p.vy = Math.sin(angle) * power;
+    if(mobile){
+      p.vx = (p.tx - W/2) * 0.03 + (Math.random()-0.5) * 4;
+      p.vy = -3 - Math.random() * 8 + (p.ty - H/2) * 0.012;
+    }else{
+      const angle = Math.random() * Math.PI * 2;
+      const power = Math.random() * 25;
+      p.vx = Math.cos(angle) * power;
+      p.vy = Math.sin(angle) * power;
+    }
     p.alpha = 1;
   });
 
