@@ -16,30 +16,6 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Fetch Steam and FACEIT data
-        env:
-          STEAM_KEY: ${{ secrets.STEAM_KEY }}
-          FACEIT_KEY: ${{ secrets.FACEIT_KEY }}
-          STEAM_ID1: '76561199770575251'
-          STEAM_ID2: '76561198165374024'
-          FACEIT_NICK: 'nuBac'
-        run: |
-          curl -s "https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v2/?key=${STEAM_KEY}&steamids=${STEAM_ID1},${STEAM_ID2}" > /tmp/summary.json
-          curl -s "https://api.steampowered.com/IPlayerService/GetRecentlyPlayedGames/v1/?key=${STEAM_KEY}&steamid=${STEAM_ID1}&count=5" > /tmp/recent1.json
-          curl -s "https://api.steampowered.com/IPlayerService/GetRecentlyPlayedGames/v1/?key=${STEAM_KEY}&steamid=${STEAM_ID2}&count=5" > /tmp/recent2.json
-          curl -s "https://api.steampowered.com/IPlayerService/GetOwnedGames/v1/?key=${STEAM_KEY}&steamid=${STEAM_ID1}&include_appinfo=true&include_played_free_games=true" > /tmp/owned1.json
-          curl -s "https://api.steampowered.com/IPlayerService/GetOwnedGames/v1/?key=${STEAM_KEY}&steamid=${STEAM_ID2}&include_appinfo=true&include_played_free_games=true" > /tmp/owned2.json
-          curl -s -H "Authorization: Bearer ${FACEIT_KEY}" "https://open.faceit.com/data/v4/players?nickname=${FACEIT_NICK}&game=cs2" > /tmp/faceit_player.json
-          echo "Faceit player:" && cat /tmp/faceit_player.json | head -5
-          PLAYER_ID=$(python3 -c "import json; d=json.load(open('/tmp/faceit_player.json')); print(d.get('player_id',''))" 2>/dev/null || echo "")
-          echo "Player ID: $PLAYER_ID"
-          if [ -n "$PLAYER_ID" ]; then
-            curl -s -H "Authorization: Bearer ${FACEIT_KEY}" "https://open.faceit.com/data/v4/players/${PLAYER_ID}/stats/cs2" > /tmp/faceit_stats.json
-          else
-            echo '{}' > /tmp/faceit_stats.json
-          fi
-          python3 /tmp/build.py
-
       - name: Write Python script
         run: |
           cat > /tmp/build.py << 'PYEOF'
@@ -122,6 +98,28 @@ with open('steam-data.json','w') as f:
 
 print('Done | Steam:', total_games, 'games | FACEIT ELO:', faceit.get('elo','?'))
 PYEOF
+
+      - name: Fetch data and build JSON
+        env:
+          STEAM_KEY: ${{ secrets.STEAM_KEY }}
+          FACEIT_KEY: ${{ secrets.FACEIT_KEY }}
+          STEAM_ID1: '76561199770575251'
+          STEAM_ID2: '76561198165374024'
+          FACEIT_NICK: 'nuBac'
+        run: |
+          curl -s "https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v2/?key=${STEAM_KEY}&steamids=${STEAM_ID1},${STEAM_ID2}" > /tmp/summary.json
+          curl -s "https://api.steampowered.com/IPlayerService/GetRecentlyPlayedGames/v1/?key=${STEAM_KEY}&steamid=${STEAM_ID1}&count=5" > /tmp/recent1.json
+          curl -s "https://api.steampowered.com/IPlayerService/GetRecentlyPlayedGames/v1/?key=${STEAM_KEY}&steamid=${STEAM_ID2}&count=5" > /tmp/recent2.json
+          curl -s "https://api.steampowered.com/IPlayerService/GetOwnedGames/v1/?key=${STEAM_KEY}&steamid=${STEAM_ID1}&include_appinfo=true&include_played_free_games=true" > /tmp/owned1.json
+          curl -s "https://api.steampowered.com/IPlayerService/GetOwnedGames/v1/?key=${STEAM_KEY}&steamid=${STEAM_ID2}&include_appinfo=true&include_played_free_games=true" > /tmp/owned2.json
+          curl -s -H "Authorization: Bearer ${FACEIT_KEY}" "https://open.faceit.com/data/v4/players?nickname=${FACEIT_NICK}&game=cs2" > /tmp/faceit_player.json
+          PLAYER_ID=$(python3 -c "import json; d=json.load(open('/tmp/faceit_player.json')); print(d.get('player_id',''))" 2>/dev/null || echo "")
+          if [ -n "$PLAYER_ID" ]; then
+            curl -s -H "Authorization: Bearer ${FACEIT_KEY}" "https://open.faceit.com/data/v4/players/${PLAYER_ID}/stats/cs2" > /tmp/faceit_stats.json
+          else
+            echo '{}' > /tmp/faceit_stats.json
+          fi
+          python3 /tmp/build.py
 
       - name: Commit steam-data.json
         run: |
