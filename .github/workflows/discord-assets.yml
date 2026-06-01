@@ -60,8 +60,11 @@ jobs:
               --output discord-assets/banner.webp
           fi
 
-          jq '{updated_at: (now | todateiso8601), discord_user: .data.discord_user}' \
-            /tmp/lanyard.json > discord-assets/profile.json
+          jq -s '{
+            updated_at: (now | todateiso8601),
+            discord_user: .[0].data.discord_user,
+            public_flags_array: (.[1].data.public_flags_array // [])
+          }' /tmp/lanyard.json /tmp/discord-profile.json > discord-assets/profile.json
 
       - name: Commit mirrored assets
         run: |

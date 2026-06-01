@@ -385,7 +385,14 @@ footer.reveal{
 }
 
 /* ── DISCORD CARD ── */
-.dc-card{--dc-card-bg:#000;background:var(--dc-card-bg);border-radius:8px;overflow:hidden;font-family:"JetBrains Mono",monospace;border:1px solid rgba(255,255,255,.08);max-width:320px;box-shadow:0 8px 40px rgba(0,0,0,.6);}
+.dc-card{--dc-card-bg:#000;background:var(--dc-card-bg);border-radius:8px;overflow:hidden;font-family:"JetBrains Mono",monospace;border:1px solid rgba(255,255,255,.08);max-width:320px;box-shadow:0 8px 40px rgba(0,0,0,.6);position:relative;isolation:isolate;}
+.dc-card>*:not(.dc-profile-effect){position:relative;z-index:1;}
+.dc-profile-effect{position:absolute;inset:0;z-index:2;pointer-events:none;overflow:hidden;opacity:.42;}
+.dc-profile-effect::before,.dc-profile-effect::after{content:"";position:absolute;inset:-35%;opacity:0;}
+.dc-profile-effect::before{background:radial-gradient(circle at 62% 20%,rgba(76,92,255,.85) 0 1px,transparent 2px),radial-gradient(circle at 34% 58%,rgba(255,255,255,.8) 0 1px,transparent 2px),radial-gradient(circle at 72% 76%,rgba(103,52,255,.75) 0 1px,transparent 2px),radial-gradient(ellipse at center,transparent 35%,rgba(49,23,103,.55) 54%,transparent 70%);background-size:58px 64px,79px 71px,91px 87px,100% 100%;animation:voidDrift 10s ease-in-out infinite;}
+.dc-profile-effect::after{background:conic-gradient(from 90deg at 76% 18%,transparent 0 36%,rgba(80,43,180,.24) 42%,transparent 49% 100%);filter:blur(8px);animation:voidPulse 10s ease-in-out infinite;}
+@keyframes voidDrift{0%,100%{opacity:0;transform:scale(.9) rotate(0)}14%,68%{opacity:1}82%{opacity:0}100%{transform:scale(1.08) rotate(8deg)}}
+@keyframes voidPulse{0%,100%{opacity:0;transform:scale(.85)}18%,60%{opacity:1}78%{opacity:0;transform:scale(1.15)}}
 .dc-banner{height:100px;background:#0d0d14;position:relative;overflow:hidden;}
 .dc-banner-canvas{position:absolute;inset:0;width:100%;height:100%;}
 .dc-profile-banner{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:none;}
@@ -402,6 +409,10 @@ footer.reveal{
 .dc-status-text{font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:rgba(240,237,232,.3);margin-top:12px;}
 .dc-username{position:relative;font-size:18px;font-weight:700;color:#f0ede8;letter-spacing:.02em;z-index:1;}
 .dc-handle{font-size:11px;color:rgba(240,237,232,.3);letter-spacing:.05em;margin-top:2px;}
+.dc-badges{display:flex;gap:5px;align-items:center;margin-top:7px;min-height:16px;}
+.dc-badge{width:16px;height:16px;display:inline-grid;place-items:center;color:#b7a7ff;}
+.dc-badge.nitro{color:#f47fff;}
+.dc-badge svg{width:16px;height:16px;display:block;fill:currentColor;}
 .dc-divider{height:1px;background:rgba(255,255,255,.06);margin:12px 0;}
 .dc-activity,.dc-spotify{background:rgba(255,255,255,.04);border-radius:4px;padding:10px 12px;margin-bottom:8px;}
 .dc-activity-label{font-size:9px;letter-spacing:.15em;color:rgba(240,237,232,.3);text-transform:uppercase;margin-bottom:4px;}
@@ -415,6 +426,7 @@ footer.reveal{
 .dc-fact-label{font-size:9px;letter-spacing:.12em;color:rgba(240,237,232,.25);text-transform:uppercase;flex-shrink:0;}
 .dc-fact-val{font-size:10px;color:rgba(240,237,232,.6);letter-spacing:.04em;text-align:right;}
 @media(max-width:900px){.dc-card{max-width:100%;}}
+@media(prefers-reduced-motion:reduce){.dc-profile-effect{display:none;}}
 /* ── PERFORMANCE MODES ── */
 /* low — отключаем все тяжёлые анимации */
 body.perf-low *{
@@ -731,6 +743,7 @@ ASCII INTRO — ANKUZO
 
       <!-- Discord Profile Card -->
       <div class="dc-card" id="dcCard">
+        <div class="dc-profile-effect" aria-hidden="true"></div>
         <div class="dc-banner" id="dcBanner">
           <canvas class="dc-banner-canvas" id="dcBannerCanvas"></canvas>
           <img class="dc-profile-banner" id="dcProfileBanner" src="" alt="">
@@ -747,6 +760,7 @@ ASCII INTRO — ANKUZO
           </div>
           <div class="dc-username" id="dcUsername">anku</div>
           <div class="dc-handle">@ankuz0</div>
+          <div class="dc-badges" id="dcBadges" aria-label="Discord badges"></div>
 
           <div class="dc-divider"></div>
 
@@ -1453,6 +1467,27 @@ function applyPerfLevel(level){
     return '#'+Number(value).toString(16).padStart(6,'0');
   }
 
+  function renderBadges(flags){
+    const badges = document.getElementById('dcBadges');
+    if(!badges) return;
+    const icons = {
+      HOUSE_BRAVERY: {
+        className: 'bravery',
+        label: 'HypeSquad Bravery',
+        svg: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2 20 5v6c0 5.1-3.4 9.2-8 11-4.6-1.8-8-5.9-8-11V5l8-3Zm0 4.2-3.7 5.1 2.7-.6-1 5.1 5.7-6.5-3 .7L12 6.2Z"/></svg>',
+      },
+      NITRO: {
+        className: 'nitro',
+        label: 'Discord Nitro',
+        svg: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 2 8.5 5v10L12 22l-8.5-5V7L12 2Zm0 4.2L7.2 9v6l4.8 2.8 4.8-2.8V9L12 6.2Zm-2.6 4.1h5.2v3.4H9.4v-3.4Z"/></svg>',
+      },
+    };
+    badges.innerHTML = (flags||[])
+      .filter(flag=>icons[flag])
+      .map(flag=>`<span class="dc-badge ${icons[flag].className}" title="${icons[flag].label}" aria-label="${icons[flag].label}">${icons[flag].svg}</span>`)
+      .join('');
+  }
+
   function update(data){
     const status = data.discord_status || 'offline';
     const user   = data.discord_user || {};
@@ -1550,6 +1585,10 @@ function applyPerfLevel(level){
   fetch('https://api.lanyard.rest/v1/users/'+DISCORD_ID)
     .then(r=>r.json())
     .then(j=>{ if(j.success) update(j.data); })
+    .catch(()=>{});
+  fetch('discord-assets/profile.json?_='+Date.now())
+    .then(r=>r.json())
+    .then(profile=>renderBadges(profile.public_flags_array))
     .catch(()=>{});
 
   try{
