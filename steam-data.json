@@ -1,5 +1,5 @@
 {
-  "updated": "2026-06-01T05:55:54.662011Z",
+  "updated": "2026-06-01T08:06:12.738339Z",
   "accounts": [
     {
       "name": "b1",
@@ -84,5 +84,8 @@
       "name": "DayZ",
       "hours": 60.9
     }
-  ]
+  ],
+  "faceit": {
+    "error": "Expecting value: line 1 column 1 (char 0)"
+  }
 }
