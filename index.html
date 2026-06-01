@@ -1378,7 +1378,61 @@ ASCII INTRO — ANKUZO
   draw();
 })();
 
-// ── DISCORD STATUS (Lanyard) ──
+// ── FACEIT — прямой запрос из браузера ──
+(function(){
+  const FACEIT_KEY = '078dd8d9-57da-4d14-b92a-f8d11c94bc99';
+  const NICK = 'nuBac';
+
+  fetch(`https://open.faceit.com/data/v4/players?nickname=${NICK}`, {
+    headers: {
+      'Authorization': `Bearer ${FACEIT_KEY}`,
+      'Accept': 'application/json'
+    }
+  })
+  .then(r => r.json())
+  .then(fp => {
+    const cs2 = fp.games?.cs2 || fp.games?.csgo || {};
+    const level = cs2.skill_level || 0;
+    const elo   = cs2.faceit_elo || 0;
+    if(!elo) return;
+
+    const pid = fp.player_id;
+    // показываем базовые данные сразу
+    showFaceit({level, elo, kd:'—', hs:'—', winrate:'—', matches:'—'});
+
+    // подгружаем статистику
+    return fetch(`https://open.faceit.com/data/v4/players/${pid}/stats/cs2`, {
+      headers: {'Authorization': `Bearer ${FACEIT_KEY}`, 'Accept': 'application/json'}
+    }).then(r => r.json()).then(fs => {
+      const lt = fs.lifetime || {};
+      showFaceit({
+        level, elo,
+        kd:      lt['Average K/D Ratio'] || '—',
+        hs:      lt['Average Headshots %'] || '—',
+        winrate: lt['Win Rate %'] || '—',
+        matches: lt['Matches'] || '—',
+      });
+    });
+  })
+  .catch(() => {});
+
+  function showFaceit(d){
+    const lvlColors = {1:'#eee',2:'#eee',3:'#eee',4:'#1cd760',5:'#1cd760',6:'#1cd760',7:'#f5a623',8:'#f5a623',9:'#eb4d4b',10:'#eb4d4b'};
+    const fb  = document.getElementById('faceitBlock');
+    const lvl = document.getElementById('faceitLevel');
+    const box = document.getElementById('faceitLevelBox');
+    const elo = document.getElementById('faceitElo');
+    if(fb)  fb.style.display = 'block';
+    if(lvl) lvl.textContent  = d.level;
+    if(box) box.style.borderColor = lvlColors[d.level] || 'rgba(240,237,232,.2)';
+    if(elo){ elo.textContent = d.elo + ' ELO'; elo.style.color = lvlColors[d.level] || '#f0ede8'; }
+    const set = (id,v) => { const e=document.getElementById(id); if(e) e.textContent=v; };
+    set('faceitKD',      d.kd);
+    set('faceitHS',      d.hs !== '—' ? d.hs+'%' : '—');
+    set('faceitWR',      d.winrate !== '—' ? d.winrate+'%' : '—');
+    set('faceitMatches', d.matches);
+  }
+})();
 (function(){
   const DISCORD_ID = '514852654552186880';
   const STATUS_COLORS = {
