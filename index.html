@@ -418,6 +418,24 @@ footer.reveal{
 .dc-fact-label{font-size:9px;letter-spacing:.12em;color:rgba(240,237,232,.25);text-transform:uppercase;flex-shrink:0;}
 .dc-fact-val{font-size:10px;color:rgba(240,237,232,.6);letter-spacing:.04em;text-align:right;}
 @media(max-width:900px){.dc-card{max-width:100%;}}
+/* ── PERFORMANCE MODES ── */
+/* low — отключаем все тяжёлые анимации */
+body.perf-low *{
+  animation-duration:.001ms!important;
+  transition-duration:.001ms!important;
+}
+body.perf-low .hero-name .solid,
+body.perf-low .hero-name .outline{
+  animation:none!important;
+}
+body.perf-low .rune{display:none!important;}
+body.perf-low #bgCanvas{display:none!important;}
+body.perf-low .marquee-inner{animation-duration:40s!important;}
+
+/* mid — замедляем но не выключаем */
+body.perf-mid .rune{animation-duration:30s!important;}
+body.perf-mid .marquee-inner{animation-duration:30s!important;}
+
 /* ── NOISE TEXTURE ── */
 #noiseLayer{
   position:fixed;
@@ -1417,6 +1435,64 @@ ASCII INTRO — ANKUZO
 // ── DEVICE DETECTION ──
 const _isMobileDevice = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent) || window.innerWidth < 768;
 
+// ── PERFORMANCE DETECTION ──
+const _perf = (function(){
+  const cores = navigator.hardwareConcurrency || 4;
+  const mem   = navigator.deviceMemory || 4; // GB, если поддерживается
+  const mobile = _isMobileDevice;
+
+  // Определяем уровень производительности
+  // low: старый ПК / слабый телефон
+  // mid: средний ПК / хороший телефон
+  // high: мощный ПК
+  let level = 'high';
+  if(mobile || cores <= 2 || mem <= 2) level = 'low';
+  else if(cores <= 4 || mem <= 4) level = 'mid';
+
+  // Дополнительно — замеряем реальный FPS за первые 60 кадров
+  let _measuredFPS = null;
+  let _frameCount = 0;
+  let _fpsStart = null;
+  function measureFPS(ts){
+    if(!_fpsStart) _fpsStart = ts;
+    _frameCount++;
+    if(_frameCount < 60){
+      requestAnimationFrame(measureFPS);
+    } else {
+      _measuredFPS = Math.round(_frameCount / ((ts - _fpsStart) / 1000));
+      // Если реальный FPS ниже 40 — понижаем уровень
+      if(_measuredFPS < 40 && level === 'high') level = 'mid';
+      if(_measuredFPS < 25) level = 'low';
+      applyPerfLevel(level);
+    }
+  }
+  requestAnimationFrame(measureFPS);
+
+  return { level:()=>level, fps:()=>_measuredFPS, cores, mem, mobile };
+})();
+
+function applyPerfLevel(level){
+  document.documentElement.setAttribute('data-perf', level);
+
+  if(level === 'low'){
+    // Отключаем тяжёлые эффекты
+    const noise = document.getElementById('noiseLayer');
+    if(noise) noise.style.display = 'none';
+    const lightning = document.getElementById('lightningCanvas');
+    if(lightning) lightning.style.display = 'none';
+    const dcBanner = document.getElementById('dcBannerCanvas');
+    if(dcBanner) dcBanner.style.display = 'none';
+    // Убираем CSS анимации
+    document.body.classList.add('perf-low');
+  }
+
+  if(level === 'mid'){
+    const noise = document.getElementById('noiseLayer');
+    if(noise) noise.style.opacity = '0.015'; // тише шум
+    document.body.classList.add('perf-mid');
+  }
+}
+
 // ── PERFORMANCE OPTIMIZATION ──
 (function(){
   const isMobile = _isMobileDevice;
@@ -1777,7 +1853,7 @@ function _initAll(){
 
 // ── LIGHTNING ──
 (function(){
-  if(_isMobileDevice) return; // молния отключена на мобилке
+  if(_isMobileDevice) return;
   const cv=document.getElementById('lightningCanvas');
   const ctx=cv.getContext('2d');
   const dpr=Math.min(window.devicePixelRatio||1,2);
@@ -1866,10 +1942,9 @@ function _initAll(){
     }
     requestAnimationFrame(frame);
   }
+  // Пропускаем на слабых устройствах — applyPerfLevel скроет canvas
   createLoop(frame);
 })();
-
-// ── MAGNETIC PILLS ──
 document.querySelectorAll('.pill').forEach(pill=>{
   pill.addEventListener('mousemove',e=>{
     const r=pill.getBoundingClientRect();
