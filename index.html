@@ -21,7 +21,7 @@ body{background:var(--black);background-image:radial-gradient(ellipse at 18% 0%,
 
 /* ── CURSOR (desktop only) ── */
 #cur,#cur2{position:fixed;border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);}
-#cur{width:8px;height:8px;background:var(--white);transition:transform .15s,background .2s;}
+#cur{width:8px;height:8px;background:var(--white);transition:transform .15s,background .2s;will-change:left,top;}
 #cur2{width:36px;height:36px;border:1px solid rgba(255,255,255,0.25);transition:left .1s,top .1s,transform .25s,border-color .2s;}
 body.hovering #cur{transform:translate(-50%,-50%) scale(2.5);background:rgba(255,255,255,.5);}
 body.hovering #cur2{transform:translate(-50%,-50%) scale(1.8);border-color:rgba(255,255,255,.5);}
@@ -325,60 +325,34 @@ footer.reveal{
 }
 
 /* ── DISCORD CARD ── */
-.dc-card{
-  background:#111214;
-  border-radius:8px;
-  overflow:hidden;
-  margin-bottom:24px;
-  font-family:'JetBrains Mono',monospace;
-  border:1px solid rgba(255,255,255,.06);
-  max-width:300px;
-}
-.dc-banner{
-  height:80px;
-  background:linear-gradient(135deg,#1a1a2e 0%,#0f0f17 50%,#1a1218 100%);
-  position:relative;
-}
-.dc-body{
-  padding:0 16px 16px;
-  position:relative;
-}
-.dc-avatar-wrap{
-  position:relative;
-  display:inline-block;
-  margin-top:-32px;
-  margin-bottom:8px;
-}
-.dc-avatar{
-  width:72px;height:72px;
-  border-radius:50%;
-  border:4px solid #111214;
-  display:block;
-  background:#1a1a20;
-}
-.dc-status-ring{
-  position:absolute;
-  bottom:2px;right:2px;
-  width:16px;height:16px;
-  border-radius:50%;
-  border:3px solid #111214;
-  background:#747f8d;
-}
+.dc-card{background:#111214;border-radius:8px;overflow:hidden;font-family:"JetBrains Mono",monospace;border:1px solid rgba(255,255,255,.08);max-width:320px;box-shadow:0 8px 40px rgba(0,0,0,.6);}
+.dc-banner{height:100px;background:#0d0d14;position:relative;overflow:hidden;}
+.dc-banner-canvas{position:absolute;inset:0;width:100%;height:100%;}
+.dc-banner-text{position:absolute;right:16px;bottom:10px;font-family:"Bebas Neue",sans-serif;font-size:32px;letter-spacing:.1em;color:rgba(240,237,232,.06);user-select:none;}
+.dc-body{padding:0 16px 16px;}
+.dc-top-row{display:flex;justify-content:space-between;align-items:flex-start;}
+.dc-avatar-wrap{position:relative;display:inline-block;margin-top:-28px;margin-bottom:8px;}
+.dc-avatar{width:72px;height:72px;border-radius:50%;border:4px solid #111214;display:block;background:#1a1a20;object-fit:cover;}
+.dc-status-ring{position:absolute;bottom:3px;right:3px;width:16px;height:16px;border-radius:50%;border:3px solid #111214;background:#747f8d;}
 .dc-status-ring.online{background:#43b581;}
 .dc-status-ring.idle{background:#faa61a;}
 .dc-status-ring.dnd{background:#f04747;}
+.dc-status-text{font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:rgba(240,237,232,.3);margin-top:12px;}
 .dc-username{font-size:18px;font-weight:700;color:#f0ede8;letter-spacing:.02em;}
-.dc-handle{font-size:11px;color:rgba(240,237,232,.4);letter-spacing:.05em;margin-top:2px;margin-bottom:10px;}
-.dc-activity{background:rgba(255,255,255,.04);border-radius:4px;padding:10px 12px;margin-bottom:8px;}
-.dc-spotify{background:rgba(255,255,255,.04);border-radius:4px;padding:10px 12px;margin-bottom:8px;}
+.dc-handle{font-size:11px;color:rgba(240,237,232,.3);letter-spacing:.05em;margin-top:2px;}
+.dc-divider{height:1px;background:rgba(255,255,255,.06);margin:12px 0;}
+.dc-activity,.dc-spotify{background:rgba(255,255,255,.04);border-radius:4px;padding:10px 12px;margin-bottom:8px;}
 .dc-activity-label{font-size:9px;letter-spacing:.15em;color:rgba(240,237,232,.3);text-transform:uppercase;margin-bottom:4px;}
-.dc-activity-name{font-size:12px;color:#f0ede8;letter-spacing:.04em;}
+.dc-activity-name{font-size:12px;color:#f0ede8;letter-spacing:.03em;}
 .dc-activity-detail{font-size:10px;color:rgba(240,237,232,.4);margin-top:2px;}
-.dc-about{margin-top:8px;}
+.dc-about{margin-bottom:0;}
 .dc-about-label{font-size:9px;letter-spacing:.15em;color:rgba(240,237,232,.3);text-transform:uppercase;margin-bottom:6px;}
-.dc-about-text{font-size:11px;color:rgba(240,237,232,.6);line-height:1.7;letter-spacing:.03em;}
+.dc-about-text{font-size:11px;color:rgba(240,237,232,.55);line-height:1.8;letter-spacing:.03em;}
+.dc-facts{display:flex;flex-direction:column;gap:6px;}
+.dc-fact-row{display:flex;justify-content:space-between;align-items:baseline;gap:8px;}
+.dc-fact-label{font-size:9px;letter-spacing:.12em;color:rgba(240,237,232,.25);text-transform:uppercase;flex-shrink:0;}
+.dc-fact-val{font-size:10px;color:rgba(240,237,232,.6);letter-spacing:.04em;text-align:right;}
 @media(max-width:900px){.dc-card{max-width:100%;}}
-
 /* ── NOISE TEXTURE ── */
 #noiseLayer{
   position:fixed;
@@ -388,9 +362,23 @@ footer.reveal{
   opacity:.028;
   will-change:transform;
 }
+@media(max-width:900px){#noiseLayer{display:none;}}
 
 /* ── MAGNETIC ── */
 .mag{transition:transform .2s cubic-bezier(.16,1,.3,1);}
+
+/* ── FACEIT ── */
+.faceit-card{background:rgba(240,237,232,.03);border:1px solid rgba(240,237,232,.07);padding:16px;display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;}
+.faceit-left{display:flex;align-items:center;gap:14px;}
+.faceit-level-box{width:48px;height:48px;display:flex;flex-direction:column;align-items:center;justify-content:center;border:2px solid rgba(240,237,232,.2);border-radius:4px;flex-shrink:0;}
+.faceit-level{font-family:'Bebas Neue',sans-serif;font-size:26px;letter-spacing:.05em;color:#f0ede8;line-height:1;}
+.faceit-level-label{font-size:7px;letter-spacing:.2em;color:rgba(240,237,232,.3);text-transform:uppercase;}
+.faceit-elo{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:.05em;color:#f0ede8;}
+.faceit-nick{font-size:10px;letter-spacing:.1em;color:rgba(240,237,232,.35);}
+.faceit-stats{display:flex;gap:16px;flex-wrap:wrap;}
+.faceit-stat{text-align:center;}
+.faceit-stat-val{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:.05em;color:#f0ede8;line-height:1;}
+.faceit-stat-lbl{font-size:8px;letter-spacing:.15em;color:rgba(240,237,232,.25);text-transform:uppercase;margin-top:2px;}
 
 /* ── MARQUEE ── */
 .marquee-wrap{overflow:hidden;white-space:nowrap;padding:18px 0;border-top:1px solid rgba(240,237,232,.06);border-bottom:1px solid rgba(240,237,232,.06);margin:0;}
@@ -690,16 +678,23 @@ ASCII INTRO — ANKUZO
 
       <!-- Discord Profile Card -->
       <div class="dc-card" id="dcCard">
-        <div class="dc-banner" id="dcBanner"></div>
+        <div class="dc-banner" id="dcBanner">
+          <canvas class="dc-banner-canvas" id="dcBannerCanvas"></canvas>
+          <div class="dc-banner-text">ANKUZO</div>
+        </div>
         <div class="dc-body">
-          <div class="dc-avatar-wrap">
-            <img class="dc-avatar" id="dcAvatar" src="" alt="avatar">
-            <div class="dc-status-ring" id="dcStatusRing"></div>
+          <div class="dc-top-row">
+            <div class="dc-avatar-wrap">
+              <img class="dc-avatar" id="dcAvatar" src="" alt="avatar">
+              <div class="dc-status-ring" id="dcStatusRing"></div>
+            </div>
+            <div class="dc-status-text" id="dcStatusText"></div>
           </div>
-          <div class="dc-meta">
-            <div class="dc-username" id="dcUsername">ankuzo</div>
-            <div class="dc-handle" id="dcHandle">@ankuz0</div>
-          </div>
+          <div class="dc-username" id="dcUsername">anku</div>
+          <div class="dc-handle">@ankuz0</div>
+
+          <div class="dc-divider"></div>
+
           <div class="dc-activity" id="dcCardActivity" style="display:none;">
             <div class="dc-activity-label">СЕЙЧАС ИГРАЕТ</div>
             <div class="dc-activity-name" id="dcActivityName"></div>
@@ -709,36 +704,37 @@ ASCII INTRO — ANKUZO
             <div class="dc-activity-name" id="dcSpotifyName"></div>
             <div class="dc-activity-detail" id="dcSpotifyArtist"></div>
           </div>
+
           <div class="dc-about">
             <div class="dc-about-label">ОБО МНЕ</div>
-            <div class="dc-about-text">root@anku:~$ cat anku.conf<br>role=BigData CyberSec<br>mode=ML<br>grind=while(true)</div>
+            <div class="dc-about-text">root@anku:~$ cat anku.conf<br>role=BigData CyberSec<br>mode=ML<br>hobby=Beer<br>sleep=false<br>grind=while(true)</div>
+          </div>
+
+          <div class="dc-divider"></div>
+
+          <div class="dc-facts">
+            <div class="dc-fact-row">
+              <span class="dc-fact-label">Специализация</span>
+              <span class="dc-fact-val">Cybersecurity · Pentest</span>
+            </div>
+            <div class="dc-fact-row">
+              <span class="dc-fact-label">Направления</span>
+              <span class="dc-fact-val">ML · Big Data · Threat Intel</span>
+            </div>
+            <div class="dc-fact-row">
+              <span class="dc-fact-label">Стек</span>
+              <span class="dc-fact-val">Python · Linux · Cloud</span>
+            </div>
+            <div class="dc-fact-row">
+              <span class="dc-fact-label">В Discord с</span>
+              <span class="dc-fact-val">21 ноября 2018</span>
+            </div>
           </div>
         </div>
       </div>
 
-      <div class="fact-row">
-        <div class="fact-num">01</div>
-        <div class="fact-content">
-          <div class="fact-title">Специализация</div>
-          <div class="fact-val">Cybersecurity · Penetration Testing</div>
-        </div>
-      </div>
-      <div class="fact-row">
-        <div class="fact-num">02</div>
-        <div class="fact-content">
-          <div class="fact-title">Направления</div>
-          <div class="fact-val">ML · Big Data · Threat Intelligence</div>
-        </div>
-      </div>
-      <div class="fact-row">
-        <div class="fact-num">03</div>
-        <div class="fact-content">
-          <div class="fact-title">Стек</div>
-          <div class="fact-val">Python · Linux · Cloud infra</div>
-        </div>
-      </div>
     </div>
-  </div>
+
 </section>
 
 <hr class="section-divider">
@@ -883,6 +879,29 @@ ASCII INTRO — ANKUZO
 
     <!-- TOP 3 BANNERS -->
     <div class="steam-banners" id="steamBanners"></div>
+
+    <!-- FACEIT BLOCK -->
+    <div id="faceitBlock" style="display:none;margin-bottom:24px;">
+      <div style="font-size:9px;letter-spacing:.25em;color:rgba(240,237,232,.25);text-transform:uppercase;margin-bottom:12px;">faceit · nuBac</div>
+      <div class="faceit-card">
+        <div class="faceit-left">
+          <div class="faceit-level-box" id="faceitLevelBox">
+            <div class="faceit-level" id="faceitLevel">—</div>
+            <div class="faceit-level-label">LVL</div>
+          </div>
+          <div>
+            <div class="faceit-elo" id="faceitElo">— ELO</div>
+            <div class="faceit-nick">nuBac</div>
+          </div>
+        </div>
+        <div class="faceit-stats">
+          <div class="faceit-stat"><div class="faceit-stat-val" id="faceitKD">—</div><div class="faceit-stat-lbl">K/D</div></div>
+          <div class="faceit-stat"><div class="faceit-stat-val" id="faceitHS">—</div><div class="faceit-stat-lbl">HS%</div></div>
+          <div class="faceit-stat"><div class="faceit-stat-val" id="faceitWR">—</div><div class="faceit-stat-lbl">WR%</div></div>
+          <div class="faceit-stat"><div class="faceit-stat-val" id="faceitMatches">—</div><div class="faceit-stat-lbl">матчей</div></div>
+        </div>
+      </div>
+    </div>
 
     <!-- STATS ROW -->
     <div class="steam-stats-row" style="margin-top:20px;">
@@ -1237,6 +1256,25 @@ ASCII INTRO — ANKUZO
         setTimeout(()=>{topEl.querySelectorAll('.steam-game-bar').forEach(b=>{b.style.width=b.dataset.w+'%';});},200);
       }
 
+      // FACEIT
+      if(data.faceit && data.faceit.elo){
+        const fb = document.getElementById('faceitBlock');
+        if(fb) fb.style.display='block';
+        const lvl = data.faceit.level;
+        const lvlColors = {1:'#eee',2:'#eee',3:'#eee',4:'#1cd760',5:'#1cd760',6:'#1cd760',7:'#f5a623',8:'#f5a623',9:'#eb4d4b',10:'#eb4d4b'};
+        const lvlEl = document.getElementById('faceitLevel');
+        const lvlBox = document.getElementById('faceitLevelBox');
+        if(lvlEl) lvlEl.textContent = lvl;
+        if(lvlBox) lvlBox.style.borderColor = lvlColors[lvl]||'rgba(240,237,232,.2)';
+        const eloEl = document.getElementById('faceitElo');
+        if(eloEl){ eloEl.textContent = data.faceit.elo+' ELO'; eloEl.style.color = lvlColors[lvl]||'#f0ede8'; }
+        const set = (id,val)=>{ const e=document.getElementById(id); if(e) e.textContent=val; };
+        set('faceitKD', data.faceit.kd);
+        set('faceitHS', data.faceit.hs+'%');
+        set('faceitWR', data.faceit.winrate+'%');
+        set('faceitMatches', data.faceit.matches);
+      }
+
       const upEl=document.getElementById('steamUpdated');
       if(upEl&&data.updated){
         const d=new Date(data.updated);
@@ -1254,12 +1292,26 @@ ASCII INTRO — ANKUZO
   const canvas = document.getElementById('noiseLayer');
   if(!canvas) return;
   const ctx = canvas.getContext('2d');
-  let W, H;
+  // Рисуем в 4x меньшем разрешении — CSS растянет
+  const SCALE = 4;
+  let W, H, last=0;
+  const FPS = 24; // не нужно 60fps для шума
+  const interval = 1000/FPS;
+
+  canvas.style.imageRendering = 'pixelated';
+
   function resize(){
-    W = canvas.width = window.innerWidth;
-    H = canvas.height = window.innerHeight;
+    W = Math.ceil(window.innerWidth/SCALE);
+    H = Math.ceil(window.innerHeight/SCALE);
+    canvas.width = W;
+    canvas.height = H;
+    canvas.style.width = window.innerWidth+'px';
+    canvas.style.height = window.innerHeight+'px';
   }
-  function draw(){
+  function draw(ts){
+    requestAnimationFrame(draw);
+    if(ts - last < interval) return;
+    last = ts;
     const img = ctx.createImageData(W, H);
     const d = img.data;
     for(let i=0; i<d.length; i+=4){
@@ -1268,11 +1320,10 @@ ASCII INTRO — ANKUZO
       d[i+3]=255;
     }
     ctx.putImageData(img, 0, 0);
-    requestAnimationFrame(draw);
   }
   resize();
   window.addEventListener('resize', resize);
-  draw();
+  requestAnimationFrame(draw);
 })();
 
 // ── MAGNETIC BUTTONS ──
@@ -1288,6 +1339,43 @@ ASCII INTRO — ANKUZO
     });
     el.addEventListener('mouseleave', ()=>{ el.style.transform=''; });
   });
+})();
+
+// ── DISCORD CARD BANNER ──
+(function(){
+  const c = document.getElementById('dcBannerCanvas');
+  if(!c) return;
+  const ctx = c.getContext('2d');
+  let W, H;
+  function resize(){ W=c.offsetWidth; H=c.offsetHeight; c.width=W; c.height=H; }
+  resize();
+
+  const lines = Array.from({length:8},()=>({
+    x: Math.random()*W, y: Math.random()*H,
+    vx:(Math.random()-.5)*.4, vy:(Math.random()-.5)*.4,
+    len: Math.random()*60+20, angle: Math.random()*Math.PI*2,
+    alpha: Math.random()*.15+.03
+  }));
+
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    ctx.fillStyle='#0d0d14';
+    ctx.fillRect(0,0,W,H);
+    lines.forEach(l=>{
+      l.x+=l.vx; l.y+=l.vy;
+      if(l.x<0||l.x>W) l.vx*=-1;
+      if(l.y<0||l.y>H) l.vy*=-1;
+      ctx.strokeStyle=`rgba(240,237,232,${l.alpha})`;
+      ctx.lineWidth=1;
+      ctx.beginPath();
+      ctx.moveTo(l.x, l.y);
+      ctx.lineTo(l.x+Math.cos(l.angle)*l.len, l.y+Math.sin(l.angle)*l.len);
+      ctx.stroke();
+      l.angle += .005;
+    });
+    requestAnimationFrame(draw);
+  }
+  draw();
 })();
 
 // ── DISCORD STATUS (Lanyard) ──
@@ -1323,6 +1411,7 @@ ASCII INTRO — ANKUZO
     const avatar = document.getElementById('dcAvatar');
     const ring   = document.getElementById('dcStatusRing');
     const uname  = document.getElementById('dcUsername');
+    const stText = document.getElementById('dcStatusText');
     const banner = document.getElementById('dcBanner');
 
     if(avatar && user.avatar){
@@ -1330,11 +1419,7 @@ ASCII INTRO — ANKUZO
     }
     if(ring){ ring.className='dc-status-ring '+status; }
     if(uname && user.global_name) uname.textContent = user.global_name;
-
-    // баннер цвет
-    if(banner && user.banner_color){
-      banner.style.background = `linear-gradient(135deg, ${user.banner_color}44 0%, #0f0f17 100%)`;
-    }
+    if(stText) stText.textContent = STATUS_TEXT[status]||status;
 
     // активность в карточке
     const dcAct     = document.getElementById('dcCardActivity');
