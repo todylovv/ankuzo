@@ -115,7 +115,7 @@ require('http').createServer(async (req, res) => {
     } else {
       const uid = userMatch[1];
       const kind = userMatch[2];
-      const embedUrl = `https://music.yandex.ru/iframe/#playlist/${uid}/${kind}`;
+      const embedUrl = `https://music.yandex.ru/iframe/playlist/${uid}/${kind}`;
       const canonicalUrl = `https://music.yandex.ru/users/${uid}/playlists/${kind}`;
 
       // Try mobile API
@@ -135,7 +135,8 @@ require('http').createServer(async (req, res) => {
         };
       } else {
         // Fallback: scrape web page
-        const pageRes = await fetchUrl(canonicalUrl);
+        // Fallback: scrape iframe page
+        const pageRes = await fetchUrl(`https://music.yandex.ru/iframe/playlist/${uid}/${kind}`);
         const og = parseOgTags(pageRes.body);
         result = {
           ok: og.title ? true : false,
