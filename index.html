@@ -469,6 +469,16 @@ body.perf-mid .marquee-inner{animation-duration:30s!important;}
 .steam-acc-dot.online{background:rgba(100,220,130,.8);animation:steamPulse 1.5s ease-in-out infinite;}
 .steam-acc-dot.offline{background:rgba(240,237,232,.2);}
 .steam-acc-game{font-size:9px;letter-spacing:.1em;color:rgba(100,220,130,.6);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:160px;}
+.game-profiles{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:20px;}
+.game-profile{display:block;background:rgba(240,237,232,.03);border:1px solid rgba(240,237,232,.07);padding:14px 16px;text-decoration:none;transition:background .2s,border-color .2s;}
+.game-profile:hover{background:rgba(240,237,232,.06);border-color:rgba(240,237,232,.18);}
+.game-profile-head{display:flex;justify-content:space-between;gap:12px;align-items:baseline;margin-bottom:10px;}
+.game-profile-service{font-size:10px;letter-spacing:.2em;color:#f0ede8;}
+.game-profile-account{font-size:9px;letter-spacing:.15em;color:rgba(240,237,232,.3);}
+.game-profile-stats{display:flex;gap:16px;flex-wrap:wrap;}
+.game-profile-stat{font-size:10px;letter-spacing:.08em;color:rgba(240,237,232,.65);}
+.game-profile-stat strong{display:block;font-family:'Bebas Neue',sans-serif;font-size:24px;line-height:1;color:#f0ede8;font-weight:400;}
+.game-profile-source{font-size:8px;letter-spacing:.1em;color:rgba(240,237,232,.25);margin-top:10px;}
 .steam-banners{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
 .steam-banner{position:relative;aspect-ratio:460/215;background:#111;overflow:hidden;border:1px solid rgba(240,237,232,.07);}
 .steam-banner img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .4s cubic-bezier(.16,1,.3,1),opacity .3s;}
@@ -495,6 +505,7 @@ body.perf-mid .marquee-inner{animation-duration:30s!important;}
   .steam-game-name{flex:0 0 120px;}
   .steam-banners{grid-template-columns:1fr;}
   .steam-accounts{flex-direction:column;}
+  .game-profiles{grid-template-columns:1fr;}
 }
 
 /* ── TERMINAL ── */
@@ -948,6 +959,7 @@ ASCII INTRO — ANKUZO
 
     <!-- ACCOUNTS STATUS -->
     <div class="steam-accounts" id="steamAccounts"></div>
+    <div class="game-profiles" id="gameProfiles" style="display:none;"></div>
 
     <!-- TOP 3 BANNERS -->
     <div class="steam-banners" id="steamBanners"></div>
@@ -1270,6 +1282,25 @@ ASCII INTRO — ANKUZO
               }
             </div>
           </div>`).join('');
+      }
+
+      const profilesEl=document.getElementById('gameProfiles');
+      if(profilesEl&&data.profiles&&data.profiles.length){
+        const value=(label,val)=>val!==null&&val!==undefined&&val!==''?`<div class="game-profile-stat"><strong>${val}</strong>${label}</div>`:'';
+        profilesEl.style.display='grid';
+        profilesEl.innerHTML=data.profiles.map(p=>`
+          <a class="game-profile" href="${p.url}" target="_blank" rel="noopener noreferrer">
+            <div class="game-profile-head">
+              <span class="game-profile-service">${p.service}</span>
+              <span class="game-profile-account">${p.account} · ${p.name}</span>
+            </div>
+            <div class="game-profile-stats">
+              ${p.service==='FACEIT'
+                ? value('LEVEL',p.level)+value('ELO',p.elo)
+                : value('RANK',p.rank)+value('RP',p.rp)+value('LEVEL',p.level)+value('KILLS',p.kills)+value('DAMAGE',p.damage)}
+            </div>
+            ${p.service==='APEX'?'<div class="game-profile-source">Data provided by Tracker Network</div>':''}
+          </a>`).join('');
       }
 
       // banners top 3

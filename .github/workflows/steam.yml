@@ -1,6 +1,12 @@
 name: Update Steam Data
 
 on:
+  push:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/steam.yml'
+      - 'build.py'
   schedule:
     - cron: '0 * * * *'
   workflow_dispatch:
@@ -19,6 +25,8 @@ jobs:
       - name: Fetch data and build JSON
         env:
           STEAM_KEY: ${{ secrets.STEAM_KEY }}
+          FACEIT_KEY: ${{ secrets.FACEIT_KEY }}
+          TRN_KEY: ${{ secrets.TRN_KEY }}
           STEAM_ID1: '76561199770575251'
           STEAM_ID2: '76561198165374024'
         run: |
@@ -27,6 +35,20 @@ jobs:
           curl --fail --silent --show-error "https://api.steampowered.com/IPlayerService/GetRecentlyPlayedGames/v1/?key=${STEAM_KEY}&steamid=${STEAM_ID2}&count=5" > /tmp/recent2.json
           curl --fail --silent --show-error "https://api.steampowered.com/IPlayerService/GetOwnedGames/v1/?key=${STEAM_KEY}&steamid=${STEAM_ID1}&include_appinfo=true&include_played_free_games=true" > /tmp/owned1.json
           curl --fail --silent --show-error "https://api.steampowered.com/IPlayerService/GetOwnedGames/v1/?key=${STEAM_KEY}&steamid=${STEAM_ID2}&include_appinfo=true&include_played_free_games=true" > /tmp/owned2.json
+          echo '{}' > /tmp/faceit.json
+          echo '{}' > /tmp/apex.json
+          if [ -n "${FACEIT_KEY:-}" ]; then
+            curl --fail --silent --show-error \
+              --header "Authorization: Bearer ${FACEIT_KEY}" \
+              "https://open.faceit.com/data/v4/players?game=cs2&game_player_id=${STEAM_ID1}" \
+              > /tmp/faceit.json || echo '{}' > /tmp/faceit.json
+          fi
+          if [ -n "${TRN_KEY:-}" ]; then
+            curl --fail --silent --show-error \
+              --header "TRN-Api-Key: ${TRN_KEY}" \
+              "https://public-api.tracker.gg/v2/apex/standard/profile/steam/${STEAM_ID2}" \
+              > /tmp/apex.json || echo '{}' > /tmp/apex.json
+          fi
           python3 build.py
 
       - name: Commit steam-data.json
