@@ -4,18 +4,14 @@
     {
       "name": "b1",
       "avatar": "https://avatars.steamstatic.com/6a30a26c019394587a828b964f6156b6a17e36a2_full.jpg",
-      "status": "offline",
       "online": false,
-      "gameextrainfo": "",
-      "gameid": ""
+      "gameextrainfo": ""
     },
     {
       "name": "b2",
       "avatar": "https://avatars.steamstatic.com/719bc8ea7c3e382348fd1909400257c0d49497f3_full.jpg",
-      "status": "offline",
       "online": false,
-      "gameextrainfo": "",
-      "gameid": ""
+      "gameextrainfo": ""
     }
   ],
   "stats": {
@@ -84,8 +80,5 @@
       "name": "DayZ",
       "hours": 60.9
     }
-  ],
-  "faceit": {
-    "error": "Expecting value: line 1 column 1 (char 0)"
-  }
+  ]
 }

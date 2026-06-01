@@ -21,17 +21,12 @@ jobs:
           STEAM_KEY: ${{ secrets.STEAM_KEY }}
           STEAM_ID1: '76561199770575251'
           STEAM_ID2: '76561198165374024'
-          FACEIT_NICK: 'nuBac'
         run: |
-          curl -s "https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v2/?key=${STEAM_KEY}&steamids=${STEAM_ID1},${STEAM_ID2}" > /tmp/summary.json
-          curl -s "https://api.steampowered.com/IPlayerService/GetRecentlyPlayedGames/v1/?key=${STEAM_KEY}&steamid=${STEAM_ID1}&count=5" > /tmp/recent1.json
-          curl -s "https://api.steampowered.com/IPlayerService/GetRecentlyPlayedGames/v1/?key=${STEAM_KEY}&steamid=${STEAM_ID2}&count=5" > /tmp/recent2.json
-          curl -s "https://api.steampowered.com/IPlayerService/GetOwnedGames/v1/?key=${STEAM_KEY}&steamid=${STEAM_ID1}&include_appinfo=true&include_played_free_games=true" > /tmp/owned1.json
-          curl -s "https://api.steampowered.com/IPlayerService/GetOwnedGames/v1/?key=${STEAM_KEY}&steamid=${STEAM_ID2}&include_appinfo=true&include_played_free_games=true" > /tmp/owned2.json
-
-          curl -s "https://faceit.lcrypt.eu/?n=${FACEIT_NICK}" -o /tmp/faceit.json
-          echo "=== FACEIT ===" && cat /tmp/faceit.json
-
+          curl --fail --silent --show-error "https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v2/?key=${STEAM_KEY}&steamids=${STEAM_ID1},${STEAM_ID2}" > /tmp/summary.json
+          curl --fail --silent --show-error "https://api.steampowered.com/IPlayerService/GetRecentlyPlayedGames/v1/?key=${STEAM_KEY}&steamid=${STEAM_ID1}&count=5" > /tmp/recent1.json
+          curl --fail --silent --show-error "https://api.steampowered.com/IPlayerService/GetRecentlyPlayedGames/v1/?key=${STEAM_KEY}&steamid=${STEAM_ID2}&count=5" > /tmp/recent2.json
+          curl --fail --silent --show-error "https://api.steampowered.com/IPlayerService/GetOwnedGames/v1/?key=${STEAM_KEY}&steamid=${STEAM_ID1}&include_appinfo=true&include_played_free_games=true" > /tmp/owned1.json
+          curl --fail --silent --show-error "https://api.steampowered.com/IPlayerService/GetOwnedGames/v1/?key=${STEAM_KEY}&steamid=${STEAM_ID2}&include_appinfo=true&include_played_free_games=true" > /tmp/owned2.json
           python3 build.py
 
       - name: Commit steam-data.json

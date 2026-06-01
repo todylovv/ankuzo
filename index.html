@@ -91,8 +91,6 @@ section{padding:110px 48px;max-width:1200px;margin:0 auto;}
 .fact-row:hover{padding-left:8px;}
 .fact-num{font-family:'JetBrains Mono',monospace;font-size:28px;font-weight:700;color:rgba(255,255,255,.07);line-height:1;flex-shrink:0;width:44px;transition:color .3s;}
 .fact-row:hover .fact-num{color:rgba(255,255,255,.2);}
-.fact-title{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.15em;color:var(--dim);text-transform:uppercase;margin-bottom:4px;}
-.fact-val{font-size:12px;font-weight:400;letter-spacing:.05em;}
 
 /* ── SKILLS ── */
 .skills-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;}
@@ -450,19 +448,6 @@ body.perf-mid .marquee-inner{animation-duration:30s!important;}
 /* ── MAGNETIC ── */
 .mag{transition:transform .2s cubic-bezier(.16,1,.3,1);}
 
-/* ── FACEIT ── */
-.faceit-card{background:rgba(240,237,232,.03);border:1px solid rgba(240,237,232,.07);padding:16px;display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;}
-.faceit-left{display:flex;align-items:center;gap:14px;}
-.faceit-level-box{width:48px;height:48px;display:flex;flex-direction:column;align-items:center;justify-content:center;border:2px solid rgba(240,237,232,.2);border-radius:4px;flex-shrink:0;}
-.faceit-level{font-family:'Bebas Neue',sans-serif;font-size:26px;letter-spacing:.05em;color:#f0ede8;line-height:1;}
-.faceit-level-label{font-size:7px;letter-spacing:.2em;color:rgba(240,237,232,.3);text-transform:uppercase;}
-.faceit-elo{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:.05em;color:#f0ede8;}
-.faceit-nick{font-size:10px;letter-spacing:.1em;color:rgba(240,237,232,.35);}
-.faceit-stats{display:flex;gap:16px;flex-wrap:wrap;}
-.faceit-stat{text-align:center;}
-.faceit-stat-val{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:.05em;color:#f0ede8;line-height:1;}
-.faceit-stat-lbl{font-size:8px;letter-spacing:.15em;color:rgba(240,237,232,.25);text-transform:uppercase;margin-top:2px;}
-
 /* ── MARQUEE ── */
 .marquee-wrap{overflow:hidden;white-space:nowrap;padding:18px 0;border-top:1px solid rgba(240,237,232,.06);border-bottom:1px solid rgba(240,237,232,.06);margin:0;}
 .marquee-inner{display:inline-block;animation:marqueeScroll 20s linear infinite;}
@@ -491,9 +476,6 @@ body.perf-mid .marquee-inner{animation-duration:30s!important;}
 .steam-banner-name{font-size:10px;letter-spacing:.06em;color:#f0ede8;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .steam-banner-hours{font-size:8px;letter-spacing:.15em;color:rgba(240,237,232,.45);margin-top:2px;}
 .steam-banner-rank{position:absolute;top:8px;left:8px;font-family:'Bebas Neue',sans-serif;font-size:18px;color:rgba(240,237,232,.5);}
-.steam-now{background:rgba(240,237,232,.03);border:1px solid rgba(240,237,232,.08);padding:16px 20px;}
-.steam-now-dot-wrap{display:flex;align-items:center;gap:8px;margin-bottom:4px;}
-.steam-now-dot{width:6px;height:6px;border-radius:50%;background:rgba(100,220,130,.7);animation:steamPulse 1.5s ease-in-out infinite;flex-shrink:0;}
 @keyframes steamPulse{0%,100%{opacity:1;transform:scale(1);}50%{opacity:.3;transform:scale(.8);}}
 .steam-stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}
 .steam-stat{background:rgba(240,237,232,.03);border:1px solid rgba(240,237,232,.06);padding:16px 20px;}
@@ -965,29 +947,6 @@ ASCII INTRO — ANKUZO
     <!-- TOP 3 BANNERS -->
     <div class="steam-banners" id="steamBanners"></div>
 
-    <!-- FACEIT BLOCK -->
-    <div id="faceitBlock" style="display:none;margin-bottom:24px;">
-      <div style="font-size:9px;letter-spacing:.25em;color:rgba(240,237,232,.25);text-transform:uppercase;margin-bottom:12px;">faceit · nuBac</div>
-      <div class="faceit-card">
-        <div class="faceit-left">
-          <div class="faceit-level-box" id="faceitLevelBox">
-            <div class="faceit-level" id="faceitLevel">—</div>
-            <div class="faceit-level-label">LVL</div>
-          </div>
-          <div>
-            <div class="faceit-elo" id="faceitElo">— ELO</div>
-            <div class="faceit-nick">nuBac</div>
-          </div>
-        </div>
-        <div class="faceit-stats">
-          <div class="faceit-stat"><div class="faceit-stat-val" id="faceitKD">—</div><div class="faceit-stat-lbl">K/D</div></div>
-          <div class="faceit-stat"><div class="faceit-stat-val" id="faceitHS">—</div><div class="faceit-stat-lbl">HS%</div></div>
-          <div class="faceit-stat"><div class="faceit-stat-val" id="faceitWR">—</div><div class="faceit-stat-lbl">WR%</div></div>
-          <div class="faceit-stat"><div class="faceit-stat-val" id="faceitMatches">—</div><div class="faceit-stat-lbl">матчей</div></div>
-        </div>
-      </div>
-    </div>
-
     <!-- STATS ROW -->
     <div class="steam-stats-row" style="margin-top:20px;">
       <div class="steam-stat">
@@ -1349,25 +1308,6 @@ ASCII INTRO — ANKUZO
         setTimeout(()=>{topEl.querySelectorAll('.steam-game-bar').forEach(b=>{b.style.width=b.dataset.w+'%';});},200);
       }
 
-      // FACEIT
-      if(data.faceit && data.faceit.elo){
-        const fb = document.getElementById('faceitBlock');
-        if(fb) fb.style.display='block';
-        const lvl = data.faceit.level;
-        const lvlColors = {1:'#eee',2:'#eee',3:'#eee',4:'#1cd760',5:'#1cd760',6:'#1cd760',7:'#f5a623',8:'#f5a623',9:'#eb4d4b',10:'#eb4d4b'};
-        const lvlEl = document.getElementById('faceitLevel');
-        const lvlBox = document.getElementById('faceitLevelBox');
-        if(lvlEl) lvlEl.textContent = lvl;
-        if(lvlBox) lvlBox.style.borderColor = lvlColors[lvl]||'rgba(240,237,232,.2)';
-        const eloEl = document.getElementById('faceitElo');
-        if(eloEl){ eloEl.textContent = data.faceit.elo+' ELO'; eloEl.style.color = lvlColors[lvl]||'#f0ede8'; }
-        const set = (id,val)=>{ const e=document.getElementById(id); if(e) e.textContent=val; };
-        set('faceitKD', data.faceit.kd);
-        set('faceitHS', data.faceit.hs+'%');
-        set('faceitWR', data.faceit.winrate+'%');
-        set('faceitMatches', data.faceit.matches);
-      }
-
       const upEl=document.getElementById('steamUpdated');
       if(upEl&&data.updated){
         const d=new Date(data.updated);
@@ -1422,7 +1362,7 @@ ASCII INTRO — ANKUZO
 // ── MAGNETIC BUTTONS ──
 (function(){
   if(!window.matchMedia('(hover:hover)').matches) return;
-  document.querySelectorAll('.menu-btn,.discord-hero,#scrollTop,.nav-logo').forEach(el=>{
+  document.querySelectorAll('.discord-hero,#scrollTop,.nav-logo').forEach(el=>{
     el.classList.add('mag');
     el.addEventListener('mousemove', e=>{
       const r = el.getBoundingClientRect();
@@ -1568,61 +1508,6 @@ function applyPerfLevel(level){
   draw();
 })();
 
-// ── FACEIT — прямой запрос из браузера ──
-(function(){
-  const FACEIT_KEY = '078dd8d9-57da-4d14-b92a-f8d11c94bc99';
-  const NICK = 'nuBac';
-
-  fetch(`https://open.faceit.com/data/v4/players?nickname=${NICK}`, {
-    headers: {
-      'Authorization': `Bearer ${FACEIT_KEY}`,
-      'Accept': 'application/json'
-    }
-  })
-  .then(r => r.json())
-  .then(fp => {
-    const cs2 = fp.games?.cs2 || fp.games?.csgo || {};
-    const level = cs2.skill_level || 0;
-    const elo   = cs2.faceit_elo || 0;
-    if(!elo) return;
-
-    const pid = fp.player_id;
-    // показываем базовые данные сразу
-    showFaceit({level, elo, kd:'—', hs:'—', winrate:'—', matches:'—'});
-
-    // подгружаем статистику
-    return fetch(`https://open.faceit.com/data/v4/players/${pid}/stats/cs2`, {
-      headers: {'Authorization': `Bearer ${FACEIT_KEY}`, 'Accept': 'application/json'}
-    }).then(r => r.json()).then(fs => {
-      const lt = fs.lifetime || {};
-      showFaceit({
-        level, elo,
-        kd:      lt['Average K/D Ratio'] || '—',
-        hs:      lt['Average Headshots %'] || '—',
-        winrate: lt['Win Rate %'] || '—',
-        matches: lt['Matches'] || '—',
-      });
-    });
-  })
-  .catch(() => {});
-
-  function showFaceit(d){
-    const lvlColors = {1:'#eee',2:'#eee',3:'#eee',4:'#1cd760',5:'#1cd760',6:'#1cd760',7:'#f5a623',8:'#f5a623',9:'#eb4d4b',10:'#eb4d4b'};
-    const fb  = document.getElementById('faceitBlock');
-    const lvl = document.getElementById('faceitLevel');
-    const box = document.getElementById('faceitLevelBox');
-    const elo = document.getElementById('faceitElo');
-    if(fb)  fb.style.display = 'block';
-    if(lvl) lvl.textContent  = d.level;
-    if(box) box.style.borderColor = lvlColors[d.level] || 'rgba(240,237,232,.2)';
-    if(elo){ elo.textContent = d.elo + ' ELO'; elo.style.color = lvlColors[d.level] || '#f0ede8'; }
-    const set = (id,v) => { const e=document.getElementById(id); if(e) e.textContent=v; };
-    set('faceitKD',      d.kd);
-    set('faceitHS',      d.hs !== '—' ? d.hs+'%' : '—');
-    set('faceitWR',      d.winrate !== '—' ? d.winrate+'%' : '—');
-    set('faceitMatches', d.matches);
-  }
-})();
 (function(){
   const DISCORD_ID = '514852654552186880';
   const STATUS_COLORS = {
@@ -1656,8 +1541,6 @@ function applyPerfLevel(level){
     const ring   = document.getElementById('dcStatusRing');
     const uname  = document.getElementById('dcUsername');
     const stText = document.getElementById('dcStatusText');
-    const banner = document.getElementById('dcBanner');
-
     if(avatar && user.avatar){
       avatar.src = `https://cdn.discordapp.com/avatars/${DISCORD_ID}/${user.avatar}.${user.avatar.startsWith('a_')?'gif':'webp'}?size=128`;
     }
