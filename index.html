@@ -377,7 +377,7 @@ footer.reveal{
   #termWrap{font-size:11px;}
 }
 @media(max-width:480px){
-  .hero-name{font-size:clamp(56px,15vw,100px);}
+  .hero-name{font-size:clamp(58px,20vw,92px);}
   .game-row{grid-template-columns:1fr;gap:8px;}
   .game-badge{align-self:flex-start;}
   .steam-banners{grid-template-columns:1fr;}
@@ -436,6 +436,8 @@ body.perf-low *{
 body.perf-low .hero-name .solid,
 body.perf-low .hero-name .outline{
   animation:none!important;
+  opacity:1!important;
+  transform:none!important;
 }
 body.perf-low .rune{display:none!important;}
 body.perf-low #bgCanvas{display:none!important;}
@@ -591,6 +593,7 @@ body.perf-mid .marquee-inner{animation-duration:30s!important;}
   mix-blend-mode:screen;
   pointer-events:none;
 }
+@media(max-width:900px){#asciiOverlay{display:none;}}
 #enterText{
   position:absolute;
   left:50%;
