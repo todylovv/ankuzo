@@ -62,8 +62,6 @@ jobs:
             curl --fail --silent --show-error --location \
               "https://cdn.discordapp.com/banners/${DISCORD_ID}/${banner}.webp?size=512" \
               --output discord-assets/banner.webp
-          else
-            rm -f discord-assets/banner.webp
           fi
 
           jq '{updated_at: (now | todateiso8601), discord_user: .data.discord_user}' \
