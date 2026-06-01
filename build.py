@@ -7,6 +7,7 @@ owned1  = json.load(open('/tmp/owned1.json'))
 owned2  = json.load(open('/tmp/owned2.json'))
 faceit  = json.load(open('/tmp/faceit.json'))
 apex    = json.load(open('/tmp/apex.json'))
+integrations = json.load(open('/tmp/integrations.json'))
 
 players = {p['steamid']: p for p in summary.get('response',{}).get('players',[])}
 steam_id1 = os.environ.get('STEAM_ID1', '76561199770575251')
@@ -88,6 +89,7 @@ result = {
     'top3_banners': top3_banners,
     'top': [{'appid':g['appid'],'name':g['name'],'hours':round(g['playtime_forever']/60,1)} for g in top8],
     'profiles': [p for p in (faceit_card, apex_card) if p],
+    'integration_status': integrations,
 }
 
 with open('steam-data.json','w') as f:
