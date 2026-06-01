@@ -1155,9 +1155,13 @@ function showYandexManual(){
   document.getElementById('fYaCover').oninput=e=>{ const v=e.target.value.trim(); _previewData.cover_url=v; document.getElementById('prevCover').src=v; };
 }
 
-async function previewYandex(detected, originalUrl){
+async function previewYandex(detected){
   const owner=detected.owner, kind=detected.kind;
   const embedSrc=detected.embed_src||`https://music.yandex.ru/iframe/playlist/${owner}/${kind}`;
+  const box=document.getElementById('previewBox');
+  document.getElementById('prevPlatform').textContent='● ЯНДЕКС';
+  document.getElementById('prevPlatform').className='preview-platform yandex';
+  box.classList.add('visible');
   try{
     const apiUrl=`https://music.yandex.ru/handlers/playlist.jsx?owner=${encodeURIComponent(owner)}&kinds=${kind}&light=true&lang=ru&external-domain=music.yandex.ru&overembed=false`;
     const res=await fetch(apiUrl,{headers:{'X-Retpath-Y':'https://music.yandex.ru/'}});
@@ -1173,153 +1177,13 @@ async function previewYandex(detected, originalUrl){
       document.getElementById('prevCover').src=coverUrl;
       document.getElementById('prevTitle').textContent=title;
       document.getElementById('prevAuthor').textContent=`${pAuthor} · ${trackCount} треков`;
-      document.getElementById('previewBox').classList.add('visible');
       return;
     }
   }catch(e){}
-  // Fallback — есть embed но нет метаданных
+  // Fallback — embed есть но метаданных нет
   _previewData={...detected,title:'Яндекс плейлист',author:owner,cover_url:'',embed_url:embedSrc,track_count:0};
   document.getElementById('prevTitle').textContent='Яндекс плейлист';
   document.getElementById('prevAuthor').textContent=owner;
-  document.getElementById('previewBox').classList.add('visible');
-
-    // Короткий URL — пробуем получить финальный адрес через fetch
-    if(detected.short){
-      try{
-        const res = await fetch(url, {method:'HEAD', redirect:'follow', mode:'no-cors'});
-        // no-cors не даёт финальный URL, пробуем GET
-      }catch(e){}
-      // Альтернатива: парсим через iframe trick или просто сохраняем короткий URL
-      // и просим пользователя ввести данные
-      _previewData={...detected,title:'',author:'Яндекс Музыка',cover_url:'',embed_url:null,track_count:0};
-      document.getElementById('prevTitle').textContent='Заполни поля ниже';
-      document.getElementById('prevAuthor').textContent='Короткая ссылка — данные недоступны автоматически';
-      const yf=document.getElementById('yandexFields');
-      yf.style.display='block';
-      document.getElementById('fYaTitle').oninput=e=>{
-        _previewData.title=e.target.value.trim();
-        document.getElementById('prevTitle').textContent=_previewData.title||'Заполни поля ниже';
-      };
-      document.getElementById('fYaCover').oninput=e=>{
-        const v=e.target.value.trim();
-        _previewData.cover_url=v;
-        document.getElementById('prevCover').src=v;
-      };
-      return;
-    }
-
-    // Полный URL — извлекаем owner и kind
-    const m = url.match(/users\/([^\/]+)\/playlists\/(\d+)/);
-    if(m){
-      const owner=m[1], kind=m[2];
-      try{
-        const apiUrl=`https://music.yandex.ru/handlers/playlist.jsx?owner=${encodeURIComponent(owner)}&kinds=${kind}&light=true&lang=ru&external-domain=music.yandex.ru&overembed=false`;
-        const res=await fetch(apiUrl,{headers:{'X-Retpath-Y':'https://music.yandex.ru/'}});
-        if(res.ok){
-          const data=await res.json();
-          const pl=data?.playlist;
-          const title=pl?.title||'Яндекс плейлист';
-          const pAuthor=pl?.owner?.name||owner;
-          const trackCount=pl?.trackCount||0;
-          let coverUrl='';
-          if(pl?.cover?.uri) coverUrl='https://'+pl.cover.uri.replace('%%','200x200');
-          else if(pl?.tracks?.[0]?.track?.albums?.[0]?.coverUri) coverUrl='https://'+pl.tracks[0].track.albums[0].coverUri.replace('%%','200x200');
-          _previewData={...detected,title,author:pAuthor,cover_url:coverUrl,embed_url:null,track_count:trackCount};
-          document.getElementById('prevCover').src=coverUrl;
-          document.getElementById('prevTitle').textContent=title;
-          document.getElementById('prevAuthor').textContent=`${pAuthor} · ${trackCount} треков`;
-          return;
-        }
-      }catch(e){}
-    }
-
-    // Fallback — ручные поля
-    _previewData={...detected,title:'',author:'Яндекс Музыка',cover_url:'',embed_url:null,track_count:0};
-    document.getElementById('prevTitle').textContent='Заполни поля ниже';
-    document.getElementById('prevAuthor').textContent='';
-    const yf=document.getElementById('yandexFields');
-    yf.style.display='block';
-    document.getElementById('fYaTitle').oninput=e=>{
-      _previewData.title=e.target.value.trim();
-      document.getElementById('prevTitle').textContent=_previewData.title||'Заполни поля ниже';
-    };
-    document.getElementById('fYaCover').oninput=e=>{
-      const v=e.target.value.trim();
-      _previewData.cover_url=v;
-      document.getElementById('prevCover').src=v;
-    };
-  }
-
-    if(m){
-      const owner=m[1], kind=m[2];
-      document.getElementById('prevPlatform').textContent='● ЯНДЕКС';
-      document.getElementById('prevPlatform').className='preview-platform yandex';
-      document.getElementById('prevTitle').textContent='Загрузка...';
-      document.getElementById('prevAuthor').textContent='';
-      box.classList.add('visible');
-
-      try{
-        // Яндекс handlers API — работает без авторизации для публичных плейлистов
-        const apiUrl=`https://music.yandex.ru/handlers/playlist.jsx?owner=${encodeURIComponent(owner)}&kinds=${kind}&light=true&lang=ru&external-domain=music.yandex.ru&overembed=false`;
-        const res=await fetch(apiUrl,{headers:{'X-Retpath-Y':'https://music.yandex.ru/'}});
-        if(res.ok){
-          const data=await res.json();
-          const pl=data?.playlist;
-          const title=pl?.title||'Яндекс плейлист';
-          const pAuthor=pl?.owner?.name||owner;
-          const trackCount=pl?.trackCount||0;
-          // обложка: огрId первого трека или cover
-          let coverUrl='';
-          if(pl?.cover?.uri){
-            coverUrl='https://'+pl.cover.uri.replace('%%','200x200');
-          } else if(pl?.tracks?.[0]?.track?.albums?.[0]?.coverUri){
-            coverUrl='https://'+pl.tracks[0].track.albums[0].coverUri.replace('%%','200x200');
-          }
-          _previewData={...detected,title,author:pAuthor,cover_url:coverUrl,embed_url:null,track_count:trackCount};
-          document.getElementById('prevCover').src=coverUrl;
-          document.getElementById('prevTitle').textContent=title;
-          document.getElementById('prevAuthor').textContent=`${pAuthor} · ${trackCount} треков`;
-        } else {
-          throw new Error('not ok');
-        }
-      }catch(e){
-        // Если API не ответил — показываем ручные поля
-        _previewData={...detected,title:'',author:'Яндекс Музыка',cover_url:'',embed_url:null,track_count:0};
-        document.getElementById('prevTitle').textContent='Заполни поля ниже';
-        document.getElementById('prevAuthor').textContent='';
-        const yf=document.getElementById('yandexFields');
-        yf.style.display='block';
-        document.getElementById('fYaTitle').oninput=e=>{
-          _previewData.title=e.target.value.trim();
-          document.getElementById('prevTitle').textContent=_previewData.title||'Заполни поля ниже';
-        };
-        document.getElementById('fYaCover').oninput=e=>{
-          const v=e.target.value.trim();
-          _previewData.cover_url=v;
-          document.getElementById('prevCover').src=v;
-        };
-      }
-    } else {
-      // URL без owner/kind — показываем ручные поля
-      _previewData={...detected,title:'',author:'Яндекс Музыка',cover_url:'',embed_url:null,track_count:0};
-      document.getElementById('prevPlatform').textContent='● ЯНДЕКС';
-      document.getElementById('prevPlatform').className='preview-platform yandex';
-      document.getElementById('prevTitle').textContent='Заполни поля ниже';
-      document.getElementById('prevAuthor').textContent='';
-      box.classList.add('visible');
-      const yf=document.getElementById('yandexFields');
-      yf.style.display='block';
-      document.getElementById('fYaTitle').oninput=e=>{
-        _previewData.title=e.target.value.trim();
-        document.getElementById('prevTitle').textContent=_previewData.title||'Заполни поля ниже';
-      };
-      document.getElementById('fYaCover').oninput=e=>{
-        const v=e.target.value.trim();
-        _previewData.cover_url=v;
-        document.getElementById('prevCover').src=v;
-      };
-    }
-  }
 }
 
 async function submitPlaylist(){
