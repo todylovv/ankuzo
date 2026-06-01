@@ -1,0 +1,1179 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ANKUZO · Плейлисты</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=JetBrains+Mono:wght@300;400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#07070a;--fg:#f0ede8;--dim:rgba(240,237,232,.15);
+  --border:rgba(240,237,232,.1);--surface:rgba(240,237,232,.04);
+  --accent:#f0ede8;--spotify:#1DB954;--yandex:#FF4433;
+  --font-display:'Bebas Neue',sans-serif;--font-mono:'JetBrains Mono',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--fg);font-family:var(--font-mono);min-height:100vh;overflow-x:hidden;}
+
+/* ── NAV ── */
+.nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:18px 48px;border-bottom:1px solid transparent;transition:all .3s;background:transparent;}
+.nav.scrolled{background:rgba(7,7,10,.9);backdrop-filter:blur(20px);border-color:var(--border);}
+.nav-logo{font-family:var(--font-display);font-size:20px;letter-spacing:.15em;color:var(--fg);text-decoration:none;}
+.nav-back{font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:rgba(240,237,232,.4);text-decoration:none;transition:color .2s;}
+.nav-back:hover{color:var(--fg);}
+.nav-count{font-size:10px;letter-spacing:.15em;color:rgba(240,237,232,.3);}
+
+/* ── HERO ── */
+.hero{padding:120px 48px 60px;border-bottom:1px solid var(--border);}
+.hero-label{font-size:9px;letter-spacing:.3em;text-transform:uppercase;color:rgba(240,237,232,.3);margin-bottom:16px;}
+.hero-title{font-family:var(--font-display);font-size:clamp(52px,8vw,120px);letter-spacing:.04em;line-height:.9;margin-bottom:24px;}
+.hero-sub{font-size:12px;letter-spacing:.1em;color:rgba(240,237,232,.45);max-width:480px;line-height:1.8;}
+
+/* ── LAYOUT ── */
+.container{max-width:1400px;margin:0 auto;padding:0 48px;}
+.section-label{font-size:9px;letter-spacing:.3em;text-transform:uppercase;color:rgba(240,237,232,.3);margin-bottom:24px;display:flex;align-items:center;gap:12px;}
+.section-label::after{content:'';flex:1;height:1px;background:var(--border);}
+.divider{height:1px;background:var(--border);margin:0 48px;}
+
+/* ── ADD FORM ── */
+.add-section{padding:48px 0;}
+.form-wrap{background:var(--surface);border:1px solid var(--border);padding:32px;max-width:700px;}
+.form-title{font-family:var(--font-display);font-size:28px;letter-spacing:.06em;margin-bottom:24px;}
+.form-group{margin-bottom:20px;}
+.form-label{font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:rgba(240,237,232,.4);margin-bottom:8px;display:block;}
+.form-input{width:100%;background:#07070a;border:1px solid var(--border);color:var(--fg);font-family:var(--font-mono);font-size:12px;letter-spacing:.04em;padding:12px 16px;outline:none;transition:border-color .2s;}
+.form-input:focus{border-color:rgba(240,237,232,.4);}
+.form-input::placeholder{color:rgba(240,237,232,.2);}
+.form-select{appearance:none;cursor:pointer;}
+.preview-box{background:rgba(240,237,232,.03);border:1px solid var(--border);padding:16px;display:none;margin-top:12px;}
+.preview-box.visible{display:flex;gap:16px;align-items:center;}
+.preview-cover{width:64px;height:64px;object-fit:cover;flex-shrink:0;background:#1a1a20;}
+.preview-info{}
+.preview-platform{font-size:9px;letter-spacing:.15em;text-transform:uppercase;margin-bottom:4px;}
+.preview-platform.spotify{color:var(--spotify);}
+.preview-platform.yandex{color:var(--yandex);}
+.preview-title{font-size:13px;letter-spacing:.04em;margin-bottom:2px;}
+.preview-author{font-size:10px;color:rgba(240,237,232,.4);}
+.tags-wrap{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;}
+.tag-chip{font-size:9px;letter-spacing:.15em;text-transform:uppercase;padding:4px 10px;border:1px solid var(--border);cursor:pointer;transition:all .15s;user-select:none;}
+.tag-chip.selected{background:var(--fg);color:var(--bg);}
+.btn{display:inline-flex;align-items:center;gap:8px;font-family:var(--font-mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase;padding:12px 24px;border:1px solid var(--border);background:none;color:var(--fg);cursor:pointer;transition:all .2s;}
+.btn:hover{background:var(--surface);border-color:rgba(240,237,232,.4);}
+.btn.primary{background:var(--fg);color:var(--bg);border-color:var(--fg);}
+.btn.primary:hover{background:rgba(240,237,232,.85);}
+.btn:disabled{opacity:.4;cursor:not-allowed;}
+.error-msg{font-size:10px;letter-spacing:.1em;color:#f04747;margin-top:8px;display:none;}
+.error-msg.visible{display:block;}
+
+/* ── CATEGORY PICKER ── */
+.cat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px;margin-top:8px;}
+.cat-btn{display:flex;align-items:center;gap:8px;font-family:var(--font-mono);font-size:10px;letter-spacing:.1em;padding:10px 12px;border:1px solid var(--border);background:none;color:rgba(240,237,232,.6);cursor:pointer;transition:all .15s;text-align:left;}
+.cat-btn:hover{border-color:rgba(240,237,232,.3);color:var(--fg);}
+.cat-btn.selected{border-color:var(--fg);color:var(--fg);background:var(--surface);}
+
+/* ── STATS ROW ── */
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);border:1px solid var(--border);}
+.stat-cell{background:var(--bg);padding:24px;text-align:center;}
+.stat-num{font-family:var(--font-display);font-size:40px;letter-spacing:.04em;}
+.stat-lbl{font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:rgba(240,237,232,.3);margin-top:4px;}
+
+/* ── COMMUNITY CHOICE (HERO CARD) ── */
+.choice-section{padding:48px 0;}
+.choice-card{position:relative;overflow:hidden;border:1px solid var(--border);background:var(--surface);}
+.choice-banner{height:200px;background:linear-gradient(135deg,rgba(240,237,232,.06) 0%,transparent 100%);position:relative;display:flex;align-items:flex-end;padding:24px;}
+.choice-banner img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.25;}
+.choice-badge{font-size:9px;letter-spacing:.25em;text-transform:uppercase;padding:4px 12px;border:1px solid rgba(240,237,232,.3);color:rgba(240,237,232,.7);position:relative;z-index:1;}
+.choice-body{padding:24px;}
+.choice-title{font-family:var(--font-display);font-size:36px;letter-spacing:.04em;margin-bottom:8px;}
+.choice-meta{font-size:10px;letter-spacing:.1em;color:rgba(240,237,232,.4);margin-bottom:16px;}
+
+/* ── HALL OF FAME ── */
+.hof-section{padding:48px 0;}
+.hof-list{display:flex;flex-direction:column;gap:1px;background:var(--border);border:1px solid var(--border);}
+.hof-item{display:flex;align-items:center;gap:20px;background:var(--bg);padding:16px 20px;cursor:pointer;transition:background .2s;}
+.hof-item:hover{background:var(--surface);}
+.hof-rank{font-family:var(--font-display);font-size:32px;letter-spacing:.04em;color:rgba(240,237,232,.2);width:48px;flex-shrink:0;text-align:center;}
+.hof-rank.gold{color:#F0C040;}
+.hof-rank.silver{color:#C0C0C8;}
+.hof-rank.bronze{color:#CD7F32;}
+.hof-cover{width:48px;height:48px;object-fit:cover;flex-shrink:0;background:#1a1a20;}
+.hof-info{flex:1;}
+.hof-title{font-size:13px;letter-spacing:.04em;margin-bottom:2px;}
+.hof-sub{font-size:10px;color:rgba(240,237,232,.35);}
+.hof-reactions{font-family:var(--font-display);font-size:22px;letter-spacing:.04em;color:rgba(240,237,232,.4);}
+
+/* ── FILTERS ── */
+.filters-bar{position:sticky;top:60px;z-index:50;background:rgba(7,7,10,.9);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:12px 0;margin-bottom:0;}
+.filters-inner{display:flex;align-items:center;gap:12px;overflow-x:auto;padding:0 48px;}
+.filters-inner::-webkit-scrollbar{display:none;}
+.filter-btn{font-family:var(--font-mono);font-size:9px;letter-spacing:.2em;text-transform:uppercase;padding:7px 14px;border:1px solid var(--border);background:none;color:rgba(240,237,232,.5);cursor:pointer;white-space:nowrap;transition:all .15s;flex-shrink:0;}
+.filter-btn:hover{border-color:rgba(240,237,232,.4);color:var(--fg);}
+.filter-btn.active{border-color:var(--fg);color:var(--fg);background:var(--surface);}
+.filter-sep{width:1px;height:20px;background:var(--border);flex-shrink:0;}
+.search-wrap{position:relative;flex:1;min-width:200px;max-width:320px;}
+.search-input{width:100%;background:none;border:1px solid var(--border);color:var(--fg);font-family:var(--font-mono);font-size:11px;letter-spacing:.04em;padding:7px 12px 7px 32px;outline:none;}
+.search-input:focus{border-color:rgba(240,237,232,.4);}
+.search-icon{position:absolute;left:10px;top:50%;transform:translateY(-50%);font-size:12px;color:rgba(240,237,232,.3);}
+
+/* ── CARDS GRID ── */
+.cards-section{padding:48px 0;}
+.cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:1px;background:var(--border);border:1px solid var(--border);}
+.card{background:var(--bg);transition:background .2s;cursor:pointer;position:relative;}
+.card:hover{background:rgba(240,237,232,.03);}
+.card-cover-wrap{position:relative;aspect-ratio:1;overflow:hidden;}
+.card-cover{width:100%;height:100%;object-fit:cover;display:block;}
+.card-cover-placeholder{width:100%;height:100%;background:#111116;display:flex;align-items:center;justify-content:center;}
+.card-platform-badge{position:absolute;top:10px;right:10px;font-size:8px;letter-spacing:.2em;text-transform:uppercase;padding:4px 8px;}
+.card-platform-badge.spotify{background:var(--spotify);color:#000;}
+.card-platform-badge.yandex{background:var(--yandex);color:#fff;}
+.card-body{padding:16px;}
+.card-category{font-size:8px;letter-spacing:.2em;text-transform:uppercase;color:rgba(240,237,232,.3);margin-bottom:6px;}
+.card-title{font-size:13px;letter-spacing:.04em;margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.card-author{font-size:10px;color:rgba(240,237,232,.4);margin-bottom:12px;}
+.card-footer{display:flex;align-items:center;justify-content:space-between;}
+.card-reactions{display:flex;gap:6px;}
+.reaction-btn{display:inline-flex;align-items:center;gap:4px;font-size:10px;letter-spacing:.05em;color:rgba(240,237,232,.4);padding:3px 6px;border:1px solid transparent;background:none;cursor:pointer;transition:all .15s;}
+.reaction-btn:hover,.reaction-btn.active{border-color:rgba(240,237,232,.2);color:var(--fg);}
+.card-views{font-size:9px;letter-spacing:.1em;color:rgba(240,237,232,.2);}
+
+/* ── MODAL ── */
+.overlay{position:fixed;inset:0;background:rgba(7,7,10,.92);z-index:200;display:none;align-items:center;justify-content:center;padding:24px;}
+.overlay.open{display:flex;}
+.modal{background:#0d0d10;border:1px solid var(--border);width:100%;max-width:720px;max-height:90vh;overflow-y:auto;position:relative;}
+.modal::-webkit-scrollbar{width:3px;}
+.modal::-webkit-scrollbar-thumb{background:var(--border);}
+.modal-close{position:absolute;top:16px;right:16px;background:none;border:none;color:rgba(240,237,232,.4);font-size:18px;cursor:pointer;padding:4px;z-index:1;}
+.modal-close:hover{color:var(--fg);}
+.modal-cover{width:100%;aspect-ratio:2/1;object-fit:cover;display:block;}
+.modal-body{padding:24px;}
+.modal-platform{font-size:9px;letter-spacing:.2em;text-transform:uppercase;margin-bottom:8px;}
+.modal-title{font-family:var(--font-display);font-size:32px;letter-spacing:.04em;margin-bottom:4px;}
+.modal-author{font-size:11px;color:rgba(240,237,232,.4);margin-bottom:16px;}
+.modal-actions{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:24px;}
+.embed-wrap{margin-bottom:24px;}
+.embed-wrap iframe{width:100%;border:none;border-radius:2px;}
+.modal-reactions{display:flex;gap:8px;margin-bottom:24px;flex-wrap:wrap;}
+.modal-reaction{display:inline-flex;align-items:center;gap:6px;font-size:11px;padding:8px 14px;border:1px solid var(--border);background:none;cursor:pointer;color:rgba(240,237,232,.6);transition:all .15s;font-family:var(--font-mono);}
+.modal-reaction:hover,.modal-reaction.active{border-color:rgba(240,237,232,.4);color:var(--fg);}
+.comments-section{border-top:1px solid var(--border);padding-top:20px;}
+.comments-title{font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:rgba(240,237,232,.3);margin-bottom:16px;}
+.comment-form{display:flex;gap:8px;margin-bottom:20px;}
+.comment-nick{width:120px;flex-shrink:0;}
+.comment-body{flex:1;}
+.comment-send{flex-shrink:0;}
+.comment-list{display:flex;flex-direction:column;gap:12px;}
+.comment-item{display:flex;gap:12px;}
+.comment-avatar{width:28px;height:28px;background:var(--surface);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:10px;flex-shrink:0;}
+.comment-content{}
+.comment-nick-label{font-size:10px;color:var(--fg);margin-bottom:2px;}
+.comment-text{font-size:11px;color:rgba(240,237,232,.6);line-height:1.6;}
+.comment-date{font-size:9px;color:rgba(240,237,232,.2);margin-top:3px;}
+
+/* ── PRESENCE ── */
+.presence-bar{position:fixed;bottom:24px;right:24px;z-index:150;display:flex;gap:8px;}
+.presence-pill{font-size:9px;letter-spacing:.15em;text-transform:uppercase;padding:6px 12px;background:rgba(7,7,10,.9);border:1px solid var(--border);backdrop-filter:blur(10px);display:flex;align-items:center;gap:6px;}
+.presence-dot{width:5px;height:5px;border-radius:50%;background:rgba(100,220,130,.7);animation:blink 2s ease-in-out infinite;}
+@keyframes blink{0%,100%{opacity:1;}50%{opacity:.3;}}
+
+/* ── RANDOM PILL ── */
+.random-btn{position:fixed;bottom:24px;left:24px;z-index:150;display:flex;align-items:center;gap:8px;font-family:var(--font-mono);font-size:9px;letter-spacing:.2em;text-transform:uppercase;padding:8px 16px;background:rgba(7,7,10,.9);border:1px solid var(--border);backdrop-filter:blur(10px);color:rgba(240,237,232,.5);cursor:pointer;transition:all .2s;}
+.random-btn:hover{color:var(--fg);border-color:rgba(240,237,232,.4);}
+
+/* ── LOAD MORE ── */
+.load-more-wrap{display:flex;justify-content:center;padding:48px 0;}
+
+/* ── TOAST ── */
+.toast{position:fixed;top:80px;left:50%;transform:translateX(-50%);z-index:300;font-size:10px;letter-spacing:.15em;text-transform:uppercase;padding:10px 20px;background:#0d0d10;border:1px solid var(--border);opacity:0;transition:opacity .3s;pointer-events:none;}
+.toast.show{opacity:1;}
+.toast.err{border-color:#f04747;color:#f04747;}
+.toast.ok{border-color:rgba(100,220,130,.5);color:rgba(100,220,130,.8);}
+
+/* ── REALTIME BADGE ── */
+.live-badge{display:inline-flex;align-items:center;gap:5px;font-size:8px;letter-spacing:.2em;text-transform:uppercase;color:rgba(100,220,130,.6);padding:0 8px;}
+
+/* ── EMPTY STATE ── */
+.empty{text-align:center;padding:64px 0;color:rgba(240,237,232,.2);}
+.empty-icon{font-size:32px;margin-bottom:12px;}
+.empty-text{font-size:10px;letter-spacing:.2em;text-transform:uppercase;}
+
+/* ── SKELETON ── */
+.skeleton{background:linear-gradient(90deg,rgba(240,237,232,.04) 0%,rgba(240,237,232,.08) 50%,rgba(240,237,232,.04) 100%);background-size:200% 100%;animation:shimmer 1.4s infinite;}
+@keyframes shimmer{0%{background-position:200% 0;}100%{background-position:-200% 0;}}
+
+/* ── REPORT MODAL ── */
+.report-list{display:flex;flex-direction:column;gap:8px;margin:16px 0;}
+.report-opt{display:flex;align-items:center;gap:10px;cursor:pointer;padding:10px;border:1px solid var(--border);transition:background .15s;}
+.report-opt:hover{background:var(--surface);}
+.report-opt input{accent-color:var(--fg);}
+
+/* ── MOBILE ── */
+@media(max-width:768px){
+  .nav,.hero,.container,.divider,.filters-inner{padding-left:20px;padding-right:20px;}
+  .hero{padding-top:90px;}
+  .stats-row{grid-template-columns:1fr 1fr;}
+  .cards-grid{grid-template-columns:1fr;}
+  .comment-form{flex-wrap:wrap;}
+  .comment-nick{width:100%;}
+  .modal-actions{gap:8px;}
+  .presence-bar{bottom:70px;}
+  .random-btn{bottom:70px;}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav" id="nav">
+  <a href="/ankuzo/" class="nav-back">← ANKUZO</a>
+  <a href="#" class="nav-logo">ПЛЕЙЛИСТЫ</a>
+  <span class="nav-count" id="navCount">— плейлистов</span>
+</nav>
+
+<!-- HERO -->
+<header class="hero">
+  <div class="hero-label">Community Playlists · ANKUZO</div>
+  <h1 class="hero-title">MUSIC<br>VAULT</h1>
+  <p class="hero-sub">Плейлисты сообщества. Добавляй свой. Слушай чужие. Оставляй реакции.</p>
+</header>
+
+<!-- STATS -->
+<div class="stats-row" id="statsRow">
+  <div class="stat-cell"><div class="stat-num skeleton" id="stTotal" style="height:40px;width:60px;margin:auto;"></div><div class="stat-lbl">плейлистов</div></div>
+  <div class="stat-cell"><div class="stat-num skeleton" id="stReactions" style="height:40px;width:60px;margin:auto;"></div><div class="stat-lbl">реакций</div></div>
+  <div class="stat-cell"><div class="stat-num skeleton" id="stViews" style="height:40px;width:60px;margin:auto;"></div><div class="stat-lbl">просмотров</div></div>
+  <div class="stat-cell"><div class="stat-num skeleton" id="stComments" style="height:40px;width:60px;margin:auto;"></div><div class="stat-lbl">комментариев</div></div>
+</div>
+
+<div class="divider"></div>
+
+<!-- COMMUNITY CHOICE -->
+<section class="choice-section">
+  <div class="container">
+    <div class="section-label">⭐ Выбор сообщества<span class="live-badge"><span class="presence-dot"></span>live</span></div>
+    <div id="choiceCard"></div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- HALL OF FAME -->
+<section class="hof-section">
+  <div class="container">
+    <div class="section-label">🏆 Hall of Fame</div>
+    <div class="hof-list" id="hofList"></div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ADD PLAYLIST -->
+<section class="add-section">
+  <div class="container">
+    <div class="section-label">+ Добавить плейлист</div>
+    <div class="form-wrap">
+      <h2 class="form-title">Поделись музыкой</h2>
+
+      <div class="form-group">
+        <label class="form-label">Ссылка на плейлист</label>
+        <input class="form-input" id="fUrl" type="url" placeholder="Spotify или Яндекс Музыка URL...">
+        <div class="error-msg" id="urlErr"></div>
+        <!-- preview -->
+        <div class="preview-box" id="previewBox">
+          <img class="preview-cover" id="prevCover" src="" alt="">
+          <div class="preview-info">
+            <div class="preview-platform" id="prevPlatform"></div>
+            <div class="preview-title" id="prevTitle"></div>
+            <div class="preview-author" id="prevAuthor"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Твой никнейм</label>
+        <input class="form-input" id="fNick" type="text" maxlength="32" placeholder="ankuzo">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Категория</label>
+        <div class="cat-grid" id="catGrid"></div>
+        <div class="error-msg" id="catErr">Выбери категорию</div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Теги (до 5)</label>
+        <div class="tags-wrap" id="tagsWrap"></div>
+      </div>
+
+      <div style="display:flex;gap:12px;align-items:center;margin-top:8px;">
+        <button class="btn primary" id="submitBtn" onclick="submitPlaylist()">Добавить →</button>
+        <span style="font-size:9px;letter-spacing:.1em;color:rgba(240,237,232,.2);" id="submitStatus"></span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- FILTERS + MAIN LIST -->
+<div class="filters-bar">
+  <div class="filters-inner">
+    <button class="filter-btn active" data-sort="new" onclick="setSort('new',this)">🆕 Новые</button>
+    <button class="filter-btn" data-sort="popular" onclick="setSort('popular',this)">🔥 Популярные</button>
+    <button class="filter-btn" data-sort="trend" onclick="setSort('trend',this)">📈 В тренде</button>
+    <button class="filter-btn" data-sort="discussed" onclick="setSort('discussed',this)">💬 Обсуждаемые</button>
+    <button class="filter-btn" data-sort="views" onclick="setSort('views',this)">👁 Просматриваемые</button>
+    <div class="filter-sep"></div>
+    <button class="filter-btn" data-plat="all" onclick="setPlatform('all',this)">Все</button>
+    <button class="filter-btn" data-plat="spotify" onclick="setPlatform('spotify',this)">● Spotify</button>
+    <button class="filter-btn" data-plat="yandex" onclick="setPlatform('yandex',this)">● Яндекс</button>
+    <div class="filter-sep"></div>
+    <div class="search-wrap">
+      <span class="search-icon">⌕</span>
+      <input class="search-input form-input" id="searchInput" type="text" placeholder="Поиск...">
+    </div>
+  </div>
+</div>
+
+<section class="cards-section">
+  <div class="container">
+    <div class="section-label" id="cardsLabel">📚 Все плейлисты</div>
+    <div class="cards-grid" id="cardsGrid"></div>
+    <div class="empty" id="emptyState" style="display:none;">
+      <div class="empty-icon">🎵</div>
+      <div class="empty-text">Плейлисты не найдены</div>
+    </div>
+    <div class="load-more-wrap" id="loadMoreWrap" style="display:none;">
+      <button class="btn" onclick="loadMore()">Загрузить ещё →</button>
+    </div>
+  </div>
+</section>
+
+<!-- MODAL -->
+<div class="overlay" id="overlay" onclick="closeModal(event)">
+  <div class="modal" id="modal">
+    <button class="modal-close" onclick="closeModalBtn()">✕</button>
+    <img class="modal-cover" id="mCover" src="" alt="" style="display:none;">
+    <div class="modal-body">
+      <div class="modal-platform" id="mPlatform"></div>
+      <h2 class="modal-title" id="mTitle"></h2>
+      <div class="modal-author" id="mAuthor"></div>
+      <div class="modal-actions" id="mActions"></div>
+      <div class="embed-wrap" id="mEmbed"></div>
+      <div class="modal-reactions" id="mReactions"></div>
+      <div style="display:flex;justify-content:flex-end;margin-bottom:16px;">
+        <button class="btn" style="font-size:9px;" id="mReportBtn">🚩 Пожаловаться</button>
+      </div>
+      <div class="comments-section">
+        <div class="comments-title">Комментарии <span id="mCommentCount" style="color:rgba(240,237,232,.3);"></span></div>
+        <div class="comment-form">
+          <input class="form-input comment-nick" id="cNick" type="text" maxlength="32" placeholder="Ник">
+          <input class="form-input comment-body" id="cBody" type="text" maxlength="500" placeholder="Напиши комментарий...">
+          <button class="btn comment-send" onclick="sendComment()">→</button>
+        </div>
+        <div class="comment-list" id="commentList"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- REPORT MODAL -->
+<div class="overlay" id="reportOverlay" onclick="closeReportModal(event)">
+  <div class="modal" style="max-width:400px;">
+    <button class="modal-close" onclick="closeReportModal()">✕</button>
+    <div class="modal-body">
+      <h3 style="font-family:var(--font-display);font-size:22px;letter-spacing:.06em;margin-bottom:16px;">Пожаловаться</h3>
+      <div class="report-list">
+        <label class="report-opt"><input type="radio" name="report" value="spam"> Спам</label>
+        <label class="report-opt"><input type="radio" name="report" value="ad"> Реклама</label>
+        <label class="report-opt"><input type="radio" name="report" value="abuse"> Оскорбление</label>
+        <label class="report-opt"><input type="radio" name="report" value="other"> Другое</label>
+      </div>
+      <input class="form-input" id="reportNote" type="text" placeholder="Примечание (необязательно)" style="margin-bottom:16px;">
+      <button class="btn primary" onclick="submitReport()">Отправить →</button>
+    </div>
+  </div>
+</div>
+
+<!-- PRESENCE -->
+<div class="presence-bar">
+  <div class="presence-pill"><span class="presence-dot"></span><span id="onlineCount">1</span> онлайн</div>
+</div>
+
+<!-- RANDOM -->
+<button class="random-btn" onclick="openRandom()">🎲 Случайный</button>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ══════════════════════════════════════════════════════════════
+// CONFIG
+// ══════════════════════════════════════════════════════════════
+const SB_URL = 'https://ppurfykznriopzxrafox.supabase.co';
+const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBwdXJmeWt6bnJpb3B6eHJhZm94Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAzMDgyNTMsImV4cCI6MjA5NTg4NDI1M30.uqPWzd_xLaJm12ViYZCVlYnxIdv80ZZoibmZH1DPdkg';
+
+const CATEGORIES = [
+  {icon:'🎮',name:'Для игр',slug:'games'},
+  {icon:'🚗',name:'В дорогу',slug:'road'},
+  {icon:'🌙',name:'Для чилла',slug:'chill'},
+  {icon:'📚',name:'Для учёбы',slug:'study'},
+  {icon:'💻',name:'Для работы',slug:'work'},
+  {icon:'💪',name:'Для тренировок',slug:'workout'},
+  {icon:'🎌',name:'Аниме вайб',slug:'anime'},
+  {icon:'🌧',name:'Под дождь',slug:'rain'},
+  {icon:'🌃',name:'Night Drive',slug:'nightdrive'},
+  {icon:'😴',name:'Для сна',slug:'sleep'},
+  {icon:'🔥',name:'Жёсткий вайб',slug:'hard'},
+  {icon:'🎉',name:'Для тусовки',slug:'party'},
+];
+
+const REACTIONS = [
+  {type:'heart',emoji:'❤️'},{type:'fire',emoji:'🔥'},
+  {type:'thumbsup',emoji:'👍'},{type:'music',emoji:'🎵'},{type:'skull',emoji:'💀'},
+];
+
+// ── visitor id ──
+let _vid = localStorage.getItem('_ankuzo_vid');
+if(!_vid){ _vid = 'v_'+Math.random().toString(36).slice(2)+Date.now().toString(36); localStorage.setItem('_ankuzo_vid',_vid); }
+
+// ── state ──
+let _sort = 'new';
+let _platform = 'all';
+let _search = '';
+let _page = 0;
+const _limit = 12;
+let _openPlaylist = null;
+let _reportTarget = null;
+let _myReactions = {}; // {playlistId: Set<reaction_type>}
+let _allTags = [];
+let _selectedTags = new Set();
+let _selectedCat = null;
+let _previewData = null;
+let _commentPage = 0;
+let _rtChannel = null;
+
+// ══════════════════════════════════════════════════════════════
+// SUPABASE CLIENT (minimal)
+// ══════════════════════════════════════════════════════════════
+const sb = {
+  async _req(method, path, body, params){
+    const url = new URL(SB_URL + '/rest/v1/' + path);
+    if(params) Object.entries(params).forEach(([k,v])=>url.searchParams.set(k,v));
+    const res = await fetch(url, {
+      method,
+      headers:{
+        'apikey':SB_KEY,
+        'Authorization':'Bearer '+SB_KEY,
+        'Content-Type':'application/json',
+        'Prefer': method==='POST' ? 'return=representation' : '',
+      },
+      body: body ? JSON.stringify(body) : undefined,
+    });
+    const text = await res.text();
+    const data = text ? JSON.parse(text) : null;
+    if(!res.ok) throw new Error(data?.message || res.status);
+    return data;
+  },
+  select: (table,query,params)=>sb._req('GET',table+'?'+query,'',params),
+  insert: (table,body)=>sb._req('POST',table,body),
+  delete: (table,query)=>sb._req('DELETE',table+'?'+query),
+  rpc: async (fn,body)=>{
+    const res = await fetch(SB_URL+'/rest/v1/rpc/'+fn,{
+      method:'POST',headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Content-Type':'application/json'},
+      body:JSON.stringify(body),
+    });
+    const text=await res.text();
+    const data=text?JSON.parse(text):null;
+    if(!res.ok) throw new Error(data?.message||res.status);
+    return data;
+  },
+};
+
+// ══════════════════════════════════════════════════════════════
+// SUPABASE REALTIME (websocket)
+// ══════════════════════════════════════════════════════════════
+function initRealtime(){
+  const ws = new WebSocket(
+    `wss://ppurfykznriopzxrafox.supabase.co/realtime/v1/websocket?apikey=${SB_KEY}&vsn=1.0.0`
+  );
+  ws.onopen=()=>{
+    ws.send(JSON.stringify({topic:'realtime:public:reactions',event:'phx_join',payload:{},ref:'1'}));
+    ws.send(JSON.stringify({topic:'realtime:public:comments',event:'phx_join',payload:{},ref:'2'}));
+    // presence
+    ws.send(JSON.stringify({topic:'realtime:public',event:'phx_join',payload:{config:{presence:{key:_vid}}},ref:'3'}));
+  };
+  ws.onmessage=e=>{
+    const msg = JSON.parse(e.data);
+    if(msg.event==='postgres_changes'){
+      const {table,eventType,new:rec}=msg.payload||{};
+      if(table==='reactions'){
+        // обновляем счётчик реакций на открытом плейлисте
+        if(_openPlaylist && rec?.playlist_id===_openPlaylist.id){
+          loadModalReactions(_openPlaylist.id);
+        }
+      }
+      if(table==='comments' && _openPlaylist && rec?.playlist_id===_openPlaylist.id){
+        loadComments(_openPlaylist.id, true);
+      }
+    }
+    if(msg.event==='presence_state'||msg.event==='presence_diff'){
+      const state=msg.payload?.joins||msg.payload||{};
+      const count=Object.keys(state).length;
+      if(count>0) document.getElementById('onlineCount').textContent=count;
+    }
+    if(msg.event==='phx_reply') return;
+    if(msg.event===null) ws.send(JSON.stringify({topic:msg.topic,event:'heartbeat',payload:{},ref:'hb'}));
+  };
+  _rtChannel=ws;
+}
+
+// ══════════════════════════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════════════════════════
+document.addEventListener('DOMContentLoaded',async()=>{
+  // nav scroll
+  window.addEventListener('scroll',()=>document.getElementById('nav').classList.toggle('scrolled',scrollY>10));
+
+  // build UI
+  buildCategories();
+  await loadTags();
+  buildTagChips();
+
+  // load data
+  await Promise.all([loadStats(), loadCommunityChoice(), loadHallOfFame(), loadPlaylists(true)]);
+
+  // load my reactions from localStorage
+  const saved = localStorage.getItem('_ankuzo_reactions');
+  if(saved) try{ Object.assign(_myReactions, JSON.parse(saved)); }catch(e){}
+
+  // search debounce
+  let searchTimer;
+  document.getElementById('searchInput').addEventListener('input',e=>{
+    clearTimeout(searchTimer);
+    searchTimer=setTimeout(()=>{ _search=e.target.value.trim(); _page=0; loadPlaylists(true); },350);
+  });
+
+  // url preview
+  let urlTimer;
+  document.getElementById('fUrl').addEventListener('input',e=>{
+    clearTimeout(urlTimer);
+    urlTimer=setTimeout(()=>previewUrl(e.target.value.trim()),600);
+  });
+
+  // realtime
+  initRealtime();
+});
+
+// ══════════════════════════════════════════════════════════════
+// STATS
+// ══════════════════════════════════════════════════════════════
+async function loadStats(){
+  try{
+    const [pl,re,cm] = await Promise.all([
+      fetch(`${SB_URL}/rest/v1/playlists?select=count&status=eq.active`,{headers:{apikey:SB_KEY,Authorization:'Bearer '+SB_KEY,Prefer:'count=exact',Range:'0-0'}}).then(r=>({count:r.headers.get('content-range')?.split('/')[1]||'0'})),
+      fetch(`${SB_URL}/rest/v1/reactions?select=count`,{headers:{apikey:SB_KEY,Authorization:'Bearer '+SB_KEY,Prefer:'count=exact',Range:'0-0'}}).then(r=>({count:r.headers.get('content-range')?.split('/')[1]||'0'})),
+      fetch(`${SB_URL}/rest/v1/comments?select=count&status=eq.active`,{headers:{apikey:SB_KEY,Authorization:'Bearer '+SB_KEY,Prefer:'count=exact',Range:'0-0'}}).then(r=>({count:r.headers.get('content-range')?.split('/')[1]||'0'})),
+    ]);
+    animNum('stTotal',parseInt(pl.count)||0);
+    animNum('stReactions',parseInt(re.count)||0);
+    animNum('stViews',0);
+    animNum('stComments',parseInt(cm.count)||0);
+    document.getElementById('navCount').textContent=(parseInt(pl.count)||0)+' плейлистов';
+  }catch(e){ console.warn('stats err',e); }
+}
+
+function animNum(id,target){
+  const el=document.getElementById(id);
+  el.classList.remove('skeleton');
+  el.style='';
+  let n=0; const step=Math.ceil(target/40);
+  const iv=setInterval(()=>{ n=Math.min(n+step,target); el.textContent=n.toLocaleString('ru'); if(n>=target)clearInterval(iv); },30);
+}
+
+// ══════════════════════════════════════════════════════════════
+// COMMUNITY CHOICE
+// ══════════════════════════════════════════════════════════════
+async function loadCommunityChoice(){
+  try{
+    // плейлист с наибольшим числом реакций за 24ч
+    const since = new Date(Date.now()-86400000).toISOString();
+    const rows = await sb._req('GET',`reactions?created_at=gte.${since}&select=playlist_id`);
+    if(!rows||!rows.length){ document.getElementById('choiceCard').innerHTML=`<div class="empty"><div class="empty-icon">🌙</div><div class="empty-text">Пока нет активности за последние 24ч</div></div>`; return; }
+    const counts={};
+    rows.forEach(r=>{ counts[r.playlist_id]=(counts[r.playlist_id]||0)+1; });
+    const topId=Object.entries(counts).sort((a,b)=>b[1]-a[1])[0]?.[0];
+    if(!topId) return;
+    const pl = await sb._req('GET',`playlists?id=eq.${topId}&status=eq.active&select=*&limit=1`);
+    if(!pl||!pl.length) return;
+    renderChoiceCard(pl[0], counts[topId]);
+  }catch(e){ console.warn('choice err',e); }
+}
+
+function renderChoiceCard(p, reactionCount){
+  const el=document.getElementById('choiceCard');
+  el.innerHTML=`
+    <div class="choice-card" onclick="openModal('${p.id}')">
+      <div class="choice-banner" style="background:linear-gradient(135deg,rgba(240,237,232,.08) 0%,transparent 100%)">
+        ${p.cover_url?`<img src="${esc(p.cover_url)}" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.2;">`:''}
+        <span class="choice-badge">+${reactionCount} реакций за 24ч</span>
+      </div>
+      <div class="choice-body">
+        <div class="card-platform-badge ${p.platform}" style="display:inline-block;margin-bottom:8px;position:static;">${p.platform==='spotify'?'● SPOTIFY':'● ЯНДЕКС'}</div>
+        <div class="choice-title">${esc(p.title)}</div>
+        <div class="choice-meta">${esc(p.author)} · ${p.track_count||0} треков · ${esc(p.category)}</div>
+        <div style="display:flex;gap:8px;">
+          ${REACTIONS.map(r=>`<span style="font-size:16px;">${r.emoji}</span>`).join('')}
+        </div>
+      </div>
+    </div>`;
+}
+
+// ══════════════════════════════════════════════════════════════
+// HALL OF FAME
+// ══════════════════════════════════════════════════════════════
+async function loadHallOfFame(){
+  try{
+    const rows = await sb._req('GET','playlists?status=eq.active&hall_of_fame_rank=not.is.null&select=id,title,author,cover_url,reaction_count,platform,category&order=hall_of_fame_rank.asc&limit=5');
+    const list=document.getElementById('hofList');
+    if(!rows||!rows.length){ list.innerHTML=`<div class="empty" style="border:none;"><div class="empty-text">Скоро появятся лидеры</div></div>`; return; }
+    const medals=['🥇','🥈','🥉','4️⃣','5️⃣'];
+    const rankClass=['gold','silver','bronze','',''];
+    list.innerHTML=rows.map((p,i)=>`
+      <div class="hof-item" onclick="openModal('${p.id}')">
+        <div class="hof-rank ${rankClass[i]}">${medals[i]}</div>
+        ${p.cover_url?`<img class="hof-cover" src="${esc(p.cover_url)}" alt="">`:`<div class="hof-cover"></div>`}
+        <div class="hof-info">
+          <div class="hof-title">${esc(p.title)}</div>
+          <div class="hof-sub">${esc(p.author)} · ${p.platform==='spotify'?'Spotify':'Яндекс'} · ${esc(p.category)}</div>
+        </div>
+        <div class="hof-reactions">${p.reaction_count||0} ❤️</div>
+      </div>`).join('');
+  }catch(e){ console.warn('hof err',e); }
+}
+
+// ══════════════════════════════════════════════════════════════
+// PLAYLISTS LIST
+// ══════════════════════════════════════════════════════════════
+async function loadPlaylists(reset=false){
+  if(reset){ _page=0; document.getElementById('cardsGrid').innerHTML=''; }
+  const grid=document.getElementById('cardsGrid');
+
+  // show skeletons
+  if(reset) grid.innerHTML=Array(6).fill(0).map(()=>`<div class="card"><div class="skeleton" style="aspect-ratio:1;"></div><div class="card-body"><div class="skeleton" style="height:10px;width:60%;margin-bottom:8px;"></div><div class="skeleton" style="height:14px;width:80%;margin-bottom:4px;"></div><div class="skeleton" style="height:10px;width:40%;"></div></div></div>`).join('');
+
+  try{
+    let q = `status=eq.active&limit=${_limit}&offset=${_page*_limit}`;
+
+    if(_platform!=='all') q+=`&platform=eq.${_platform}`;
+
+    // search
+    if(_search) q+=`&or=(title.ilike.*${encodeURIComponent(_search)}*,author.ilike.*${encodeURIComponent(_search)}*,category.ilike.*${encodeURIComponent(_search)}*)`;
+
+    // sort
+    const sortMap={new:'created_at.desc',popular:'reaction_count.desc',trend:'trend_score.desc',discussed:'comment_count.desc',views:'view_count.desc'};
+    q+=`&order=${sortMap[_sort]||'created_at.desc'}`;
+    q+=`&select=id,title,author,cover_url,platform,category,track_count,reaction_count,view_count,created_at,nickname`;
+
+    const rows = await sb._req('GET','playlists?'+q);
+
+    if(reset) grid.innerHTML='';
+
+    if(!rows||!rows.length){
+      if(_page===0) document.getElementById('emptyState').style.display='block';
+      document.getElementById('loadMoreWrap').style.display='none';
+      return;
+    }
+    document.getElementById('emptyState').style.display='none';
+
+    // load my reactions for these playlist ids
+    await loadMyReactions(rows.map(r=>r.id));
+
+    rows.forEach(p=>grid.insertAdjacentHTML('beforeend', cardHTML(p)));
+
+    // show/hide load more
+    document.getElementById('loadMoreWrap').style.display = rows.length<_limit?'none':'flex';
+
+    // track views
+    rows.forEach(p=>trackEvent(p.id,'view'));
+
+  }catch(e){
+    console.warn('load err',e);
+    if(reset) grid.innerHTML=`<div class="empty" style="border:none;grid-column:1/-1;"><div class="empty-text">Ошибка загрузки</div></div>`;
+  }
+}
+
+async function loadMyReactions(ids){
+  if(!ids.length) return;
+  try{
+    const rows = await sb._req('GET',`reactions?visitor_id=eq.${_vid}&playlist_id=in.(${ids.join(',')})&select=playlist_id,reaction`);
+    rows.forEach(r=>{
+      if(!_myReactions[r.playlist_id]) _myReactions[r.playlist_id]=new Set();
+      _myReactions[r.playlist_id].add(r.reaction);
+    });
+  }catch(e){}
+}
+
+function loadMore(){
+  _page++;
+  loadPlaylists(false);
+}
+
+function cardHTML(p){
+  const myR=_myReactions[p.id]||new Set();
+  const topReaction=REACTIONS[0];
+  return `
+    <div class="card" id="card_${p.id}" onclick="openModal('${p.id}')">
+      <div class="card-cover-wrap">
+        ${p.cover_url
+          ?`<img class="card-cover" src="${esc(p.cover_url)}" alt="" loading="lazy">`
+          :`<div class="card-cover-placeholder"><span style="font-size:32px;opacity:.15;">🎵</span></div>`}
+        <span class="card-platform-badge ${p.platform}">${p.platform==='spotify'?'● SPOTIFY':'● ЯНДЕКС'}</span>
+      </div>
+      <div class="card-body">
+        <div class="card-category">${esc(p.category)}</div>
+        <div class="card-title">${esc(p.title)}</div>
+        <div class="card-author">${esc(p.author)} · ${esc(p.nickname)}</div>
+        <div class="card-footer">
+          <div class="card-reactions">
+            ${REACTIONS.map(r=>`
+              <button class="reaction-btn ${myR.has(r.type)?'active':''}"
+                onclick="toggleReaction(event,'${p.id}','${r.type}')"
+                title="${r.type}" data-rid="${p.id}_${r.type}">
+                ${r.emoji}
+              </button>`).join('')}
+          </div>
+          <div class="card-views">👁 ${p.view_count||0}</div>
+        </div>
+      </div>
+    </div>`;
+}
+
+// ══════════════════════════════════════════════════════════════
+// REACTIONS
+// ══════════════════════════════════════════════════════════════
+async function toggleReaction(e, playlistId, type){
+  e.stopPropagation();
+  if(!_myReactions[playlistId]) _myReactions[playlistId]=new Set();
+  const has=_myReactions[playlistId].has(type);
+  const btn=document.querySelector(`[data-rid="${playlistId}_${type}"]`);
+
+  try{
+    if(has){
+      await sb.delete('reactions',`visitor_id=eq.${_vid}&playlist_id=eq.${playlistId}&reaction=eq.${type}`);
+      _myReactions[playlistId].delete(type);
+      if(btn) btn.classList.remove('active');
+    } else {
+      // check rate limit
+      const ok = await sb.rpc('check_rate_limit',{p_visitor_id:_vid,p_action:'add_reaction',p_hourly_limit:50,p_daily_limit:200});
+      if(!ok){ toast('Слишком много реакций',true); return; }
+      await sb.insert('reactions',{playlist_id:playlistId,visitor_id:_vid,reaction:type});
+      _myReactions[playlistId].add(type);
+      if(btn) btn.classList.add('active');
+    }
+    localStorage.setItem('_ankuzo_reactions', JSON.stringify(
+      Object.fromEntries(Object.entries(_myReactions).map(([k,v])=>[k,[...v]]))
+    ));
+    // update modal if open
+    if(_openPlaylist?.id===playlistId) loadModalReactions(playlistId);
+  }catch(e){
+    console.warn('reaction err',e);
+  }
+}
+
+async function loadModalReactions(playlistId){
+  try{
+    const rows = await sb._req('GET',`reactions?playlist_id=eq.${playlistId}&select=reaction`);
+    const counts={};
+    rows.forEach(r=>{ counts[r.reaction]=(counts[r.reaction]||0)+1; });
+    const myR=_myReactions[playlistId]||new Set();
+    document.getElementById('mReactions').innerHTML=REACTIONS.map(r=>`
+      <button class="modal-reaction ${myR.has(r.type)?'active':''}"
+        onclick="toggleReaction(event,'${playlistId}','${r.type}')">
+        ${r.emoji} <span>${counts[r.type]||0}</span>
+      </button>`).join('');
+  }catch(e){}
+}
+
+// ══════════════════════════════════════════════════════════════
+// MODAL
+// ══════════════════════════════════════════════════════════════
+async function openModal(id){
+  const overlay=document.getElementById('overlay');
+  overlay.classList.add('open');
+  document.body.style.overflow='hidden';
+
+  // load playlist
+  try{
+    const rows = await sb._req('GET',`playlists?id=eq.${id}&status=eq.active&select=*`);
+    if(!rows||!rows.length){ closeModalBtn(); return; }
+    _openPlaylist=rows[0];
+    const p=rows[0];
+
+    // cover
+    const mCover=document.getElementById('mCover');
+    if(p.cover_url){ mCover.src=p.cover_url; mCover.style.display='block'; }
+    else mCover.style.display='none';
+
+    // platform
+    const mPlat=document.getElementById('mPlatform');
+    mPlat.textContent=p.platform==='spotify'?'● SPOTIFY':'● ЯНДЕКС';
+    mPlat.style.color=p.platform==='spotify'?'var(--spotify)':'var(--yandex)';
+
+    document.getElementById('mTitle').textContent=p.title;
+    document.getElementById('mAuthor').textContent=`${p.author} · ${p.track_count||0} треков · от ${p.nickname}`;
+
+    // actions
+    const acts=document.getElementById('mActions');
+    if(p.platform==='spotify' && p.playlist_id){
+      acts.innerHTML=`<button class="btn primary" onclick="openSpotify('${p.playlist_id}')">🎧 Открыть в Spotify</button>`;
+    } else if(p.platform==='yandex' && p.playlist_url){
+      acts.innerHTML=`<button class="btn primary" onclick="openYandex('${esc(p.playlist_url)}')">🎵 Открыть в Яндекс Музыке</button>`;
+    }
+
+    // embed
+    const mEmbed=document.getElementById('mEmbed');
+    if(p.platform==='spotify' && p.embed_url){
+      mEmbed.innerHTML=`<iframe src="${esc(p.embed_url)}" height="152" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>`;
+      mEmbed.style.display='block';
+    } else {
+      mEmbed.innerHTML=''; mEmbed.style.display='none';
+    }
+
+    // report btn
+    document.getElementById('mReportBtn').onclick=()=>openReport(p.id);
+
+    // reactions + comments
+    await Promise.all([
+      loadModalReactions(p.id),
+      loadComments(p.id, true),
+      loadMyReactions([p.id]),
+    ]);
+
+    // track open
+    trackEvent(p.id,'view');
+
+  }catch(e){ console.warn('modal err',e); }
+}
+
+function openSpotify(pid){ window.open(`https://open.spotify.com/playlist/${pid}`,'_blank'); if(_openPlaylist) trackEvent(_openPlaylist.id,'open_spotify'); }
+function openYandex(url){ window.open(url,'_blank'); if(_openPlaylist) trackEvent(_openPlaylist.id,'open_yandex'); }
+
+function closeModal(e){ if(e.target===document.getElementById('overlay')) closeModalBtn(); }
+function closeModalBtn(){
+  document.getElementById('overlay').classList.remove('open');
+  document.body.style.overflow='';
+  _openPlaylist=null;
+  document.getElementById('mEmbed').innerHTML='';
+}
+
+// ══════════════════════════════════════════════════════════════
+// COMMENTS
+// ══════════════════════════════════════════════════════════════
+let _commentLast = null;
+
+async function loadComments(playlistId, reset=false){
+  if(reset){ _commentPage=0; _commentLast=null; }
+  try{
+    let q=`playlist_id=eq.${playlistId}&status=eq.active&order=created_at.desc&limit=20&select=id,nickname,body,created_at`;
+    if(_commentLast) q+=`&created_at=lt.${_commentLast}`;
+
+    const rows=await sb._req('GET','comments?'+q);
+    const list=document.getElementById('commentList');
+    if(reset) list.innerHTML='';
+
+    document.getElementById('mCommentCount').textContent=`(${rows.length})`;
+
+    if(!rows||!rows.length){ if(reset) list.innerHTML=`<div class="empty" style="padding:24px 0;"><div class="empty-text">Комментариев пока нет</div></div>`; return; }
+
+    const frag=rows.map(c=>`
+      <div class="comment-item">
+        <div class="comment-avatar">${c.nickname.slice(0,2).toUpperCase()}</div>
+        <div class="comment-content">
+          <div class="comment-nick-label">${esc(c.nickname)}</div>
+          <div class="comment-text">${esc(c.body)}</div>
+          <div class="comment-date">${timeAgo(c.created_at)}</div>
+        </div>
+      </div>`).join('');
+
+    list.insertAdjacentHTML('beforeend',frag);
+    if(rows.length>0) _commentLast=rows[rows.length-1].created_at;
+  }catch(e){ console.warn('comments err',e); }
+}
+
+async function sendComment(){
+  const nick=document.getElementById('cNick').value.trim();
+  const body=document.getElementById('cBody').value.trim();
+  if(!nick||!body){ toast('Заполни ник и комментарий',true); return; }
+  if(!_openPlaylist) return;
+
+  try{
+    const ok=await sb.rpc('check_rate_limit',{p_visitor_id:_vid,p_action:'add_comment',p_hourly_limit:5,p_daily_limit:20});
+    if(!ok){ toast('Слишком много комментариев',true); return; }
+
+    await sb.insert('comments',{playlist_id:_openPlaylist.id,visitor_id:_vid,nickname:nick,body});
+    document.getElementById('cBody').value='';
+    toast('Комментарий добавлен');
+    await loadComments(_openPlaylist.id, true);
+  }catch(e){ toast('Ошибка: '+e.message,true); }
+}
+
+// ══════════════════════════════════════════════════════════════
+// REPORT
+// ══════════════════════════════════════════════════════════════
+function openReport(id){ _reportTarget=id; document.getElementById('reportOverlay').classList.add('open'); }
+function closeReportModal(e){ if(!e||e.target===document.getElementById('reportOverlay')){ document.getElementById('reportOverlay').classList.remove('open'); _reportTarget=null; } }
+
+async function submitReport(){
+  const reason=document.querySelector('input[name="report"]:checked')?.value;
+  if(!reason){ toast('Выбери причину',true); return; }
+  if(!_reportTarget) return;
+  try{
+    await sb.insert('reports',{playlist_id:_reportTarget,visitor_id:_vid,reason,note:document.getElementById('reportNote').value.trim()||null});
+    toast('Жалоба отправлена');
+    closeReportModal();
+  }catch(e){ toast('Ошибка',true); }
+}
+
+// ══════════════════════════════════════════════════════════════
+// ADD PLAYLIST
+// ══════════════════════════════════════════════════════════════
+function buildCategories(){
+  const grid=document.getElementById('catGrid');
+  grid.innerHTML=CATEGORIES.map(c=>`<button class="cat-btn" data-slug="${c.slug}" onclick="selectCat('${c.slug}',this)">${c.icon} ${c.name}</button>`).join('');
+}
+
+function selectCat(slug,el){
+  document.querySelectorAll('.cat-btn').forEach(b=>b.classList.remove('selected'));
+  el.classList.add('selected');
+  _selectedCat=slug;
+  document.getElementById('catErr').classList.remove('visible');
+}
+
+async function loadTags(){
+  try{
+    const rows=await sb._req('GET','tags?order=use_count.desc&limit=30&select=id,name,slug');
+    _allTags=rows||[];
+  }catch(e){}
+}
+
+function buildTagChips(){
+  const wrap=document.getElementById('tagsWrap');
+  wrap.innerHTML=_allTags.map(t=>`
+    <span class="tag-chip" data-id="${t.id}" onclick="toggleTag('${t.id}',this)">${esc(t.name)}</span>`).join('');
+}
+
+function toggleTag(id,el){
+  if(_selectedTags.has(id)){
+    _selectedTags.delete(id);
+    el.classList.remove('selected');
+  } else {
+    if(_selectedTags.size>=5){ toast('Максимум 5 тегов',true); return; }
+    _selectedTags.add(id);
+    el.classList.add('selected');
+  }
+}
+
+// ── URL PREVIEW ──
+function detectPlatform(url){
+  if(/open\.spotify\.com\/playlist\//.test(url)){
+    const m=url.match(/playlist\/([a-zA-Z0-9]+)/);
+    return {platform:'spotify', playlist_id:m?m[1]:null};
+  }
+  if(/music\.yandex\.(ru|com)/.test(url) && /playlist/.test(url)){
+    return {platform:'yandex', playlist_url:url};
+  }
+  return null;
+}
+
+async function previewUrl(url){
+  const box=document.getElementById('previewBox');
+  const err=document.getElementById('urlErr');
+  if(!url){ box.classList.remove('visible'); return; }
+
+  const detected=detectPlatform(url);
+  if(!detected){
+    err.textContent='Поддерживаются только Spotify и Яндекс Музыка.';
+    err.classList.add('visible');
+    box.classList.remove('visible');
+    _previewData=null;
+    return;
+  }
+  err.classList.remove('visible');
+
+  // Spotify oEmbed
+  if(detected.platform==='spotify' && detected.playlist_id){
+    try{
+      const oembed=await fetch(`https://open.spotify.com/oembed?url=${encodeURIComponent(url)}`).then(r=>r.json());
+      _previewData={
+        ...detected,
+        title:oembed.title||'Плейлист',
+        author:oembed.provider_name||'Spotify',
+        cover_url:oembed.thumbnail_url||'',
+        embed_url:`https://open.spotify.com/embed/playlist/${detected.playlist_id}?utm_source=generator`,
+        track_count:0,
+      };
+      document.getElementById('prevCover').src=_previewData.cover_url;
+      document.getElementById('prevPlatform').textContent='● SPOTIFY';
+      document.getElementById('prevPlatform').className='preview-platform spotify';
+      document.getElementById('prevTitle').textContent=_previewData.title;
+      document.getElementById('prevAuthor').textContent=_previewData.author;
+      box.classList.add('visible');
+    }catch(e){
+      _previewData={...detected,title:'Spotify плейлист',author:'Spotify',cover_url:'',embed_url:`https://open.spotify.com/embed/playlist/${detected.playlist_id}?utm_source=generator`,track_count:0};
+      document.getElementById('prevPlatform').textContent='● SPOTIFY';
+      document.getElementById('prevPlatform').className='preview-platform spotify';
+      document.getElementById('prevTitle').textContent='Spotify плейлист';
+      document.getElementById('prevAuthor').textContent='Проверь ссылку';
+      document.getElementById('prevCover').src='';
+      box.classList.add('visible');
+    }
+  }
+
+  if(detected.platform==='yandex'){
+    _previewData={...detected,title:'Яндекс плейлист',author:'Яндекс Музыка',cover_url:'',embed_url:null,track_count:0};
+    document.getElementById('prevCover').src='';
+    document.getElementById('prevPlatform').textContent='● ЯНДЕКС';
+    document.getElementById('prevPlatform').className='preview-platform yandex';
+    document.getElementById('prevTitle').textContent='Яндекс плейлист';
+    document.getElementById('prevAuthor').textContent=url;
+    box.classList.add('visible');
+  }
+}
+
+async function submitPlaylist(){
+  const nick=document.getElementById('fNick').value.trim();
+  const btn=document.getElementById('submitBtn');
+  const status=document.getElementById('submitStatus');
+
+  if(!_previewData){ toast('Вставь ссылку на плейлист',true); return; }
+  if(!nick){ toast('Введи никнейм',true); return; }
+  if(!_selectedCat){ document.getElementById('catErr').classList.add('visible'); return; }
+
+  btn.disabled=true; status.textContent='Проверка...';
+
+  try{
+    // rate limit
+    const ok=await sb.rpc('check_rate_limit',{p_visitor_id:_vid,p_action:'add_playlist',p_hourly_limit:5,p_daily_limit:20});
+    if(!ok){ toast('Лимит: 5 плейлистов в час / 20 в сутки',true); btn.disabled=false; status.textContent=''; return; }
+
+    // check duplicate
+    let dupQ;
+    if(_previewData.platform==='spotify') dupQ=`playlists?platform=eq.spotify&playlist_id=eq.${_previewData.playlist_id}&select=id`;
+    else dupQ=`playlists?platform=eq.yandex&playlist_url=eq.${encodeURIComponent(_previewData.playlist_url)}&select=id`;
+    const dup=await sb._req('GET',dupQ);
+    if(dup&&dup.length){ toast('Этот плейлист уже добавлен в коллекцию.',true); btn.disabled=false; status.textContent=''; return; }
+
+    status.textContent='Добавление...';
+
+    // insert playlist
+    const inserted=await sb.insert('playlists',{
+      platform:_previewData.platform,
+      playlist_id:_previewData.platform==='spotify'?_previewData.playlist_id:null,
+      playlist_url:_previewData.platform==='yandex'?_previewData.playlist_url:null,
+      title:_previewData.title,
+      author:_previewData.author,
+      cover_url:_previewData.cover_url||null,
+      embed_url:_previewData.embed_url||null,
+      track_count:_previewData.track_count||0,
+      category:CATEGORIES.find(c=>c.slug===_selectedCat)?.name||_selectedCat,
+      nickname:nick,
+      description:null,
+    });
+
+    if(inserted&&inserted[0]&&_selectedTags.size>0){
+      const plId=inserted[0].id;
+      for(const tagId of _selectedTags){
+        try{ await sb.insert('playlist_tag_links',{playlist_id:plId,tag_id:tagId}); }catch(e){}
+      }
+    }
+
+    toast('Плейлист добавлен! 🎵');
+    document.getElementById('fUrl').value='';
+    document.getElementById('fNick').value='';
+    document.getElementById('previewBox').classList.remove('visible');
+    document.querySelectorAll('.cat-btn').forEach(b=>b.classList.remove('selected'));
+    document.querySelectorAll('.tag-chip').forEach(b=>b.classList.remove('selected'));
+    _selectedCat=null; _selectedTags.clear(); _previewData=null;
+    await loadPlaylists(true);
+    await loadStats();
+
+  }catch(e){
+    toast('Ошибка: '+e.message,true);
+  } finally {
+    btn.disabled=false; status.textContent='';
+  }
+}
+
+// ══════════════════════════════════════════════════════════════
+// FILTERS
+// ══════════════════════════════════════════════════════════════
+function setSort(sort,el){
+  _sort=sort; _page=0;
+  document.querySelectorAll('[data-sort]').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active');
+  loadPlaylists(true);
+}
+
+function setPlatform(plat,el){
+  _platform=plat; _page=0;
+  document.querySelectorAll('[data-plat]').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active');
+  loadPlaylists(true);
+}
+
+// ══════════════════════════════════════════════════════════════
+// ANALYTICS
+// ══════════════════════════════════════════════════════════════
+async function trackEvent(playlistId, event){
+  try{
+    await sb.insert('analytics',{playlist_id:playlistId,event,visitor_id:_vid});
+    if(event==='view'){
+      // increment view_count (fire and forget)
+      fetch(`${SB_URL}/rest/v1/rpc/increment_view`,{
+        method:'POST',headers:{apikey:SB_KEY,Authorization:'Bearer '+SB_KEY,'Content-Type':'application/json'},
+        body:JSON.stringify({p_id:playlistId}),
+      }).catch(()=>{});
+    }
+  }catch(e){}
+}
+
+// ══════════════════════════════════════════════════════════════
+// RANDOM
+// ══════════════════════════════════════════════════════════════
+async function openRandom(){
+  try{
+    const count=await fetch(`${SB_URL}/rest/v1/playlists?status=eq.active&select=count`,{
+      headers:{apikey:SB_KEY,Authorization:'Bearer '+SB_KEY,Prefer:'count=exact',Range:'0-0'}
+    }).then(r=>parseInt(r.headers.get('content-range')?.split('/')[1]||'0'));
+    if(!count) return;
+    const offset=Math.floor(Math.random()*count);
+    const rows=await sb._req('GET',`playlists?status=eq.active&select=id&limit=1&offset=${offset}`);
+    if(rows&&rows[0]) openModal(rows[0].id);
+  }catch(e){}
+}
+
+// ══════════════════════════════════════════════════════════════
+// HELPERS
+// ══════════════════════════════════════════════════════════════
+function esc(s){ if(!s) return ''; return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+function timeAgo(iso){
+  const diff=(Date.now()-new Date(iso))/1000;
+  if(diff<60) return 'только что';
+  if(diff<3600) return Math.floor(diff/60)+' мин назад';
+  if(diff<86400) return Math.floor(diff/3600)+' ч назад';
+  return Math.floor(diff/86400)+' дн назад';
+}
+
+let _toastTimer;
+function toast(msg, err=false){
+  const el=document.getElementById('toast');
+  el.textContent=msg;
+  el.className='toast show'+(err?' err':' ok');
+  clearTimeout(_toastTimer);
+  _toastTimer=setTimeout(()=>el.classList.remove('show'),3000);
+}
+</script>
+</body>
+</html>
