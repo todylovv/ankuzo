@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ANKUZO</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -295,6 +294,7 @@ footer.reveal{
   nav.scrolled{padding:14px 20px;}
   .nav-links{display:none;}
   .nav-burger{display:flex;}
+  #dsWidget{display:none!important;}
   .hero{padding:100px 20px 70px;}
   .scroll-hint{left:20px;bottom:28px;}
   section,.gen-section{padding:60px 20px;max-width:100%;width:100%;}
@@ -311,17 +311,86 @@ footer.reveal{
   .section-label,.skill-card,.game-row,.fact-row{
     opacity:1;transform:none;
   }
-  #genLayout{display:flex!important;flex-direction:column!important;gap:20px;width:100%;}
-  #genPreview{width:100%;aspect-ratio:3/2;min-height:unset;}
-  #genOutput{grid-template-columns:repeat(3,1fr)!important;}
   .discord-hero{font-size:10px;padding:10px 16px;}
+  .steam-banners{grid-template-columns:1fr 1fr;}
+  .steam-stats-row{grid-template-columns:1fr 1fr;}
+  #termWrap{font-size:11px;}
 }
 @media(max-width:480px){
   .hero-name{font-size:clamp(56px,15vw,100px);}
   .game-row{grid-template-columns:1fr;gap:8px;}
   .game-badge{align-self:flex-start;}
-  #genOutput{grid-template-columns:repeat(2,1fr)!important;}
+  .steam-banners{grid-template-columns:1fr;}
+  .steam-game-name{flex:0 0 120px;}
 }
+
+/* ── DISCORD CARD ── */
+.dc-card{
+  background:#111214;
+  border-radius:8px;
+  overflow:hidden;
+  margin-bottom:24px;
+  font-family:'JetBrains Mono',monospace;
+  border:1px solid rgba(255,255,255,.06);
+  max-width:300px;
+}
+.dc-banner{
+  height:80px;
+  background:linear-gradient(135deg,#1a1a2e 0%,#0f0f17 50%,#1a1218 100%);
+  position:relative;
+}
+.dc-body{
+  padding:0 16px 16px;
+  position:relative;
+}
+.dc-avatar-wrap{
+  position:relative;
+  display:inline-block;
+  margin-top:-32px;
+  margin-bottom:8px;
+}
+.dc-avatar{
+  width:72px;height:72px;
+  border-radius:50%;
+  border:4px solid #111214;
+  display:block;
+  background:#1a1a20;
+}
+.dc-status-ring{
+  position:absolute;
+  bottom:2px;right:2px;
+  width:16px;height:16px;
+  border-radius:50%;
+  border:3px solid #111214;
+  background:#747f8d;
+}
+.dc-status-ring.online{background:#43b581;}
+.dc-status-ring.idle{background:#faa61a;}
+.dc-status-ring.dnd{background:#f04747;}
+.dc-username{font-size:18px;font-weight:700;color:#f0ede8;letter-spacing:.02em;}
+.dc-handle{font-size:11px;color:rgba(240,237,232,.4);letter-spacing:.05em;margin-top:2px;margin-bottom:10px;}
+.dc-activity{background:rgba(255,255,255,.04);border-radius:4px;padding:10px 12px;margin-bottom:8px;}
+.dc-spotify{background:rgba(255,255,255,.04);border-radius:4px;padding:10px 12px;margin-bottom:8px;}
+.dc-activity-label{font-size:9px;letter-spacing:.15em;color:rgba(240,237,232,.3);text-transform:uppercase;margin-bottom:4px;}
+.dc-activity-name{font-size:12px;color:#f0ede8;letter-spacing:.04em;}
+.dc-activity-detail{font-size:10px;color:rgba(240,237,232,.4);margin-top:2px;}
+.dc-about{margin-top:8px;}
+.dc-about-label{font-size:9px;letter-spacing:.15em;color:rgba(240,237,232,.3);text-transform:uppercase;margin-bottom:6px;}
+.dc-about-text{font-size:11px;color:rgba(240,237,232,.6);line-height:1.7;letter-spacing:.03em;}
+@media(max-width:900px){.dc-card{max-width:100%;}}
+
+/* ── NOISE TEXTURE ── */
+#noiseLayer{
+  position:fixed;
+  inset:0;
+  z-index:9998;
+  pointer-events:none;
+  opacity:.028;
+  will-change:transform;
+}
+
+/* ── MAGNETIC ── */
+.mag{transition:transform .2s cubic-bezier(.16,1,.3,1);}
 
 /* ── MARQUEE ── */
 .marquee-wrap{overflow:hidden;white-space:nowrap;padding:18px 0;border-top:1px solid rgba(240,237,232,.06);border-bottom:1px solid rgba(240,237,232,.06);margin:0;}
@@ -501,6 +570,8 @@ ASCII INTRO — ANKUZO
 </div>
 
 
+<canvas id="noiseLayer"></canvas>
+
 <div id="cur"></div>
 <div id="cur2"></div>
 
@@ -523,19 +594,30 @@ ASCII INTRO — ANKUZO
 <!-- NAV -->
 <nav id="nav">
   <div class="nav-logo">ANKUZO</div>
+  <div id="dsWidget" style="display:none;align-items:center;gap:8px;">
+    <div id="dsDot" style="width:8px;height:8px;border-radius:50%;flex-shrink:0;"></div>
+    <div style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.15em;text-transform:uppercase;">
+      <span id="dsStatus" style="color:rgba(240,237,232,.35);">...</span>
+      <span id="dsGame" style="color:rgba(240,237,232,.55);margin-left:8px;"></span>
+    </div>
+  </div>
   <div class="nav-links">
+    <a href="#terminal">Терминал</a>
     <a href="#about">Обо мне</a>
     <a href="#skills">Навыки</a>
     <a href="#games">Игры</a>
+    <a href="#steam">Steam</a>
   </div>
   <div class="nav-burger" id="burger" onclick="toggleMenu()" aria-label="Открыть меню" aria-expanded="false" role="button" tabindex="0">
     <span></span><span></span><span></span>
   </div>
 </nav>
 <div class="nav-mobile" id="mobileNav">
+  <a href="#terminal" onclick="toggleMenu()">Терминал</a>
   <a href="#about" onclick="toggleMenu()">Обо мне</a>
   <a href="#skills" onclick="toggleMenu()">Навыки</a>
   <a href="#games" onclick="toggleMenu()">Игры</a>
+  <a href="#steam" onclick="toggleMenu()">Steam</a>
 </div>
 
 <!-- HERO -->
@@ -605,6 +687,35 @@ ASCII INTRO — ANKUZO
       <em>Кибербезопасность, машинное обучение и большие данные</em> — не три отдельных мира, а один способ видеть системы насквозь. Спокойно. Методично. До конца.
     </div>
     <div class="about-right reveal-right">
+
+      <!-- Discord Profile Card -->
+      <div class="dc-card" id="dcCard">
+        <div class="dc-banner" id="dcBanner"></div>
+        <div class="dc-body">
+          <div class="dc-avatar-wrap">
+            <img class="dc-avatar" id="dcAvatar" src="" alt="avatar">
+            <div class="dc-status-ring" id="dcStatusRing"></div>
+          </div>
+          <div class="dc-meta">
+            <div class="dc-username" id="dcUsername">ankuzo</div>
+            <div class="dc-handle" id="dcHandle">@ankuz0</div>
+          </div>
+          <div class="dc-activity" id="dcCardActivity" style="display:none;">
+            <div class="dc-activity-label">СЕЙЧАС ИГРАЕТ</div>
+            <div class="dc-activity-name" id="dcActivityName"></div>
+          </div>
+          <div class="dc-spotify" id="dcCardSpotify" style="display:none;">
+            <div class="dc-activity-label">♫ СЛУШАЕТ В SPOTIFY</div>
+            <div class="dc-activity-name" id="dcSpotifyName"></div>
+            <div class="dc-activity-detail" id="dcSpotifyArtist"></div>
+          </div>
+          <div class="dc-about">
+            <div class="dc-about-label">ОБО МНЕ</div>
+            <div class="dc-about-text">root@anku:~$ cat anku.conf<br>role=BigData CyberSec<br>mode=ML<br>grind=while(true)</div>
+          </div>
+        </div>
+      </div>
+
       <div class="fact-row">
         <div class="fact-num">01</div>
         <div class="fact-content">
@@ -1138,6 +1249,130 @@ ASCII INTRO — ANKUZO
     });
 })();
 
+// ── NOISE TEXTURE ──
+(function(){
+  const canvas = document.getElementById('noiseLayer');
+  if(!canvas) return;
+  const ctx = canvas.getContext('2d');
+  let W, H;
+  function resize(){
+    W = canvas.width = window.innerWidth;
+    H = canvas.height = window.innerHeight;
+  }
+  function draw(){
+    const img = ctx.createImageData(W, H);
+    const d = img.data;
+    for(let i=0; i<d.length; i+=4){
+      const v = Math.random()*255|0;
+      d[i]=d[i+1]=d[i+2]=v;
+      d[i+3]=255;
+    }
+    ctx.putImageData(img, 0, 0);
+    requestAnimationFrame(draw);
+  }
+  resize();
+  window.addEventListener('resize', resize);
+  draw();
+})();
+
+// ── MAGNETIC BUTTONS ──
+(function(){
+  if(!window.matchMedia('(hover:hover)').matches) return;
+  document.querySelectorAll('.menu-btn,.discord-hero,#scrollTop,.nav-logo').forEach(el=>{
+    el.classList.add('mag');
+    el.addEventListener('mousemove', e=>{
+      const r = el.getBoundingClientRect();
+      const dx = (e.clientX - r.left - r.width/2) * 0.3;
+      const dy = (e.clientY - r.top - r.height/2) * 0.3;
+      el.style.transform = `translate(${dx}px,${dy}px)`;
+    });
+    el.addEventListener('mouseleave', ()=>{ el.style.transform=''; });
+  });
+})();
+
+// ── DISCORD STATUS (Lanyard) ──
+(function(){
+  const DISCORD_ID = '514852654552186880';
+  const STATUS_COLORS = {
+    online:'#43b581', idle:'#faa61a', dnd:'#f04747', offline:'#747f8d',
+  };
+  const STATUS_TEXT = {
+    online:'онлайн', idle:'отошёл', dnd:'не беспокоить', offline:'оффлайн',
+  };
+
+  function update(data){
+    const status = data.discord_status || 'offline';
+    const user   = data.discord_user || {};
+
+    // ── Nav widget ──
+    const dot    = document.getElementById('dsDot');
+    const stat   = document.getElementById('dsStatus');
+    const game   = document.getElementById('dsGame');
+    const widget = document.getElementById('dsWidget');
+    if(dot){ dot.style.background=STATUS_COLORS[status]; if(status==='online') dot.style.boxShadow=`0 0 6px ${STATUS_COLORS.online}`; }
+    if(stat) stat.textContent = STATUS_TEXT[status]||status;
+    if(widget) widget.style.display='flex';
+    const act = (data.activities||[]).find(a=>a.type===0);
+    if(game){
+      if(act) game.textContent = '· '+act.name;
+      else if(data.spotify) game.textContent = '· ♫ '+data.spotify.song+' — '+data.spotify.artist;
+      else game.textContent = '';
+    }
+
+    // ── Discord Card ──
+    const avatar = document.getElementById('dcAvatar');
+    const ring   = document.getElementById('dcStatusRing');
+    const uname  = document.getElementById('dcUsername');
+    const banner = document.getElementById('dcBanner');
+
+    if(avatar && user.avatar){
+      avatar.src = `https://cdn.discordapp.com/avatars/${DISCORD_ID}/${user.avatar}.${user.avatar.startsWith('a_')?'gif':'webp'}?size=128`;
+    }
+    if(ring){ ring.className='dc-status-ring '+status; }
+    if(uname && user.global_name) uname.textContent = user.global_name;
+
+    // баннер цвет
+    if(banner && user.banner_color){
+      banner.style.background = `linear-gradient(135deg, ${user.banner_color}44 0%, #0f0f17 100%)`;
+    }
+
+    // активность в карточке
+    const dcAct     = document.getElementById('dcCardActivity');
+    const dcActName = document.getElementById('dcActivityName');
+    const dcSpo     = document.getElementById('dcCardSpotify');
+    const dcSpoName = document.getElementById('dcSpotifyName');
+    const dcSpoArt  = document.getElementById('dcSpotifyArtist');
+
+    if(act && dcAct && dcActName){
+      dcAct.style.display='block';
+      dcActName.textContent = act.name;
+      if(dcSpo) dcSpo.style.display='none';
+    } else if(data.spotify && dcSpo){
+      if(dcAct) dcAct.style.display='none';
+      dcSpo.style.display='block';
+      if(dcSpoName) dcSpoName.textContent = data.spotify.song;
+      if(dcSpoArt)  dcSpoArt.textContent  = data.spotify.artist;
+    } else {
+      if(dcAct) dcAct.style.display='none';
+      if(dcSpo) dcSpo.style.display='none';
+    }
+  }
+
+  fetch('https://api.lanyard.rest/v1/users/'+DISCORD_ID)
+    .then(r=>r.json())
+    .then(j=>{ if(j.success) update(j.data); })
+    .catch(()=>{});
+
+  try{
+    const ws = new WebSocket('wss://api.lanyard.rest/socket');
+    ws.onmessage = e=>{
+      const msg = JSON.parse(e.data);
+      if(msg.op===1) ws.send(JSON.stringify({op:2,d:{subscribe_to_id:DISCORD_ID}}));
+      if(msg.op===0 && msg.d?.discord_user) update(msg.d);
+    };
+  }catch(e){}
+})();
+
 document.getElementById('footerYear').textContent = new Date().getFullYear();
 
 
@@ -1178,6 +1413,24 @@ if(_hasMouse && cur && cur2){
     el.addEventListener('mouseleave',()=>document.body.classList.remove('hovering'));
   });
   (function loop(){cx+=(mx-cx)*.13;cy+=(my-cy)*.13;cur2.style.left=cx+'px';cur2.style.top=cy+'px';requestAnimationFrame(loop);})();
+}
+
+// ── FPS LIMITER ──
+const _isMobileDevice = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent) || window.innerWidth < 768;
+const _targetFPS = _isMobileDevice ? 30 : 60;
+const _fpsInterval = 1000 / _targetFPS;
+
+function createLoop(fn){
+  let last = 0;
+  function tick(ts){
+    const elapsed = ts - last;
+    if(elapsed >= _fpsInterval){
+      last = ts - (elapsed % _fpsInterval);
+      fn(ts);
+    }
+    requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
 }
 
 // ── NAV SCROLL + SCROLL TO TOP ──
@@ -1250,7 +1503,7 @@ function _initAll(){
     }
     requestAnimationFrame(frame);
   }
-  frame();
+  createLoop(frame);
 })();
 
 // ── HERO GLITCH ──
@@ -1364,7 +1617,7 @@ function _initAll(){
     }
     requestAnimationFrame(frame);
   }
-  frame();
+  createLoop(frame);
 })();
 
 // ── MAGNETIC PILLS ──
