@@ -294,7 +294,7 @@ body{background:var(--bg);color:var(--fg);font-family:var(--font-mono);min-heigh
         <label class="form-label">Ссылка или iframe код плейлиста</label>
         <input class="form-input" id="fUrl" type="text" placeholder="Яндекс или VK URL / iframe код...">
         <div style="font-size:9px;letter-spacing:.08em;color:rgba(240,237,232,.25);margin-top:6px;line-height:1.6;">
-          Яндекс: вставь ссылку <span style="color:rgba(240,237,232,.4);">music.yandex.ru/playlists/...</span> или iframe код<br>
+          Яндекс: вставь iframe-код (три точки → Поделиться → HTML-код). Обычная ссылка покажет подсказку<br>
           VK: вставь ссылку <span style="color:rgba(240,237,232,.4);">vk.com/music/playlist/...</span> или iframe код виджета
         </div>
         <div class="error-msg" id="urlErr"></div>
@@ -1129,13 +1129,12 @@ async function previewUrl(url){
     const embedSrc = detected.embed_src || (owner && kind ? `https://music.yandex.ru/iframe/playlist/${owner}/${kind}` : null);
 
     if(detected.short){
-      // UUID share links can be embedded directly on static hosting.
-      _previewData={...detected,title:'Яндекс плейлист',author:'Яндекс Музыка',cover_url:'',embed_url:detected.embed_src,track_count:0};
+      // GitHub Pages cannot resolve UUID share links through Yandex API because
+      // the API blocks cross-origin browser requests. Ask for the official iframe.
+      _previewData={...detected,title:'',author:'Яндекс Музыка',cover_url:'',embed_url:null,track_count:0};
       document.getElementById('prevCover').style.display='none';
-      document.getElementById('prevTitle').textContent='Яндекс плейлист';
-      document.getElementById('prevAuthor').textContent='Плеер готов к добавлению';
-      platformEmbedPreview.innerHTML=`<iframe style="border:1px solid rgba(255,204,0,.38);border-radius:8px;" src="${esc(detected.embed_src)}" width="100%" height="450" frameBorder="0" allow="autoplay; clipboard-write" loading="lazy"></iframe>`;
-      platformEmbedPreview.style.display='block';
+      document.getElementById('prevTitle').textContent='Нужен iframe-код Яндекса';
+      document.getElementById('prevAuthor').textContent='В плейлисте нажми три точки → Поделиться → HTML-код';
       return;
     }
 
