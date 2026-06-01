@@ -1,5 +1,5 @@
 {
-  "updated": "2026-06-01T20:44:59.347140+00:00",
+  "updated": "2026-06-01T20:46:32.325004+00:00",
   "accounts": [
     {
       "name": "b1",
@@ -81,5 +81,9 @@
       "hours": 60.9
     }
   ],
-  "profiles": []
+  "profiles": [],
+  "integration_status": {
+    "faceit": "403",
+    "apex": "401"
+  }
 }
