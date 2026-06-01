@@ -44,6 +44,7 @@ jobs:
               --header "Authorization: Bearer ${FACEIT_KEY}" \
               "https://open.faceit.com/data/v4/players?game=cs2&game_player_id=${STEAM_ID1}" \
               --output /tmp/faceit.json --write-out '%{http_code}' || true)"
+            faceit_message="$(jq -r '.message // .errors[0].message // empty' /tmp/faceit.json 2>/dev/null || true)"
             [ "$faceit_status" = 200 ] || echo '{}' > /tmp/faceit.json
           fi
           if [ -n "${TRN_KEY:-}" ]; then
@@ -51,9 +52,14 @@ jobs:
               --header "TRN-Api-Key: ${TRN_KEY}" \
               "https://public-api.tracker.gg/v2/apex/standard/profile/steam/${STEAM_ID2}" \
               --output /tmp/apex.json --write-out '%{http_code}' || true)"
+            apex_message="$(jq -r '.message // .errors[0].message // empty' /tmp/apex.json 2>/dev/null || true)"
             [ "$apex_status" = 200 ] || echo '{}' > /tmp/apex.json
           fi
-          printf '{"faceit":"%s","apex":"%s"}\n' "$faceit_status" "$apex_status" > /tmp/integrations.json
+          jq -n \
+            --arg faceit "$faceit_status" --arg faceit_message "${faceit_message:-}" \
+            --arg apex "$apex_status" --arg apex_message "${apex_message:-}" \
+            '{faceit:$faceit,faceit_message:$faceit_message,apex:$apex,apex_message:$apex_message}' \
+            > /tmp/integrations.json
           python3 build.py
 
       - name: Commit steam-data.json
