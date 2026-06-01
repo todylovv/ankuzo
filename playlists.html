@@ -295,7 +295,7 @@ body{background:var(--bg);color:var(--fg);font-family:var(--font-mono);min-heigh
         <input class="form-input" id="fUrl" type="text" placeholder="Яндекс или VK URL / iframe код...">
         <div style="font-size:9px;letter-spacing:.08em;color:rgba(240,237,232,.25);margin-top:6px;line-height:1.6;">
           Яндекс: вставь iframe-код (три точки → Поделиться → HTML-код). Обычная ссылка покажет подсказку<br>
-          VK: вставь ссылку <span style="color:rgba(240,237,232,.4);">vk.com/music/playlist/...</span> или iframe код виджета
+          VK: вставь iframe-код виджета. Обычная ссылка покажет подсказку
         </div>
         <div class="error-msg" id="urlErr"></div>
         <!-- preview -->
@@ -1040,13 +1040,13 @@ function detectPlatform(input){
   }
   if(/vk\.com\/(?:music\/playlist\/|audio\?z=audio_playlist)/.test(decodedInput)){
     const normalized=decodeURIComponent(decodedInput);
-    const m=normalized.match(/(?:music\/playlist\/|audio_playlist)(-?\d+)_(\d+)/);
+    const m=normalized.match(/(?:music\/playlist\/|audio_playlist)(-?\d+)_(\d+)(?:_([a-zA-Z0-9]+))?/);
     if(m){
-      const owner=m[1], playlist=m[2];
+      const owner=m[1], playlist=m[2], hash=m[3]||'';
       return {
         platform:'vk',
-        playlist_url:`https://vk.com/music/playlist/${owner}_${playlist}`,
-        embed_src:`https://vk.com/widget_playlist.php?owner_id=${owner}&playlist_id=${playlist}`,
+        playlist_url:`https://vk.com/music/playlist/${owner}_${playlist}${hash?'_'+hash:''}`,
+        share_link:true,
       };
     }
   }
@@ -1104,15 +1104,17 @@ async function previewUrl(url){
   document.getElementById('yandexFields').style.display='none';
 
   if(detected.platform==='vk'){
-    _previewData={...detected,title:'VK плейлист',author:'VK Музыка',cover_url:'',embed_url:detected.embed_src,track_count:0};
+    _previewData={...detected,title:detected.embed_src?'VK плейлист':'',author:'VK Музыка',cover_url:'',embed_url:detected.embed_src||null,track_count:0};
     document.getElementById('prevCover').style.display='none';
     document.getElementById('prevPlatform').textContent='● VK';
     document.getElementById('prevPlatform').className='preview-platform vk';
-    document.getElementById('prevTitle').textContent='VK плейлист';
-    document.getElementById('prevAuthor').textContent='Плеер готов к добавлению';
+    document.getElementById('prevTitle').textContent=detected.embed_src?'VK плейлист':'Нужен iframe-код VK';
+    document.getElementById('prevAuthor').textContent=detected.embed_src?'Плеер готов к добавлению':'Вставь HTML-код виджета плейлиста VK';
     box.classList.add('visible');
-    platformEmbedPreview.innerHTML=`<iframe style="border:1px solid rgba(39,135,245,.42);border-radius:8px;" src="${esc(detected.embed_src)}" width="100%" height="450" frameBorder="0" allow="autoplay; encrypted-media" loading="lazy"></iframe>`;
-    platformEmbedPreview.style.display='block';
+    if(detected.embed_src){
+      platformEmbedPreview.innerHTML=`<iframe style="border:1px solid rgba(39,135,245,.42);border-radius:8px;" src="${esc(detected.embed_src)}" width="100%" height="450" frameBorder="0" allow="autoplay; encrypted-media" loading="lazy"></iframe>`;
+      platformEmbedPreview.style.display='block';
+    }
     return;
   }
 
