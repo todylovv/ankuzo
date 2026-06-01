@@ -1,4 +1,4 @@
-name: Update Steam Data
+name: Update Steam and Game Data
 
 on:
   push:
