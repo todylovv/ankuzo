@@ -388,17 +388,21 @@ footer.reveal{
 .dc-card{background:#111214;border-radius:8px;overflow:hidden;font-family:"JetBrains Mono",monospace;border:1px solid rgba(255,255,255,.08);max-width:320px;box-shadow:0 8px 40px rgba(0,0,0,.6);}
 .dc-banner{height:100px;background:#0d0d14;position:relative;overflow:hidden;}
 .dc-banner-canvas{position:absolute;inset:0;width:100%;height:100%;}
+.dc-profile-banner{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:none;}
 .dc-banner-text{position:absolute;right:16px;bottom:10px;font-family:"Bebas Neue",sans-serif;font-size:32px;letter-spacing:.1em;color:rgba(240,237,232,.06);user-select:none;}
 .dc-body{padding:0 16px 16px;}
 .dc-top-row{display:flex;justify-content:space-between;align-items:flex-start;}
 .dc-avatar-wrap{position:relative;display:inline-block;margin-top:-28px;margin-bottom:8px;}
 .dc-avatar{width:72px;height:72px;border-radius:50%;border:4px solid #111214;display:block;background:#1a1a20;object-fit:cover;}
-.dc-status-ring{position:absolute;bottom:3px;right:3px;width:16px;height:16px;border-radius:50%;border:3px solid #111214;background:#747f8d;}
+.dc-avatar-decoration{position:absolute;left:50%;top:50%;width:92px;height:92px;transform:translate(-50%,-50%);pointer-events:none;display:none;z-index:2;}
+.dc-status-ring{position:absolute;bottom:3px;right:3px;width:16px;height:16px;border-radius:50%;border:3px solid #111214;background:#747f8d;z-index:3;}
 .dc-status-ring.online{background:#43b581;}
 .dc-status-ring.idle{background:#faa61a;}
 .dc-status-ring.dnd{background:#f04747;}
 .dc-status-text{font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:rgba(240,237,232,.3);margin-top:12px;}
-.dc-username{font-size:18px;font-weight:700;color:#f0ede8;letter-spacing:.02em;}
+.dc-nameplate{position:relative;display:inline-flex;align-items:center;min-height:28px;padding:0 8px;margin-left:-8px;overflow:hidden;border-radius:4px;}
+.dc-nameplate-video{position:absolute;inset:0;width:100%;height:100%;object-fit:fill;display:none;pointer-events:none;}
+.dc-username{position:relative;font-size:18px;font-weight:700;color:#f0ede8;letter-spacing:.02em;z-index:1;}
 .dc-handle{font-size:11px;color:rgba(240,237,232,.3);letter-spacing:.05em;margin-top:2px;}
 .dc-divider{height:1px;background:rgba(255,255,255,.06);margin:12px 0;}
 .dc-activity,.dc-spotify{background:rgba(255,255,255,.04);border-radius:4px;padding:10px 12px;margin-bottom:8px;}
@@ -731,17 +735,22 @@ ASCII INTRO — ANKUZO
       <div class="dc-card" id="dcCard">
         <div class="dc-banner" id="dcBanner">
           <canvas class="dc-banner-canvas" id="dcBannerCanvas"></canvas>
+          <img class="dc-profile-banner" id="dcProfileBanner" src="" alt="">
           <div class="dc-banner-text">ANKUZO</div>
         </div>
         <div class="dc-body">
           <div class="dc-top-row">
             <div class="dc-avatar-wrap">
               <img class="dc-avatar" id="dcAvatar" src="" alt="avatar">
+              <img class="dc-avatar-decoration" id="dcAvatarDecoration" src="" alt="" aria-hidden="true">
               <div class="dc-status-ring" id="dcStatusRing"></div>
             </div>
             <div class="dc-status-text" id="dcStatusText"></div>
           </div>
-          <div class="dc-username" id="dcUsername">anku</div>
+          <div class="dc-nameplate" id="dcNameplate">
+            <video class="dc-nameplate-video" id="dcNameplateVideo" autoplay loop muted playsinline aria-hidden="true"></video>
+            <div class="dc-username" id="dcUsername">anku</div>
+          </div>
           <div class="dc-handle">@ankuz0</div>
 
           <div class="dc-divider"></div>
@@ -1445,6 +1454,10 @@ function applyPerfLevel(level){
     online:'онлайн', idle:'отошёл', dnd:'не беспокоить', offline:'оффлайн',
   };
 
+  function hexColor(value){
+    return '#'+Number(value).toString(16).padStart(6,'0');
+  }
+
   function update(data){
     const status = data.discord_status || 'offline';
     const user   = data.discord_user || {};
@@ -1466,14 +1479,40 @@ function applyPerfLevel(level){
 
     // ── Discord Card ──
     const avatar = document.getElementById('dcAvatar');
+    const decoration = document.getElementById('dcAvatarDecoration');
+    const profileBanner = document.getElementById('dcProfileBanner');
+    const nameplateVideo = document.getElementById('dcNameplateVideo');
     const ring   = document.getElementById('dcStatusRing');
     const uname  = document.getElementById('dcUsername');
     const stText = document.getElementById('dcStatusText');
     if(avatar && user.avatar){
       avatar.src = `https://cdn.discordapp.com/avatars/${DISCORD_ID}/${user.avatar}.${user.avatar.startsWith('a_')?'gif':'webp'}?size=128`;
     }
+    if(decoration){
+      const asset = user.avatar_decoration_data?.asset;
+      decoration.style.display = asset ? 'block' : 'none';
+      if(asset) decoration.src = `https://cdn.discordapp.com/avatar-decoration-presets/${asset}.png?size=128&passthrough=true`;
+    }
+    if(profileBanner){
+      profileBanner.style.display = user.banner ? 'block' : 'none';
+      if(user.banner) profileBanner.src = `https://cdn.discordapp.com/banners/${DISCORD_ID}/${user.banner}.${user.banner.startsWith('a_')?'gif':'webp'}?size=512`;
+    }
+    if(nameplateVideo){
+      const asset = user.collectibles?.nameplate?.asset;
+      nameplateVideo.style.display = asset ? 'block' : 'none';
+      const src = asset ? `https://cdn.discordapp.com/assets/collectibles/${asset}asset.webm` : '';
+      if(src && nameplateVideo.src !== src) nameplateVideo.src = src;
+      if(!src) nameplateVideo.removeAttribute('src');
+    }
     if(ring){ ring.className='dc-status-ring '+status; }
-    if(uname && user.global_name) uname.textContent = user.global_name;
+    if(uname){
+      uname.textContent = user.display_name || user.global_name || user.username || 'anku';
+      const colors = user.display_name_styles?.colors;
+      uname.style.background = colors?.length ? `linear-gradient(90deg,${colors.map(hexColor).join(',')})` : '';
+      uname.style.backgroundClip = colors?.length ? 'text' : '';
+      uname.style.webkitBackgroundClip = colors?.length ? 'text' : '';
+      uname.style.color = colors?.length ? 'transparent' : '';
+    }
     if(stText) stText.textContent = STATUS_TEXT[status]||status;
 
     // активность в карточке
