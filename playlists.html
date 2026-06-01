@@ -873,6 +873,7 @@ async function openModal(id){
 
     // embed
 	const mEmbed = document.getElementById('mEmbed');
+	clearTimeout(_spotifyEmbedTimer);
 	const yandexUuid = (p.playlist_url||'').match(/playlists\/([a-f0-9-]{36})/)?.[1];
 	const yandexEmbedUrl = p.embed_url || (yandexUuid?`https://music.yandex.ru/iframe/playlist/${yandexUuid}`:null);
 	if (p.platform === 'spotify') {
@@ -888,7 +889,14 @@ async function openModal(id){
 					</a>
 				</div>`;
 		} else {
-			mEmbed.innerHTML = `<iframe style="border-radius:8px;" src="${esc(embedUrl)}" width="100%" height="352" frameBorder="0" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" allowfullscreen loading="lazy"></iframe>`;
+			clearTimeout(_spotifyEmbedTimer);
+			mEmbed.innerHTML = `
+				<iframe style="border-radius:8px;" src="${esc(embedUrl)}" width="100%" height="352" frameBorder="0" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" allowfullscreen loading="lazy"></iframe>
+				<div id="spotifyEmbedNotice" style="margin-top:10px;padding:12px 16px;background:rgba(29,185,84,.06);border:1px solid rgba(29,185,84,.16);border-radius:8px;">
+					<div id="spotifyEmbedNoticeText" style="font-size:10px;line-height:1.7;letter-spacing:.06em;color:rgba(240,237,232,.45);">Если плеер не загрузится, открой плейлист напрямую в Spotify.</div>
+					<a href="https://open.spotify.com/playlist/${p.playlist_id}" target="_blank" rel="noopener" class="modal-action-btn spotify-btn" style="margin-top:10px;" onclick="trackEvent('${p.id}','open_spotify')">Открыть в Spotify</a>
+				</div>`;
+			_spotifyEmbedTimer=setTimeout(showSpotifyBlockedNotice,7000);
 		}
 		mEmbed.style.display = 'block';
 	} else if (p.platform === 'yandex' && yandexEmbedUrl) {
@@ -917,9 +925,15 @@ async function openModal(id){
 
 function openSpotify(pid){ window.open(`https://open.spotify.com/playlist/${pid}`,'_blank'); if(_openPlaylist) trackEvent(_openPlaylist.id,'open_spotify'); }
 function openYandex(url){ window.open(url,'_blank'); if(_openPlaylist) trackEvent(_openPlaylist.id,'open_yandex'); }
+let _spotifyEmbedTimer;
+function showSpotifyBlockedNotice(){
+  const text=document.getElementById('spotifyEmbedNoticeText');
+  if(text) text.textContent='Spotify может быть недоступен в твоём регионе. Встроенный плеер нельзя разблокировать со стороны сайта. Попробуй открыть Spotify напрямую через доступное тебе подключение.';
+}
 
 function closeModal(e){ if(e.target===document.getElementById('overlay')) closeModalBtn(); }
 function closeModalBtn(){
+  clearTimeout(_spotifyEmbedTimer);
   document.getElementById('overlay').classList.remove('open');
   document.body.style.overflow='';
   _openPlaylist=null;
