@@ -19,7 +19,6 @@ jobs:
       - name: Fetch data and build JSON
         env:
           STEAM_KEY: ${{ secrets.STEAM_KEY }}
-          FACEIT_KEY: ${{ secrets.FACEIT_KEY }}
           STEAM_ID1: '76561199770575251'
           STEAM_ID2: '76561198165374024'
           FACEIT_NICK: 'nuBac'
@@ -30,28 +29,8 @@ jobs:
           curl -s "https://api.steampowered.com/IPlayerService/GetOwnedGames/v1/?key=${STEAM_KEY}&steamid=${STEAM_ID1}&include_appinfo=true&include_played_free_games=true" > /tmp/owned1.json
           curl -s "https://api.steampowered.com/IPlayerService/GetOwnedGames/v1/?key=${STEAM_KEY}&steamid=${STEAM_ID2}&include_appinfo=true&include_played_free_games=true" > /tmp/owned2.json
 
-          curl -s \
-            -H "Authorization: Bearer ${FACEIT_KEY}" \
-            -H "Accept: application/json" \
-            "https://open.faceit.com/data/v4/players?nickname=${FACEIT_NICK}" \
-            -o /tmp/faceit_player.json \
-            -w "\nHTTP_STATUS:%{http_code}\n"
-
-          echo "=== FACEIT RAW ===" && cat /tmp/faceit_player.json
-
-          PLAYER_ID=$(python3 -c "import json; d=json.load(open('/tmp/faceit_player.json')); print(d.get('player_id',''))" 2>/dev/null || echo "")
-          echo "=== PLAYER_ID: $PLAYER_ID ==="
-
-          if [ -n "$PLAYER_ID" ]; then
-            curl -s \
-              -H "Authorization: Bearer ${FACEIT_KEY}" \
-              -H "Accept: application/json" \
-              "https://open.faceit.com/data/v4/players/${PLAYER_ID}/stats/cs2" \
-              -o /tmp/faceit_stats.json
-            echo "=== FACEIT STATS ===" && cat /tmp/faceit_stats.json | head -20
-          else
-            echo '{}' > /tmp/faceit_stats.json
-          fi
+          curl -s "https://faceit.lcrypt.eu/?n=${FACEIT_NICK}" -o /tmp/faceit.json
+          echo "=== FACEIT ===" && cat /tmp/faceit.json
 
           python3 build.py
 
