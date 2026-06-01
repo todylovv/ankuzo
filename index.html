@@ -1485,24 +1485,45 @@ function applyPerfLevel(level){
     const ring   = document.getElementById('dcStatusRing');
     const uname  = document.getElementById('dcUsername');
     const stText = document.getElementById('dcStatusText');
-    if(avatar && user.avatar){
-      avatar.src = `https://cdn.discordapp.com/avatars/${DISCORD_ID}/${user.avatar}.${user.avatar.startsWith('a_')?'gif':'webp'}?size=128`;
+    if(avatar && user.avatar && avatar.dataset.asset !== user.avatar){
+      const cdn = `https://cdn.discordapp.com/avatars/${DISCORD_ID}/${user.avatar}.${user.avatar.startsWith('a_')?'gif':'webp'}?size=128`;
+      avatar.onerror = ()=>{ avatar.onerror=null; avatar.src=cdn; };
+      avatar.src = `discord-assets/avatar.webp?v=${encodeURIComponent(user.avatar)}`;
+      avatar.dataset.asset = user.avatar;
     }
     if(decoration){
       const asset = user.avatar_decoration_data?.asset;
       decoration.style.display = asset ? 'block' : 'none';
-      if(asset) decoration.src = `https://cdn.discordapp.com/avatar-decoration-presets/${asset}.png?size=128&passthrough=true`;
+      if(asset && decoration.dataset.asset !== asset){
+        const cdn = `https://cdn.discordapp.com/avatar-decoration-presets/${asset}.png?size=128&passthrough=true`;
+        decoration.onerror = ()=>{ decoration.onerror=null; decoration.src=cdn; };
+        decoration.src = `discord-assets/avatar-decoration.png?v=${encodeURIComponent(asset)}`;
+        decoration.dataset.asset = asset;
+      }
+      if(!asset) delete decoration.dataset.asset;
     }
     if(profileBanner){
       profileBanner.style.display = user.banner ? 'block' : 'none';
-      if(user.banner) profileBanner.src = `https://cdn.discordapp.com/banners/${DISCORD_ID}/${user.banner}.${user.banner.startsWith('a_')?'gif':'webp'}?size=512`;
+      if(user.banner && profileBanner.dataset.asset !== user.banner){
+        const cdn = `https://cdn.discordapp.com/banners/${DISCORD_ID}/${user.banner}.${user.banner.startsWith('a_')?'gif':'webp'}?size=512`;
+        profileBanner.onerror = ()=>{ profileBanner.onerror=null; profileBanner.src=cdn; };
+        profileBanner.src = `discord-assets/banner.webp?v=${encodeURIComponent(user.banner)}`;
+        profileBanner.dataset.asset = user.banner;
+      }
+      if(!user.banner) delete profileBanner.dataset.asset;
     }
     if(nameplateVideo){
       const asset = user.collectibles?.nameplate?.asset;
       nameplateVideo.style.display = asset ? 'block' : 'none';
-      const src = asset ? `https://cdn.discordapp.com/assets/collectibles/${asset}asset.webm` : '';
-      if(src && nameplateVideo.src !== src) nameplateVideo.src = src;
-      if(!src) nameplateVideo.removeAttribute('src');
+      const local = asset ? `discord-assets/nameplate.webm?v=${encodeURIComponent(asset)}` : '';
+      const cdn = asset ? `https://cdn.discordapp.com/assets/collectibles/${asset}asset.webm` : '';
+      nameplateVideo.onerror = ()=>{ nameplateVideo.onerror=null; nameplateVideo.src=cdn; };
+      if(local && nameplateVideo.dataset.asset !== asset){
+        nameplateVideo.src = local;
+        nameplateVideo.dataset.asset = asset;
+      }
+      if(!local) nameplateVideo.removeAttribute('src');
+      if(!asset) delete nameplateVideo.dataset.asset;
     }
     if(ring){ ring.className='dc-status-ring '+status; }
     if(uname){
