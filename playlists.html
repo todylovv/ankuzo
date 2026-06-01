@@ -871,17 +871,24 @@ async function openModal(id){
     }
 
     // embed
-    const mEmbed=document.getElementById('mEmbed');
-    if(p.platform==='spotify'){
-      const embedUrl=p.embed_url||`https://open.spotify.com/embed/playlist/${p.playlist_id}?utm_source=generator`;
-      mEmbed.innerHTML=`<iframe style="border-radius:8px;" src="${esc(embedUrl)}" width="100%" height="352" frameBorder="0" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>`;
-      mEmbed.style.display='block';
-    } else if(p.platform==='yandex' && p.embed_url){
-      mEmbed.innerHTML=`<iframe src="${esc(p.embed_url)}" frameborder="0" allow="clipboard-write" style="width:100%;height:200px;border:none;border-radius:4px;" loading="lazy"></iframe>`;
-      mEmbed.style.display='block';
-    } else {
-      mEmbed.innerHTML=''; mEmbed.style.display='none';
-    }
+	const mEmbed = document.getElementById('mEmbed');
+	if (p.platform === 'spotify') {
+		const embedUrl = p.embed_url || `https://open.spotify.com/embed/playlist/${p.playlist_id}?utm_source=generator`;
+		const isMobile = /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent);
+		if (isMobile) {
+		// На мобильных показываем только кнопку — iframe Spotify там не работает
+			mEmbed.innerHTML = `
+				<div style="padding:16px;text-align:center;background:rgba(29,185,84,.08);border:1px solid rgba(29,185,84,.2);border-radius:8px;">
+					<div style="font-size:11px;letter-spacing:.1em;color:rgba(240,237,232,.4);margin-bottom:12px;">Встроенный плеер недоступен на мобильных</div>
+					<a href="https://open.spotify.com/playlist/${p.playlist_id}" target="_blank" rel="noopener" class="modal-action-btn spotify-btn">
+					🎵 Открыть в Spotify
+					</a>
+				</div>`;
+		} else {
+			mEmbed.innerHTML = `<iframe style="border-radius:8px;" src="${esc(embedUrl)}" width="100%" height="352" frameBorder="0" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" allowfullscreen loading="lazy"></iframe>`;
+		}
+		mEmbed.style.display = 'block';
+	}
 
     // report btn
     document.getElementById('mReportBtn').onclick=()=>openReport(p.id);
