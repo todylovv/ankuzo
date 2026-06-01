@@ -386,9 +386,7 @@ footer.reveal{
 
 /* ── DISCORD CARD ── */
 .dc-card{background:#111214;border-radius:8px;overflow:hidden;font-family:"JetBrains Mono",monospace;border:1px solid rgba(255,255,255,.08);max-width:320px;box-shadow:0 8px 40px rgba(0,0,0,.6);}
-.dc-card[data-palette="cobalt"]{background:#111522;}
 .dc-banner{height:100px;background:#0d0d14;position:relative;overflow:hidden;}
-.dc-card[data-palette="cobalt"] .dc-banner{background:#0b0f1b;}
 .dc-banner-canvas{position:absolute;inset:0;width:100%;height:100%;}
 .dc-profile-banner{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:none;}
 .dc-banner-text{position:absolute;right:16px;bottom:10px;font-family:"Bebas Neue",sans-serif;font-size:32px;letter-spacing:.1em;color:rgba(240,237,232,.06);user-select:none;}
@@ -402,8 +400,6 @@ footer.reveal{
 .dc-status-ring.idle{background:#faa61a;}
 .dc-status-ring.dnd{background:#f04747;}
 .dc-status-text{font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:rgba(240,237,232,.3);margin-top:12px;}
-.dc-nameplate{position:relative;display:inline-flex;align-items:center;min-width:150px;min-height:32px;padding:0 12px;overflow:hidden;border-radius:4px;}
-.dc-nameplate-video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:none;pointer-events:none;}
 .dc-username{position:relative;font-size:18px;font-weight:700;color:#f0ede8;letter-spacing:.02em;z-index:1;}
 .dc-handle{font-size:11px;color:rgba(240,237,232,.3);letter-spacing:.05em;margin-top:2px;}
 .dc-divider{height:1px;background:rgba(255,255,255,.06);margin:12px 0;}
@@ -738,7 +734,7 @@ ASCII INTRO — ANKUZO
         <div class="dc-banner" id="dcBanner">
           <canvas class="dc-banner-canvas" id="dcBannerCanvas"></canvas>
           <img class="dc-profile-banner" id="dcProfileBanner" src="" alt="">
-          <div class="dc-banner-text">ANKUZO</div>
+          <div class="dc-banner-text" id="dcBannerText">ANKUZO</div>
         </div>
         <div class="dc-body">
           <div class="dc-top-row">
@@ -749,10 +745,7 @@ ASCII INTRO — ANKUZO
             </div>
             <div class="dc-status-text" id="dcStatusText"></div>
           </div>
-          <div class="dc-nameplate" id="dcNameplate">
-            <video class="dc-nameplate-video" id="dcNameplateVideo" autoplay loop muted playsinline aria-hidden="true"></video>
-            <div class="dc-username" id="dcUsername">anku</div>
-          </div>
+          <div class="dc-username" id="dcUsername">anku</div>
           <div class="dc-handle">@ankuz0</div>
 
           <div class="dc-divider"></div>
@@ -1483,8 +1476,7 @@ function applyPerfLevel(level){
     const avatar = document.getElementById('dcAvatar');
     const decoration = document.getElementById('dcAvatarDecoration');
     const profileBanner = document.getElementById('dcProfileBanner');
-    const nameplateVideo = document.getElementById('dcNameplateVideo');
-    const card = document.getElementById('dcCard');
+    const bannerText = document.getElementById('dcBannerText');
     const ring   = document.getElementById('dcStatusRing');
     const uname  = document.getElementById('dcUsername');
     const stText = document.getElementById('dcStatusText');
@@ -1506,32 +1498,21 @@ function applyPerfLevel(level){
       if(!asset) delete decoration.dataset.asset;
     }
     if(profileBanner && !profileBanner.dataset.asset){
-      profileBanner.style.display = 'block';
+      profileBanner.onload = ()=>{
+        profileBanner.style.display = 'block';
+        if(bannerText) bannerText.style.display = 'none';
+      };
       profileBanner.onerror = ()=>{
         profileBanner.onerror = null;
         if(user.banner){
           profileBanner.src = `https://cdn.discordapp.com/banners/${DISCORD_ID}/${user.banner}.${user.banner.startsWith('a_')?'gif':'webp'}?size=512`;
         } else {
           profileBanner.style.display = 'none';
+          if(bannerText) bannerText.style.display = '';
         }
       };
-      profileBanner.src = `discord-assets/banner.webp?v=${encodeURIComponent(user.banner || 'manual')}`;
+      profileBanner.src = `discord-assets/banner.webp?v=${encodeURIComponent(user.banner || 'manual-2')}`;
       profileBanner.dataset.asset = user.banner || 'manual';
-    }
-    if(nameplateVideo){
-      const nameplate = user.collectibles?.nameplate;
-      const asset = nameplate?.asset;
-      if(card) card.dataset.palette = nameplate?.palette || '';
-      nameplateVideo.style.display = asset ? 'block' : 'none';
-      const local = asset ? `discord-assets/nameplate.webm?v=${encodeURIComponent(asset)}` : '';
-      const cdn = asset ? `https://cdn.discordapp.com/assets/collectibles/${asset}asset.webm` : '';
-      nameplateVideo.onerror = ()=>{ nameplateVideo.onerror=null; nameplateVideo.src=cdn; };
-      if(local && nameplateVideo.dataset.asset !== asset){
-        nameplateVideo.src = local;
-        nameplateVideo.dataset.asset = asset;
-      }
-      if(!local) nameplateVideo.removeAttribute('src');
-      if(!asset) delete nameplateVideo.dataset.asset;
     }
     if(ring){ ring.className='dc-status-ring '+status; }
     if(uname){

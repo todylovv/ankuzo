@@ -30,11 +30,13 @@ jobs:
 
           curl --fail --silent --show-error --location \
             "https://api.lanyard.rest/v1/users/${DISCORD_ID}" > /tmp/lanyard.json
+          curl --fail --silent --show-error --location \
+            "https://japi.rest/discord/v1/user/${DISCORD_ID}" > /tmp/discord-profile.json ||
+            echo '{"data":{}}' > /tmp/discord-profile.json
 
           avatar="$(jq -r '.data.discord_user.avatar // empty' /tmp/lanyard.json)"
           decoration="$(jq -r '.data.discord_user.avatar_decoration_data.asset // empty' /tmp/lanyard.json)"
-          nameplate="$(jq -r '.data.discord_user.collectibles.nameplate.asset // empty' /tmp/lanyard.json)"
-          banner="$(jq -r '.data.discord_user.banner // empty' /tmp/lanyard.json)"
+          banner="$(jq -r '.data.banner // empty' /tmp/discord-profile.json)"
 
           if [ -n "$avatar" ]; then
             curl --fail --silent --show-error --location \
@@ -50,13 +52,7 @@ jobs:
             rm -f discord-assets/avatar-decoration.png
           fi
 
-          if [ -n "$nameplate" ]; then
-            curl --fail --silent --show-error --location \
-              "https://cdn.discordapp.com/assets/collectibles/${nameplate}asset.webm" \
-              --output discord-assets/nameplate.webm
-          else
-            rm -f discord-assets/nameplate.webm
-          fi
+          rm -f discord-assets/nameplate.webm
 
           if [ -n "$banner" ]; then
             curl --fail --silent --show-error --location \
