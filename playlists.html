@@ -888,6 +888,12 @@ async function openModal(id){
 			mEmbed.innerHTML = `<iframe style="border-radius:8px;" src="${esc(embedUrl)}" width="100%" height="352" frameBorder="0" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" allowfullscreen loading="lazy"></iframe>`;
 		}
 		mEmbed.style.display = 'block';
+	} else if (p.platform === 'yandex' && p.embed_url) {
+		mEmbed.innerHTML = `<iframe style="border:none;border-radius:8px;" src="${esc(p.embed_url)}" width="100%" height="450" frameBorder="0" allow="autoplay; clipboard-write" loading="lazy"></iframe>`;
+		mEmbed.style.display = 'block';
+	} else {
+		mEmbed.innerHTML = '';
+		mEmbed.style.display = 'none';
 	}
 
     // report btn
@@ -1051,7 +1057,14 @@ function detectPlatform(input){
   }
   // Короткий формат: /playlists/{uuid}
   if(/music\.yandex\.(ru|com)\/playlists\/[a-f0-9-]{36}/.test(input)){
-    return {platform:'yandex', playlist_url:input.split('?')[0], short:true};
+    const m=input.match(/playlists\/([a-f0-9-]{36})/);
+    const uuid=m?m[1]:null;
+    return {
+      platform:'yandex',
+      playlist_url:input.split('?')[0],
+      embed_src:uuid?`https://music.yandex.ru/iframe/playlist/${uuid}`:null,
+      short:true,
+    };
   }
   return null;
 }
@@ -1114,50 +1127,8 @@ async function previewUrl(url){
     const embedSrc = detected.embed_src || (owner && kind ? `https://music.yandex.ru/iframe/playlist/${owner}/${kind}` : null);
 
     if(detected.short){
-      // UUID ссылка — пробуем resolve через CORS прокси
-      document.getElementById('prevTitle').textContent='Загрузка...';
-      try{
-        const proxyUrl=`https://api.allorigins.win/get?url=${encodeURIComponent(url.split('?')[0])}`;
-        const res=await fetch(proxyUrl);
-        const data=await res.json();
-        const html=data.contents||'';
-
-        // Ищем iframe src в HTML — Яндекс кладёт его в og:video или в JSON
-        // Паттерн: "playlist/al.semenov22/1000" или owner/kind в JSON
-        let owner=null, kind=null;
-
-        // Ищем в JSON данных страницы
-        const ownerMatch=html.match(/"owner"\s*:\s*\{\s*"uid"\s*:\s*\d+\s*,\s*"login"\s*:\s*"([^"]+)"/);
-        const kindMatch=html.match(/"kind"\s*:\s*(\d+)/);
-        if(ownerMatch) owner=ownerMatch[1];
-        if(kindMatch) kind=kindMatch[1];
-
-        // Ищем в iframe src если есть
-        if(!owner||!kind){
-          const iframeMatch=html.match(/music\.yandex\.ru\/iframe\/playlist\/([^\/\\"]+)\/(\d+)/);
-          if(iframeMatch){ owner=iframeMatch[1]; kind=iframeMatch[2]; }
-        }
-
-        // Ищем в og:url
-        if(!owner||!kind){
-          const ogMatch=html.match(/users\/([^\/\\"]+)\/playlists\/(\d+)/);
-          if(ogMatch){ owner=ogMatch[1]; kind=ogMatch[2]; }
-        }
-
-        if(owner && kind){
-          detected.owner=owner; detected.kind=kind;
-          detected.playlist_url=`https://music.yandex.ru/users/${owner}/playlists/${kind}`;
-          detected.embed_src=`https://music.yandex.ru/iframe/playlist/${owner}/${kind}`;
-          detected.short=false;
-          // Рекурсивно вызываем с полными данными
-          _previewData=null;
-          await previewYandex(detected, url);
-          return;
-        }
-      }catch(e){}
-
-      // Не удалось — ручные поля
-      _previewData={...detected,title:'',author:'Яндекс Музыка',cover_url:'',embed_url:null,track_count:0};
+      // UUID share links can be embedded directly on static hosting.
+      _previewData={...detected,title:'',author:'Яндекс Музыка',cover_url:'',embed_url:detected.embed_src,track_count:0};
       document.getElementById('prevTitle').textContent='Заполни поля ниже';
       document.getElementById('prevAuthor').textContent='Не удалось получить данные автоматически';
       const yf=document.getElementById('yandexFields');
