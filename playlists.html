@@ -9,7 +9,7 @@
 :root{
   --bg:#07070a;--fg:#f0ede8;--dim:rgba(240,237,232,.15);
   --border:rgba(240,237,232,.1);--surface:rgba(240,237,232,.04);
-  --accent:#f0ede8;--yandex:#ffcc00;--vk:#2787f5;
+  --accent:#f0ede8;--vk:#2787f5;
   --font-display:'Bebas Neue',sans-serif;--font-mono:'JetBrains Mono',monospace;
 }
 *{box-sizing:border-box;margin:0;padding:0;}
@@ -51,7 +51,6 @@ body{background:var(--bg);color:var(--fg);font-family:var(--font-mono);min-heigh
 .preview-cover{width:64px;height:64px;object-fit:cover;flex-shrink:0;background:#1a1a20;}
 .preview-info{}
 .preview-platform{font-size:9px;letter-spacing:.15em;text-transform:uppercase;margin-bottom:4px;}
-.preview-platform.yandex{color:var(--yandex);}
 .preview-platform.vk{color:var(--vk);}
 .preview-title{font-size:13px;letter-spacing:.04em;margin-bottom:2px;}
 .preview-author{font-size:10px;color:rgba(240,237,232,.4);}
@@ -125,7 +124,6 @@ body{background:var(--bg);color:var(--fg);font-family:var(--font-mono);min-heigh
 .card-cover{width:100%;height:100%;object-fit:cover;display:block;}
 .card-cover-placeholder{width:100%;height:100%;background:#111116;display:flex;align-items:center;justify-content:center;}
 .card-platform-badge{position:absolute;top:10px;right:10px;font-size:8px;letter-spacing:.2em;text-transform:uppercase;padding:4px 8px;}
-.card-platform-badge.yandex{background:var(--yandex);color:#07070a;}
 .card-platform-badge.vk{background:var(--vk);color:#fff;}
 .card-body{padding:16px;}
 .card-category{font-size:8px;letter-spacing:.2em;text-transform:uppercase;color:rgba(240,237,232,.3);margin-bottom:6px;}
@@ -144,10 +142,6 @@ body{background:var(--bg);color:var(--fg);font-family:var(--font-mono);min-heigh
   padding:12px 24px;text-decoration:none;border-radius:100px;
   transition:all .2s;font-weight:700;
 }
-.yandex-btn{
-  background:var(--yandex);color:#07070a;
-}
-.yandex-btn:hover{background:#ffda40;transform:translateY(-1px);}
 .vk-btn{
   background:var(--vk);color:#fff;
 }
@@ -168,7 +162,6 @@ body{background:var(--bg);color:var(--fg);font-family:var(--font-mono);min-heigh
 .modal-author{font-size:11px;color:rgba(240,237,232,.4);margin-bottom:16px;}
 .modal-actions{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:24px;}
 .embed-wrap{margin-bottom:24px;}
-.embed-wrap iframe{width:100%;border:none;border-radius:2px;}
 .modal-reactions{display:flex;gap:8px;margin-bottom:24px;flex-wrap:wrap;}
 .modal-reaction{display:inline-flex;align-items:center;gap:6px;font-size:11px;padding:8px 14px;border:1px solid var(--border);background:none;cursor:pointer;color:rgba(240,237,232,.6);transition:all .15s;font-family:var(--font-mono);}
 .modal-reaction:hover,.modal-reaction.active{border-color:rgba(240,237,232,.4);color:var(--fg);}
@@ -291,10 +284,9 @@ body{background:var(--bg);color:var(--fg);font-family:var(--font-mono);min-heigh
       <h2 class="form-title">Поделись музыкой</h2>
 
       <div class="form-group">
-        <label class="form-label">Ссылка или iframe код плейлиста</label>
-        <input class="form-input" id="fUrl" type="text" placeholder="Яндекс или VK URL / iframe код...">
+        <label class="form-label">Ссылка или код плейлиста</label>
+        <input class="form-input" id="fUrl" type="text" placeholder="Ссылка VK или HTML-код виджета...">
         <div style="font-size:9px;letter-spacing:.08em;color:rgba(240,237,232,.25);margin-top:6px;line-height:1.6;">
-          Яндекс: вставь ссылку <span style="color:rgba(240,237,232,.4);">music.yandex.ru/playlists/...</span> или iframe-код<br>
           VK: вставь ссылку <span style="color:rgba(240,237,232,.4);">vk.com/music/playlist/...</span> или HTML-код виджета
         </div>
         <div class="error-msg" id="urlErr"></div>
@@ -308,17 +300,6 @@ body{background:var(--bg);color:var(--fg);font-family:var(--font-mono);min-heigh
           </div>
         </div>
         <div id="platformEmbedPreview" style="display:none;margin-top:12px;"></div>
-        <!-- Яндекс: ручной ввод -->
-        <div id="yandexFields" style="display:none;margin-top:12px;display:none;">
-          <div class="form-group" style="margin-bottom:12px;">
-            <label class="form-label">Название плейлиста</label>
-            <input class="form-input" id="fYaTitle" type="text" maxlength="100" placeholder="Название...">
-          </div>
-          <div class="form-group" style="margin-bottom:0;">
-            <label class="form-label">Ссылка на обложку (необязательно)</label>
-            <input class="form-input" id="fYaCover" type="url" placeholder="https://...">
-          </div>
-        </div>
       </div>
 
       <div class="form-group">
@@ -355,10 +336,6 @@ body{background:var(--bg);color:var(--fg);font-family:var(--font-mono);min-heigh
     <button class="filter-btn" data-sort="trend" onclick="setSort('trend',this)">📈 В тренде</button>
     <button class="filter-btn" data-sort="discussed" onclick="setSort('discussed',this)">💬 Обсуждаемые</button>
     <button class="filter-btn" data-sort="views" onclick="setSort('views',this)">👁 Просматриваемые</button>
-    <div class="filter-sep"></div>
-    <button class="filter-btn" data-plat="all" onclick="setPlatform('all',this)">Все</button>
-    <button class="filter-btn" data-plat="yandex" onclick="setPlatform('yandex',this)">● Яндекс</button>
-    <button class="filter-btn" data-plat="vk" onclick="setPlatform('vk',this)">● VK</button>
     <div class="filter-sep"></div>
     <div class="search-wrap">
       <span class="search-icon">⌕</span>
@@ -444,8 +421,6 @@ body{background:var(--bg);color:var(--fg);font-family:var(--font-mono);min-heigh
 // ══════════════════════════════════════════════════════════════
 const SB_URL = 'https://ppurfykznriopzxrafox.supabase.co';
 const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBwdXJmeWt6bnJpb3B6eHJhZm94Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAzMDgyNTMsImV4cCI6MjA5NTg4NDI1M30.uqPWzd_xLaJm12ViYZCVlYnxIdv80ZZoibmZH1DPdkg';
-const YANDEX_RESOLVER_URL = `${SB_URL}/functions/v1/resolve-yandex-playlist`;
-
 const CATEGORIES = [
   {icon:'🎮',name:'Для игр',slug:'games'},
   {icon:'🚗',name:'В дорогу',slug:'road'},
@@ -466,8 +441,8 @@ const REACTIONS = [
   {type:'thumbsup',emoji:'👍'},{type:'music',emoji:'🎵'},{type:'skull',emoji:'💀'},
 ];
 
-function platformLabel(platform){ return platform==='vk'?'● VK':'● ЯНДЕКС'; }
-function platformName(platform){ return platform==='vk'?'VK Музыка':'Яндекс Музыка'; }
+function platformLabel(){ return '● VK'; }
+function platformName(){ return 'VK Музыка'; }
 let _vkWidgetScriptPromise;
 function loadVkWidgetScript(){
   if(window.VK?.Widgets?.Playlist) return Promise.resolve();
@@ -509,7 +484,6 @@ if(!_vid){ _vid = 'v_'+Math.random().toString(36).slice(2)+Date.now().toString(3
 
 // ── state ──
 let _sort = 'new';
-let _platform = 'all';
 let _search = '';
 let _page = 0;
 const _limit = 12;
@@ -643,7 +617,7 @@ document.addEventListener('DOMContentLoaded',async()=>{
 async function loadStats(){
   try{
     const [pl,re,cm] = await Promise.all([
-      fetch(`${SB_URL}/rest/v1/playlists?select=count&status=eq.active&platform=in.(yandex,vk)`,{headers:{apikey:SB_KEY,Authorization:'Bearer '+SB_KEY,Prefer:'count=exact',Range:'0-0'}}).then(r=>({count:r.headers.get('content-range')?.split('/')[1]||'0'})),
+      fetch(`${SB_URL}/rest/v1/playlists?select=count&status=eq.active&platform=eq.vk`,{headers:{apikey:SB_KEY,Authorization:'Bearer '+SB_KEY,Prefer:'count=exact',Range:'0-0'}}).then(r=>({count:r.headers.get('content-range')?.split('/')[1]||'0'})),
       fetch(`${SB_URL}/rest/v1/reactions?select=count`,{headers:{apikey:SB_KEY,Authorization:'Bearer '+SB_KEY,Prefer:'count=exact',Range:'0-0'}}).then(r=>({count:r.headers.get('content-range')?.split('/')[1]||'0'})),
       fetch(`${SB_URL}/rest/v1/comments?select=count&status=eq.active`,{headers:{apikey:SB_KEY,Authorization:'Bearer '+SB_KEY,Prefer:'count=exact',Range:'0-0'}}).then(r=>({count:r.headers.get('content-range')?.split('/')[1]||'0'})),
     ]);
@@ -676,7 +650,7 @@ async function loadCommunityChoice(){
     rows.forEach(r=>{ counts[r.playlist_id]=(counts[r.playlist_id]||0)+1; });
     const topId=Object.entries(counts).sort((a,b)=>b[1]-a[1])[0]?.[0];
     if(!topId) return;
-    const pl = await sb._req('GET',`playlists?id=eq.${topId}&status=eq.active&platform=in.(yandex,vk)&select=*&limit=1`);
+    const pl = await sb._req('GET',`playlists?id=eq.${topId}&status=eq.active&platform=eq.vk&select=*&limit=1`);
     if(!pl||!pl.length) return;
     renderChoiceCard(pl[0], counts[topId]);
   }catch(e){ console.warn('choice err',e); }
@@ -706,7 +680,7 @@ function renderChoiceCard(p, reactionCount){
 // ══════════════════════════════════════════════════════════════
 async function loadHallOfFame(){
   try{
-    const rows = await sb._req('GET','playlists?status=eq.active&platform=in.(yandex,vk)&hall_of_fame_rank=not.is.null&select=id,title,author,cover_url,reaction_count,platform,category&order=hall_of_fame_rank.asc&limit=5');
+    const rows = await sb._req('GET','playlists?status=eq.active&platform=eq.vk&hall_of_fame_rank=not.is.null&select=id,title,author,cover_url,reaction_count,platform,category&order=hall_of_fame_rank.asc&limit=5');
     const list=document.getElementById('hofList');
     if(!rows||!rows.length){ list.innerHTML=`<div class="empty" style="border:none;"><div class="empty-text">Скоро появятся лидеры</div></div>`; return; }
     const medals=['🥇','🥈','🥉','4️⃣','5️⃣'];
@@ -735,9 +709,7 @@ async function loadPlaylists(reset=false){
   if(reset) grid.innerHTML=Array(6).fill(0).map(()=>`<div class="card"><div class="skeleton" style="aspect-ratio:1;"></div><div class="card-body"><div class="skeleton" style="height:10px;width:60%;margin-bottom:8px;"></div><div class="skeleton" style="height:14px;width:80%;margin-bottom:4px;"></div><div class="skeleton" style="height:10px;width:40%;"></div></div></div>`).join('');
 
   try{
-    let q = `status=eq.active&platform=in.(yandex,vk)&limit=${_limit}&offset=${_page*_limit}`;
-
-    if(_platform!=='all') q+=`&platform=eq.${_platform}`;
+    let q = `status=eq.active&platform=eq.vk&limit=${_limit}&offset=${_page*_limit}`;
 
     // search
     if(_search) q+=`&or=(title.ilike.*${encodeURIComponent(_search)}*,author.ilike.*${encodeURIComponent(_search)}*,category.ilike.*${encodeURIComponent(_search)}*)`;
@@ -890,20 +862,14 @@ async function openModal(id){
     // platform
     const mPlat=document.getElementById('mPlatform');
     mPlat.textContent=platformLabel(p.platform);
-    mPlat.style.color=p.platform==='vk'?'var(--vk)':'var(--yandex)';
+    mPlat.style.color='var(--vk)';
 
     document.getElementById('mTitle').textContent=p.title;
     document.getElementById('mAuthor').textContent=`${p.author} · ${p.track_count||0} треков · от ${p.nickname}`;
 
     // actions
     const acts=document.getElementById('mActions');
-    if(p.platform==='yandex' && p.playlist_url){
-      acts.innerHTML=`
-        <a href="${esc(p.playlist_url)}" target="_blank" rel="noopener" class="modal-action-btn yandex-btn" onclick="trackEvent('${p.id}','open_yandex')">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm.6 17.4h-1.8v-6.6L8.4 17.4H6.6l-2.4-6.6v6.6H2.4V6.6h1.8l2.7 7.5 2.7-7.5h1.8v10.8h1.2V6.6h2.4c2.4 0 3.6 1.2 3.6 3.3 0 1.8-1.2 3-2.7 3.3l3 4.2h-2.1l-2.7-3.9h-.9v3.9h.1z"/></svg>
-          Открыть в Яндекс Музыке
-        </a>`;
-    } else if(p.platform==='vk' && p.playlist_url){
+    if(p.platform==='vk' && p.playlist_url){
       acts.innerHTML=`
         <a href="${esc(p.playlist_url)}" target="_blank" rel="noopener" class="modal-action-btn vk-btn" onclick="trackEvent('${p.id}','open_vk')">
           Открыть в VK Музыке
@@ -912,12 +878,7 @@ async function openModal(id){
 
     // embed
 	const mEmbed = document.getElementById('mEmbed');
-	const yandexUuid = (p.playlist_url||'').match(/playlists\/([a-f0-9-]{36})/)?.[1];
-	const yandexEmbedUrl = p.embed_url || (yandexUuid?`https://music.yandex.ru/iframe/playlist/${yandexUuid}`:null);
-	if (p.platform === 'yandex' && yandexEmbedUrl) {
-		mEmbed.innerHTML = `<iframe style="border:1px solid rgba(255,204,0,.38);border-radius:8px;" src="${esc(yandexEmbedUrl)}" width="100%" height="450" frameBorder="0" allow="autoplay; clipboard-write" loading="lazy"></iframe>`;
-		mEmbed.style.display = 'block';
-	} else if (p.platform === 'vk' && p.embed_url) {
+	if (p.platform === 'vk' && p.embed_url) {
 		mEmbed.innerHTML = '<div id="vkModalWidget" style="min-height:180px;padding:8px;border:1px solid rgba(39,135,245,.42);border-radius:8px;"></div>';
 		mEmbed.style.display = 'block';
 		renderVkWidget('vkModalWidget',decodeVkWidgetSpec(p.embed_url));
@@ -941,8 +902,6 @@ async function openModal(id){
 
   }catch(e){ console.warn('modal err',e); }
 }
-
-function openYandex(url){ window.open(url,'_blank'); if(_openPlaylist) trackEvent(_openPlaylist.id,'open_yandex'); }
 
 function closeModal(e){ if(e.target===document.getElementById('overlay')) closeModalBtn(); }
 function closeModalBtn(){
@@ -1071,7 +1030,7 @@ function detectPlatform(input){
       vk_widget:vkWidget,
     };
   }
-  if(/vk\.com\/(?:music\/playlist\/|audio\?z=audio_playlist)/.test(decodedInput)){
+  if(/vk\.(?:com|ru)\/(?:music\/playlist\/|audio\?z=audio_playlist)/.test(decodedInput)){
     const normalized=decodeURIComponent(decodedInput);
     const m=normalized.match(/(?:music\/playlist\/|audio_playlist)(-?\d+)_(\d+)(?:_([a-zA-Z0-9]+))?/);
     if(m){
@@ -1084,36 +1043,6 @@ function detectPlatform(input){
         share_link:true,
       };
     }
-  }
-  // Яндекс iframe код — парсим src
-  if(input.includes('<iframe') && input.includes('music.yandex.ru/iframe/playlist')){
-    const srcMatch = input.match(/src="([^"]+)"/);
-    if(srcMatch){
-      const src = srcMatch[1];
-      // https://music.yandex.ru/iframe/playlist/{owner}/{kind}
-      const m = src.match(/iframe\/playlist\/([^\/]+)\/(\d+)/);
-      if(m){
-        const owner=m[1], kind=m[2];
-        const fullUrl=`https://music.yandex.ru/users/${owner}/playlists/${kind}`;
-        return {platform:'yandex', playlist_url:fullUrl, owner, kind, embed_src:src};
-      }
-    }
-  }
-  // Полный формат: /users/{owner}/playlists/{kind}
-  if(/music\.yandex\.(ru|com)/.test(input) && /users\/.+\/playlists\/\d+/.test(input)){
-    const m=input.match(/users\/([^\/\?]+)\/playlists\/(\d+)/);
-    return {platform:'yandex', playlist_url:input.split('?')[0], owner:m?m[1]:null, kind:m?m[2]:null};
-  }
-  // Короткий формат: /playlists/{uuid}
-  if(/music\.yandex\.(ru|com)\/playlists\/[a-f0-9-]{36}/.test(input)){
-    const m=input.match(/playlists\/([a-f0-9-]{36})/);
-    const uuid=m?m[1]:null;
-    return {
-      platform:'yandex',
-      playlist_url:input.split('?')[0],
-      uuid,
-      short:true,
-    };
   }
   return null;
 }
@@ -1129,15 +1058,13 @@ async function previewUrl(url){
 
   const detected=detectPlatform(url);
   if(!detected){
-    err.textContent='Поддерживаются только Яндекс Музыка и VK Музыка.';
+    err.textContent='Поддерживаются только плейлисты VK Музыки.';
     err.classList.add('visible');
     box.classList.remove('visible');
     _previewData=null;
     return;
   }
   err.classList.remove('visible');
-  document.getElementById('yandexFields').style.display='none';
-
   if(detected.platform==='vk'){
     _previewData={...detected,title:detected.vk_widget?'VK плейлист':'',author:'VK Музыка',cover_url:'',embed_url:detected.embed_src||null,track_count:0};
     document.getElementById('prevCover').style.display='none';
@@ -1153,100 +1080,6 @@ async function previewUrl(url){
     }
     return;
   }
-
-  if(detected.platform==='yandex'){
-    document.getElementById('yandexFields').style.display='none';
-    document.getElementById('prevPlatform').textContent='● ЯНДЕКС';
-    document.getElementById('prevPlatform').className='preview-platform yandex';
-    document.getElementById('prevTitle').textContent='Загрузка...';
-    document.getElementById('prevAuthor').textContent='';
-    box.classList.add('visible');
-
-    const owner = detected.owner;
-    const kind  = detected.kind;
-    const embedSrc = detected.embed_src || (owner && kind ? `https://music.yandex.ru/iframe/playlist/${owner}/${kind}` : null);
-
-    if(detected.short){
-      document.getElementById('prevCover').style.display='none';
-      document.getElementById('prevTitle').textContent='Получаем данные Яндекса...';
-      document.getElementById('prevAuthor').textContent='';
-      try{
-        const resolved=await resolveYandexUuid(detected.uuid);
-        _previewData={...detected,...resolved};
-        document.getElementById('prevTitle').textContent=resolved.title;
-        document.getElementById('prevAuthor').textContent=`${resolved.author} · ${resolved.track_count} треков`;
-        if(resolved.cover_url){
-          document.getElementById('prevCover').src=resolved.cover_url;
-          document.getElementById('prevCover').style.display='block';
-        }
-        platformEmbedPreview.innerHTML=`<iframe style="border:1px solid rgba(255,204,0,.38);border-radius:8px;" src="${esc(resolved.embed_url)}" width="100%" height="450" frameBorder="0" allow="autoplay; clipboard-write" loading="lazy"></iframe>`;
-        platformEmbedPreview.style.display='block';
-      }catch(e){
-        _previewData=null;
-        document.getElementById('prevTitle').textContent='Не удалось получить данные Яндекса';
-        document.getElementById('prevAuthor').textContent='Проверь resolver в Supabase Functions';
-      }
-      return;
-    }
-
-    if(owner && kind){
-      await previewYandex(detected, url);
-      return;
-    }
-
-    // Fallback
-    _previewData={...detected,title:'',author:'Яндекс Музыка',cover_url:'',embed_url:null,track_count:0};
-    document.getElementById('prevTitle').textContent='Заполни поля ниже';
-    document.getElementById('prevAuthor').textContent='';
-    showYandexManual();
-  }
-}
-
-async function resolveYandexUuid(uuid){
-  const res=await fetch(`${YANDEX_RESOLVER_URL}?uuid=${encodeURIComponent(uuid)}`,{
-    headers:{apikey:SB_KEY,Authorization:'Bearer '+SB_KEY},
-  });
-  const data=await res.json().catch(()=>({}));
-  if(!res.ok) throw new Error(data?.error||`Resolver ${res.status}`);
-  return data;
-}
-
-function showYandexManual(){
-  const yf=document.getElementById('yandexFields');
-  yf.style.display='block';
-  document.getElementById('fYaTitle').oninput=e=>{ _previewData.title=e.target.value.trim(); document.getElementById('prevTitle').textContent=_previewData.title||'Заполни поля ниже'; };
-  document.getElementById('fYaCover').oninput=e=>{ const v=e.target.value.trim(); _previewData.cover_url=v; document.getElementById('prevCover').src=v; };
-}
-
-async function previewYandex(detected){
-  const owner=detected.owner, kind=detected.kind;
-  const embedSrc=detected.embed_src||`https://music.yandex.ru/iframe/playlist/${owner}/${kind}`;
-  const box=document.getElementById('previewBox');
-  document.getElementById('prevPlatform').textContent='● ЯНДЕКС';
-  document.getElementById('prevPlatform').className='preview-platform yandex';
-  box.classList.add('visible');
-  try{
-    const apiUrl=`https://music.yandex.ru/handlers/playlist.jsx?owner=${encodeURIComponent(owner)}&kinds=${kind}&light=true&lang=ru&external-domain=music.yandex.ru&overembed=false`;
-    const res=await fetch(apiUrl,{headers:{'X-Retpath-Y':'https://music.yandex.ru/'}});
-    if(res.ok){
-      const data=await res.json();
-      const pl=data?.playlist;
-      const title=pl?.title||'Яндекс плейлист';
-      const pAuthor=pl?.owner?.name||owner;
-      const trackCount=pl?.trackCount||0;
-      let coverUrl='';
-      if(pl?.cover?.uri) coverUrl='https://'+pl.cover.uri.replace('%%','200x200');
-      _previewData={...detected,title,author:pAuthor,cover_url:coverUrl,embed_url:embedSrc,track_count:trackCount};
-      document.getElementById('prevCover').src=coverUrl;
-      document.getElementById('prevTitle').textContent=title;
-      document.getElementById('prevAuthor').textContent=`${pAuthor} · ${trackCount} треков`;
-      return;
-    }
-  }catch(e){}
-  // Fallback — embed есть но метаданных нет
-  _previewData={...detected,title:'Яндекс плейлист',author:owner,cover_url:'',embed_url:embedSrc,track_count:0};
-  document.getElementById('prevTitle').textContent='Яндекс плейлист';
-  document.getElementById('prevAuthor').textContent=owner;
 }
 
 async function submitPlaylist(){
@@ -1298,9 +1131,6 @@ async function submitPlaylist(){
     toast('Плейлист добавлен! 🎵');
     document.getElementById('fUrl').value='';
     document.getElementById('fNick').value='';
-    document.getElementById('fYaTitle').value='';
-    document.getElementById('fYaCover').value='';
-    document.getElementById('yandexFields').style.display='none';
     document.getElementById('previewBox').classList.remove('visible');
     document.getElementById('platformEmbedPreview').style.display='none';
     document.getElementById('platformEmbedPreview').innerHTML='';
@@ -1327,13 +1157,6 @@ function setSort(sort,el){
   loadPlaylists(true);
 }
 
-function setPlatform(plat,el){
-  _platform=plat; _page=0;
-  document.querySelectorAll('[data-plat]').forEach(b=>b.classList.remove('active'));
-  el.classList.add('active');
-  loadPlaylists(true);
-}
-
 // ══════════════════════════════════════════════════════════════
 // ANALYTICS
 // ══════════════════════════════════════════════════════════════
@@ -1355,12 +1178,12 @@ async function trackEvent(playlistId, event){
 // ══════════════════════════════════════════════════════════════
 async function openRandom(){
   try{
-    const count=await fetch(`${SB_URL}/rest/v1/playlists?status=eq.active&platform=in.(yandex,vk)&select=count`,{
+    const count=await fetch(`${SB_URL}/rest/v1/playlists?status=eq.active&platform=eq.vk&select=count`,{
       headers:{apikey:SB_KEY,Authorization:'Bearer '+SB_KEY,Prefer:'count=exact',Range:'0-0'}
     }).then(r=>parseInt(r.headers.get('content-range')?.split('/')[1]||'0'));
     if(!count) return;
     const offset=Math.floor(Math.random()*count);
-    const rows=await sb._req('GET',`playlists?status=eq.active&platform=in.(yandex,vk)&select=id&limit=1&offset=${offset}`);
+    const rows=await sb._req('GET',`playlists?status=eq.active&platform=eq.vk&select=id&limit=1&offset=${offset}`);
     if(rows&&rows[0]) openModal(rows[0].id);
   }catch(e){}
 }
