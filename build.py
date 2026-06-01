@@ -1,4 +1,4 @@
-import json, datetime
+import json, datetime, sys
 
 summary = json.load(open('/tmp/summary.json'))
 recent1 = json.load(open('/tmp/recent1.json'))
@@ -45,26 +45,27 @@ recent1_games = recent1.get('response',{}).get('games',[])
 recent2_games = recent2.get('response',{}).get('games',[])
 total_2w = sum(g.get('playtime_2weeks',0) for g in recent1_games+recent2_games)/60
 
+# FACEIT через lcrypt.eu прокси
 try:
-    fp = json.load(open('/tmp/faceit_player.json'))
-    fs = json.load(open('/tmp/faceit_stats.json'))
-    cs2g = fp.get('games',{}).get('cs2',{})
-    lifetime = fs.get('lifetime',{})
+    raw = open('/tmp/faceit.json').read().strip()
+    print('FACEIT raw:', raw[:200], file=sys.stderr)
+    fp = json.loads(raw)
     faceit = {
-        'nickname': fp.get('nickname',''),
-        'level':    cs2g.get('skill_level',0),
-        'elo':      cs2g.get('faceit_elo',0),
-        'kd':       lifetime.get('Average K/D Ratio','—'),
-        'winrate':  lifetime.get('Win Rate %','—'),
-        'matches':  lifetime.get('Matches','—'),
-        'hs':       lifetime.get('Average Headshots %','—'),
+        'nickname': fp.get('nickname', 'nuBac'),
+        'level':    fp.get('level', 0),
+        'elo':      fp.get('elo', 0),
+        'kd':       fp.get('lifetime', {}).get('Average K/D Ratio', '—'),
+        'winrate':  fp.get('lifetime', {}).get('Win Rate %', '—'),
+        'matches':  fp.get('lifetime', {}).get('Matches', '—'),
+        'hs':       fp.get('lifetime', {}).get('Average Headshots %', '—'),
     }
+    print('FACEIT OK: level', faceit['level'], 'elo', faceit['elo'], file=sys.stderr)
 except Exception as e:
     faceit = {'error': str(e)}
-    print('FACEIT error:', e)
+    print('FACEIT error:', e, file=sys.stderr)
 
 result = {
-    'updated': datetime.datetime.utcnow().isoformat()+'Z',
+    'updated': datetime.datetime.now(datetime.timezone.utc).isoformat(),
     'accounts': [acc_info(p1), acc_info(p2)],
     'stats': {'total_games':total_games,'total_hours':total_hours,'hours_2weeks':round(total_2w,1)},
     'top3_banners': top3_banners,
@@ -75,4 +76,4 @@ result = {
 with open('steam-data.json','w') as f:
     json.dump(result, f, ensure_ascii=False, indent=2)
 
-print('Done | Steam:', total_games, 'games | FACEIT ELO:', faceit.get('elo','?'))
+print('Done | Steam:', total_games, 'games | FACEIT:', faceit.get('elo', faceit.get('error','?')))
