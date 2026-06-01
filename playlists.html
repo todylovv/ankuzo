@@ -9,7 +9,7 @@
 :root{
   --bg:#07070a;--fg:#f0ede8;--dim:rgba(240,237,232,.15);
   --border:rgba(240,237,232,.1);--surface:rgba(240,237,232,.04);
-  --accent:#f0ede8;--spotify:#1DB954;--yandex:#FF4433;
+  --accent:#f0ede8;--yandex:#ffcc00;--vk:#2787f5;
   --font-display:'Bebas Neue',sans-serif;--font-mono:'JetBrains Mono',monospace;
 }
 *{box-sizing:border-box;margin:0;padding:0;}
@@ -51,8 +51,8 @@ body{background:var(--bg);color:var(--fg);font-family:var(--font-mono);min-heigh
 .preview-cover{width:64px;height:64px;object-fit:cover;flex-shrink:0;background:#1a1a20;}
 .preview-info{}
 .preview-platform{font-size:9px;letter-spacing:.15em;text-transform:uppercase;margin-bottom:4px;}
-.preview-platform.spotify{color:var(--spotify);}
 .preview-platform.yandex{color:var(--yandex);}
+.preview-platform.vk{color:var(--vk);}
 .preview-title{font-size:13px;letter-spacing:.04em;margin-bottom:2px;}
 .preview-author{font-size:10px;color:rgba(240,237,232,.4);}
 .tags-wrap{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;}
@@ -125,8 +125,8 @@ body{background:var(--bg);color:var(--fg);font-family:var(--font-mono);min-heigh
 .card-cover{width:100%;height:100%;object-fit:cover;display:block;}
 .card-cover-placeholder{width:100%;height:100%;background:#111116;display:flex;align-items:center;justify-content:center;}
 .card-platform-badge{position:absolute;top:10px;right:10px;font-size:8px;letter-spacing:.2em;text-transform:uppercase;padding:4px 8px;}
-.card-platform-badge.spotify{background:var(--spotify);color:#000;}
-.card-platform-badge.yandex{background:var(--yandex);color:#fff;}
+.card-platform-badge.yandex{background:var(--yandex);color:#07070a;}
+.card-platform-badge.vk{background:var(--vk);color:#fff;}
 .card-body{padding:16px;}
 .card-category{font-size:8px;letter-spacing:.2em;text-transform:uppercase;color:rgba(240,237,232,.3);margin-bottom:6px;}
 .card-title{font-size:13px;letter-spacing:.04em;margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
@@ -144,14 +144,14 @@ body{background:var(--bg);color:var(--fg);font-family:var(--font-mono);min-heigh
   padding:12px 24px;text-decoration:none;border-radius:100px;
   transition:all .2s;font-weight:700;
 }
-.spotify-btn{
-  background:#1DB954;color:#000;
-}
-.spotify-btn:hover{background:#1ed760;transform:translateY(-1px);}
 .yandex-btn{
-  background:#FF4433;color:#fff;
+  background:var(--yandex);color:#07070a;
 }
-.yandex-btn:hover{background:#ff5544;transform:translateY(-1px);}
+.yandex-btn:hover{background:#ffda40;transform:translateY(-1px);}
+.vk-btn{
+  background:var(--vk);color:#fff;
+}
+.vk-btn:hover{background:#4398f5;transform:translateY(-1px);}
 
 /* ── MODAL ── */
 .overlay{position:fixed;inset:0;background:rgba(7,7,10,.92);z-index:200;display:none;align-items:center;justify-content:center;padding:24px;}
@@ -292,10 +292,10 @@ body{background:var(--bg);color:var(--fg);font-family:var(--font-mono);min-heigh
 
       <div class="form-group">
         <label class="form-label">Ссылка или iframe код плейлиста</label>
-        <input class="form-input" id="fUrl" type="text" placeholder="Spotify URL или Яндекс URL / iframe код...">
+        <input class="form-input" id="fUrl" type="text" placeholder="Яндекс или VK URL / iframe код...">
         <div style="font-size:9px;letter-spacing:.08em;color:rgba(240,237,232,.25);margin-top:6px;line-height:1.6;">
-          Spotify: вставь ссылку вида <span style="color:rgba(240,237,232,.4);">open.spotify.com/playlist/...</span><br>
-          Яндекс: вставь ссылку <span style="color:rgba(240,237,232,.4);">music.yandex.ru/users/.../playlists/...</span> или iframe код (три точки → Поделиться → HTML-код)
+          Яндекс: вставь ссылку <span style="color:rgba(240,237,232,.4);">music.yandex.ru/playlists/...</span> или iframe код<br>
+          VK: вставь ссылку <span style="color:rgba(240,237,232,.4);">vk.com/music/playlist/...</span> или iframe код виджета
         </div>
         <div class="error-msg" id="urlErr"></div>
         <!-- preview -->
@@ -307,7 +307,7 @@ body{background:var(--bg);color:var(--fg);font-family:var(--font-mono);min-heigh
             <div class="preview-author" id="prevAuthor"></div>
           </div>
         </div>
-        <div id="yandexEmbedPreview" style="display:none;margin-top:12px;"></div>
+        <div id="platformEmbedPreview" style="display:none;margin-top:12px;"></div>
         <!-- Яндекс: ручной ввод -->
         <div id="yandexFields" style="display:none;margin-top:12px;display:none;">
           <div class="form-group" style="margin-bottom:12px;">
@@ -357,8 +357,8 @@ body{background:var(--bg);color:var(--fg);font-family:var(--font-mono);min-heigh
     <button class="filter-btn" data-sort="views" onclick="setSort('views',this)">👁 Просматриваемые</button>
     <div class="filter-sep"></div>
     <button class="filter-btn" data-plat="all" onclick="setPlatform('all',this)">Все</button>
-    <button class="filter-btn" data-plat="spotify" onclick="setPlatform('spotify',this)">● Spotify</button>
     <button class="filter-btn" data-plat="yandex" onclick="setPlatform('yandex',this)">● Яндекс</button>
+    <button class="filter-btn" data-plat="vk" onclick="setPlatform('vk',this)">● VK</button>
     <div class="filter-sep"></div>
     <div class="search-wrap">
       <span class="search-icon">⌕</span>
@@ -464,6 +464,9 @@ const REACTIONS = [
   {type:'heart',emoji:'❤️'},{type:'fire',emoji:'🔥'},
   {type:'thumbsup',emoji:'👍'},{type:'music',emoji:'🎵'},{type:'skull',emoji:'💀'},
 ];
+
+function platformLabel(platform){ return platform==='vk'?'● VK':'● ЯНДЕКС'; }
+function platformName(platform){ return platform==='vk'?'VK Музыка':'Яндекс Музыка'; }
 
 // ── visitor id ──
 let _vid = localStorage.getItem('_ankuzo_vid');
@@ -603,7 +606,7 @@ document.addEventListener('DOMContentLoaded',async()=>{
 async function loadStats(){
   try{
     const [pl,re,cm] = await Promise.all([
-      fetch(`${SB_URL}/rest/v1/playlists?select=count&status=eq.active`,{headers:{apikey:SB_KEY,Authorization:'Bearer '+SB_KEY,Prefer:'count=exact',Range:'0-0'}}).then(r=>({count:r.headers.get('content-range')?.split('/')[1]||'0'})),
+      fetch(`${SB_URL}/rest/v1/playlists?select=count&status=eq.active&platform=in.(yandex,vk)`,{headers:{apikey:SB_KEY,Authorization:'Bearer '+SB_KEY,Prefer:'count=exact',Range:'0-0'}}).then(r=>({count:r.headers.get('content-range')?.split('/')[1]||'0'})),
       fetch(`${SB_URL}/rest/v1/reactions?select=count`,{headers:{apikey:SB_KEY,Authorization:'Bearer '+SB_KEY,Prefer:'count=exact',Range:'0-0'}}).then(r=>({count:r.headers.get('content-range')?.split('/')[1]||'0'})),
       fetch(`${SB_URL}/rest/v1/comments?select=count&status=eq.active`,{headers:{apikey:SB_KEY,Authorization:'Bearer '+SB_KEY,Prefer:'count=exact',Range:'0-0'}}).then(r=>({count:r.headers.get('content-range')?.split('/')[1]||'0'})),
     ]);
@@ -636,7 +639,7 @@ async function loadCommunityChoice(){
     rows.forEach(r=>{ counts[r.playlist_id]=(counts[r.playlist_id]||0)+1; });
     const topId=Object.entries(counts).sort((a,b)=>b[1]-a[1])[0]?.[0];
     if(!topId) return;
-    const pl = await sb._req('GET',`playlists?id=eq.${topId}&status=eq.active&select=*&limit=1`);
+    const pl = await sb._req('GET',`playlists?id=eq.${topId}&status=eq.active&platform=in.(yandex,vk)&select=*&limit=1`);
     if(!pl||!pl.length) return;
     renderChoiceCard(pl[0], counts[topId]);
   }catch(e){ console.warn('choice err',e); }
@@ -651,7 +654,7 @@ function renderChoiceCard(p, reactionCount){
         <span class="choice-badge">+${reactionCount} реакций за 24ч</span>
       </div>
       <div class="choice-body">
-        <div class="card-platform-badge ${p.platform}" style="display:inline-block;margin-bottom:8px;position:static;">${p.platform==='spotify'?'● SPOTIFY':'● ЯНДЕКС'}</div>
+        <div class="card-platform-badge ${p.platform}" style="display:inline-block;margin-bottom:8px;position:static;">${platformLabel(p.platform)}</div>
         <div class="choice-title">${esc(p.title)}</div>
         <div class="choice-meta">${esc(p.author)} · ${p.track_count||0} треков · ${esc(p.category)}</div>
         <div style="display:flex;gap:8px;">
@@ -666,7 +669,7 @@ function renderChoiceCard(p, reactionCount){
 // ══════════════════════════════════════════════════════════════
 async function loadHallOfFame(){
   try{
-    const rows = await sb._req('GET','playlists?status=eq.active&hall_of_fame_rank=not.is.null&select=id,title,author,cover_url,reaction_count,platform,category&order=hall_of_fame_rank.asc&limit=5');
+    const rows = await sb._req('GET','playlists?status=eq.active&platform=in.(yandex,vk)&hall_of_fame_rank=not.is.null&select=id,title,author,cover_url,reaction_count,platform,category&order=hall_of_fame_rank.asc&limit=5');
     const list=document.getElementById('hofList');
     if(!rows||!rows.length){ list.innerHTML=`<div class="empty" style="border:none;"><div class="empty-text">Скоро появятся лидеры</div></div>`; return; }
     const medals=['🥇','🥈','🥉','4️⃣','5️⃣'];
@@ -677,7 +680,7 @@ async function loadHallOfFame(){
         ${p.cover_url?`<img class="hof-cover" src="${esc(p.cover_url)}" alt="">`:`<div class="hof-cover"></div>`}
         <div class="hof-info">
           <div class="hof-title">${esc(p.title)}</div>
-          <div class="hof-sub">${esc(p.author)} · ${p.platform==='spotify'?'Spotify':'Яндекс'} · ${esc(p.category)}</div>
+          <div class="hof-sub">${esc(p.author)} · ${platformName(p.platform)} · ${esc(p.category)}</div>
         </div>
         <div class="hof-reactions">${p.reaction_count||0} ❤️</div>
       </div>`).join('');
@@ -695,7 +698,7 @@ async function loadPlaylists(reset=false){
   if(reset) grid.innerHTML=Array(6).fill(0).map(()=>`<div class="card"><div class="skeleton" style="aspect-ratio:1;"></div><div class="card-body"><div class="skeleton" style="height:10px;width:60%;margin-bottom:8px;"></div><div class="skeleton" style="height:14px;width:80%;margin-bottom:4px;"></div><div class="skeleton" style="height:10px;width:40%;"></div></div></div>`).join('');
 
   try{
-    let q = `status=eq.active&limit=${_limit}&offset=${_page*_limit}`;
+    let q = `status=eq.active&platform=in.(yandex,vk)&limit=${_limit}&offset=${_page*_limit}`;
 
     if(_platform!=='all') q+=`&platform=eq.${_platform}`;
 
@@ -760,7 +763,7 @@ function cardHTML(p){
         ${p.cover_url
           ?`<img class="card-cover" src="${esc(p.cover_url)}" alt="" loading="lazy">`
           :`<div class="card-cover-placeholder"><span style="font-size:32px;opacity:.15;">🎵</span></div>`}
-        <span class="card-platform-badge ${p.platform}">${p.platform==='spotify'?'● SPOTIFY':'● ЯНДЕКС'}</span>
+        <span class="card-platform-badge ${p.platform}">${platformLabel(p.platform)}</span>
       </div>
       <div class="card-body">
         <div class="card-category">${esc(p.category)}</div>
@@ -849,58 +852,36 @@ async function openModal(id){
 
     // platform
     const mPlat=document.getElementById('mPlatform');
-    mPlat.textContent=p.platform==='spotify'?'● SPOTIFY':'● ЯНДЕКС';
-    mPlat.style.color=p.platform==='spotify'?'var(--spotify)':'var(--yandex)';
+    mPlat.textContent=platformLabel(p.platform);
+    mPlat.style.color=p.platform==='vk'?'var(--vk)':'var(--yandex)';
 
     document.getElementById('mTitle').textContent=p.title;
     document.getElementById('mAuthor').textContent=`${p.author} · ${p.track_count||0} треков · от ${p.nickname}`;
 
     // actions
     const acts=document.getElementById('mActions');
-    if(p.platform==='spotify' && p.playlist_id){
-      acts.innerHTML=`
-        <a href="https://open.spotify.com/playlist/${p.playlist_id}" target="_blank" rel="noopener" class="modal-action-btn spotify-btn" onclick="trackEvent('${p.id}','open_spotify')">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/></svg>
-          Открыть в Spotify
-        </a>`;
-    } else if(p.platform==='yandex' && p.playlist_url){
+    if(p.platform==='yandex' && p.playlist_url){
       acts.innerHTML=`
         <a href="${esc(p.playlist_url)}" target="_blank" rel="noopener" class="modal-action-btn yandex-btn" onclick="trackEvent('${p.id}','open_yandex')">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm.6 17.4h-1.8v-6.6L8.4 17.4H6.6l-2.4-6.6v6.6H2.4V6.6h1.8l2.7 7.5 2.7-7.5h1.8v10.8h1.2V6.6h2.4c2.4 0 3.6 1.2 3.6 3.3 0 1.8-1.2 3-2.7 3.3l3 4.2h-2.1l-2.7-3.9h-.9v3.9h.1z"/></svg>
           Открыть в Яндекс Музыке
         </a>`;
+    } else if(p.platform==='vk' && p.playlist_url){
+      acts.innerHTML=`
+        <a href="${esc(p.playlist_url)}" target="_blank" rel="noopener" class="modal-action-btn vk-btn" onclick="trackEvent('${p.id}','open_vk')">
+          Открыть в VK Музыке
+        </a>`;
     }
 
     // embed
 	const mEmbed = document.getElementById('mEmbed');
-	clearTimeout(_spotifyEmbedTimer);
 	const yandexUuid = (p.playlist_url||'').match(/playlists\/([a-f0-9-]{36})/)?.[1];
 	const yandexEmbedUrl = p.embed_url || (yandexUuid?`https://music.yandex.ru/iframe/playlist/${yandexUuid}`:null);
-	if (p.platform === 'spotify') {
-		const embedUrl = p.embed_url || `https://open.spotify.com/embed/playlist/${p.playlist_id}?utm_source=generator`;
-		const isMobile = /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent);
-		if (isMobile) {
-		// На мобильных показываем только кнопку — iframe Spotify там не работает
-			mEmbed.innerHTML = `
-				<div style="padding:16px;text-align:center;background:rgba(29,185,84,.08);border:1px solid rgba(29,185,84,.2);border-radius:8px;">
-					<div style="font-size:11px;letter-spacing:.1em;color:rgba(240,237,232,.4);margin-bottom:12px;">Встроенный плеер недоступен на мобильных</div>
-					<a href="https://open.spotify.com/playlist/${p.playlist_id}" target="_blank" rel="noopener" class="modal-action-btn spotify-btn">
-					🎵 Открыть в Spotify
-					</a>
-				</div>`;
-		} else {
-			clearTimeout(_spotifyEmbedTimer);
-			mEmbed.innerHTML = `
-				<iframe style="border-radius:8px;" src="${esc(embedUrl)}" width="100%" height="352" frameBorder="0" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" allowfullscreen loading="lazy"></iframe>
-				<div id="spotifyEmbedNotice" style="margin-top:10px;padding:12px 16px;background:rgba(29,185,84,.06);border:1px solid rgba(29,185,84,.16);border-radius:8px;">
-					<div id="spotifyEmbedNoticeText" style="font-size:10px;line-height:1.7;letter-spacing:.06em;color:rgba(240,237,232,.45);">Если плеер не загрузится, открой плейлист напрямую в Spotify.</div>
-					<a href="https://open.spotify.com/playlist/${p.playlist_id}" target="_blank" rel="noopener" class="modal-action-btn spotify-btn" style="margin-top:10px;" onclick="trackEvent('${p.id}','open_spotify')">Открыть в Spotify</a>
-				</div>`;
-			_spotifyEmbedTimer=setTimeout(showSpotifyBlockedNotice,7000);
-		}
+	if (p.platform === 'yandex' && yandexEmbedUrl) {
+		mEmbed.innerHTML = `<iframe style="border:1px solid rgba(255,204,0,.38);border-radius:8px;" src="${esc(yandexEmbedUrl)}" width="100%" height="450" frameBorder="0" allow="autoplay; clipboard-write" loading="lazy"></iframe>`;
 		mEmbed.style.display = 'block';
-	} else if (p.platform === 'yandex' && yandexEmbedUrl) {
-		mEmbed.innerHTML = `<iframe style="border:none;border-radius:8px;" src="${esc(yandexEmbedUrl)}" width="100%" height="450" frameBorder="0" allow="autoplay; clipboard-write" loading="lazy"></iframe>`;
+	} else if (p.platform === 'vk' && p.embed_url) {
+		mEmbed.innerHTML = `<iframe style="border:1px solid rgba(39,135,245,.42);border-radius:8px;" src="${esc(p.embed_url)}" width="100%" height="450" frameBorder="0" allow="autoplay; encrypted-media" loading="lazy"></iframe>`;
 		mEmbed.style.display = 'block';
 	} else {
 		mEmbed.innerHTML = '';
@@ -923,17 +904,10 @@ async function openModal(id){
   }catch(e){ console.warn('modal err',e); }
 }
 
-function openSpotify(pid){ window.open(`https://open.spotify.com/playlist/${pid}`,'_blank'); if(_openPlaylist) trackEvent(_openPlaylist.id,'open_spotify'); }
 function openYandex(url){ window.open(url,'_blank'); if(_openPlaylist) trackEvent(_openPlaylist.id,'open_yandex'); }
-let _spotifyEmbedTimer;
-function showSpotifyBlockedNotice(){
-  const text=document.getElementById('spotifyEmbedNoticeText');
-  if(text) text.textContent='Spotify может быть недоступен в твоём регионе. Встроенный плеер нельзя разблокировать со стороны сайта. Попробуй открыть Spotify напрямую через доступное тебе подключение.';
-}
 
 function closeModal(e){ if(e.target===document.getElementById('overlay')) closeModalBtn(); }
 function closeModalBtn(){
-  clearTimeout(_spotifyEmbedTimer);
   document.getElementById('overlay').classList.remove('open');
   document.body.style.overflow='';
   _openPlaylist=null;
@@ -1049,6 +1023,31 @@ function toggleTag(id,el){
 
 // ── URL PREVIEW ──
 function detectPlatform(input){
+  const decodedInput=input.replace(/&amp;/g,'&');
+  if(decodedInput.includes('vk.com/widget_playlist.php')){
+    const srcMatch=decodedInput.match(/(?:src=["']([^"']+)["']|https?:\/\/vk\.com\/widget_playlist\.php[^\s"'<>]*)/);
+    if(srcMatch){
+      const src=srcMatch[1]||srcMatch[0];
+      const parsed=new URL(src);
+      const owner=parsed.searchParams.get('owner_id');
+      const playlist=parsed.searchParams.get('playlist_id');
+      if(owner&&playlist){
+        return {platform:'vk',playlist_url:`https://vk.com/music/playlist/${owner}_${playlist}`,embed_src:src};
+      }
+    }
+  }
+  if(/vk\.com\/(?:music\/playlist\/|audio\?z=audio_playlist)/.test(decodedInput)){
+    const normalized=decodeURIComponent(decodedInput);
+    const m=normalized.match(/(?:music\/playlist\/|audio_playlist)(-?\d+)_(\d+)/);
+    if(m){
+      const owner=m[1], playlist=m[2];
+      return {
+        platform:'vk',
+        playlist_url:`https://vk.com/music/playlist/${owner}_${playlist}`,
+        embed_src:`https://vk.com/widget_playlist.php?owner_id=${owner}&playlist_id=${playlist}`,
+      };
+    }
+  }
   // Яндекс iframe код — парсим src
   if(input.includes('<iframe') && input.includes('music.yandex.ru/iframe/playlist')){
     const srcMatch = input.match(/src="([^"]+)"/);
@@ -1062,10 +1061,6 @@ function detectPlatform(input){
         return {platform:'yandex', playlist_url:fullUrl, owner, kind, embed_src:src};
       }
     }
-  }
-  if(/open\.spotify\.com\/playlist\//.test(input)){
-    const m=input.match(/playlist\/([a-zA-Z0-9]+)/);
-    return {platform:'spotify', playlist_id:m?m[1]:null};
   }
   // Полный формат: /users/{owner}/playlists/{kind}
   if(/music\.yandex\.(ru|com)/.test(input) && /users\/.+\/playlists\/\d+/.test(input)){
@@ -1089,15 +1084,15 @@ function detectPlatform(input){
 async function previewUrl(url){
   const box=document.getElementById('previewBox');
   const err=document.getElementById('urlErr');
-  const yandexEmbedPreview=document.getElementById('yandexEmbedPreview');
-  yandexEmbedPreview.style.display='none';
-  yandexEmbedPreview.innerHTML='';
+  const platformEmbedPreview=document.getElementById('platformEmbedPreview');
+  platformEmbedPreview.style.display='none';
+  platformEmbedPreview.innerHTML='';
   document.getElementById('prevCover').style.display='block';
   if(!url){ box.classList.remove('visible'); return; }
 
   const detected=detectPlatform(url);
   if(!detected){
-    err.textContent='Поддерживаются только Spotify и Яндекс Музыка.';
+    err.textContent='Поддерживаются только Яндекс Музыка и VK Музыка.';
     err.classList.add('visible');
     box.classList.remove('visible');
     _previewData=null;
@@ -1106,33 +1101,17 @@ async function previewUrl(url){
   err.classList.remove('visible');
   document.getElementById('yandexFields').style.display='none';
 
-  // Spotify oEmbed
-  if(detected.platform==='spotify' && detected.playlist_id){
-    try{
-      const oembed=await fetch(`https://open.spotify.com/oembed?url=${encodeURIComponent(url)}`).then(r=>r.json());
-      _previewData={
-        ...detected,
-        title:oembed.title||'Плейлист',
-        author:oembed.provider_name||'Spotify',
-        cover_url:oembed.thumbnail_url||'',
-        embed_url:`https://open.spotify.com/embed/playlist/${detected.playlist_id}?utm_source=generator`,
-        track_count:0,
-      };
-      document.getElementById('prevCover').src=_previewData.cover_url;
-      document.getElementById('prevPlatform').textContent='● SPOTIFY';
-      document.getElementById('prevPlatform').className='preview-platform spotify';
-      document.getElementById('prevTitle').textContent=_previewData.title;
-      document.getElementById('prevAuthor').textContent=_previewData.author;
-      box.classList.add('visible');
-    }catch(e){
-      _previewData={...detected,title:'Spotify плейлист',author:'Spotify',cover_url:'',embed_url:`https://open.spotify.com/embed/playlist/${detected.playlist_id}?utm_source=generator`,track_count:0};
-      document.getElementById('prevPlatform').textContent='● SPOTIFY';
-      document.getElementById('prevPlatform').className='preview-platform spotify';
-      document.getElementById('prevTitle').textContent='Spotify плейлист';
-      document.getElementById('prevAuthor').textContent='Проверь ссылку';
-      document.getElementById('prevCover').src='';
-      box.classList.add('visible');
-    }
+  if(detected.platform==='vk'){
+    _previewData={...detected,title:'VK плейлист',author:'VK Музыка',cover_url:'',embed_url:detected.embed_src,track_count:0};
+    document.getElementById('prevCover').style.display='none';
+    document.getElementById('prevPlatform').textContent='● VK';
+    document.getElementById('prevPlatform').className='preview-platform vk';
+    document.getElementById('prevTitle').textContent='VK плейлист';
+    document.getElementById('prevAuthor').textContent='Плеер готов к добавлению';
+    box.classList.add('visible');
+    platformEmbedPreview.innerHTML=`<iframe style="border:1px solid rgba(39,135,245,.42);border-radius:8px;" src="${esc(detected.embed_src)}" width="100%" height="450" frameBorder="0" allow="autoplay; encrypted-media" loading="lazy"></iframe>`;
+    platformEmbedPreview.style.display='block';
+    return;
   }
 
   if(detected.platform==='yandex'){
@@ -1153,8 +1132,8 @@ async function previewUrl(url){
       document.getElementById('prevCover').style.display='none';
       document.getElementById('prevTitle').textContent='Яндекс плейлист';
       document.getElementById('prevAuthor').textContent='Плеер готов к добавлению';
-      yandexEmbedPreview.innerHTML=`<iframe style="border:none;border-radius:8px;" src="${esc(detected.embed_src)}" width="100%" height="450" frameBorder="0" allow="autoplay; clipboard-write" loading="lazy"></iframe>`;
-      yandexEmbedPreview.style.display='block';
+      platformEmbedPreview.innerHTML=`<iframe style="border:1px solid rgba(255,204,0,.38);border-radius:8px;" src="${esc(detected.embed_src)}" width="100%" height="450" frameBorder="0" allow="autoplay; clipboard-write" loading="lazy"></iframe>`;
+      platformEmbedPreview.style.display='block';
       return;
     }
 
@@ -1215,7 +1194,7 @@ async function submitPlaylist(){
   const status=document.getElementById('submitStatus');
 
   if(!_previewData){ toast('Вставь ссылку на плейлист',true); return; }
-  if(_previewData.platform==='yandex' && !_previewData.title){ toast('Введи название плейлиста',true); return; }
+  if(!_previewData.title){ toast('Введи название плейлиста',true); return; }
   if(!nick){ toast('Введи никнейм',true); return; }
   if(!_selectedCat){ document.getElementById('catErr').classList.add('visible'); return; }
 
@@ -1227,9 +1206,7 @@ async function submitPlaylist(){
     if(!ok){ toast('Лимит: 5 плейлистов в час / 20 в сутки',true); btn.disabled=false; status.textContent=''; return; }
 
     // check duplicate
-    let dupQ;
-    if(_previewData.platform==='spotify') dupQ=`playlists?platform=eq.spotify&playlist_id=eq.${_previewData.playlist_id}&select=id`;
-    else dupQ=`playlists?platform=eq.yandex&playlist_url=eq.${encodeURIComponent(_previewData.playlist_url)}&select=id`;
+    const dupQ=`playlists?platform=eq.${_previewData.platform}&playlist_url=eq.${encodeURIComponent(_previewData.playlist_url)}&select=id`;
     const dup=await sb._req('GET',dupQ);
     if(dup&&dup.length){ toast('Этот плейлист уже добавлен в коллекцию.',true); btn.disabled=false; status.textContent=''; return; }
 
@@ -1238,8 +1215,8 @@ async function submitPlaylist(){
     // insert playlist
     const inserted=await sb.insert('playlists',{
       platform:_previewData.platform,
-      playlist_id:_previewData.platform==='spotify'?_previewData.playlist_id:null,
-      playlist_url:_previewData.platform==='yandex'?_previewData.playlist_url:null,
+      playlist_id:null,
+      playlist_url:_previewData.playlist_url,
       title:_previewData.title,
       author:_previewData.author,
       cover_url:_previewData.cover_url||null,
@@ -1264,8 +1241,8 @@ async function submitPlaylist(){
     document.getElementById('fYaCover').value='';
     document.getElementById('yandexFields').style.display='none';
     document.getElementById('previewBox').classList.remove('visible');
-    document.getElementById('yandexEmbedPreview').style.display='none';
-    document.getElementById('yandexEmbedPreview').innerHTML='';
+    document.getElementById('platformEmbedPreview').style.display='none';
+    document.getElementById('platformEmbedPreview').innerHTML='';
     document.querySelectorAll('.cat-btn').forEach(b=>b.classList.remove('selected'));
     document.querySelectorAll('.tag-chip').forEach(b=>b.classList.remove('selected'));
     _selectedCat=null; _selectedTags.clear(); _previewData=null;
@@ -1317,12 +1294,12 @@ async function trackEvent(playlistId, event){
 // ══════════════════════════════════════════════════════════════
 async function openRandom(){
   try{
-    const count=await fetch(`${SB_URL}/rest/v1/playlists?status=eq.active&select=count`,{
+    const count=await fetch(`${SB_URL}/rest/v1/playlists?status=eq.active&platform=in.(yandex,vk)&select=count`,{
       headers:{apikey:SB_KEY,Authorization:'Bearer '+SB_KEY,Prefer:'count=exact',Range:'0-0'}
     }).then(r=>parseInt(r.headers.get('content-range')?.split('/')[1]||'0'));
     if(!count) return;
     const offset=Math.floor(Math.random()*count);
-    const rows=await sb._req('GET',`playlists?status=eq.active&select=id&limit=1&offset=${offset}`);
+    const rows=await sb._req('GET',`playlists?status=eq.active&platform=in.(yandex,vk)&select=id&limit=1&offset=${offset}`);
     if(rows&&rows[0]) openModal(rows[0].id);
   }catch(e){}
 }
