@@ -505,7 +505,7 @@ function applyPerfLevel(level){
     };
     badges.innerHTML = (flags||[])
       .filter(flag=>icons[flag])
-      .map(flag=>`<span class="dc-badge ${icons[flag].className}" title="${icons[flag].label}" aria-label="${icons[flag].label}">${icons[flag].svg}</span>`)
+      .map(flag=>`<span class="dc-badge ${icons[flag].className}" role="img" title="${icons[flag].label}" aria-label="${icons[flag].label}">${icons[flag].svg}</span>`)
       .join('');
   }
 
@@ -603,35 +603,28 @@ function applyPerfLevel(level){
     }
   }
 
-  fetch('https://api.lanyard.rest/v1/users/'+DISCORD_ID)
-    .then(r=>r.json())
-    .then(j=>{ if(j.success) update(j.data); })
-    .catch(()=>{});
   fetch('discord-assets/profile.json?_='+Date.now())
     .then(r=>r.json())
-    .then(profile=>renderBadges(profile.public_flags_array))
+    .then(profile=>{ update(profile); renderBadges(profile.public_flags_array); })
     .catch(()=>{});
 
-  try{
-    const ws = new WebSocket('wss://api.lanyard.rest/socket');
-    ws.onmessage = e=>{
-      const msg = JSON.parse(e.data);
-      if(msg.op===1) ws.send(JSON.stringify({op:2,d:{subscribe_to_id:DISCORD_ID}}));
-      if(msg.op===0 && msg.d?.discord_user) update(msg.d);
-    };
-  }catch(e){}
+  if(matchMedia('(min-width:901px) and (pointer:fine)').matches){
+    fetch('https://api.lanyard.rest/v1/users/'+DISCORD_ID)
+      .then(r=>r.json())
+      .then(j=>{ if(j.success) update(j.data); })
+      .catch(()=>{});
+    try{
+      const ws = new WebSocket('wss://api.lanyard.rest/socket');
+      ws.onmessage = e=>{
+        const msg = JSON.parse(e.data);
+        if(msg.op===1) ws.send(JSON.stringify({op:2,d:{subscribe_to_id:DISCORD_ID}}));
+        if(msg.op===0 && msg.d?.discord_user) update(msg.d);
+      };
+    }catch(e){}
+  }
 })();
 
 // в”Ђв”Ђ VISITOR COUNTER в”Ђв”Ђ
-fetch('https://hits.sh/todylovv.github.io/ankuzo.svg')
-  .then(r=>r.text())
-  .then(svg=>{
-    const el = document.getElementById('visitorCount');
-    const hits = svg.match(/aria-label="hits:\s*([\d,]+)"/)?.[1];
-    if(el && hits) el.textContent = Number(hits.replace(/,/g,'')).toLocaleString('ru-RU');
-  })
-  .catch(()=>{});
-
 document.getElementById('footerYear').textContent = new Date().getFullYear();
 
 

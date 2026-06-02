@@ -145,6 +145,7 @@ section { max-width: 1360px; padding-inline: clamp(20px, 5vw, 76px); }
 .terminal-console.studio-reveal, .platform-frame.studio-reveal, .steam-shell.studio-reveal { transform: translateY(28px); }
 .terminal-console.studio-visible, .platform-frame.studio-visible, .steam-shell.studio-visible { transform: none; }
 .split-line { overflow: hidden; }
+.studio-frame span { color: rgba(240, 237, 232, .68) !important; font-size: 7px !important; }
 
 @media (max-width: 900px) {
   .hero { padding-top: 106px; }
@@ -154,6 +155,9 @@ section { max-width: 1360px; padding-inline: clamp(20px, 5vw, 76px); }
   .hero-editorial { display: block; margin-top: 24px; }.hero-sidecopy { display: none; }
   .hero-actions { display: block; }.discord-hero { margin-top: 18px; }
   .hero-observatory { top: 19%; right: -34vw; width: 100vw; height: 55vh; opacity: .38; }
+  .hero-inner { min-height: 610px; }
+  .hero-eyebrow, .hero-name .solid, .hero-name .outline, .hero-tagline, .hero-pills, .discord-hero, .scroll-hint { animation: none !important; opacity: 1 !important; transform: none !important; }
+  #discordLoader { display: none !important; }
   .about-manifesto { display: block; }.about-manifesto h2 { margin: 18px 0 20px; font-size: clamp(82px, 26vw, 142px); }.about-manifesto p { font-size: 9px; }
   .about-grid { display: block; }.about-right { position: relative; top: auto; margin-top: 44px; }
   .skills-heading { display: block; }.skills-heading h2 { margin-top: 18px; text-align: left; font-size: clamp(82px, 25vw, 136px); }

@@ -13,6 +13,7 @@
     [100, 'ACCESS GRANTED']
   ];
   const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const compactExperience = matchMedia('(max-width: 900px), (pointer: coarse)').matches;
   let value = 0;
   let finished = false;
 
@@ -45,6 +46,10 @@
 
   intro.addEventListener('pointerdown', enter);
   addEventListener('keydown', enter, { once: true });
+  if (compactExperience) {
+    intro.classList.add('hide');
+    return;
+  }
   draw();
   setTimeout(tick, reducedMotion ? 0 : 140);
   setTimeout(enter, reducedMotion ? 0 : 3200);
