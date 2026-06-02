@@ -5,3 +5,4 @@ dist/
 .chrome-qa-*/
 .codex-*.pid
 .codex-lighthouse.json
+.codex-lighthouse-local.json

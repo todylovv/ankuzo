@@ -2,7 +2,11 @@
   --studio-hot: #ff5a36;
   --studio-paper: #f0ede8;
   --studio-ink: #050507;
-  --studio-serif: 'Instrument Serif', Georgia, serif;
+  --studio-display: 'Bebas Neue', Impact, sans-serif;
+  --studio-display-cyr: 'Unbounded', Arial, sans-serif;
+  --studio-body: 'Manrope', Arial, sans-serif;
+  --studio-serif: 'Prata', Georgia, serif;
+  --studio-mono: 'JetBrains Mono', Consolas, monospace;
 }
 
 body {
@@ -10,7 +14,9 @@ body {
     radial-gradient(circle at 80% 6%, rgba(255, 90, 54, .11), transparent 24rem),
     radial-gradient(circle at 16% 34%, rgba(240, 237, 232, .045), transparent 30rem),
     #050507;
+  font-family: var(--studio-body);
 }
+#bgCanvas { display: none !important; }
 
 section { max-width: 1360px; padding-inline: clamp(20px, 5vw, 76px); }
 .section-divider { margin-inline: clamp(20px, 5vw, 76px); opacity: .58; }
@@ -22,13 +28,13 @@ section { max-width: 1360px; padding-inline: clamp(20px, 5vw, 76px); }
 .hero-inner { z-index: 4; max-width: 1360px; }
 .hero-introline { display: flex; align-items: center; justify-content: space-between; max-width: 740px; border-bottom: 1px solid rgba(240, 237, 232, .16); padding-bottom: 14px; }
 .hero-introline span, .hero-sidecopy span, .hero-sidecopy small, .skills-heading span, .about-manifesto span {
-  color: rgba(240, 237, 232, .44); font: 8px 'JetBrains Mono', monospace; letter-spacing: .23em; text-transform: uppercase;
+  color: rgba(240, 237, 232, .56); font: 9px var(--studio-mono); letter-spacing: .18em; text-transform: uppercase;
 }
 .hero-eyebrow { margin: 0; color: var(--studio-hot); }
-.hero-name { margin: clamp(24px, 4vw, 54px) 0 0; font-size: clamp(104px, 18vw, 286px); letter-spacing: -.025em; }
+.hero-name { margin: clamp(24px, 4vw, 54px) 0 0; font-family: var(--studio-display); font-size: clamp(104px, 18vw, 286px); letter-spacing: -.025em; }
 .hero-name .outline { margin-top: -.14em; opacity: .72; }
 .hero-editorial { display: grid; grid-template-columns: minmax(300px, 560px) 240px; gap: clamp(42px, 9vw, 148px); align-items: end; margin-top: 12px; }
-.hero-tagline { margin: 0; padding-left: 18px; border-left: 1px solid var(--studio-hot); font-size: clamp(12px, 1.2vw, 15px); }
+.hero-tagline { margin: 0; padding-left: 18px; border-left: 1px solid var(--studio-hot); color: rgba(240, 237, 232, .74); font: 500 clamp(14px, 1.3vw, 17px)/1.85 var(--studio-body); letter-spacing: -.005em; }
 .hero-sidecopy { padding-bottom: 4px; }
 .hero-sidecopy strong { display: block; margin: 13px 0 16px; color: var(--studio-paper); font: 42px/.86 var(--studio-serif); letter-spacing: -.03em; }
 .hero-sidecopy em, .skills-heading em, .about-manifesto em, .contact-copy em { color: var(--studio-hot); font-family: var(--studio-serif); font-weight: 400; }
@@ -43,18 +49,18 @@ section { max-width: 1360px; padding-inline: clamp(20px, 5vw, 76px); }
 /* Manifesto */
 #about { padding-top: clamp(100px, 14vw, 196px); }
 .about-manifesto { display: grid; grid-template-columns: 130px minmax(280px, 1fr) 280px; gap: 30px; align-items: end; padding-bottom: clamp(52px, 7vw, 92px); border-bottom: 1px solid rgba(240, 237, 232, .16); }
-.about-manifesto h2, .skills-heading h2 { color: var(--studio-paper); font: clamp(72px, 10vw, 154px)/.8 'Bebas Neue', sans-serif; letter-spacing: -.01em; }
-.about-manifesto p { color: rgba(240, 237, 232, .58); font: 11px/1.9 'JetBrains Mono', monospace; letter-spacing: .05em; }
+.about-manifesto h2, .skills-heading h2 { color: var(--studio-paper); font: 500 clamp(54px, 7vw, 108px)/1.02 var(--studio-display-cyr); letter-spacing: -.07em; }
+.about-manifesto p { color: rgba(240, 237, 232, .7); font: 500 15px/1.75 var(--studio-body); letter-spacing: 0; }
 .about-grid { grid-template-columns: minmax(0, 1fr) minmax(320px, 460px); gap: clamp(50px, 9vw, 146px); padding-top: clamp(52px, 7vw, 88px); }
-.about-index { display: block; margin-bottom: 24px; color: var(--studio-hot); font: 8px 'JetBrains Mono', monospace; letter-spacing: .22em; }
-.about-text { max-width: 680px; font-size: clamp(14px, 1.4vw, 18px); line-height: 2; }
+.about-index { display: block; margin-bottom: 28px; color: var(--studio-hot); font: 9px var(--studio-mono); letter-spacing: .18em; }
+.about-text { max-width: 720px; color: rgba(240, 237, 232, .84); font: 500 clamp(18px, 1.65vw, 22px)/1.85 var(--studio-body); letter-spacing: -.012em; text-wrap: pretty; }
 .about-right { position: sticky; top: 96px; }
 .dc-card { border-radius: 0 !important; border-color: rgba(240, 237, 232, .18) !important; box-shadow: 24px 24px 0 rgba(255, 90, 54, .07) !important; }
 
 /* Expertise index */
 #skills { padding-top: clamp(110px, 15vw, 210px); }
 .skills-heading { display: flex; justify-content: space-between; gap: 30px; align-items: end; margin-bottom: 54px; }
-.skills-heading h2 { font-size: clamp(76px, 10vw, 152px); text-align: right; }
+.skills-heading h2 { font-size: clamp(52px, 6.3vw, 102px); text-align: right; }
 .skills-grid { display: block; border-top: 1px solid rgba(240, 237, 232, .2); }
 .skill-card { display: grid; grid-template-columns: 66px 90px minmax(190px, .8fr) minmax(240px, 1.35fr) 1fr 34px; gap: 20px; align-items: center; min-height: 160px; padding: 28px 0; border: 0; border-bottom: 1px solid rgba(240, 237, 232, .15); background: transparent; }
 .skill-card::before { background: linear-gradient(90deg, rgba(255, 90, 54, .12), transparent 62%); }
@@ -62,8 +68,8 @@ section { max-width: 1360px; padding-inline: clamp(20px, 5vw, 76px); }
 .skill-card:hover { transform: none; background: rgba(255, 255, 255, .018); }
 .skill-count { color: rgba(240, 237, 232, .3); font: 10px 'JetBrains Mono', monospace; letter-spacing: .18em; }
 .skill-icon { margin: 0; color: rgba(240, 237, 232, .1); font: 54px/.8 'Bebas Neue', sans-serif; }
-.skill-title { margin: 0; font: clamp(28px, 3vw, 44px)/.9 'Bebas Neue', sans-serif; letter-spacing: .04em; }
-.skill-desc { max-width: 470px; font-size: 10px; }
+.skill-title { margin: 0; font: 500 clamp(18px, 1.7vw, 25px)/1.2 var(--studio-display-cyr); letter-spacing: -.045em; }
+.skill-desc { max-width: 500px; color: rgba(240, 237, 232, .68); font: 500 14px/1.7 var(--studio-body); letter-spacing: -.005em; }
 .skill-tags { margin: 0; }
 .skill-tag { border: 0; border-bottom: 1px solid rgba(240, 237, 232, .16); border-radius: 0; padding: 4px 0; }
 .skill-arrow { color: var(--studio-hot); font-size: 24px; transition: transform .3s; }
@@ -76,10 +82,10 @@ section { max-width: 1360px; padding-inline: clamp(20px, 5vw, 76px); }
   color: rgba(240, 237, 232, .38); font: 8px 'JetBrains Mono', monospace; letter-spacing: .22em; text-transform: uppercase;
 }
 .terminal-intro h2, .platform-intro h2, .steam-intro h2 {
-  margin-top: 18px; color: var(--studio-paper); font: clamp(78px, 9vw, 142px)/.78 'Bebas Neue', sans-serif; letter-spacing: -.01em;
+  margin-top: 18px; color: var(--studio-paper); font: clamp(78px, 9vw, 142px)/.78 var(--studio-display); letter-spacing: -.01em;
 }
 .terminal-intro h2 em, .platform-intro h2 em, .steam-intro h2 em { color: var(--studio-hot); font-family: var(--studio-serif); font-weight: 400; }
-.terminal-intro p, .platform-intro p, .steam-intro p { max-width: 440px; margin-top: 28px; color: rgba(240, 237, 232, .56); font: 11px/1.9 'JetBrains Mono', monospace; }
+.terminal-intro p, .platform-intro p, .steam-intro p { max-width: 480px; margin-top: 28px; color: rgba(240, 237, 232, .68); font: 500 15px/1.75 var(--studio-body); letter-spacing: -.005em; }
 .terminal-intro b { color: var(--studio-paper); font-weight: 400; }
 .terminal-index { display: flex; align-items: center; gap: 10px; margin-top: 46px; color: rgba(240, 237, 232, .34); font: 8px 'JetBrains Mono', monospace; letter-spacing: .22em; }
 .terminal-index i { width: 36px; height: 1px; background: var(--studio-hot); }
@@ -99,8 +105,9 @@ section { max-width: 1360px; padding-inline: clamp(20px, 5vw, 76px); }
 .ps-profile { border-radius: 0; border-color: rgba(240, 237, 232, .16) !important; box-shadow: inset 0 1px rgba(255, 255, 255, .045), inset 0 -70px 120px rgba(0, 0, 0, .5) !important; }
 .ps-mark, .ps-trophy, .ps-panel, .ps-all-game { border-radius: 0 !important; }
 
-.games-intro h2 { font-size: clamp(68px, 8vw, 124px) !important; line-height: .84 !important; }
+.games-intro h2 { font-family: var(--studio-display-cyr) !important; font-size: clamp(50px, 6vw, 96px) !important; font-weight: 500 !important; line-height: 1.03 !important; letter-spacing: -.075em !important; }
 .games-intro h2 em { color: var(--studio-hot); font-family: var(--studio-serif); font-weight: 400; }
+.games-intro > span { color: rgba(240, 237, 232, .7) !important; font: 500 15px/1.75 var(--studio-body) !important; letter-spacing: 0 !important; }
 .games-intro { padding-bottom: 44px; border-bottom: 1px solid rgba(240, 237, 232, .16); }
 .games-intro p { color: var(--studio-hot) !important; }
 .games-showcase { gap: clamp(34px, 7vw, 104px) !important; padding-top: 44px; }
@@ -146,6 +153,12 @@ section { max-width: 1360px; padding-inline: clamp(20px, 5vw, 76px); }
 .terminal-console.studio-visible, .platform-frame.studio-visible, .steam-shell.studio-visible { transform: none; }
 .split-line { overflow: hidden; }
 .studio-frame span { color: rgba(240, 237, 232, .68) !important; font-size: 7px !important; }
+.nav-links a { font-family: var(--studio-body) !important; font-size: 11px !important; font-weight: 600; letter-spacing: .04em !important; text-transform: none !important; }
+.section-label { font-size: 11px !important; letter-spacing: .14em !important; }
+.game-desc { color: rgba(240, 237, 232, .68) !important; font: 500 14px/1.7 var(--studio-body) !important; letter-spacing: -.005em !important; }
+.dc-about-text, .dc-fact-val { font-size: 12px !important; line-height: 1.65 !important; }
+.dc-fact-label { font-size: 10px !important; letter-spacing: .08em !important; }
+.steam-stat-lbl, .steam-top-label, .steam-updated { font-size: 10px !important; letter-spacing: .12em !important; }
 
 @media (max-width: 900px) {
   .hero { padding-top: 106px; }
@@ -158,9 +171,10 @@ section { max-width: 1360px; padding-inline: clamp(20px, 5vw, 76px); }
   .hero-inner { min-height: 610px; }
   .hero-eyebrow, .hero-name .solid, .hero-name .outline, .hero-tagline, .hero-pills, .discord-hero, .scroll-hint { animation: none !important; opacity: 1 !important; transform: none !important; }
   #discordLoader { display: none !important; }
-  .about-manifesto { display: block; }.about-manifesto h2 { margin: 18px 0 20px; font-size: clamp(82px, 26vw, 142px); }.about-manifesto p { font-size: 9px; }
+  #asciiIntro, .intro-wipe { display: none !important; }
+  .about-manifesto { display: block; }.about-manifesto h2 { margin: 18px 0 20px; font-size: clamp(46px, 12vw, 68px); }.about-manifesto p { font-size: 15px; }
   .about-grid { display: block; }.about-right { position: relative; top: auto; margin-top: 44px; }
-  .skills-heading { display: block; }.skills-heading h2 { margin-top: 18px; text-align: left; font-size: clamp(82px, 25vw, 136px); }
+  .skills-heading { display: block; }.skills-heading h2 { margin-top: 18px; text-align: left; font-size: clamp(48px, 13vw, 72px); }
   .skill-card { display: grid; grid-template-columns: 42px 1fr 22px; gap: 12px; min-height: auto; padding: 24px 0; }
   .skill-count { grid-column: 1; }.skill-icon { display: none; }.skill-title { grid-column: 2; }.skill-arrow { grid-column: 3; grid-row: 1; }
   .skill-desc, .skill-tags { grid-column: 2 / -1; }.skill-desc { margin-top: 4px; }
@@ -171,6 +185,11 @@ section { max-width: 1360px; padding-inline: clamp(20px, 5vw, 76px); }
   .steam-intro { margin-bottom: 34px; }.steam-stat-num { font-size: 62px !important; }
   .contact-section { min-height: 82vh; }.contact-grid { display: block !important; }.contact-copy h2 { font-size: clamp(146px, 45vw, 238px) !important; margin-top: 38px; }
   .contact-action { margin-top: 58px; }.contact-orbit { width: 82vw; right: -36vw; top: 26%; opacity: .58; }
+  #cur, #cur2, .scroll-atmosphere, .studio-frame { display: none !important; }
+  body::after { display: none !important; }
+  .section-label { margin-bottom: 42px; font-size: 10px !important; }
+  .about-text { font-size: 17px; line-height: 1.82; }
+  .game-desc { font-size: 14px !important; }
 }
 
 @media (prefers-reduced-motion: reduce) {

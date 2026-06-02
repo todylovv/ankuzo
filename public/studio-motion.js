@@ -111,7 +111,7 @@
     window.studioLenis = lenis;
   }
 
-  if (typeof SplitType !== 'undefined') {
+  if (typeof SplitType !== 'undefined' && matchMedia('(min-width: 901px) and (pointer: fine)').matches) {
     document.querySelectorAll('.terminal-intro h2,.about-manifesto h2,.skills-heading h2,.platform-intro h2,.games-intro h2,.steam-intro h2,.contact-copy h2').forEach(title => {
       const split = new SplitType(title, {
         types: 'lines,chars',

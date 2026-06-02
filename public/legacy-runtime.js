@@ -1,5 +1,5 @@
 ﻿
-// в”Ђв”Ђ TERMINAL в”Ђв”Ђ
+// ── TERMINAL ──
 (function(){
   const body = document.getElementById('termBody');
   const input = document.getElementById('termInput');
@@ -11,55 +11,55 @@
   const COMMANDS = {
     help(){
       return [
-        {t:'accent', v:'Р”РѕСЃС‚СѓРїРЅС‹Рµ РєРѕРјР°РЅРґС‹:'},
-        {t:'dim',    v:'whoami          вЂ” РєС‚Рѕ С‚Р°РєРѕР№ ankuzo'},
-        {t:'dim',    v:'skills          вЂ” СЃС‚РµРє Рё РЅР°РїСЂР°РІР»РµРЅРёСЏ'},
-        {t:'contact         вЂ” РєР°Рє СЃРІСЏР·Р°С‚СЊСЃСЏ'},
-        {t:'dim',    v:'cat manifesto   вЂ” С„РёР»РѕСЃРѕС„РёСЏ'},
-        {t:'dim',    v:'ls -la          вЂ” С„Р°Р№Р»РѕРІР°СЏ СЃРёСЃС‚РµРјР°'},
-        {t:'dim',    v:'nmap ankuzo     вЂ” СЃРєР°РЅ СЃРёСЃС‚РµРјС‹'},
-        {t:'dim',    v:'hack            вЂ” РїРѕРїСЂРѕР±СѓР№'},
-        {t:'dim',    v:'sudo rm -rf /   вЂ” РЅРµ РЅР°РґРѕ'},
-        {t:'dim',    v:'ping ankuzo     вЂ” РїСЂРѕРІРµСЂРєР° СЃРІСЏР·Рё'},
-        {t:'dim',    v:'clear           вЂ” РѕС‡РёСЃС‚РёС‚СЊ С‚РµСЂРјРёРЅР°Р»'},
+        {t:'accent', v:'Доступные команды:'},
+        {t:'dim',    v:'whoami          — кто такой ankuzo'},
+        {t:'dim',    v:'skills          — стек и направления'},
+        {t:'dim',    v:'contact         — как связаться'},
+        {t:'dim',    v:'cat manifesto   — философия'},
+        {t:'dim',    v:'ls -la          — файловая система'},
+        {t:'dim',    v:'nmap ankuzo     — скан системы'},
+        {t:'dim',    v:'hack            — попробуй'},
+        {t:'dim',    v:'sudo rm -rf /   — не надо'},
+        {t:'dim',    v:'ping ankuzo     — проверка связи'},
+        {t:'dim',    v:'clear           — очистить терминал'},
       ];
     },
     whoami(){
       return [
         {t:'accent', v:'ankuzo'},
-        {t:'', v:'Р”СѓРјР°СЋ РєР°Рє Р°С‚Р°РєСѓСЋС‰РёР№ вЂ” СЃС‚СЂРѕСЋ РєР°Рє Р·Р°С‰РёС‚РЅРёРє.'},
-        {t:'', v:'РљРёР±РµСЂР±РµР·РѕРїР°СЃРЅРѕСЃС‚СЊ В· Machine Learning В· Big Data'},
-        {t:'dim', v:'РЎРїРѕРєРѕР№РЅРѕ. РњРµС‚РѕРґРёС‡РЅРѕ. Р”Рѕ РєРѕРЅС†Р°.'},
+        {t:'', v:'Думаю как атакующий — строю как защитник.'},
+        {t:'', v:'Кибербезопасность · Machine Learning · Big Data'},
+        {t:'dim', v:'Спокойно. Методично. До конца.'},
       ];
     },
     skills(){
       return [
         {t:'green', v:'[SEC]  Cybersecurity'},
-        {t:'dim',   v:'       Pentest В· OSINT В· Forensics В· CTF В· SIEM'},
+        {t:'dim',   v:'       Pentest · OSINT · Forensics · CTF · SIEM'},
         {t:'green', v:'[ML]   Machine Learning'},
-        {t:'dim',   v:'       Python В· PyTorch В· sklearn В· NLP В· CV'},
+        {t:'dim',   v:'       Python · PyTorch · sklearn · NLP · CV'},
         {t:'green', v:'[BIG]  Big Data'},
-        {t:'dim',   v:'       Spark В· Kafka В· Hadoop В· SQL В· Airflow'},
-        {t:'dim',   v:'       Linux В· Cloud infra В· Git'},
+        {t:'dim',   v:'       Spark · Kafka · Hadoop · SQL · Airflow'},
+        {t:'dim',   v:'       Linux · Cloud infra · Git'},
       ];
     },
     contact(){
       return [
         {t:'', v:'Discord: ankuz0'},
-        {t:'dim', v:'Р›СѓС‡С€РёР№ СЃРїРѕСЃРѕР± СЃРІСЏР·Р°С‚СЊСЃСЏ вЂ” РЅР°РїСЂСЏРјСѓСЋ РІ DM.'},
-        {t:'dim', v:'РћС‚РєСЂС‹С‚ Рє РёРЅС‚РµСЂРµСЃРЅС‹Рј РїСЂРµРґР»РѕР¶РµРЅРёСЏРј.'},
+        {t:'dim', v:'Лучший способ связаться — напрямую в DM.'},
+        {t:'dim', v:'Открыт к интересным предложениям.'},
       ];
     },
     'cat manifesto'(){
       return [
         {t:'accent', v:'manifesto.txt'},
-        {t:'dim', v:'в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ'},
-        {t:'', v:'РЎРёСЃС‚РµРјС‹ Р»РѕРјР°СЋС‚СЃСЏ С‚Р°Рј, РіРґРµ РёС… РЅРµ Р¶РґСѓС‚.'},
-        {t:'', v:'Р”Р°РЅРЅС‹Рµ РІСЂСѓС‚ С‚Р°Рј, РіРґРµ РёС… РЅРµ РїСЂРѕРІРµСЂСЏСЋС‚.'},
-        {t:'', v:'РЇ СЂР°Р±РѕС‚Р°СЋ РёРјРµРЅРЅРѕ РІ СЌС‚РёС… РјРµСЃС‚Р°С… вЂ”'},
-        {t:'', v:'РјРµР¶РґСѓ С‚РµРј, С‡С‚Рѕ РІРёРґРЅРѕ,'},
-        {t:'', v:'Рё С‚РµРј, С‡С‚Рѕ РїСЂРѕРёСЃС…РѕРґРёС‚ РЅР° СЃР°РјРѕРј РґРµР»Рµ.'},
-        {t:'dim', v:'в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ'},
+        {t:'dim', v:'─────────────────────────────'},
+        {t:'', v:'Системы ломаются там, где их не ждут.'},
+        {t:'', v:'Данные врут там, где их не проверяют.'},
+        {t:'', v:'Я работаю именно в этих местах —'},
+        {t:'', v:'между тем, что видно,'},
+        {t:'', v:'и тем, что происходит на самом деле.'},
+        {t:'dim', v:'─────────────────────────────'},
       ];
     },
     'ls -la'(){
@@ -72,7 +72,7 @@
         {t:'', v:'-rw-r--r--  souls.db'},
         {t:'', v:'-rwxr-xr-x  ctf_tools/'},
         {t:'', v:'-rw-------  secrets.enc'},
-        {t:'dim', v:'???????????  ???'},
+        {t:'dim', v:'classified/  encrypted'},
       ];
     },
     nmap(){
@@ -126,7 +126,7 @@
       {p:443,  s:'open',   svc:'https'},
       {p:1337, s:'open',   svc:'elite'},
       {p:3306, s:'closed', svc:'mysql'},
-      {p:8080, s:'filtered',svc:'???'},
+      {p:8080, s:'filtered',svc:'internal'},
     ];
     for(const port of ports){
       await new Promise(r=>setTimeout(r,120));
@@ -142,8 +142,8 @@
   async function runHack(){
     const lines = [
       'Initializing breach sequence...',
-      'Bypassing firewall... [в–€в–€в–€в–€в–€в–€в–€в–€в–‘в–‘] 80%',
-      'Bypassing firewall... [в–€в–€в–€в–€в–€в–€в–€в–€в–€в–€] 100%',
+      'Bypassing firewall... [████████░░] 80%',
+      'Bypassing firewall... [██████████] 100%',
       'Accessing mainframe...',
       'Decrypting credentials...',
       'ERROR: Target system is ankuzo.',
@@ -221,16 +221,16 @@
     }
   });
 
-  // РєР»РёРєР°Р±РµР»СЊРЅС‹Рµ РїРѕРґСЃРєР°Р·РєРё РєРѕРјР°РЅРґ
+  // кликабельные подсказки команд
   document.querySelectorAll('.term-cmd-hint').forEach(el=>{
     el.addEventListener('click',()=>{ input.value=el.textContent; input.focus(); });
   });
 
-  // С„РѕРєСѓСЃ РїСЂРё РєР»РёРєРµ РЅР° С‚РµСЂРјРёРЅР°Р»
+  // фокус при клике на терминал
   document.getElementById('termWrap').addEventListener('click',()=>input.focus());
 })();
 
-// в”Ђв”Ђ STEAM DATA в”Ђв”Ђ
+// ── STEAM DATA ──
 (function(){
   function animNum(el,target,dur){
     let s=null;
@@ -260,7 +260,7 @@
                 ? `<div class="steam-acc-game">в–¶ ${a.gameextrainfo}</div>`
                 : `<div class="steam-acc-status ${a.online?'online':'offline'}">
                     <span class="steam-acc-dot ${a.online?'online':'offline'}"></span>
-                    ${a.online?'РѕРЅР»Р°Р№РЅ':'РѕС„С„Р»Р°Р№РЅ'}
+                    ${a.online?'онлайн':'оффлайн'}
                   </div>`
               }
             </div>
@@ -276,14 +276,14 @@
           ['FACEIT','b1',statuses.faceit],
           ['APEX','b2',statuses.apex]
         ].filter(([service,,status])=>status&&status!=='200'&&!profiles.some(p=>p.service===service));
-        const statusLabel=status=>status==='missing'?'API KEY NOT CONFIGURED':`SYNC UNAVAILABLE В· HTTP ${status}`;
+        const statusLabel=status=>status==='missing'?'API KEY NOT CONFIGURED':`SYNC UNAVAILABLE · HTTP ${status}`;
         if(profiles.length||unavailable.length){
         profilesEl.style.display='grid';
         profilesEl.innerHTML=profiles.map(p=>`
           <a class="game-profile" href="${p.url}" target="_blank" rel="noopener noreferrer">
             <div class="game-profile-head">
               <span class="game-profile-service">${p.service}</span>
-              <span class="game-profile-account">${p.account} В· ${p.name}</span>
+              <span class="game-profile-account">${p.account} · ${p.name}</span>
             </div>
             <div class="game-profile-stats">
               ${p.service==='FACEIT'
@@ -311,7 +311,7 @@
             <div class="steam-banner-rank">#${i+1}</div>
             <div class="steam-banner-info">
               <div class="steam-banner-name">${g.name}</div>
-              <div class="steam-banner-hours">${g.hours} С‡</div>
+              <div class="steam-banner-hours">${g.hours} ч</div>
             </div>
           </div>`).join('');
       }
@@ -338,7 +338,7 @@
             <div class="steam-game-rank">#${i+1}</div>
             <div class="steam-game-name">${g.name}</div>
             <div class="steam-game-bar-wrap"><div class="steam-game-bar" style="width:0%" data-w="${Math.round(g.hours/max*100)}"></div></div>
-            <div class="steam-game-hours">${g.hours} С‡</div>
+            <div class="steam-game-hours">${g.hours} ч</div>
           </div>`).join('');
         setTimeout(()=>{topEl.querySelectorAll('.steam-game-bar').forEach(b=>{b.style.width=b.dataset.w+'%';});},200);
       }
@@ -346,16 +346,16 @@
       const upEl=document.getElementById('steamUpdated');
       if(upEl&&data.updated){
         const d=new Date(data.updated);
-        upEl.textContent='РѕР±РЅРѕРІР»РµРЅРѕ: '+d.toLocaleString('ru-RU');
+        upEl.textContent='обновлено: '+d.toLocaleString('ru-RU');
       }
     })
     .catch(()=>{
       const s=document.getElementById('steamSection');
-      if(s)s.innerHTML='<div style="font-size:11px;letter-spacing:.1em;color:rgba(240,237,232,.2);">РґР°РЅРЅС‹Рµ Р·Р°РіСЂСѓР¶Р°СЋС‚СЃСЏ...</div>';
+      if(s)s.innerHTML='<div style="font-size:11px;letter-spacing:.1em;color:rgba(240,237,232,.2);">данные загружаются...</div>';
     });
 })();
 
-// в”Ђв”Ђ MAGNETIC BUTTONS в”Ђв”Ђ
+// ── MAGNETIC BUTTONS ──
 (function(){
   if(!window.matchMedia('(hover:hover)').matches) return;
   document.querySelectorAll('.discord-hero,#scrollTop,.nav-logo').forEach(el=>{
@@ -370,24 +370,24 @@
   });
 })();
 
-// в”Ђв”Ђ DEVICE DETECTION в”Ђв”Ђ
+// ── DEVICE DETECTION ──
 const _isMobileDevice = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent) || window.innerWidth < 768;
 
-// в”Ђв”Ђ PERFORMANCE DETECTION в”Ђв”Ђ
+// ── PERFORMANCE DETECTION ──
 const _perf = (function(){
   const cores = navigator.hardwareConcurrency || 4;
-  const mem   = navigator.deviceMemory || 4; // GB, РµСЃР»Рё РїРѕРґРґРµСЂР¶РёРІР°РµС‚СЃСЏ
+  const mem   = navigator.deviceMemory || 4; // GB, если поддерживается
   const mobile = _isMobileDevice;
 
-  // РћРїСЂРµРґРµР»СЏРµРј СѓСЂРѕРІРµРЅСЊ РїСЂРѕРёР·РІРѕРґРёС‚РµР»СЊРЅРѕСЃС‚Рё
-  // low: СЃС‚Р°СЂС‹Р№ РџРљ / СЃР»Р°Р±С‹Р№ С‚РµР»РµС„РѕРЅ
-  // mid: СЃСЂРµРґРЅРёР№ РџРљ / С…РѕСЂРѕС€РёР№ С‚РµР»РµС„РѕРЅ
-  // high: РјРѕС‰РЅС‹Р№ РџРљ
+  // Определяем уровень производительности
+  // low: старый ПК / слабый телефон
+  // mid: средний ПК / хороший телефон
+  // high: мощный ПК
   let level = 'high';
   if(mobile || cores <= 2 || mem <= 2) level = 'low';
   else if(cores <= 4 || mem <= 4) level = 'mid';
 
-  // Р”РѕРїРѕР»РЅРёС‚РµР»СЊРЅРѕ вЂ” Р·Р°РјРµСЂСЏРµРј СЂРµР°Р»СЊРЅС‹Р№ FPS Р·Р° РїРµСЂРІС‹Рµ 60 РєР°РґСЂРѕРІ
+  // Дополнительно — замеряем реальный FPS за первые 60 кадров
   let _measuredFPS = null;
   let _frameCount = 0;
   let _fpsStart = null;
@@ -398,7 +398,7 @@ const _perf = (function(){
       requestAnimationFrame(measureFPS);
     } else {
       _measuredFPS = Math.round(_frameCount / ((ts - _fpsStart) / 1000));
-      // Р•СЃР»Рё СЂРµР°Р»СЊРЅС‹Р№ FPS РЅРёР¶Рµ 40 вЂ” РїРѕРЅРёР¶Р°РµРј СѓСЂРѕРІРµРЅСЊ
+      // Если реальный FPS ниже 40 — понижаем уровень
       if(_measuredFPS < 40 && level === 'high') level = 'mid';
       if(_measuredFPS < 25) level = 'low';
       applyPerfLevel(level);
@@ -413,10 +413,10 @@ function applyPerfLevel(level){
   document.documentElement.setAttribute('data-perf', level);
 
   if(level === 'low'){
-    // РћС‚РєР»СЋС‡Р°РµРј С‚СЏР¶С‘Р»С‹Рµ СЌС„С„РµРєС‚С‹
+    // Отключаем тяжёлые эффекты
     const dcBanner = document.getElementById('dcBannerCanvas');
     if(dcBanner) dcBanner.style.display = 'none';
-    // РЈР±РёСЂР°РµРј CSS Р°РЅРёРјР°С†РёРё
+    // Убираем CSS анимации
     document.body.classList.add('perf-low');
   }
 
@@ -425,11 +425,11 @@ function applyPerfLevel(level){
   }
 }
 
-// в”Ђв”Ђ PERFORMANCE OPTIMIZATION в”Ђв”Ђ
+// ── PERFORMANCE OPTIMIZATION ──
 (function(){
   const isMobile = _isMobileDevice;
 
-  // 1. РћСЃС‚Р°РЅР°РІР»РёРІР°РµРј DC Banner РЅР° РјРѕР±РёР»РєРµ
+  // 1. Останавливаем DC Banner на мобилке
   if(isMobile){
     const dc = document.getElementById('dcBannerCanvas');
     if(dc) dc.style.display = 'none';
@@ -437,7 +437,7 @@ function applyPerfLevel(level){
 
 })();
 
-// в”Ђв”Ђ DISCORD CARD BANNER в”Ђв”Ђ
+// ── DISCORD CARD BANNER ──
 (function(){
   const c = document.getElementById('dcBannerCanvas');
   if(!c || _isMobileDevice || window.matchMedia('(prefers-reduced-motion:reduce)').matches) return;
@@ -481,7 +481,7 @@ function applyPerfLevel(level){
     online:'#43b581', idle:'#faa61a', dnd:'#f04747', offline:'#747f8d',
   };
   const STATUS_TEXT = {
-    online:'РѕРЅР»Р°Р№РЅ', idle:'РѕС‚РѕС€С‘Р»', dnd:'РЅРµ Р±РµСЃРїРѕРєРѕРёС‚СЊ', offline:'РѕС„С„Р»Р°Р№РЅ',
+    online:'онлайн', idle:'отошёл', dnd:'не беспокоить', offline:'оффлайн',
   };
 
   function hexColor(value){
@@ -513,7 +513,7 @@ function applyPerfLevel(level){
     const status = data.discord_status || 'offline';
     const user   = data.discord_user || {};
 
-    // в”Ђв”Ђ Nav widget в”Ђв”Ђ
+    // ── Nav widget ──
     const dot    = document.getElementById('dsDot');
     const stat   = document.getElementById('dsStatus');
     const game   = document.getElementById('dsGame');
@@ -523,12 +523,12 @@ function applyPerfLevel(level){
     if(widget) widget.style.display='flex';
     const act = (data.activities||[]).find(a=>a.type===0);
     if(game){
-      if(act) game.textContent = 'В· '+act.name;
-      else if(data.spotify) game.textContent = 'В· в™« '+data.spotify.song+' вЂ” '+data.spotify.artist;
+      if(act) game.textContent = '· '+act.name;
+      else if(data.spotify) game.textContent = '· ♫ '+data.spotify.song+' — '+data.spotify.artist;
       else game.textContent = '';
     }
 
-    // в”Ђв”Ђ Discord Card в”Ђв”Ђ
+    // ── Discord Card ──
     const avatar = document.getElementById('dcAvatar');
     const decoration = document.getElementById('dcAvatarDecoration');
     const profileBanner = document.getElementById('dcProfileBanner');
@@ -581,7 +581,7 @@ function applyPerfLevel(level){
     }
     if(stText) stText.textContent = STATUS_TEXT[status]||status;
 
-    // Р°РєС‚РёРІРЅРѕСЃС‚СЊ РІ РєР°СЂС‚РѕС‡РєРµ
+    // активность в карточке
     const dcAct     = document.getElementById('dcCardActivity');
     const dcActName = document.getElementById('dcActivityName');
     const dcSpo     = document.getElementById('dcCardSpotify');
@@ -624,21 +624,21 @@ function applyPerfLevel(level){
   }
 })();
 
-// в”Ђв”Ђ VISITOR COUNTER в”Ђв”Ђ
+// ── VISITOR COUNTER ──
 document.getElementById('footerYear').textContent = new Date().getFullYear();
 
 
 
-// в”Ђв”Ђ MOBILE MENU в”Ђв”Ђ
+// ── MOBILE MENU ──
 function toggleMenu(){
   const m=document.getElementById('mobileNav');
   const burger=document.getElementById('burger');
   const isOpen=m.classList.toggle('open');
   burger.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
-  burger.setAttribute('aria-label', isOpen ? 'Р—Р°РєСЂС‹С‚СЊ РјРµРЅСЋ' : 'РћС‚РєСЂС‹С‚СЊ РјРµРЅСЋ');
+  burger.setAttribute('aria-label', isOpen ? 'Закрыть меню' : 'Открыть меню');
 }
 
-// в”Ђв”Ђ DISCORD LOADER вЂ” hide after 1.2s or when page ready в”Ђв”Ђ
+// ── DISCORD LOADER — hide after 1.2s or when page ready ──
 (function(){
   const loader = document.getElementById('discordLoader');
   if(!loader) return;
@@ -654,20 +654,28 @@ function toggleMenu(){
   });
 })();
 
-// в”Ђв”Ђ CURSOR в”Ђв”Ђ
+// ── CURSOR ──
 const cur=document.getElementById('cur'),cur2=document.getElementById('cur2');
 const _hasMouse = window.matchMedia('(hover:hover)').matches;
 let mx=0,my=0,cx=0,cy=0;
 if(_hasMouse && cur && cur2){
-  document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;cur.style.left=mx+'px';cur.style.top=my+'px';});
+  let cursorFrame = 0;
+  function updateCursor(){
+    cx+=(mx-cx)*.13;cy+=(my-cy)*.13;cur2.style.left=cx+'px';cur2.style.top=cy+'px';
+    if(Math.abs(mx-cx)>.2 || Math.abs(my-cy)>.2) cursorFrame=requestAnimationFrame(updateCursor);
+    else cursorFrame=0;
+  }
+  document.addEventListener('mousemove',e=>{
+    mx=e.clientX;my=e.clientY;cur.style.left=mx+'px';cur.style.top=my+'px';
+    if(!cursorFrame) cursorFrame=requestAnimationFrame(updateCursor);
+  });
   document.querySelectorAll('a,button,.pill,.skill-card,.game-row,.nav-burger').forEach(el=>{
     el.addEventListener('mouseenter',()=>document.body.classList.add('hovering'));
     el.addEventListener('mouseleave',()=>document.body.classList.remove('hovering'));
   });
-  (function loop(){cx+=(mx-cx)*.13;cy+=(my-cy)*.13;cur2.style.left=cx+'px';cur2.style.top=cy+'px';requestAnimationFrame(loop);})();
 }
 
-// в”Ђв”Ђ createLoop вЂ” Р±РµР· Р»РёРјРёС‚Р° FPS в”Ђв”Ђ
+// ── createLoop — без лимита FPS ──
 function createLoop(fn){
   function tick(ts){
     if(!document.hidden) fn(ts);
@@ -676,7 +684,7 @@ function createLoop(fn){
   requestAnimationFrame(tick);
 }
 
-// в”Ђв”Ђ NAV SCROLL + SCROLL TO TOP в”Ђв”Ђ
+// ── NAV SCROLL + SCROLL TO TOP ──
 const nav=document.getElementById('nav');
 const scrollTopBtn=document.getElementById('scrollTop');
 window.addEventListener('scroll',()=>{
@@ -684,12 +692,13 @@ window.addEventListener('scroll',()=>{
   scrollTopBtn.classList.toggle('visible',scrollY>400);
 });
 
-// в”Ђв”Ђ ALL CANVAS + ANIMATIONS в”Ђв”Ђ
+// ── ALL CANVAS + ANIMATIONS ──
 function _initAll(){
 
-// в”Ђв”Ђ HERO PARTICLES (mouse + touch reactive) в”Ђв”Ђ
+// ── HERO PARTICLES (mouse + touch reactive) ──
 (function(){
   const cv=document.getElementById('bgCanvas');
+  if(!cv || document.getElementById('heroShaderCanvas')) return;
   const ctx=cv.getContext('2d');
   let W,H;
   const dpr=Math.min(window.devicePixelRatio||1,_isMobileDevice?1:2);
@@ -748,11 +757,11 @@ function _initAll(){
   createLoop(frame);
 })();
 
-// в”Ђв”Ђ HERO GLITCH в”Ђв”Ђ
+// ── HERO GLITCH ──
 (function(){
   const el=document.getElementById('heroName');
   const orig='ANKUZO';
-  const chars='г‚ўг‚¤г‚¦г‚Ё#@%!01г‚¬г‚®ж€¦жљ—е€ѓ';
+  const chars='<>[]{}#@%!01/$*+?';
   let active=false;
   function glitch(){
     if(active)return;active=true;
@@ -779,18 +788,7 @@ document.querySelectorAll('.pill').forEach(pill=>{
   pill.addEventListener('mouseleave',()=>{pill.style.transform='';});
 });
 
-// в”Ђв”Ђ SKILL CARD 3D TILT в”Ђв”Ђ
-document.querySelectorAll('.skill-card').forEach(card=>{
-  card.addEventListener('mousemove',e=>{
-    const r=card.getBoundingClientRect();
-    const x=(e.clientX-r.left)/r.width-.5;
-    const y=(e.clientY-r.top)/r.height-.5;
-    card.style.transform=`translateY(-6px) rotateX(${-y*9}deg) rotateY(${x*9}deg)`;
-  });
-  card.addEventListener('mouseleave',()=>{card.style.transform='';});
-});
-
-// в”Ђв”Ђ GAME TITLE PARALLAX в”Ђв”Ђ
+// ── GAME TITLE PARALLAX ──
 document.querySelectorAll('.game-row').forEach(row=>{
   const title=row.querySelector('.game-title-text');
   row.addEventListener('mousemove',e=>{
@@ -801,7 +799,7 @@ document.querySelectorAll('.game-row').forEach(row=>{
   row.addEventListener('mouseleave',()=>{if(title)title.style.transform='';});
 });
 
-// в”Ђв”Ђ SCROLL REVEAL вЂ” matveyan style в”Ђв”Ђ
+// ── SCROLL REVEAL — matveyan style ──
 const allReveal = document.querySelectorAll(
   '.reveal,.reveal-left,.reveal-right,.reveal-scale,.section-label,.skill-card,.game-row,.fact-row'
 );
@@ -835,9 +833,6 @@ if('IntersectionObserver' in window){
 
 } // end _initAll
 _initAll();
-
-
-
 
 
 
