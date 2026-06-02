@@ -21,23 +21,29 @@
     let targetY = 0;
     let currentX = 0;
     let currentY = 0;
-    hero.addEventListener('pointermove', event => {
-      const bounds = hero.getBoundingClientRect();
-      targetX = (event.clientX / bounds.width - .5) * 2;
-      targetY = ((event.clientY - bounds.top) / bounds.height - .5) * 2;
-    });
-    hero.addEventListener('pointerleave', () => {
-      targetX = 0;
-      targetY = 0;
-    });
+    let isAnimating = false;
     const animateLogo = () => {
       currentX += (targetX - currentX) * .065;
       currentY += (targetY - currentY) * .065;
       logo.style.setProperty('--logo-x', currentX.toFixed(4));
       logo.style.setProperty('--logo-y', currentY.toFixed(4));
-      requestAnimationFrame(animateLogo);
+      if (Math.abs(targetX - currentX) > 0.0005 || Math.abs(targetY - currentY) > 0.0005) {
+        requestAnimationFrame(animateLogo);
+      } else {
+        isAnimating = false;
+      }
     };
-    requestAnimationFrame(animateLogo);
+    hero.addEventListener('pointermove', event => {
+      const bounds = hero.getBoundingClientRect();
+      targetX = (event.clientX / bounds.width - .5) * 2;
+      targetY = ((event.clientY - bounds.top) / bounds.height - .5) * 2;
+      if (!isAnimating) { isAnimating = true; requestAnimationFrame(animateLogo); }
+    });
+    hero.addEventListener('pointerleave', () => {
+      targetX = 0;
+      targetY = 0;
+      if (!isAnimating) { isAnimating = true; requestAnimationFrame(animateLogo); }
+    });
   }
 
   sections.forEach((section, index) => {

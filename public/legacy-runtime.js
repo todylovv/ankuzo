@@ -690,7 +690,7 @@ const scrollTopBtn=document.getElementById('scrollTop');
 window.addEventListener('scroll',()=>{
   nav.classList.toggle('scrolled',scrollY>60);
   scrollTopBtn.classList.toggle('visible',scrollY>400);
-});
+},{ passive: true });
 
 // ── ALL CANVAS + ANIMATIONS ──
 function _initAll(){

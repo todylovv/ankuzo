@@ -161,18 +161,9 @@
     const chapter = sections.find(item => item.id === id);
     links.forEach(link => link.classList.toggle('active', link.dataset.chapter === id));
     if (chapter) {
-      const index = sections.indexOf(chapter);
       railNumber.textContent = chapter.number;
       atmosphereNumber.textContent = chapter.number;
       atmosphereCode.textContent = chapter.number;
-      root.style.setProperty('--chapter-index', index);
-      root.style.setProperty('--glow-left', `${-25 + index * 10}vw`);
-      root.style.setProperty('--glow-top', `${4 + index * 7}vh`);
-      root.style.setProperty('--ring-a-right', `${-18 + index * 3}vw`);
-      root.style.setProperty('--ring-a-top', `${13 - index * 5}vh`);
-      root.style.setProperty('--ring-b-left', `${-9 + index * 6}vw`);
-      root.style.setProperty('--ring-b-bottom', `${-12 + index * 4}vh`);
-      root.style.setProperty('--cross-top', `${24 + index * 8}vh`);
       document.body.dataset.chapter = chapter.id;
     }
   }
@@ -183,28 +174,11 @@
     const heroDepth = Math.min(1, scrollY / Math.max(1, innerHeight));
     const marker = scrollY + innerHeight * .42;
     let current = sections[0];
-    let routePosition = route[0];
     for (let index = 0; index < sections.length; index++) {
-      const chapter = sections[index];
-      if (chapter.el.offsetTop <= marker) current = chapter;
-      const next = sections[index + 1];
-      if (next && marker >= chapter.el.offsetTop && marker < next.el.offsetTop) {
-        const distance = next.el.offsetTop - chapter.el.offsetTop;
-        const blend = Math.min(1, Math.max(0, (marker - chapter.el.offsetTop) / distance));
-        const eased = blend * blend * (3 - 2 * blend);
-        routePosition = route[index] + (route[index + 1] - route[index]) * eased;
-        break;
-      }
-      if (!next && marker >= chapter.el.offsetTop) routePosition = route[index];
+      if (sections[index].el.offsetTop <= marker) current = sections[index];
     }
-    cameraTarget = routePosition * innerWidth;
     root.style.setProperty('--page-progress', value.toFixed(4));
     root.style.setProperty('--hero-depth', heroDepth.toFixed(4));
-    root.style.setProperty('--scroll-px', `${scrollY.toFixed(1)}px`);
-    root.style.setProperty('--grid-shift', `${(scrollY * .075).toFixed(1)}px`);
-    root.style.setProperty('--ring-a-rotate', `${(scrollY * .018).toFixed(1)}deg`);
-    root.style.setProperty('--ring-b-rotate', `${(scrollY * -.025).toFixed(1)}deg`);
-    root.style.setProperty('--camera-x', `${cameraTarget.toFixed(1)}px`);
     depth.textContent = String(Math.round(value * 100)).padStart(3, '0');
     hero?.classList.toggle('hero-passed', heroDepth > .7);
 
