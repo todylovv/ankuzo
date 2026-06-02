@@ -7,10 +7,7 @@
   const nodeName = makeNodeName(sessionId);
   const cursors = new Map();
   const presence = new Set();
-  let ws;
-  let heartbeat;
-  let reconnectTimer;
-  let ref = 0;
+  let channel;
   let cursorTimer = 0;
   let cursorsOn = localStorage.getItem('_ankuzo_cursors') !== 'off';
   let signalsPage = 0;
@@ -21,7 +18,7 @@
     <div class="ln-cursor-layer" id="lnCursorLayer" aria-hidden="true"></div>
     <div class="live-network">
       <div class="ln-stack">
-        <div class="ln-pill"><span class="ln-dot connecting" id="lnStatusDot"></span><span id="lnOnline">1</span> online · <span id="lnVisits">—</span> visits</div>
+        <div class="ln-pill"><span class="ln-dot connecting" id="lnStatusDot"></span><span id="lnOnline">--</span> online · <span id="lnVisits">—</span> visits</div>
         <button class="ln-button ln-network-toggle ${cursorsOn ? 'on' : ''}" id="lnNetworkToggle">${isTouch ? 'taps' : 'cursors'} ${cursorsOn ? 'on' : 'off'}</button>
       </div>
       <button class="ln-button" id="lnSignalsButton">signals / <span id="lnSignalCount">00</span></button>
@@ -84,48 +81,39 @@
     return api(`rpc/${name}`, { method: 'POST', body: JSON.stringify(body) });
   }
 
-  function sendRealtime(event, payload) {
-    if (!ws || ws.readyState !== WebSocket.OPEN) return;
-    ws.send(JSON.stringify({ topic: TOPIC, event, payload, ref: String(++ref) }));
-  }
-
   function broadcast(event, payload) {
-    if (!cursorsOn) return;
-    sendRealtime('broadcast', { type: 'broadcast', event, payload: { ...payload, id: sessionId, name: nodeName } });
+    if (!cursorsOn || !channel) return;
+    channel.send({ type: 'broadcast', event, payload: { ...payload, id: sessionId, name: nodeName } });
   }
 
   function connect() {
-    clearTimeout(reconnectTimer);
-    ws = new WebSocket(`${SB_URL.replace('https', 'wss')}/realtime/v1/websocket?apikey=${SB_KEY}&vsn=1.0.0`);
-    ws.onopen = () => {
-      statusDot.className = 'ln-dot connecting';
-      ws.send(JSON.stringify({
-        topic: TOPIC,
-        event: 'phx_join',
-        payload: { config: { broadcast: { self: false, ack: false }, presence: { key: sessionId } } },
-        ref: String(++ref)
-      }));
-      clearInterval(heartbeat);
-      heartbeat = setInterval(() => {
-        if (ws.readyState === WebSocket.OPEN) ws.send(JSON.stringify({ topic: 'phoenix', event: 'heartbeat', payload: {}, ref: String(++ref) }));
-      }, 25000);
-    };
-    ws.onmessage = event => {
-      let message;
-      try { message = JSON.parse(event.data); } catch { return; }
-      if (message.event === 'phx_reply' && message.topic === TOPIC && message.payload?.status === 'ok') {
-        statusDot.className = 'ln-dot';
-        sendRealtime('presence', { type: 'presence', event: 'track', payload: { name: nodeName, online_at: new Date().toISOString() } });
-      }
-      if (message.event === 'presence_state') syncPresence(message.payload || {});
-      if (message.event === 'presence_diff') applyPresenceDiff(message.payload || {});
-      if (message.event === 'broadcast') receiveBroadcast(message.payload || {});
-    };
-    ws.onclose = () => {
+    if (!window.supabase?.createClient) {
       statusDot.className = 'ln-dot offline';
-      clearInterval(heartbeat);
-      reconnectTimer = setTimeout(connect, 3500);
-    };
+      return;
+    }
+    const client = window.supabase.createClient(SB_URL, SB_KEY, {
+      auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false }
+    });
+    channel = client.channel(TOPIC.replace('realtime:', ''), {
+      config: { broadcast: { self: false, ack: false }, presence: { key: sessionId } }
+    });
+    channel
+      .on('presence', { event: 'sync' }, () => syncPresence(channel.presenceState()))
+      .on('presence', { event: 'join' }, ({ key }) => applyPresenceDiff({ joins: { [key]: true } }))
+      .on('presence', { event: 'leave' }, ({ key }) => applyPresenceDiff({ leaves: { [key]: true } }))
+      .on('broadcast', { event: 'cursor' }, receiveBroadcast)
+      .on('broadcast', { event: 'pulse' }, receiveBroadcast)
+      .on('broadcast', { event: 'signal' }, receiveBroadcast)
+      .subscribe(async status => {
+        if (status === 'SUBSCRIBED') {
+          statusDot.className = 'ln-dot';
+          await channel.track({ name: nodeName, online_at: new Date().toISOString() });
+        }
+        if (status === 'CHANNEL_ERROR' || status === 'TIMED_OUT' || status === 'CLOSED') {
+          statusDot.className = 'ln-dot offline';
+          onlineEl.textContent = '--';
+        }
+      });
   }
 
   function syncPresence(state) {
@@ -141,7 +129,7 @@
   }
 
   function updateOnline() {
-    onlineEl.textContent = Math.max(1, presence.size);
+    onlineEl.textContent = presence.size;
   }
 
   function syncVisits() {
