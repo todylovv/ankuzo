@@ -164,15 +164,15 @@
   const blobs = Array.from({ length: 5 }, (_, index) => {
     const angle = index * Math.PI * 2 / 5;
     return {
-      x: Math.cos(angle) * (.25 + index * .1),
-      y: Math.sin(angle) * (.25 + index * .1),
+      x: Math.cos(angle) * (.22 + index * .08),
+      y: Math.sin(angle) * (.22 + index * .08),
       z: 0,
       tx: 0,
       ty: 0,
       tz: 0,
       angle,
-      radius: .32 + index * .14,
-      speed: .22 + index * .055
+      radius: .28 + index * .1,
+      speed: .18 + index * .04
     };
   });
   const packedBlobs = new Float32Array(15);

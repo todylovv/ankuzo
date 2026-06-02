@@ -24,7 +24,7 @@ export function Hero() {
         </h1>
         <div className="hero-editorial">
           <p className="hero-tagline">Нахожу уязвимости в системах.<br />Строю модели, которые решают задачи.<br />Работаю с данными в любом масштабе.</p>
-          <div className="hero-sidecopy"><span>DISCIPLINE / 01</span><strong>Systems<br /><em>with intent.</em></strong><small>SCROLL TO ENTER THE INDEX</small></div>
+          <div className="hero-sidecopy"><span>DISCIPLINE / 01</span><strong>Системы.<br /><em>Данные. Защита.</em></strong></div>
         </div>
         <div className="hero-actions">
           <div className="hero-pills">{['Cybersecurity', 'Machine Learning', 'Big Data', 'CS2 · 2500 ELO', 'PC + PS5'].map(value => <div className="pill" key={value}><div className="pill-dot" />{value}</div>)}</div>

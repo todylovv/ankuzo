@@ -6,7 +6,7 @@ export function Steam() {
       <SectionLabel>06 — Игровой профиль</SectionLabel>
       <div className="steam-intro reveal">
         <span>LIVE LIBRARY / STEAM</span>
-        <h2>PLAYED.<br /><em>MEASURED.</em></h2>
+        <h2>Сыграно.<br /><em>Измерено.</em></h2>
         <p>Два аккаунта. Общая история. Игровая статистика собрана как персональный data-архив.</p>
       </div>
       <div className="steam-shell reveal" id="steamSection">
