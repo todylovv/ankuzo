@@ -691,20 +691,17 @@ ASCII INTRO — ANKUZO
 <div class="hero">
   <canvas id="bgCanvas"></canvas>
   <div class="hero-observatory" aria-hidden="true">
-    <div class="obs-cross obs-cross-a"></div>
-    <div class="obs-cross obs-cross-b"></div>
-    <div class="obs-orbit obs-orbit-1"></div>
-    <div class="obs-orbit obs-orbit-2"></div>
-    <div class="obs-orbit obs-orbit-3"></div>
-    <div class="obs-core">
-      <span class="obs-core-line"></span>
-      <span class="obs-core-line"></span>
-      <span class="obs-core-line"></span>
-      <span class="obs-core-line"></span>
+    <canvas class="shader-canvas" id="heroShaderCanvas"></canvas>
+    <div class="shader-chip"><i></i> LIVE SHADER</div>
+    <div class="shader-bottom">
+      <span>FLUID BLOB / WEBGL / GLSL</span>
+      <b id="heroShaderFps">-- FPS</b>
     </div>
-    <div class="obs-label obs-label-a">SYS.NODE / 01</div>
-    <div class="obs-label obs-label-b">LIVE TRACE<br>ACTIVE</div>
-    <div class="obs-label obs-label-c">43°12' / 77°03'</div>
+    <div class="shader-swatches">
+      <i class="shader-swatch shader-swatch-active"></i>
+      <i class="shader-swatch"></i>
+      <i class="shader-swatch"></i>
+    </div>
   </div>
   <div class="hero-telemetry" aria-hidden="true">
     <div><span>01</span><b>SECURITY</b></div>
@@ -2215,6 +2212,7 @@ setInterval(()=>{
 
 </script>
 <script src="intro-engine.js"></script>
+<script src="hero-shader.js"></script>
 <script src="scroll-experience.js"></script>
 <script src="ps5-profile.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
