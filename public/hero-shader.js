@@ -278,7 +278,7 @@
     blobs.forEach((blob, index) => {
       const phase = blob.angle + now * blob.speed;
       blob.tx = Math.cos(phase * (1 + index % 3 * .24)) * blob.radius;
-      blob.ty = Math.sin(phase * (.78 + (index + 1) % 3 * .2)) * blob.radius * .82;
+      blob.ty = Math.sin(phase * (.78 + (index + 1) % 3 * .2)) * blob.radius;
       blob.tz = Math.sin(phase * .62 + index) * .36;
 
       if (pointerInside && dragging && activeBlob === index) {
