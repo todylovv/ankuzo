@@ -23,7 +23,7 @@ export function Hero() {
           {['a', 'b', 'c'].map(value => <span className={`hero-fragment hero-fragment-${value}`} aria-hidden="true" key={value}>ANKUZO</span>)}
         </h1>
         <div className="hero-editorial">
-          <p className="hero-tagline">SECURITY · MACHINE LEARNING · DATA<br />Исследую системы. Нахожу слабые места.<br />Создаю вещи, которые <em>работают</em>.</p>
+          <p className="hero-tagline">Нахожу уязвимости в системах.<br />Строю модели, которые решают задачи.<br />Работаю с данными в любом масштабе.</p>
           <div className="hero-sidecopy"><span>DISCIPLINE / 01</span><strong>Systems<br /><em>with intent.</em></strong><small>SCROLL TO ENTER THE INDEX</small></div>
         </div>
         <div className="hero-actions">

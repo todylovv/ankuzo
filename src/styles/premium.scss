@@ -49,7 +49,7 @@ section { max-width: 1360px; padding-inline: clamp(20px, 5vw, 76px); }
 /* Manifesto */
 #about { padding-top: clamp(100px, 14vw, 196px); }
 .about-manifesto { display: grid; grid-template-columns: 130px minmax(280px, 1fr) 280px; gap: 30px; align-items: end; padding-bottom: clamp(52px, 7vw, 92px); border-bottom: 1px solid rgba(240, 237, 232, .16); }
-.about-manifesto h2, .skills-heading h2 { color: var(--studio-paper); font: 500 clamp(54px, 7vw, 108px)/1.02 var(--studio-display-cyr); letter-spacing: -.07em; }
+.about-manifesto h2, .skills-heading h2 { color: var(--studio-paper); font: 500 clamp(54px, 7vw, 108px)/1.02 var(--studio-display-cyr); letter-spacing: -.04em; }
 .about-manifesto p { color: rgba(240, 237, 232, .7); font: 500 15px/1.75 var(--studio-body); letter-spacing: 0; }
 .about-grid { grid-template-columns: minmax(0, 1fr) minmax(320px, 460px); gap: clamp(50px, 9vw, 146px); padding-top: clamp(52px, 7vw, 88px); }
 .about-index { display: block; margin-bottom: 28px; color: var(--studio-hot); font: 9px var(--studio-mono); letter-spacing: .18em; }
@@ -68,7 +68,7 @@ section { max-width: 1360px; padding-inline: clamp(20px, 5vw, 76px); }
 .skill-card:hover { transform: none; background: rgba(255, 255, 255, .018); }
 .skill-count { color: rgba(240, 237, 232, .3); font: 10px 'JetBrains Mono', monospace; letter-spacing: .18em; }
 .skill-icon { margin: 0; color: rgba(240, 237, 232, .1); font: 54px/.8 'Bebas Neue', sans-serif; }
-.skill-title { margin: 0; font: 500 clamp(18px, 1.7vw, 25px)/1.2 var(--studio-display-cyr); letter-spacing: -.045em; }
+.skill-title { margin: 0; font: 500 clamp(18px, 1.7vw, 25px)/1.2 var(--studio-display-cyr); letter-spacing: -.025em; }
 .skill-desc { max-width: 500px; color: rgba(240, 237, 232, .68); font: 500 14px/1.7 var(--studio-body); letter-spacing: -.005em; }
 .skill-tags { margin: 0; }
 .skill-tag { border: 0; border-bottom: 1px solid rgba(240, 237, 232, .16); border-radius: 0; padding: 4px 0; }
@@ -105,7 +105,7 @@ section { max-width: 1360px; padding-inline: clamp(20px, 5vw, 76px); }
 .ps-profile { border-radius: 0; border-color: rgba(240, 237, 232, .16) !important; box-shadow: inset 0 1px rgba(255, 255, 255, .045), inset 0 -70px 120px rgba(0, 0, 0, .5) !important; }
 .ps-mark, .ps-trophy, .ps-panel, .ps-all-game { border-radius: 0 !important; }
 
-.games-intro h2 { font-family: var(--studio-display-cyr) !important; font-size: clamp(50px, 6vw, 96px) !important; font-weight: 500 !important; line-height: 1.03 !important; letter-spacing: -.075em !important; }
+.games-intro h2 { font-family: var(--studio-display-cyr) !important; font-size: clamp(50px, 6vw, 96px) !important; font-weight: 500 !important; line-height: 1.03 !important; letter-spacing: -.05em !important; }
 .games-intro h2 em { color: var(--studio-hot); font-family: var(--studio-serif); font-weight: 400; }
 .games-intro > span { color: rgba(240, 237, 232, .7) !important; font: 500 15px/1.75 var(--studio-body) !important; letter-spacing: 0 !important; }
 .games-intro { padding-bottom: 44px; border-bottom: 1px solid rgba(240, 237, 232, .16); }
