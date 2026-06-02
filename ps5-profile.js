@@ -34,6 +34,14 @@
       </div>` : `<div class="ps-empty">${emptyMessage}</div>`;
 
     root.innerHTML = `
+      <div class="ps-depth" aria-hidden="true">
+        <div class="ps-depth-tunnel">
+          <i></i><i></i><i></i><i></i><i></i><i></i>
+        </div>
+        <div class="ps-depth-plane ps-depth-plane-a"></div>
+        <div class="ps-depth-plane ps-depth-plane-b"></div>
+        <b></b>
+      </div>
       <div class="ps-head">
         <div class="ps-mark">PS</div>
         <div>
@@ -99,6 +107,20 @@
 
     const toggle = root.querySelector('.ps-all-toggle');
     const body = root.querySelector('.ps-all-body');
+    root.addEventListener('pointermove', event => {
+      if (document.body.classList.contains('perf-low')) return;
+      const rect = root.getBoundingClientRect();
+      const x = (event.clientX - rect.left) / rect.width;
+      const y = (event.clientY - rect.top) / rect.height;
+      root.style.setProperty('--ps-x', `${(x * 100).toFixed(1)}%`);
+      root.style.setProperty('--ps-y', `${(y * 100).toFixed(1)}%`);
+      root.style.setProperty('--ps-shift-x', `${((x - .5) * -30).toFixed(1)}px`);
+    });
+    root.addEventListener('pointerleave', () => {
+      root.style.removeProperty('--ps-x');
+      root.style.removeProperty('--ps-y');
+      root.style.removeProperty('--ps-shift-x');
+    });
     toggle?.addEventListener('click', () => {
       const open = toggle.getAttribute('aria-expanded') !== 'true';
       toggle.setAttribute('aria-expanded', String(open));
