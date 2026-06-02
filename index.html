@@ -624,6 +624,7 @@ body.perf-mid .marquee-inner{animation-duration:30s!important;}
 }
 
 </style>
+<link rel="stylesheet" href="live-network.css">
 </head>
 <body>
 
@@ -672,7 +673,6 @@ ASCII INTRO — ANKUZO
     <a href="#skills">Навыки</a>
     <a href="#games">Игры</a>
     <a href="#steam">Steam</a>
-    <a href="/ankuzo/playlists.html">Плейлисты</a>
   </div>
   <div class="nav-burger" id="burger" onclick="toggleMenu()" aria-label="Открыть меню" aria-expanded="false" role="button" tabindex="0">
     <span></span><span></span><span></span>
@@ -684,7 +684,6 @@ ASCII INTRO — ANKUZO
   <a href="#skills" onclick="toggleMenu()">Навыки</a>
   <a href="#games" onclick="toggleMenu()">Игры</a>
   <a href="#steam" onclick="toggleMenu()">Steam</a>
-  <a href="/ankuzo/playlists.html">Плейлисты</a>
 </div>
 
 <!-- HERO -->
@@ -2115,6 +2114,7 @@ _initAll();
 ASCII INTRO ENGINE
 ========================= */
 (function(){
+return; // Replaced by the optimized intro-engine.js implementation.
 
 const intro = document.getElementById('asciiIntro');
 const canvas = document.getElementById('asciiCanvas');
@@ -2350,5 +2350,7 @@ setInterval(()=>{
 })();
 
 </script>
+<script src="intro-engine.js"></script>
+<script src="live-network.js"></script>
 </body>
 </html>
