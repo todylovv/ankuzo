@@ -51,7 +51,7 @@
       <div class="ps-body">
         <div>
           <div class="ps-library">
-            <span>БИБЛИОТЕКА PSN</span>
+            <span>КУПЛЕННАЯ БИБЛИОТЕКА PSN</span>
             <strong>${escape(profile.games_count || 0)} <i>ИГР</i></strong>
           </div>
           <div class="ps-trophies">

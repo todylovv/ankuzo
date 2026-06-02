@@ -6,6 +6,7 @@ const psnApi = require('psn-api');
 const {
   exchangeAccessCodeForAuthTokens,
   exchangeNpssoForAccessCode,
+  getPurchasedGames,
   getRecentlyPlayedGames,
   getProfileFromUserName,
   getUserTitles
@@ -30,6 +31,19 @@ const recentResponse = await getRecentlyPlayedGames(authorization, {
   limit: 5
 });
 const recentGames = recentResponse.data?.gameLibraryTitlesRetrieve?.games || [];
+const purchasedGames = [];
+for (let start = 0; start < 2400; start += 24) {
+  const purchasedResponse = await getPurchasedGames(authorization, {
+    size: 24,
+    start,
+    platform: ['ps4', 'ps5'],
+    sortBy: 'ACTIVE_DATE',
+    sortDirection: 'desc'
+  });
+  const page = purchasedResponse.data?.purchasedTitlesRetrieve?.games || [];
+  purchasedGames.push(...page);
+  if (page.length < 24) break;
+}
 const current = JSON.parse(fs.readFileSync(path, 'utf8'));
 
 fs.writeFileSync(path, JSON.stringify({
@@ -40,7 +54,8 @@ fs.writeFileSync(path, JSON.stringify({
   updated: new Date().toISOString(),
   trophy_level: summary.level || 0,
   trophy_progress: summary.progress || 0,
-  games_count: titlesResponse.totalItemCount || titles.length,
+  games_count: purchasedGames.length,
+  trophy_titles_count: titlesResponse.totalItemCount || titles.length,
   trophies: {
     platinum: earned.platinum || 0,
     gold: earned.gold || 0,
@@ -53,9 +68,11 @@ fs.writeFileSync(path, JSON.stringify({
     icon: game.image?.url || '',
     last_played: game.lastPlayedDateTime || ''
   })),
-  games: titles.map(title => ({
-    name: title.trophyTitleName,
-    platform: (title.trophyTitlePlatform || '').replace(/,/g, ' / '),
-    icon: title.trophyTitleIconUrl || ''
+  games: purchasedGames.map(game => ({
+    name: game.name,
+    platform: game.platform || 'PLAYSTATION',
+    icon: game.image?.url || '',
+    entitlement_id: game.entitlementId || '',
+    title_id: game.titleId || ''
   }))
 }, null, 2) + '\n');
