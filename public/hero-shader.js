@@ -89,10 +89,7 @@
         if (travelled > 14.) break;
       }
 
-      vec3 background = vec3(.948, .943, .918);
-      float grid = step(.985, fract(uv.x * 18.)) + step(.985, fract(uv.y * 18.));
-      background -= min(grid, 1.) * .022;
-      vec3 color = background;
+      vec3 color = vec3(0., 0., 0.);
 
       if (hit) {
         vec3 normal = normalAt(point);
