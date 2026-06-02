@@ -1,18 +1,351 @@
 {
-  "display_name": "ANKUZO",
+  "display_name": "ankkui",
   "online_id": "ankkui",
   "platform": "PLAYSTATION 5",
-  "sync_status": "СИНХРОНИЗАЦИЯ НЕ НАСТРОЕНА",
-  "trophy_level": 0,
-  "trophy_progress": 0,
-  "games_count": 0,
+  "sync_status": "SYNCED FROM PSN",
+  "trophy_level": 60,
+  "trophy_progress": 25,
+  "games_count": 60,
   "trophies": {
     "platinum": 0,
-    "gold": 0,
-    "silver": 0,
-    "bronze": 0
+    "gold": 8,
+    "silver": 24,
+    "bronze": 141
   },
   "recent_trophies": [],
-  "recent_games": [],
-  "games": []
+  "recent_games": [
+    {
+      "name": "STEEP",
+      "platform": "PS4",
+      "icon": "https://image.api.playstation.com/gs2-sec/appkgo/prod/CUSA05526_00/2/i_c8094d5d5778a7deb586d35a39a606beec8e8faf120802182960a69a51fcd45a/i/icon0.png",
+      "last_played": "2026-05-30T08:13:20.930000Z"
+    },
+    {
+      "name": "Kingdom Come: Deliverance II",
+      "platform": "PS5",
+      "icon": "https://image.api.playstation.com/sgst/prod/00/PPSA21704_00/app/info/42/fi_39ebe8caff40d0105e6753b2e31047cb63852c877f7cd0edf0668eefe2070ffa/icon0.png",
+      "last_played": "2026-05-30T08:06:03.390000Z"
+    },
+    {
+      "name": "Devil May Cry 5",
+      "platform": "PS4",
+      "icon": "https://image.api.playstation.com/gs2-sec/appkgo/prod/CUSA08161_00/3/i_36c1f9b3a1f54b7ec511ed10c656e5df61599f0f49772e3a07128d0de8aa6b72/i/icon0.png",
+      "last_played": "2026-05-30T07:56:11.010000Z"
+    },
+    {
+      "name": "EA SPORTS FC 26",
+      "platform": "PS5",
+      "icon": "https://image.api.playstation.com/sgst/prod/00/PPSA27360_00/app/info/48/fi_7f5335bcf95ac62506ce2fb2496f0472380846833da98eecd8a3ad7d440710fa/icon0.png",
+      "last_played": "2026-05-22T19:46:22.680000Z"
+    },
+    {
+      "name": "Forza Horizon 5",
+      "platform": "PS5",
+      "icon": "https://image.api.playstation.com/sgst/prod/00/PPSA22327_00/app/info/119/fi_bbf54f01d9a94f05aa17885f7aa3c23231d2a3b478d20ee746a0b01b6a3e4442/icon0.png",
+      "last_played": "2026-05-22T16:07:46.650000Z"
+    }
+  ],
+  "games": [
+    {
+      "name": "Devil May Cry 5",
+      "platform": "PS4",
+      "icon": "https://image.api.playstation.com/trophy/np/NPWR13157_00_00B327763D4CBFA188CD1A1A240CE3B9F1B5FDF9AD/AC4595403FC48F9BCEA6AE2EB6664BBD5018AE25.PNG"
+    },
+    {
+      "name": "Kingdom Come: Deliverance II",
+      "platform": "PS5",
+      "icon": "https://psnobj.prod.dl.playstation.net/psnobj/NPWR33491_00/3fa1919d-9fca-469a-9a50-e6ade1ee14ac.png"
+    },
+    {
+      "name": "God of War Ragnarök",
+      "platform": "PS5 / PSPC",
+      "icon": "https://psnobj.prod.dl.playstation.net/psnobj/NPWR22392_00/e7fdc8c6-d6ee-4345-b174-3ccb46f617b0.png"
+    },
+    {
+      "name": "RIDERS REPUBLIC",
+      "platform": "PS5",
+      "icon": "https://psnobj.prod.dl.playstation.net/psnobj/NPWR20494_00/3da14929-92ae-4250-9541-2c85a01a0e55.png"
+    },
+    {
+      "name": "STEEP",
+      "platform": "PS4",
+      "icon": "https://image.api.playstation.com/trophy/np/NPWR11332_00_00721F944BD138F71D29A5466BAD604C9D48C90228/A58C4C2AEA8CF64154AD28D1FC51489AAA549052.PNG"
+    },
+    {
+      "name": "Horizon Zero Dawn™ Remastered",
+      "platform": "PS5 / PSPC",
+      "icon": "https://psnobj.prod.dl.playstation.net/psnobj/NPWR24321_00/96674236-573c-422c-9754-0357cfde931d.png"
+    },
+    {
+      "name": "Sword Of The Sea",
+      "platform": "PS5",
+      "icon": "https://psnobj.prod.dl.playstation.net/psnobj/NPWR52038_00/5ac1e21c-e5fd-4fb8-9581-56f609f40996.PNG"
+    },
+    {
+      "name": "明末：渊虚之羽",
+      "platform": "PS5",
+      "icon": "https://psnobj.prod.dl.playstation.net/psnobj/NPWR38524_00/076139c7-ad3c-497f-8d27-a7442b74520e.png"
+    },
+    {
+      "name": "EA SPORTS FC™ 26 Trophies",
+      "platform": "PS5",
+      "icon": "https://psnobj.prod.dl.playstation.net/psnobj/NPWR49547_00/c8237009-d5b3-4976-bda2-aa864152bc91.png"
+    },
+    {
+      "name": "DAYS GONE",
+      "platform": "PS4",
+      "icon": "https://image.api.playstation.com/trophy/np/NPWR17130_00_002D14DB28AA079AB444D1AA3527D40F8F780DBAEE/81687E4B5151D16193E5EC2A558719BBCB6BD363.PNG"
+    },
+    {
+      "name": "Ratchet & Clank: Rift Apart",
+      "platform": "PS5",
+      "icon": "https://psnobj.prod.dl.playstation.net/psnobj/NPWR20842_00/693b98ed-1b2b-4111-abcd-39ad740aa941.png"
+    },
+    {
+      "name": "Until Dawn",
+      "platform": "PS5 / PSPC",
+      "icon": "https://psnobj.prod.dl.playstation.net/psnobj/NPWR37139_00/d3e3d749-d309-41ed-88bb-67f9421bee65.png"
+    },
+    {
+      "name": "Untitled Goose Game",
+      "platform": "PS4",
+      "icon": "https://image.api.playstation.com/trophy/np/NPWR19514_00_00AFD45414CE474BFBA792F7CC3950B22401428A7F/AC5C8ECE7C36ADC1086ED6ECE6DF792721D065B9.PNG"
+    },
+    {
+      "name": "Returnal",
+      "platform": "PS5",
+      "icon": "https://psnobj.prod.dl.playstation.net/psnobj/NPWR20004_00/f60fd55f-a01f-4274-a865-d8356dc0fd9c.png"
+    },
+    {
+      "name": "Resident Evil Village",
+      "platform": "PS5",
+      "icon": "https://psnobj.prod.dl.playstation.net/psnobj/NPWR21115_00/a61ffefb-5d49-4183-bf55-4a834551b499.png"
+    },
+    {
+      "name": "Forza Horizon 5",
+      "platform": "PS5",
+      "icon": "https://psnobj.prod.dl.playstation.net/psnobj/NPWR43387_00/9d52878a-5ff3-4589-9bbc-c9ece58c7ee1.png"
+    },
+    {
+      "name": "Where Winds Meet",
+      "platform": "PS5",
+      "icon": "https://psnobj.prod.dl.playstation.net/psnobj/NPWR50887_00/153b7dff-c525-48af-89d2-cccfb93d3e0d.png"
+    },
+    {
+      "name": "The Invincible",
+      "platform": "PS5",
+      "icon": "https://psnobj.prod.dl.playstation.net/psnobj/NPWR37568_00/d064d89b-11e6-4d2a-a28a-ea6278131438.png"
+    },
+    {
+      "name": "Pacific Drive",
+      "platform": "PS5",
+      "icon": "https://psnobj.prod.dl.playstation.net/psnobj/NPWR38148_00/2f351acb-1b1f-43db-a4b3-67198b4d0b31.png"
+    },
+    {
+      "name": "Ghost of Tsushima",
+      "platform": "PS5 / PSPC",
+      "icon": "https://psnobj.prod.dl.playstation.net/psnobj/NPWR22859_00/d7213b2e-8048-40ae-859e-3ce1863b9390.png"
+    },
+    {
+      "name": "Stray",
+      "platform": "PS5",
+      "icon": "https://psnobj.prod.dl.playstation.net/psnobj/NPWR22008_00/6c1d6ee2-469a-4b97-ad63-98ec651ad4f2.png"
+    },
+    {
+      "name": "Tropico 6",
+      "platform": "PS5",
+      "icon": "https://psnobj.prod.dl.playstation.net/psnobj/NPWR27021_00/5ab22749-f5d0-4ab1-9814-06ee44127e5e.PNG"
+    },
+    {
+      "name": "Stardew Valley",
+      "platform": "PS3 / PSVITA / PS4",
+      "icon": "https://image.api.playstation.com/trophy/np/NPWR12196_00_00981D365C09BEA7F2465D9E7BA83994EC0D6B3B2F/221FC609348C8CDE3C865ED3B32B14EAA13EA02C.PNG"
+    },
+    {
+      "name": "Anno 1800",
+      "platform": "PS5",
+      "icon": "https://psnobj.prod.dl.playstation.net/psnobj/NPWR27587_00/f3444108-5ac0-49bd-9ed8-9bcf78e17b4f.png"
+    },
+    {
+      "name": "MONOPOLY®",
+      "platform": "PS5",
+      "icon": "https://psnobj.prod.dl.playstation.net/psnobj/NPWR43054_00/bf4a924e-cfdd-4399-8349-e4f8d8306d2e.png"
+    },
+    {
+      "name": "skate.",
+      "platform": "PS5",
+      "icon": "https://psnobj.prod.dl.playstation.net/psnobj/NPWR35812_00/6ba3cf83-d2b2-4059-b707-b8e064686ea5.png"
+    },
+    {
+      "name": "Lies of P",
+      "platform": "PS5",
+      "icon": "https://psnobj.prod.dl.playstation.net/psnobj/NPWR36570_00/0a9b918b-1da3-4c43-8763-f86c3d0efdd8.png"
+    },
+    {
+      "name": "DEATH STRANDING DIRECTOR'S CUT",
+      "platform": "PS5",
+      "icon": "https://psnobj.prod.dl.playstation.net/psnobj/NPWR21859_00/cd37d791-9d02-4cd6-a1b1-9033f7d0e35a.png"
+    },
+    {
+      "name": "EA SPORTS FC™ 25 Trophies",
+      "platform": "PS5",
+      "icon": "https://psnobj.prod.dl.playstation.net/psnobj/NPWR41872_00/bbd2c8bc-d9eb-45ce-9ade-7f87b555af1f.png"
+    },
+    {
+      "name": "It Takes Two",
+      "platform": "PS5",
+      "icon": "https://psnobj.prod.dl.playstation.net/psnobj/NPWR22459_00/841bf99e-b054-4d8a-b340-ca5bd4cbb5e8.png"
+    },
+    {
+      "name": "Five Nights at Freddy's: Help Wanted 2",
+      "platform": "PS5",
+      "icon": "https://psnobj.prod.dl.playstation.net/psnobj/NPWR40336_00/1a7768f4-0c63-49ea-a1c0-4c5e4fc0afd9.png"
+    },
+    {
+      "name": "Planet Zoo",
+      "platform": "PS5",
+      "icon": "https://psnobj.prod.dl.playstation.net/psnobj/NPWR39871_00/ab762577-0859-4d75-9e57-d49024b01177.png"
+    },
+    {
+      "name": "Rocket League®",
+      "platform": "PS4",
+      "icon": "https://image.api.playstation.com/trophy/np/NPWR07466_00_002B372EA023E6E03E3194E148C0B2BF285AD8CE49/7E97D451B278DACDDD0CA8D59AFF7BF62E1A6560.PNG"
+    },
+    {
+      "name": "Diablo IV",
+      "platform": "PS5",
+      "icon": "https://psnobj.prod.dl.playstation.net/psnobj/NPWR22810_00/5ada1d24-434d-450b-ad6f-374bc6566d46.png"
+    },
+    {
+      "name": "Assassin's Creed® II",
+      "platform": "PS4",
+      "icon": "https://image.api.playstation.com/trophy/np/NPWR11435_00_00025CC40B8D85858575298BAA090D80E9E134D207/987B37AA2202ABB7055B12AD6E63A95EC077D01E.PNG"
+    },
+    {
+      "name": "Dead Island 2",
+      "platform": "PS5",
+      "icon": "https://psnobj.prod.dl.playstation.net/psnobj/NPWR23978_00/493aa82b-8c6c-41ca-bfdc-289c8d829fbb.png"
+    },
+    {
+      "name": "ELDEN RING™",
+      "platform": "PS5",
+      "icon": "https://psnobj.prod.dl.playstation.net/psnobj/NPWR25067_00/98e8431b-6a2b-4575-bb1e-135beb3f4896.png"
+    },
+    {
+      "name": "EA SPORTS™ UFC® 5",
+      "platform": "PS5",
+      "icon": "https://psnobj.prod.dl.playstation.net/psnobj/NPWR24071_00/3766b975-0d27-48c0-adb0-eab491096a09.png"
+    },
+    {
+      "name": "Lost Records: Bloom & Rage",
+      "platform": "PS5",
+      "icon": "https://psnobj.prod.dl.playstation.net/psnobj/NPWR43878_00/d57cf372-848b-4003-a6fe-5b6edd3b2d7d.png"
+    },
+    {
+      "name": "DAVE THE DIVER",
+      "platform": "PS5",
+      "icon": "https://psnobj.prod.dl.playstation.net/psnobj/NPWR41950_00/75945292-b048-49f5-bb4a-0cde9c51a69e.png"
+    },
+    {
+      "name": "ARK: Survival Ascended",
+      "platform": "PS5",
+      "icon": "https://psnobj.prod.dl.playstation.net/psnobj/NPWR39005_00/778d420b-9ca1-403d-a428-ee5ae81f08fb.png"
+    },
+    {
+      "name": "Mortal Kombat 11 Trophies",
+      "platform": "PS5",
+      "icon": "https://psnobj.prod.dl.playstation.net/psnobj/NPWR21249_00/b0ca5165-b152-46ce-9584-16b09baabafd.png"
+    },
+    {
+      "name": "Call of Duty® Modern Warfare® II",
+      "platform": "PS5",
+      "icon": "https://psnobj.prod.dl.playstation.net/psnobj/NPWR24223_00/4bf6ce0f-4c4c-42a2-b3d0-66c295cbd7aa.png"
+    },
+    {
+      "name": "Marvel's Spider-Man: Miles Morales",
+      "platform": "PS5",
+      "icon": "https://psnobj.prod.dl.playstation.net/psnobj/NPWR20684_00/baa4acc4-a8e5-42f6-ae09-3ae51b6a38fb.png"
+    },
+    {
+      "name": "Unravel Two",
+      "platform": "PS4",
+      "icon": "https://image.api.playstation.com/trophy/np/NPWR14847_00_009EEE97E1D83592E74292CA6AAA1AEABCCF3CA253/1A4F5AE09B6EE30E934396CBEF96ED0BCE221CDF.PNG"
+    },
+    {
+      "name": "Sea of Thieves",
+      "platform": "PS5",
+      "icon": "https://psnobj.prod.dl.playstation.net/psnobj/NPWR40455_00/b925290d-ba56-4240-8715-55457d78e612.png"
+    },
+    {
+      "name": "Lost In Random™",
+      "platform": "PS5",
+      "icon": "https://psnobj.prod.dl.playstation.net/psnobj/NPWR24329_00/3d567bf5-301a-4298-9776-ff9da8b73b39.png"
+    },
+    {
+      "name": "Dying Light 2: Stay Human",
+      "platform": "PS5",
+      "icon": "https://psnobj.prod.dl.playstation.net/psnobj/NPWR24587_00/9b5079a2-e379-4b94-b4b6-e0a524bb84d4.png"
+    },
+    {
+      "name": "Far Cry® 6",
+      "platform": "PS5",
+      "icon": "https://psnobj.prod.dl.playstation.net/psnobj/NPWR22385_00/a0bfcc5f-03af-4104-877c-1499076cc22a.png"
+    },
+    {
+      "name": "UNO®",
+      "platform": "PS5",
+      "icon": "https://psnobj.prod.dl.playstation.net/psnobj/NPWR37576_00/143be648-40f7-40ca-bf0a-b4547fe84349.png"
+    },
+    {
+      "name": "You Suck At Parking",
+      "platform": "PS5",
+      "icon": "https://psnobj.prod.dl.playstation.net/psnobj/NPWR30945_00/4108d796-c082-4d47-b7c2-b2377fc2bd2d.png"
+    },
+    {
+      "name": "Assassin's Creed® Valhalla",
+      "platform": "PS5",
+      "icon": "https://psnobj.prod.dl.playstation.net/psnobj/NPWR20954_00/338ec131-2911-4905-821c-4f3f514dfa2d.png"
+    },
+    {
+      "name": "Assetto Corsa Competizione",
+      "platform": "PS5",
+      "icon": "https://psnobj.prod.dl.playstation.net/psnobj/NPWR24633_00/573bc690-0d4e-4761-a68a-adcf67d5b9f5.png"
+    },
+    {
+      "name": "Sackboy: A Big Adventure",
+      "platform": "PS5",
+      "icon": "https://psnobj.prod.dl.playstation.net/psnobj/NPWR19950_00/28286d6e-d0b0-492f-8e0e-573ad62184ef.png"
+    },
+    {
+      "name": "SWORD ART ONLINE Last Recollection",
+      "platform": "PS5",
+      "icon": "https://psnobj.prod.dl.playstation.net/psnobj/NPWR28940_00/c69062ab-4537-4138-a85b-c50ce9c7386e.png"
+    },
+    {
+      "name": "The Last of Us™ Part I",
+      "platform": "PS5",
+      "icon": "https://psnobj.prod.dl.playstation.net/psnobj/NPWR26546_00/905833e1-1c8e-48eb-826f-01839fda59a0.png"
+    },
+    {
+      "name": "Cult of the Lamb",
+      "platform": "PS5",
+      "icon": "https://psnobj.prod.dl.playstation.net/psnobj/NPWR28536_00/310f477b-85fb-4ce7-a94f-ed3ad8ec7301.png"
+    },
+    {
+      "name": "Apex Legends Trophies",
+      "platform": "PS5",
+      "icon": "https://psnobj.prod.dl.playstation.net/psnobj/NPWR25959_00/13fe9d83-7453-4466-b27c-9662c5039dec.png"
+    },
+    {
+      "name": "ASTRO’s PLAYROOM",
+      "platform": "PS5",
+      "icon": "https://psnobj.prod.dl.playstation.net/psnobj/NPWR20188_00/9f84e2fc-0cd2-40f1-bfdb-6774fe3a69f6.png"
+    },
+    {
+      "name": "Fall Guys",
+      "platform": "PS5",
+      "icon": "https://psnobj.prod.dl.playstation.net/psnobj/NPWR25297_00/34ff04f4-655c-4b5e-ab44-270a1cb9885f.png"
+    }
+  ],
+  "updated": "2026-06-02T11:46:43.425Z"
 }
