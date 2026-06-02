@@ -1,0 +1,1522 @@
+{
+  "display_name": "ankkui",
+  "online_id": "ankkui",
+  "platform": "PLAYSTATION 5",
+  "sync_status": "SYNCED FROM PSN",
+  "trophy_level": 60,
+  "trophy_progress": 25,
+  "games_count": 210,
+  "trophy_titles_count": 60,
+  "trophies": {
+    "platinum": 0,
+    "gold": 8,
+    "silver": 24,
+    "bronze": 141
+  },
+  "recent_trophies": [],
+  "recent_games": [
+    {
+      "name": "STEEP",
+      "platform": "PS4",
+      "icon": "https://image.api.playstation.com/gs2-sec/appkgo/prod/CUSA05526_00/2/i_c8094d5d5778a7deb586d35a39a606beec8e8faf120802182960a69a51fcd45a/i/icon0.png",
+      "last_played": "2026-05-30T08:13:20.930000Z"
+    },
+    {
+      "name": "Kingdom Come: Deliverance II",
+      "platform": "PS5",
+      "icon": "https://image.api.playstation.com/sgst/prod/00/PPSA21704_00/app/info/42/fi_39ebe8caff40d0105e6753b2e31047cb63852c877f7cd0edf0668eefe2070ffa/icon0.png",
+      "last_played": "2026-05-30T08:06:03.390000Z"
+    },
+    {
+      "name": "Devil May Cry 5",
+      "platform": "PS4",
+      "icon": "https://image.api.playstation.com/gs2-sec/appkgo/prod/CUSA08161_00/3/i_36c1f9b3a1f54b7ec511ed10c656e5df61599f0f49772e3a07128d0de8aa6b72/i/icon0.png",
+      "last_played": "2026-05-30T07:56:11.010000Z"
+    },
+    {
+      "name": "EA SPORTS FC 26",
+      "platform": "PS5",
+      "icon": "https://image.api.playstation.com/sgst/prod/00/PPSA27360_00/app/info/48/fi_7f5335bcf95ac62506ce2fb2496f0472380846833da98eecd8a3ad7d440710fa/icon0.png",
+      "last_played": "2026-05-22T19:46:22.680000Z"
+    },
+    {
+      "name": "Forza Horizon 5",
+      "platform": "PS5",
+      "icon": "https://image.api.playstation.com/sgst/prod/00/PPSA22327_00/app/info/119/fi_bbf54f01d9a94f05aa17885f7aa3c23231d2a3b478d20ee746a0b01b6a3e4442/icon0.png",
+      "last_played": "2026-05-22T16:07:46.650000Z"
+    }
+  ],
+  "games": [
+    {
+      "name": "Devil May Cry 5",
+      "platform": "PS4",
+      "icon": "https://image.api.playstation.com/gs2-sec/appkgo/prod/CUSA08161_00/3/i_36c1f9b3a1f54b7ec511ed10c656e5df61599f0f49772e3a07128d0de8aa6b72/i/icon0.png",
+      "entitlement_id": "EP0102-CUSA08161_00-DMC5000000000001",
+      "title_id": "CUSA08161_00"
+    },
+    {
+      "name": "Kingdom Come: Deliverance",
+      "platform": "PS4",
+      "icon": "https://image.api.playstation.com/gs2-sec/appkgo/prod/CUSA07180_00/3/i_ac76574c731b2b3709d25b74720990edc2f03c30591140cdb49762ba77d497c7/i/icon0.png",
+      "entitlement_id": "EP4062-CUSA07180_00-KCDGAME010000000",
+      "title_id": "CUSA07180_00"
+    },
+    {
+      "name": "Kingdom Come: Deliverance",
+      "platform": "PS4",
+      "icon": "https://image.api.playstation.com/gs2-sec/appkgo/prod/CUSA09682_00/3/i_de68b4b5403bf8c5659e9558058757c8c6bc882769d389343992c73ba106367d/i/icon0.png",
+      "entitlement_id": "EP4062-CUSA09682_00-KCDGAME01000FRDE",
+      "title_id": "CUSA09682_00"
+    },
+    {
+      "name": "Kingdom Come: Deliverance II",
+      "platform": "PS5",
+      "icon": "https://image.api.playstation.com/sgst/prod/00/PPSA21704_00/app/info/42/fi_39ebe8caff40d0105e6753b2e31047cb63852c877f7cd0edf0668eefe2070ffa/icon0.png",
+      "entitlement_id": "EP4062-PPSA21704_00-KCD2MAINGAMEDSEU",
+      "title_id": "PPSA21704_00"
+    },
+    {
+      "name": "Enotria",
+      "platform": "PS5",
+      "icon": "https://image.api.playstation.com/sgst/prod/00/PPSA20515_00/app/info/44/fi_b2d633fe1ac7339b4db05bcf189cde8cc53371120adae38aa8e259a40fff1607/icon0.png",
+      "entitlement_id": "EP7780-PPSA20515_00-0232483321110628",
+      "title_id": "PPSA20515_00"
+    },
+    {
+      "name": "Star Wars Outlaws",
+      "platform": "PS5",
+      "icon": "https://image.api.playstation.com/sgst/prod/00/PPSA08260_00/app/info/108/fi_596981222e72a4a9d1b1331c7b5d50ea7417f4512b378a81896bb5b8b9528f0a/icon0.png",
+      "entitlement_id": "EP0001-PPSA08260_00-GAME000000000000",
+      "title_id": "PPSA08260_00"
+    },
+    {
+      "name": "God of War",
+      "platform": "PS4",
+      "icon": "https://image.api.playstation.com/gs2-sec/appkgo/prod/CUSA07410_00/1/i_826c17ea4a4481657542bec02a9da35d5555d8f80ba2b906f745bbd3f4173ca6/i/icon0.png",
+      "entitlement_id": "EP9000-CUSA07410_00-00000000GODOFWAR",
+      "title_id": "CUSA07410_00"
+    },
+    {
+      "name": "Sword Of The Sea",
+      "platform": "PS5",
+      "icon": "https://image.api.playstation.com/sgst/prod/00/PPSA25344_00/app/info/20/fi_588df91bb15a51597de4da5264f06dae2984d12441d1824df866b24a9e266026/icon0.png",
+      "entitlement_id": "EP0292-PPSA25344_00-0946238103518617",
+      "title_id": "PPSA25344_00"
+    },
+    {
+      "name": "Nine Sols",
+      "platform": "PS4",
+      "icon": "https://image.api.playstation.com/gs2-sec/appkgo/prod/CUSA50688_00/5/i_4e4b3e3509449d3c6114428f347544da7b2711f0f05d09ee68acf61dd139e4fb/i/icon0.png",
+      "entitlement_id": "JP4443-CUSA50688_00-0507167220706885",
+      "title_id": "CUSA50688_00"
+    },
+    {
+      "name": "Nine Sols",
+      "platform": "PS5",
+      "icon": "https://image.api.playstation.com/sgst/prod/00/PPSA25414_00/app/info/17/fi_bc802da434f60fc36ff5344b1cce2a99b6ad92eefea891308613db2958ea1db8/icon0.png",
+      "entitlement_id": "JP4443-PPSA25414_00-0905368681809535",
+      "title_id": "PPSA25414_00"
+    },
+    {
+      "name": "WUCHANG: Fallen Feathers",
+      "platform": "PS5",
+      "icon": "https://image.api.playstation.com/sgst/prod/00/PPSA09519_00/app/info/61/fi_bec6308cafdcabce329ac5a1f76016c392dfc0f2b98d63ea05c5869ebe61459e/icon0.png",
+      "entitlement_id": "EP4040-PPSA09519_00-WUCHANGPS5000000",
+      "title_id": "PPSA09519_00"
+    },
+    {
+      "name": "EA SPORTS FC 26",
+      "platform": "PS4",
+      "icon": "https://image.api.playstation.com/gs2-sec/appkgo/prod/CUSA52342_00/5/i_0b5975f55e957b9cbaf8730c00dc917c1aa38a670acbcd33b2e05dc666cc975a/i/icon0_01.png",
+      "entitlement_id": "UP0006-CUSA52342_00-EASPORTSFC2026BG",
+      "title_id": "CUSA52342_00"
+    },
+    {
+      "name": "EA SPORTS FC 26",
+      "platform": "PS5",
+      "icon": "https://image.api.playstation.com/sgst/prod/00/PPSA27360_00/app/info/48/fi_7f5335bcf95ac62506ce2fb2496f0472380846833da98eecd8a3ad7d440710fa/icon0.png",
+      "entitlement_id": "UP0006-PPSA27360_00-EASPORTSFC2026BG",
+      "title_id": "PPSA27360_00"
+    },
+    {
+      "name": "Assassin's Creed® IV Black Flag",
+      "platform": "PS4",
+      "icon": "https://image.api.playstation.com/gs2-sec/appkgo/prod/CUSA00009_00/2/i_bb56e3087ed420e514ddd26c731396aac8cd65aaa26a4d6247d013f417bfae55/i/icon0.png",
+      "entitlement_id": "EP0001-CUSA00009_00-AC4GAMEPS4000001",
+      "title_id": "CUSA00009_00"
+    },
+    {
+      "name": "WATCH_DOGS™",
+      "platform": "PS4",
+      "icon": "https://image.api.playstation.com/gs2-sec/appkgo/prod/CUSA00016_00/3/i_36e2b7c37c766c3c8028a3740918af1bec0cd873f2583ffc0264aeae38683cca/i/icon0.png",
+      "entitlement_id": "EP0001-CUSA00016_00-WATCHDOGS0000000",
+      "title_id": "CUSA00016_00"
+    },
+    {
+      "name": "Rayman Legends",
+      "platform": "PS4",
+      "icon": "https://image.api.playstation.com/gs2-sec/appkgo/prod/CUSA00031_00/1/i_de7f2d4471d56be1911987fdae0711e95cd6f21b0ae43c57c70d0bf785ae4acb/i/icon0.png",
+      "entitlement_id": "EP0001-CUSA00031_00-RAYMANLEGENDS001",
+      "title_id": "CUSA00031_00"
+    },
+    {
+      "name": "Assassin's Creed® Freedom Cry",
+      "platform": "PS4",
+      "icon": "https://image.api.playstation.com/gs2-sec/appkgo/prod/CUSA00435_00/1/i_22fd08ba55dffe7d490ddeb52ee140dbcad92b61bf44369e45700236533c53e4/i/icon0.png",
+      "entitlement_id": "EP0001-CUSA00435_00-ACBFDLCSPSA00001",
+      "title_id": "CUSA00435_00"
+    },
+    {
+      "name": "Far Cry® 4",
+      "platform": "PS4",
+      "icon": "https://image.api.playstation.com/gs2-sec/appkgo/prod/CUSA00462_00/3/i_f949708af1851db4e2c353b5ae0f577e3fad30658f8381b0485267663aac769a/i/icon0.png",
+      "entitlement_id": "EP0001-CUSA00462_00-FC4GAMEPS4000001",
+      "title_id": "CUSA00462_00"
+    },
+    {
+      "name": "Stalker: Shadow of Chornobyl",
+      "platform": "PS4",
+      "icon": "https://image.api.playstation.com/gs2-sec/appkgo/prod/CUSA43932_00/3/i_9d7c040c8b65cab04615ce8a23b6789d842d2461d687200c13ed1e86e4aa6352/i/icon0.png",
+      "entitlement_id": "EB0236-CUSA43932_00-STALKERSOC000000",
+      "title_id": "CUSA43932_00"
+    },
+    {
+      "name": "Stalker: Call of Prypiat",
+      "platform": "PS4",
+      "icon": "https://image.api.playstation.com/gs2-sec/appkgo/prod/CUSA43978_00/3/i_b08f6dedb91ca4ed320325bf1eed5ebadf1c1e36e0d9085838709dd3f8892683/i/icon0.png",
+      "entitlement_id": "EB0236-CUSA43978_00-STALKERCOP000000",
+      "title_id": "CUSA43978_00"
+    },
+    {
+      "name": "Stalker: Clear Sky",
+      "platform": "PS4",
+      "icon": "https://image.api.playstation.com/gs2-sec/appkgo/prod/CUSA43980_00/3/i_4ac60be1380f78d4fab15fba585296684bfe66d96db81df9516fe478a9c7fb30/i/icon0.png",
+      "entitlement_id": "EB0236-CUSA43980_00-STALKERCS0000000",
+      "title_id": "CUSA43980_00"
+    },
+    {
+      "name": "S.T.A.L.K.E.R.: Call of Prypiat",
+      "platform": "PS5",
+      "icon": "https://image.api.playstation.com/sgst/prod/00/PPSA21732_00/app/info/12/fi_45d4f2f01807e56fae7a373d5b06f6d522b4ffdf05ffe441988798f2a9e4f1fa/icon0.png",
+      "entitlement_id": "EB0236-PPSA21732_00-0450712096375802",
+      "title_id": "PPSA21732_00"
+    },
+    {
+      "name": "S.T.A.L.K.E.R.: Clear Sky",
+      "platform": "PS5",
+      "icon": "https://image.api.playstation.com/sgst/prod/00/PPSA21733_00/app/info/11/fi_ad453df608bb76170cefb81864a57ccd85cbf84cb397ed27c8865bb7afccae3d/icon0.png",
+      "entitlement_id": "EB0236-PPSA21733_00-0784463229646064",
+      "title_id": "PPSA21733_00"
+    },
+    {
+      "name": "S.T.A.L.K.E.R.: Shadow of Chornobyl",
+      "platform": "PS5",
+      "icon": "https://image.api.playstation.com/sgst/prod/00/PPSA21734_00/app/info/13/fi_210eda8a4d066d2f109c59926405b33faff926b21981c2f32f91a5044e9f3168/icon0.png",
+      "entitlement_id": "EB0236-PPSA21734_00-0778461500088717",
+      "title_id": "PPSA21734_00"
+    },
+    {
+      "name": "Valiant Hearts: The Great War",
+      "platform": "PS4",
+      "icon": "https://image.api.playstation.com/gs2-sec/appkgo/prod/CUSA00479_00/1/i_38455b7ae8315e30ce20121a26636553dde9d6465d91b69ad8f6ce02ee11dc6d/i/icon0.png",
+      "entitlement_id": "EP0001-CUSA00479_00-VALIANTHEARTS001",
+      "title_id": "CUSA00479_00"
+    },
+    {
+      "name": "Assassin's Creed® Unity",
+      "platform": "PS4",
+      "icon": "https://image.api.playstation.com/gs2-sec/appkgo/prod/CUSA00605_00/3/i_c15f584921b0e2d55abaac59bca53946438f110541caa61c17439850c3fd7269/i/icon0.png",
+      "entitlement_id": "EP0001-CUSA00605_00-AC5GAMEPS4000001",
+      "title_id": "CUSA00605_00"
+    },
+    {
+      "name": "Rabbids Invasion: The Interactive TV Show",
+      "platform": "PS4",
+      "icon": "https://image.api.playstation.com/gs2-sec/appkgo/prod/CUSA01179_00/5/i_515f4c2c720a32f174334637f02dab6f8c11640a84785e148e213793003ecc6b/i/icon0.png",
+      "entitlement_id": "EP0001-CUSA01179_00-RABBIDSINVASION1",
+      "title_id": "CUSA01179_00"
+    },
+    {
+      "name": "Assassin’s Creed® Chronicles: Russia",
+      "platform": "PS4",
+      "icon": "https://image.api.playstation.com/gs2-sec/appkgo/prod/CUSA01356_00/1/i_bd485fbe017d70d211e5e0e6047c3348f6911a630e990cd70eb33edfd9ef97dd/i/icon0.png",
+      "entitlement_id": "EP0001-CUSA01356_00-ACCHRONICLESEP03",
+      "title_id": "CUSA01356_00"
+    },
+    {
+      "name": "Assassin's Creed® Syndicate",
+      "platform": "PS4",
+      "icon": "https://image.api.playstation.com/gs2-sec/appkgo/prod/CUSA02376_00/4/i_0e50eb68d16406df3d32f1f41b6c4853886c72762fe3c9954058479faa03afc5/i/icon0.png",
+      "entitlement_id": "EP0001-CUSA02376_00-ACVICTORYGAMEPS4",
+      "title_id": "CUSA02376_00"
+    },
+    {
+      "name": "Tom Clancy's Ghost Recon® Wildlands",
+      "platform": "PS4",
+      "icon": "https://image.api.playstation.com/gs2-sec/appkgo/prod/CUSA02819_00/4/i_2e028661bf2f2d1576bdd4819f151856bb0c3c4f40d0f67c1f6a32c8c13a671d/i/icon0.png",
+      "entitlement_id": "EP0001-CUSA02819_00-GRWEMEANORMAL000",
+      "title_id": "CUSA02819_00"
+    },
+    {
+      "name": "Far Cry® Primal",
+      "platform": "PS4",
+      "icon": "https://image.api.playstation.com/gs2-sec/appkgo/prod/CUSA03309_00/4/i_d86f4491b78f62dd5a94ad4d2e329d3df268296da678ec8440c3ad5865c66614/i/icon0.png",
+      "entitlement_id": "EP0001-CUSA03309_00-PRIMALGAME000001",
+      "title_id": "CUSA03309_00"
+    },
+    {
+      "name": "WATCH_DOGS® 2",
+      "platform": "PS4",
+      "icon": "https://image.api.playstation.com/gs2-sec/appkgo/prod/CUSA04294_00/2/i_8c74e4a9e267e8b93835c91b4b7304d744898c0c36c8f4173c177e33d723fc36/i/icon0.png",
+      "entitlement_id": "EP0001-CUSA04294_00-WD2FULLGAME00000",
+      "title_id": "CUSA04294_00"
+    },
+    {
+      "name": "South Park™: The Stick of Truth™",
+      "platform": "PS4",
+      "icon": "https://image.api.playstation.com/gs2-sec/appkgo/prod/CUSA04695_00/2/i_a4d6404cdf79e181f650f4a1f331b298e4cf3c06288d0dfd84d72fa34aed3108/i/icon0.png",
+      "entitlement_id": "EP0001-CUSA04695_00-SOUTHPARKTSOT001",
+      "title_id": "CUSA04695_00"
+    },
+    {
+      "name": "Assassin's Creed The Ezio Collection",
+      "platform": "PS4",
+      "icon": "https://image.api.playstation.com/gs2-sec/appkgo/prod/CUSA04893_00/3/i_1cb18fb68f50580587f2834a2288a99023af359c3dda3b79d96726611c162828/i/icon0.png",
+      "entitlement_id": "EP0001-CUSA04893_00-ACLEGACYHD000000",
+      "title_id": "CUSA04893_00"
+    },
+    {
+      "name": "STEEP",
+      "platform": "PS4",
+      "icon": "https://image.api.playstation.com/gs2-sec/appkgo/prod/CUSA05526_00/2/i_c8094d5d5778a7deb586d35a39a606beec8e8faf120802182960a69a51fcd45a/i/icon0.png",
+      "entitlement_id": "EP0001-CUSA05526_00-STEEPGAMEEEFIGS1",
+      "title_id": "CUSA05526_00"
+    },
+    {
+      "name": "Assassin's Creed® Origins",
+      "platform": "PS4",
+      "icon": "https://image.api.playstation.com/gs2-sec/appkgo/prod/CUSA05625_00/3/i_1918d4f78a3ed7521b7936984d525927a03a03e241bdd3d748bfd23c104d45db/i/icon0.png",
+      "entitlement_id": "EP0001-CUSA05625_00-GAMEACEMPIRE0000",
+      "title_id": "CUSA05625_00"
+    },
+    {
+      "name": "Far Cry® 5",
+      "platform": "PS4",
+      "icon": "https://image.api.playstation.com/gs2-sec/appkgo/prod/CUSA05847_00/2/i_156be5fdc23a961f0e2b05974c0df5ecfd6169b09aa25e5c510ec7e6e1ad683f/i/icon0.png",
+      "entitlement_id": "EP0001-CUSA05847_00-FARCRY5GAME00000",
+      "title_id": "CUSA05847_00"
+    },
+    {
+      "name": "The Crew® 2",
+      "platform": "PS4",
+      "icon": "https://image.api.playstation.com/gs2-sec/appkgo/prod/CUSA08609_00/2/i_b6a9aae70f933165ae2e4361ae10aed3d3146b1cedf4102b05626817250e94f8/i/icon0.png",
+      "entitlement_id": "EP0001-CUSA08609_00-THECREW2SCEE0000",
+      "title_id": "CUSA08609_00"
+    },
+    {
+      "name": "Assassin's Creed® Rogue Remastered",
+      "platform": "PS4",
+      "icon": "https://image.api.playstation.com/gs2-sec/appkgo/prod/CUSA10123_00/3/i_80ff04b481efdfa0e3614377de51a80034d740bdb420cb28d32c324a4ee78bd3/i/icon0.png",
+      "entitlement_id": "EP0001-CUSA10123_00-ACRGAMEPS4000001",
+      "title_id": "CUSA10123_00"
+    },
+    {
+      "name": "Far Cry® 3 Classic Edition",
+      "platform": "PS4",
+      "icon": "https://image.api.playstation.com/gs2-sec/appkgo/prod/CUSA10326_00/3/i_f9b63839c90440a787bc494fd0ce7eee3026e71f53fb194dd85d0984979c52d1/i/icon0.png",
+      "entitlement_id": "EP0001-CUSA10326_00-FARCRY3REMASTER0",
+      "title_id": "CUSA10326_00"
+    },
+    {
+      "name": "Assassin's Creed® III Remastered",
+      "platform": "PS4",
+      "icon": "https://image.api.playstation.com/gs2-sec/appkgo/prod/CUSA11560_00/2/i_1f66fe8962ba359e0b0472732030643d8296fb427dd6b227dc67a966fab122ac/i/icon0.png",
+      "entitlement_id": "EP0001-CUSA11560_00-AC3GAMEPS4000001",
+      "title_id": "CUSA11560_00"
+    },
+    {
+      "name": "Assassin's Creed® Odyssey",
+      "platform": "PS4",
+      "icon": "https://image.api.playstation.com/gs2-sec/appkgo/prod/CUSA12042_00/2/i_b040e6525b7ebcbd0887fe56900029b48dafb0a2ea890bfad5eb43ab8418ac7d/i/icon0.png",
+      "entitlement_id": "EP0001-CUSA12042_00-GAME000000000000",
+      "title_id": "CUSA12042_00"
+    },
+    {
+      "name": "Watch Dogs®: Legion",
+      "platform": "PS4",
+      "icon": "https://image.api.playstation.com/gs2-sec/appkgo/prod/CUSA13035_00/1/i_4436f7d75fa37ec57fc6ba4634d0646c8539f7079d5c89a5a6256b9ef2a875ad/i/icon0.png",
+      "entitlement_id": "EP0001-CUSA13035_00-ORWFULLGAME00000",
+      "title_id": "CUSA13035_00"
+    },
+    {
+      "name": "Far Cry® New Dawn",
+      "platform": "PS4",
+      "icon": "https://image.api.playstation.com/gs2-sec/appkgo/prod/CUSA13886_00/2/i_06c2c7fb0a1fc896ef080d6c0bcf9f63174a45eae52939c2737869ad06885604/i/icon0.png",
+      "entitlement_id": "EP0001-CUSA13886_00-FARCRYBOWMORE000",
+      "title_id": "CUSA13886_00"
+    },
+    {
+      "name": "Tom Clancy’s Ghost Recon® Breakpoint",
+      "platform": "PS4",
+      "icon": "https://image.api.playstation.com/gs2-sec/appkgo/prod/CUSA16001_00/1/i_0785ec3816c6e336523cbac1a05ea30377164292d120edd9f894734840a1e5ce/i/icon0.png",
+      "entitlement_id": "EP0001-CUSA16001_00-GRW2SCEEUKRUS000",
+      "title_id": "CUSA16001_00"
+    },
+    {
+      "name": "RIDERS REPUBLIC™",
+      "platform": "PS4",
+      "icon": "https://image.api.playstation.com/gs2-sec/appkgo/prod/CUSA19394_00/2/i_523767e01813d99294f6e4b3be7e630deddcf332004f40756dc69ff2ad4a8239/i/icon0.png",
+      "entitlement_id": "EP0001-CUSA19394_00-MADGAMESCEEEUR00",
+      "title_id": "CUSA19394_00"
+    },
+    {
+      "name": "RIDERS REPUBLIC™",
+      "platform": "PS5",
+      "icon": "https://image.api.playstation.com/sgst/prod/00/PPSA01372_00/app/info/78/fi_f30d00bc4c57147ccad4becccb2997ef8921896256dcb71876ed04006171270d/icon0.png",
+      "entitlement_id": "EP0001-PPSA01372_00-MADGAMESCEEEUR00",
+      "title_id": "PPSA01372_00"
+    },
+    {
+      "name": "Watch Dogs®: Legion",
+      "platform": "PS5",
+      "icon": "https://image.api.playstation.com/sgst/prod/00/PPSA01500_00/app/info/35/fi_6e5af594e56beb1368be79fe17ce365a6cdafa70eced318e64b76d3436b18e21/icon0.png",
+      "entitlement_id": "EP0001-PPSA01500_00-ORWFULLGAME00000",
+      "title_id": "PPSA01500_00"
+    },
+    {
+      "name": "UNO®",
+      "platform": "PS4",
+      "icon": "https://image.api.playstation.com/gs2-sec/appkgo/prod/CUSA04040_00/4/i_789ad0144152e7e36ed265830b2591c54c3842cbd4dbedc733cd2faa02caf458/i/icon0.png",
+      "entitlement_id": "EP0001-CUSA04040_00-UBISOFTUNOFULL00",
+      "title_id": "CUSA04040_00"
+    },
+    {
+      "name": "Far Cry® 6",
+      "platform": "PS4",
+      "icon": "https://image.api.playstation.com/gs2-sec/appkgo/prod/CUSA15779_00/3/i_ddd8a007ac2be9dc47dd765d64398aefb92a66048f62374a2189b87f6c5d6c6b/i/icon0.png",
+      "entitlement_id": "EP0001-CUSA15779_00-FARCRY6GAME00000",
+      "title_id": "CUSA15779_00"
+    },
+    {
+      "name": "Tom Clancy’s Rainbow Six® Extraction",
+      "platform": "PS4",
+      "icon": "https://image.api.playstation.com/gs2-sec/appkgo/prod/CUSA18095_00/2/i_5a579a25f349288ae41f35802b49fa2a3183ea774e8d128ba9f8bc1ec67b9ffd/i/icon0.png",
+      "entitlement_id": "EP0001-CUSA18095_00-R6EXTRACTION0000",
+      "title_id": "CUSA18095_00"
+    },
+    {
+      "name": "Assassin's Creed® Valhalla",
+      "platform": "PS4",
+      "icon": "https://image.api.playstation.com/gs2-sec/appkgo/prod/CUSA18535_00/1/i_ba3d13c355defb8c740d9d15b27589cd9e42340af421f5f5cc28be1088d2e45f/i/icon0.png",
+      "entitlement_id": "EP0001-CUSA18535_00-GAME000000000000",
+      "title_id": "CUSA18535_00"
+    },
+    {
+      "name": "Assassin's Creed® Mirage",
+      "platform": "PS4",
+      "icon": "https://image.api.playstation.com/gs2-sec/appkgo/prod/CUSA40975_00/3/i_8b83eb8f9352b4b0a70b508abed5d2f80a06a3d2a33e7e36448a60725f9c2e31/i/icon0.png",
+      "entitlement_id": "EP0001-CUSA40975_00-GAME000000000000",
+      "title_id": "CUSA40975_00"
+    },
+    {
+      "name": "MONOPOLY®",
+      "platform": "PS4",
+      "icon": "https://image.api.playstation.com/gs2-sec/appkgo/prod/CUSA44227_00/2/i_f7d4e3ba8086c150aa02bff7c50e4779eab69375d1db1bbd50164068bad80523/i/icon0.png",
+      "entitlement_id": "EP0001-CUSA44227_00-GAME000000000000",
+      "title_id": "CUSA44227_00"
+    },
+    {
+      "name": "Tom Clancy's Rainbow Six® Extraction",
+      "platform": "PS5",
+      "icon": "https://image.api.playstation.com/sgst/prod/00/PPSA01517_00/app/info/24/fi_398c469717b8f7752c512a312cbbb986ce2defa9b0f54d4029f28f723b99beea/icon0.png",
+      "entitlement_id": "EP0001-PPSA01517_00-R6EXTRACTION0000",
+      "title_id": "PPSA01517_00"
+    },
+    {
+      "name": "Assassin's Creed® Valhalla",
+      "platform": "PS5",
+      "icon": "https://image.api.playstation.com/sgst/prod/00/PPSA01532_00/app/info/73/fi_1c2b7395afd1a0dafabc4ffafa4709775c2bd11eb206a7f8f6e9685c9893f698/icon0.png",
+      "entitlement_id": "EP0001-PPSA01532_00-GAME000000000000",
+      "title_id": "PPSA01532_00"
+    },
+    {
+      "name": "Far Cry® 6",
+      "platform": "PS5",
+      "icon": "https://image.api.playstation.com/sgst/prod/00/PPSA01874_00/app/info/55/fi_9baa41850f6e30ff43d044d2e94caaf809423e82a7abe9506f132374791acd5e/icon0.png",
+      "entitlement_id": "EP0001-PPSA01874_00-FARCRY6GAME00000",
+      "title_id": "PPSA01874_00"
+    },
+    {
+      "name": "Anno 1800 Console Edition",
+      "platform": "PS5",
+      "icon": "https://image.api.playstation.com/sgst/prod/00/PPSA04719_00/app/info/85/fi_8f43fa053798cb8067c61fbf907b9d98ab6618163bb244ea0bdc2824fbd9a2f4/icon0.png",
+      "entitlement_id": "EP0001-PPSA04719_00-ANNO1800PS000000",
+      "title_id": "PPSA04719_00"
+    },
+    {
+      "name": "SKULL AND BONES™",
+      "platform": "PS5",
+      "icon": "https://image.api.playstation.com/sgst/prod/00/PPSA07648_00/app/info/76/fi_3aa969ff4e96d7f550b8a80cf210356ca81ab2e2ef5f8b890979d45b446d13fc/icon0.png",
+      "entitlement_id": "EP0001-PPSA07648_00-GAME000000000000",
+      "title_id": "PPSA07648_00"
+    },
+    {
+      "name": "Assassin's Creed® Mirage",
+      "platform": "PS5",
+      "icon": "https://image.api.playstation.com/sgst/prod/00/PPSA13960_00/app/info/27/fi_db0bed1dae5fa0403432946ef7055cf11ef565e3a49028b75d2a72044ef619dd/icon0.png",
+      "entitlement_id": "EP0001-PPSA13960_00-GAME000000000000",
+      "title_id": "PPSA13960_00"
+    },
+    {
+      "name": "UNO®",
+      "platform": "PS5",
+      "icon": "https://image.api.playstation.com/sgst/prod/00/PPSA15316_00/app/info/36/fi_ac84130775fbb23c166cb8d51457e8557be1241a64f12941b2e221f746035727/icon0.png",
+      "entitlement_id": "EP0001-PPSA15316_00-UNOPS50000000001",
+      "title_id": "PPSA15316_00"
+    },
+    {
+      "name": "MONOPOLY®",
+      "platform": "PS5",
+      "icon": "https://image.api.playstation.com/sgst/prod/00/PPSA17419_00/app/info/9/fi_af46cc8de4a0a4c8dac1fce939cfae5408b31c06537b201d0de4aa1ead85641b/icon0.png",
+      "entitlement_id": "EP0001-PPSA17419_00-GAME000000000000",
+      "title_id": "PPSA17419_00"
+    },
+    {
+      "name": "The Rogue Prince of Persia",
+      "platform": "PS5",
+      "icon": "https://image.api.playstation.com/sgst/prod/00/PPSA28155_00/app/info/9/fi_e1e553f399b5654671fb703efdd6cd0fe54ef29927f1138095b7bac34cd69ae6/icon0.png",
+      "entitlement_id": "EP0001-PPSA28155_00-GAME000000000000",
+      "title_id": "PPSA28155_00"
+    },
+    {
+      "name": "Diablo IV",
+      "platform": "PS4",
+      "icon": "https://image.api.playstation.com/gs2-sec/appkgo/prod/CUSA34721_00/3/i_3dfc3fc72470ffacf85271d8675dc6c66525f9a599c05514656f7c86b58ac064/i/icon0.png",
+      "entitlement_id": "EP0002-CUSA34721_00-DIABLOIVFULLPS40",
+      "title_id": "CUSA34721_00"
+    },
+    {
+      "name": "Diablo IV",
+      "platform": "PS5",
+      "icon": "https://image.api.playstation.com/sgst/prod/00/PPSA08595_00/app/info/133/fi_04f32ffbbfc107910c6e769bab4ad01901f0be4aef31eeb1a83a5e298111e2d5/icon0.png",
+      "entitlement_id": "EP0002-PPSA08595_00-DIABLOIVFULLPS50",
+      "title_id": "PPSA08595_00"
+    },
+    {
+      "name": "EA SPORTS™ WRC",
+      "platform": "PS5",
+      "icon": "https://image.api.playstation.com/sgst/prod/00/PPSA06092_00/app/info/49/fi_9ce884fe136182285eedf87d52a2c6133bfe2bb16c12c48bddac03fbb531dc47/icon0.png",
+      "entitlement_id": "EP0006-PPSA06092_00-WRC2023PS5GAME00",
+      "title_id": "PPSA06092_00"
+    },
+    {
+      "name": "FINAL FANTASY VII REMAKE",
+      "platform": "PS5",
+      "icon": "https://image.api.playstation.com/sgst/prod/00/PPSA01911_00/app/info/21/fi_273ecafc781fe0e78acbd57a2b3e3b0a049945db13711881cabc92d9f2b78d55/icon0.png",
+      "entitlement_id": "EP0082-PPSA01911_00-2887437947778581",
+      "title_id": "PPSA01911_00"
+    },
+    {
+      "name": "Hello Neighbor",
+      "platform": "PS4",
+      "icon": "https://image.api.playstation.com/gs2-sec/appkgo/prod/CUSA10960_00/2/i_5f3957cbc83bf8a4755784e61f44bad551dbcb6890cc3e1b1ce93fe3deae2427/i/icon0.png",
+      "entitlement_id": "EP0096-CUSA10960_00-HELLONEIGHBOR4EU",
+      "title_id": "CUSA10960_00"
+    },
+    {
+      "name": "SILENT HILL 2",
+      "platform": "PS5",
+      "icon": "https://image.api.playstation.com/sgst/prod/00/PPSA08709_00/app/info/34/fi_ae3c3bfe2a8bcb462a7cdb3c8be446e97bac2bef72bc9a698c38fe487ba2f167/icon0.png",
+      "entitlement_id": "EP0101-PPSA08709_00-MAINGAME00000000",
+      "title_id": "PPSA08709_00"
+    },
+    {
+      "name": "Resident Evil Village",
+      "platform": "PS4",
+      "icon": "https://image.api.playstation.com/gs2-sec/appkgo/prod/CUSA18008_00/3/i_de96f43a86296f903e7a0fba2e27a0fbcaf90b30be7f328b93b50543fe61e923/i/icon0.png",
+      "entitlement_id": "EP0102-CUSA18008_00-VILLAGEFULLGAMEX",
+      "title_id": "CUSA18008_00"
+    },
+    {
+      "name": "Resident Evil Village",
+      "platform": "PS5",
+      "icon": "https://image.api.playstation.com/sgst/prod/00/PPSA01557_00/app/info/44/fi_35a586a42c15ffbfcd5937fe1201f63493c0573b3de2eba9f51a87fadf5a11b4/icon0.png",
+      "entitlement_id": "EP0102-PPSA01557_00-VILLAGEFULLGAMEX",
+      "title_id": "PPSA01557_00"
+    },
+    {
+      "name": "Chivalry 2",
+      "platform": "PS4",
+      "icon": "https://image.api.playstation.com/gs2-sec/appkgo/prod/CUSA16982_00/4/i_8c1a74413fc0aba45e2423ba979391ae6821281559250f0a64a47add1be39888/i/icon0.png",
+      "entitlement_id": "EP0114-CUSA16982_00-CHIVALRY00000001",
+      "title_id": "CUSA16982_00"
+    },
+    {
+      "name": "Chivalry 2",
+      "platform": "PS5",
+      "icon": "https://image.api.playstation.com/sgst/prod/00/PPSA02184_00/app/info/57/fi_351c6da20057ca7da525de9f7f4f2adda0e4ba60162072f51a4241fcf46fa14e/icon0.png",
+      "entitlement_id": "EP0114-PPSA02184_00-6997552349846199",
+      "title_id": "PPSA02184_00"
+    },
+    {
+      "name": "THE KING OF FIGHTERS XV",
+      "platform": "PS4",
+      "icon": "https://image.api.playstation.com/gs2-sec/appkgo/prod/CUSA25273_00/3/i_68bb5be0741a79bd05fde5cf29a6ecbddfa65f5c5894e86e1eafea6ff94a7f89/i/icon0.png",
+      "entitlement_id": "EP0576-CUSA25273_00-KINGOFFIGHTERS15",
+      "title_id": "CUSA25273_00"
+    },
+    {
+      "name": "THE KING OF FIGHTERS XV",
+      "platform": "PS5",
+      "icon": "https://image.api.playstation.com/sgst/prod/00/PPSA02214_00/app/info/94/fi_dd329d547fb18133c66d846b75e28ddc024304c772925d01320cb11f08511a9d/icon0.png",
+      "entitlement_id": "EP0576-PPSA02214_00-KINGOFFIGHTERS15",
+      "title_id": "PPSA02214_00"
+    },
+    {
+      "name": "Five Nights at Freddy's VR: Help Wanted",
+      "platform": "PS4",
+      "icon": "https://image.api.playstation.com/gs2-sec/appkgo/prod/CUSA16049_00/3/i_05be8a433bf240236d4681d2e21732da448eb1e33b4383d758d62d626ae0beaa/i/icon0.png",
+      "entitlement_id": "EP0634-CUSA16049_00-FNAFVRHELPWANTED",
+      "title_id": "CUSA16049_00"
+    },
+    {
+      "name": "Five Nights At Freddy's: Help Wanted",
+      "platform": "PS5",
+      "icon": "https://image.api.playstation.com/sgst/prod/00/PPSA18329_00/app/info/9/fi_fb50ae094604ea52738f66a2e8f60577cfd00cedcb8d75cf4b9bc40856634c22/icon0.png",
+      "entitlement_id": "EP0634-PPSA18329_00-FNAFHELPWANTEDVR",
+      "title_id": "PPSA18329_00"
+    },
+    {
+      "name": "Five Nights at Freddy's: Help Wanted 2",
+      "platform": "PS5",
+      "icon": "https://image.api.playstation.com/sgst/prod/00/PPSA18887_00/app/info/40/fi_cfc6c41a03a8c2d523ec1f235762420d671b3c16577b7afe4522c882a83836d5/icon0.png",
+      "entitlement_id": "EP0634-PPSA18887_00-FNAFHELPWANTEDP2",
+      "title_id": "PPSA18887_00"
+    },
+    {
+      "name": "ARK Survival Ascended",
+      "platform": "PS5",
+      "icon": "https://image.api.playstation.com/sgst/prod/00/PPSA17101_00/app/info/762/fi_4a581a2c1daefb38701c1a2b8e2a1ee28503913ae37c3ad5e3cf381183aadc7c/icon0.png",
+      "entitlement_id": "EP0688-PPSA17101_00-SURVIVALASCENDED",
+      "title_id": "PPSA17101_00"
+    },
+    {
+      "name": "Digimon Story: Cyber Sleuth - Hacker's Memory",
+      "platform": "PS4",
+      "icon": "https://image.api.playstation.com/gs2-sec/appkgo/prod/CUSA09923_00/4/i_861b32f8545b6249e86aa37aafbd72d5296c6740af3a7f877b50a453f8434ceb/i/icon0.png",
+      "entitlement_id": "EP0700-CUSA09923_00-DSHACKERSMEMORY1",
+      "title_id": "CUSA09923_00"
+    },
+    {
+      "name": "MY HERO ONE'S JUSTICE 2",
+      "platform": "PS4",
+      "icon": "https://image.api.playstation.com/gs2-sec/appkgo/prod/CUSA16171_00/4/i_d1b5566170acf5aa9097ae9e163d4187eba9346fd9738745bbc1b188feae1d0c/i/icon0.png",
+      "entitlement_id": "EP0700-CUSA16171_00-HEROGAME00000000",
+      "title_id": "CUSA16171_00"
+    },
+    {
+      "name": "NBA 2K25",
+      "platform": "PS4",
+      "icon": "https://image.api.playstation.com/gs2-sec/appkgo/prod/CUSA48139_00/8/i_0077ca4e8671fc387209c0df9e39f751922244a4b41f17f49a1d05071f94fe71/i/icon0.png",
+      "entitlement_id": "EP1001-CUSA48139_00-NBA2K25000000000",
+      "title_id": "CUSA48139_00"
+    },
+    {
+      "name": "NBA 2K25",
+      "platform": "PS5",
+      "icon": "https://image.api.playstation.com/sgst/prod/00/PPSA22121_00/app/info/72/fi_fdf3e64da34afd953111e09b0ee59cd748c978b3d2945dbe213438cec2d32d95/icon0.png",
+      "entitlement_id": "EP1001-PPSA22121_00-NBA2K25000000000",
+      "title_id": "PPSA22121_00"
+    },
+    {
+      "name": "Fallout 4",
+      "platform": "PS4",
+      "icon": "https://image.api.playstation.com/gs2-sec/appkgo/prod/CUSA02961_00/2/i_9927f667599cb8b6f46f473d32b582cc38bac6049905cc8897c789fee5981f7d/i/icon0.png",
+      "entitlement_id": "EP1003-CUSA02961_00-FALLOUT4FULLGAME",
+      "title_id": "CUSA02961_00"
+    },
+    {
+      "name": "Dishonored 2",
+      "platform": "PS4",
+      "icon": "https://image.api.playstation.com/gs2-sec/appkgo/prod/CUSA03604_00/2/i_fc5a794f88f33c24dc1d226070eedf2130bc2d742b18e91b152fd2528f104cec/i/icon0.png",
+      "entitlement_id": "EP1003-CUSA03604_00-DISHONOREDTWOPS4",
+      "title_id": "CUSA03604_00"
+    },
+    {
+      "name": "Skyrim",
+      "platform": "PS4",
+      "icon": "https://image.api.playstation.com/gs2-sec/appkgo/prod/CUSA05486_00/2/i_fedd9fe4b268454faf8d4c0c8e733c27a597990304e0894f58fb39705e322e26/i/icon0.png",
+      "entitlement_id": "EP1003-CUSA05486_00-SKYRIMHDFULLGAME",
+      "title_id": "CUSA05486_00"
+    },
+    {
+      "name": "DOOM Eternal",
+      "platform": "PS4",
+      "icon": "https://image.api.playstation.com/gs2-sec/appkgo/prod/CUSA13275_00/2/i_7e8e7b56cf5322c66aafb85620df73466eaec447f67ca29629585fdc787fbca5/i/icon0.png",
+      "entitlement_id": "EP1003-CUSA13275_00-DOOM050000000000",
+      "title_id": "CUSA13275_00"
+    },
+    {
+      "name": "DOOM Eternal",
+      "platform": "PS5",
+      "icon": "https://image.api.playstation.com/sgst/prod/00/PPSA01982_00/app/info/22/fi_dbdbc4956ea6844b705cf9ffe055395cdd06910044f8df82ae9601aa7e36a5f2/icon0.png",
+      "entitlement_id": "EP1003-PPSA01982_00-DOOM05PS50000000",
+      "title_id": "PPSA01982_00"
+    },
+    {
+      "name": "Skyrim",
+      "platform": "PS5",
+      "icon": "https://image.api.playstation.com/sgst/prod/00/PPSA03747_00/app/info/20/fi_c8e318b79894a60e15b1e225b269c977846b62649b58160e1cb94cd7b9ba15b8/icon0.png",
+      "entitlement_id": "EP1003-PPSA03747_00-TESVSKYRIM000000",
+      "title_id": "PPSA03747_00"
+    },
+    {
+      "name": "Fallout 4",
+      "platform": "PS5",
+      "icon": "https://image.api.playstation.com/sgst/prod/00/PPSA09017_00/app/info/42/fi_89d16c1d6d865a8a90865e0ab248cd02c2e149907d9a23c98f1f78487f95c4a9/icon0.png",
+      "entitlement_id": "EP1003-PPSA09017_00-FALLOUT4FULLGAME",
+      "title_id": "PPSA09017_00"
+    },
+    {
+      "name": "Grand Theft Auto V",
+      "platform": "PS4",
+      "icon": "https://image.api.playstation.com/gs2-sec/appkgo/prod/CUSA00411_00/7/i_c28a71044ce3a42dce746c4a711e70809e8a395be1fd20b2308eb438652e1b73/i/icon0.png",
+      "entitlement_id": "EP1004-CUSA00411_00-GTAVDIGITALDOWNL",
+      "title_id": "CUSA00411_00"
+    },
+    {
+      "name": "Grand Theft Auto V",
+      "platform": "PS5",
+      "icon": "https://image.api.playstation.com/sgst/prod/00/PPSA01721_00/app/info/46/fi_971be78d0d148373cd0e5b2149c7c3726a0f828d3422eb0910caa78ecaf0eaaf/icon0.png",
+      "entitlement_id": "EP1004-PPSA01721_00-GTAONLINEDIGITAL",
+      "title_id": "PPSA01721_00"
+    },
+    {
+      "name": "LEGO® MARVEL's Avengers",
+      "platform": "PS4",
+      "icon": "https://image.api.playstation.com/gs2-sec/appkgo/prod/CUSA02122_00/4/i_d405122ed664648de3e89bba9158c250736b929115c7f368e223091bc0d71925/i/icon0.png",
+      "entitlement_id": "EP1018-CUSA02122_00-LEGOMARVELAVENGE",
+      "title_id": "CUSA02122_00"
+    },
+    {
+      "name": "Back 4 Blood",
+      "platform": "PS4",
+      "icon": "https://image.api.playstation.com/gs2-sec/appkgo/prod/CUSA14253_00/2/i_dad340d66ccb81c32c9cd769a1b2fa9843210d1582bb21f10573abc09c7e1665/i/icon0.png",
+      "entitlement_id": "EP1018-CUSA14253_00-BACK4BLOOD000000",
+      "title_id": "CUSA14253_00"
+    },
+    {
+      "name": "Hogwarts Legacy",
+      "platform": "PS5",
+      "icon": "https://image.api.playstation.com/sgst/prod/00/PPSA01603_00/app/info/93/fi_95f83168c033b157836ef222df4eb7abdf4b17ec4bcac6182a3ad1471f2c0205/icon0.png",
+      "entitlement_id": "EP1018-PPSA01603_00-HOGWARTSLEGACY01",
+      "title_id": "PPSA01603_00"
+    },
+    {
+      "name": "Back 4 Blood",
+      "platform": "PS5",
+      "icon": "https://image.api.playstation.com/sgst/prod/00/PPSA01696_00/app/info/46/fi_ff33b45c33e0d75841bf2ef5ced1ec3e8cd3e0d5a639a5a868896c7d3f35306a/icon0.png",
+      "entitlement_id": "EP1018-PPSA01696_00-BACK4BLOOD000000",
+      "title_id": "PPSA01696_00"
+    },
+    {
+      "name": "Mortal Kombat™ 1",
+      "platform": "PS5",
+      "icon": "https://image.api.playstation.com/sgst/prod/00/PPSA07571_00/app/info/202/fi_b95e07c1ff06ff42877d877f4d719d002894482b7e9b47169c5b17ca6e2345f6/icon0.png",
+      "entitlement_id": "EP1018-PPSA07571_00-MKONE00000000000",
+      "title_id": "PPSA07571_00"
+    },
+    {
+      "name": "Lies of P",
+      "platform": "PS4",
+      "icon": "https://image.api.playstation.com/gs2-sec/appkgo/prod/CUSA36848_00/10/i_fa658f49742c1fba93a4766bc73b38c7d0def713d048beb1ab2309628990f950/i/icon0.png",
+      "entitlement_id": "EP1672-CUSA36848_00-9106701917321674",
+      "title_id": "CUSA36848_00"
+    },
+    {
+      "name": "Lies of P",
+      "platform": "PS5",
+      "icon": "https://image.api.playstation.com/sgst/prod/00/PPSA10621_00/app/info/34/fi_8a7f0df02c9818da85913f15fd03a40f6ce21f5d2d3d95cc431a36ccebd9653e/icon0.png",
+      "entitlement_id": "EP1672-PPSA10621_00-9137597337715830",
+      "title_id": "PPSA10621_00"
+    },
+    {
+      "name": "The Texas Chain Saw Massacre",
+      "platform": "PS4",
+      "icon": "https://image.api.playstation.com/gs2-sec/appkgo/prod/CUSA35221_00/2/i_dcee2ab78c458a9518d753a18be0280b937db59ad9489128e9557b19c552e52e/i/icon0.png",
+      "entitlement_id": "EP2165-CUSA35221_00-BBQGAME000000000",
+      "title_id": "CUSA35221_00"
+    },
+    {
+      "name": "The Texas Chain Saw Massacre",
+      "platform": "PS5",
+      "icon": "https://image.api.playstation.com/sgst/prod/00/PPSA05328_00/app/info/117/fi_58a899977953847fe160e91e5bf5886ee15cc3b67649e9e6ea6a3822f6036d1c/icon0.png",
+      "entitlement_id": "EP2165-PPSA05328_00-BBQGAME000000000",
+      "title_id": "PPSA05328_00"
+    },
+    {
+      "name": "Blue Prince",
+      "platform": "PS5",
+      "icon": "https://image.api.playstation.com/sgst/prod/00/PPSA25009_00/app/info/18/fi_9c58d14954c179370bdfe84cf1fc15ee99d8c166aa3e758095cf805333e19c3d/icon0.png",
+      "entitlement_id": "EP2187-PPSA25009_00-BLUEPRINCE000000",
+      "title_id": "PPSA25009_00"
+    },
+    {
+      "name": "Stardew Valley",
+      "platform": "PS4",
+      "icon": "https://image.api.playstation.com/gs2-sec/appkgo/prod/CUSA06840_00/1/i_afb1d73df2515936410908f99940dcbe1050a2732eb1b6a5a400f4bdf0980d36/i/icon0.png",
+      "entitlement_id": "EP2319-CUSA26625_00-STARDEW1200ESIEE",
+      "title_id": "CUSA26625_00"
+    },
+    {
+      "name": "Stray",
+      "platform": "PS4",
+      "icon": "https://image.api.playstation.com/gs2-sec/appkgo/prod/CUSA24899_00/1/i_9d292798534ec68c44fdaed2d5822cae587aecd40087095f7b6ee446fac1f2cf/i/icon0.png",
+      "entitlement_id": "EP2333-CUSA24899_00-STRAYSIEE0000000",
+      "title_id": "CUSA24899_00"
+    },
+    {
+      "name": "Stray",
+      "platform": "PS5",
+      "icon": "https://image.api.playstation.com/sgst/prod/00/PPSA02101_00/app/info/16/fi_2af9191aae9efcb1e27161923d2cbde56a7ae6f6c0489fafc96717112657f5f8/icon0.png",
+      "entitlement_id": "EP2333-PPSA02101_00-STRAYSIEE0000000",
+      "title_id": "PPSA02101_00"
+    },
+    {
+      "name": "Planet Zoo",
+      "platform": "PS5",
+      "icon": "https://image.api.playstation.com/sgst/prod/00/PPSA18026_00/app/info/46/fi_932f0dc88b89e7396d112a1bed66e4dbb0fdcb2dd2abc94fe7e2781b36ae7c3a/icon0.png",
+      "entitlement_id": "EP2377-PPSA18026_00-PLANETZOOOOOOOOO",
+      "title_id": "PPSA18026_00"
+    },
+    {
+      "name": "Bomb Rush Cyberfunk",
+      "platform": "PS4",
+      "icon": "https://image.api.playstation.com/gs2-sec/appkgo/prod/CUSA32469_00/1/i_8332da16554a850e64b92b2ba275b9badf21d08eebec3b59f2cf6f3c45121bd2/i/icon0.png",
+      "entitlement_id": "EP2422-CUSA32469_00-BOMBRUSHCYBRFUNK",
+      "title_id": "CUSA32469_00"
+    },
+    {
+      "name": "Bomb Rush Cyberfunk",
+      "platform": "PS5",
+      "icon": "https://image.api.playstation.com/sgst/prod/00/PPSA06690_00/app/info/10/fi_2de73e92f47a67c577a4119d81ee237a4211473171b08e9a27079681a04dd676/icon0.png",
+      "entitlement_id": "EP2422-PPSA06690_00-BOMBRUSHCYBRFUNK",
+      "title_id": "PPSA06690_00"
+    },
+    {
+      "name": "DayZ",
+      "platform": "PS4",
+      "icon": "https://image.api.playstation.com/gs2-sec/appkgo/prod/CUSA05645_00/6/i_b62f0f1b2976d153ae283b5673504b2598529a0bc0feeb481d26453403e674e3/i/icon0.png",
+      "entitlement_id": "EP2601-CUSA05645_00-DAYZ000000000001",
+      "title_id": "CUSA05645_00"
+    },
+    {
+      "name": "The Long Dark",
+      "platform": "PS4",
+      "icon": "https://image.api.playstation.com/gs2-sec/appkgo/prod/CUSA09690_00/2/i_620588e3b1e6e722ef3da53a8d883f6e2d6bc33a29e3c3c06841980a20b1fce7/i/icon0.png",
+      "entitlement_id": "EP2845-CUSA09690_00-TLDRKFULLGAMEPS4",
+      "title_id": "CUSA09690_00"
+    },
+    {
+      "name": "The Long Dark",
+      "platform": "PS5",
+      "icon": "https://image.api.playstation.com/sgst/prod/00/PPSA30659_00/app/info/15/fi_3b2e9928bd2fe0f7c1ad880d3da3a75c14f98d986fb3dc22008c8b97ec91f42c/icon0.png",
+      "entitlement_id": "EP2845-PPSA30659_00-TLDRKFULLGAMEPS5",
+      "title_id": "PPSA30659_00"
+    },
+    {
+      "name": "Hundred Days - Winemaking Simulator",
+      "platform": "PS4",
+      "icon": "https://image.api.playstation.com/gs2-sec/appkgo/prod/CUSA32294_00/5/i_45714efda6aa076024ea2ea955c918163e5363942bbed0b6f241366a530c0e5b/i/icon0.png",
+      "entitlement_id": "EP3040-CUSA32294_00-9497533742115368",
+      "title_id": "CUSA32294_00"
+    },
+    {
+      "name": "HundredDays - Winemaking Simulator",
+      "platform": "PS5",
+      "icon": "https://image.api.playstation.com/sgst/prod/00/PPSA06577_00/app/info/19/fi_68d763ec5aa56865077e3680c3b73fe42ec9a69d22d3810c94ebfa41e7a339a3/icon0.png",
+      "entitlement_id": "EP3040-PPSA06577_00-0525232826244908",
+      "title_id": "PPSA06577_00"
+    },
+    {
+      "name": "Totally Accurate Battle Simulator",
+      "platform": "PS4",
+      "icon": "https://image.api.playstation.com/gs2-sec/appkgo/prod/CUSA29981_00/7/i_4e8633a370a90a8660b462eabe7ef7a42f9bb23efe0f4a11a0c4728e60279dc6/i/icon0.png",
+      "entitlement_id": "EP3316-CUSA29981_00-7641152351776768",
+      "title_id": "CUSA29981_00"
+    },
+    {
+      "name": "Totally Accurate Battle Simulator",
+      "platform": "PS5",
+      "icon": "https://image.api.playstation.com/sgst/prod/00/PPSA06082_00/app/info/6/fi_e69f5a2fd3fa7e55474529c48e918ac640a9d6ded70d9ab12a1113e5e7bbc8aa/icon0.png",
+      "entitlement_id": "EP3316-PPSA06082_00-3954245925658330",
+      "title_id": "PPSA06082_00"
+    },
+    {
+      "name": "theHunter: Call of the Wild",
+      "platform": "PS4",
+      "icon": "https://image.api.playstation.com/gs2-sec/appkgo/prod/CUSA08368_00/4/i_05034add1b438ea13fe506bcae383f189eca060827c418141e8505dbcf18ad13/i/icon0.png",
+      "entitlement_id": "EP3359-CUSA08368_00-THCOTWBASE000000",
+      "title_id": "CUSA08368_00"
+    },
+    {
+      "name": "Dead by Daylight",
+      "platform": "PS4",
+      "icon": "https://image.api.playstation.com/gs2-sec/appkgo/prod/CUSA08032_00/3/i_1ef7033e599774239b53869b64c7362da504cfec72a2a7ff6bba26eb1121da6f/i/icon0.png",
+      "entitlement_id": "EP3367-CUSA08032_00-DEADBYDAYLIGHT00",
+      "title_id": "CUSA08032_00"
+    },
+    {
+      "name": "Dead by Daylight",
+      "platform": "PS5",
+      "icon": "https://image.api.playstation.com/sgst/prod/00/PPSA02049_00/app/info/323/fi_bb6f2637f472245e562745580c8f4322e1aaf509b354795913ef399b9114ca22/icon0.png",
+      "entitlement_id": "EP3367-PPSA02049_00-DEADBYDAYLIGHT00",
+      "title_id": "PPSA02049_00"
+    },
+    {
+      "name": "Balatro",
+      "platform": "PS4",
+      "icon": "https://image.api.playstation.com/gs2-sec/appkgo/prod/CUSA47499_00/3/i_b85c81085bbb28fd105a3fe84fd302950107666cff54dbd44c103d075a1e8481/i/icon0.png",
+      "entitlement_id": "EP3495-CUSA47499_00-0592400488875967",
+      "title_id": "CUSA47499_00"
+    },
+    {
+      "name": "Balatro",
+      "platform": "PS5",
+      "icon": "https://image.api.playstation.com/sgst/prod/00/PPSA21402_00/app/info/15/fi_0a7ed8861f709e3752171d65b302e43e7ce53285fa22495c22284212aa48ec15/icon0.png",
+      "entitlement_id": "EP3495-PPSA21402_00-0421077938281357",
+      "title_id": "PPSA21402_00"
+    },
+    {
+      "name": "Untitled Goose Game",
+      "platform": "PS4",
+      "icon": "https://image.api.playstation.com/gs2-sec/appkgo/prod/CUSA23081_00/5/i_f5d2adec7665af80b8550fb33fe808df10d292cdd47629a991debfdf72bdee34/i/icon0.png",
+      "entitlement_id": "EP3825-CUSA23081_00-HONKHONKHONKHONK",
+      "title_id": "CUSA23081_00"
+    },
+    {
+      "name": "Terraria",
+      "platform": "PS4",
+      "icon": "https://image.api.playstation.com/gs2-sec/appkgo/prod/CUSA00737_00/7/i_db5a9a0c22390a8d68b215b244fb5ddf2332f2dfed152092533fc4a30c09452b/i/icon0.png",
+      "entitlement_id": "EP4040-CUSA00737_00-TERRARIA00000001",
+      "title_id": "CUSA00737_00"
+    },
+    {
+      "name": "Assetto Corsa Competizione",
+      "platform": "PS4",
+      "icon": "https://image.api.playstation.com/gs2-sec/appkgo/prod/CUSA17266_00/2/i_6a9174724ab8ec608308eb5271c590e2d813b7b63a6ba101b29d53af5bae493b/i/icon0.png",
+      "entitlement_id": "EP4040-CUSA17266_00-ACCOMP0000000000",
+      "title_id": "CUSA17266_00"
+    },
+    {
+      "name": "Assetto Corsa Competizione",
+      "platform": "PS5",
+      "icon": "https://image.api.playstation.com/sgst/prod/00/PPSA03848_00/app/info/78/fi_bf1dca70124135d8f9a83ca9096448a2210a89e47b1be305e3c5c1911437ce4d/icon0.png",
+      "entitlement_id": "EP4040-PPSA03848_00-ACCOMPPS50000000",
+      "title_id": "PPSA03848_00"
+    },
+    {
+      "name": "Crime Boss: Rockay City",
+      "platform": "PS5",
+      "icon": "https://image.api.playstation.com/sgst/prod/00/PPSA06382_00/app/info/109/fi_ffc85e3012ebd572ed0c52b6e7ca7b4f987b029709d40689195c825d59a48bb1/icon0.png",
+      "entitlement_id": "EP4040-PPSA06382_00-EPSIEECAREXBEARX",
+      "title_id": "PPSA06382_00"
+    },
+    {
+      "name": "Dead Island 2",
+      "platform": "PS4",
+      "icon": "https://image.api.playstation.com/gs2-sec/appkgo/prod/CUSA27043_00/3/i_c04134155d4fc50fbad0a65c450080e117fef56b18f94a6e2bcb994e27e41a60/i/icon0.png",
+      "entitlement_id": "EP4062-CUSA27043_00-DEADISLAND2GAME1",
+      "title_id": "CUSA27043_00"
+    },
+    {
+      "name": "Dead Island 2",
+      "platform": "PS5",
+      "icon": "https://image.api.playstation.com/sgst/prod/00/PPSA03099_00/app/info/47/fi_8ae9491250e0aa0cebb26c71ee98ac4f08f64ad404e19fa26a7774b201af0152/icon0.png",
+      "entitlement_id": "EP4062-PPSA03099_00-DEADISLAND000000",
+      "title_id": "PPSA03099_00"
+    },
+    {
+      "name": "Warhammer 40,000: Boltgun",
+      "platform": "PS4",
+      "icon": "https://image.api.playstation.com/gs2-sec/appkgo/prod/CUSA33169_00/3/i_fe2de40853a8d658a78f878a0917bc27d1e9e52ee25f4ff3a63f94ce58edd025/i/icon0.png",
+      "entitlement_id": "EP4133-CUSA33169_00-000000000BOLTGUN",
+      "title_id": "CUSA33169_00"
+    },
+    {
+      "name": "Warhammer 40,000: Boltgun",
+      "platform": "PS5",
+      "icon": "https://image.api.playstation.com/sgst/prod/00/PPSA07247_00/app/info/14/fi_bd2310ee5953f06de39e3e5fde768aab0d37270aba65d2d8802ddc87ea1a51d1/icon0.png",
+      "entitlement_id": "EP4133-PPSA07247_00-000000000BOLTGUN",
+      "title_id": "PPSA07247_00"
+    },
+    {
+      "name": "Crusader Kings III",
+      "platform": "PS5",
+      "icon": "https://image.api.playstation.com/sgst/prod/00/PPSA02308_00/app/info/84/fi_108a85aae3b06f3377fa549c42d3d00aff22778954a2139e53babc2e5d052898/icon0.png",
+      "entitlement_id": "EP4139-PPSA02308_00-0000000000000000",
+      "title_id": "PPSA02308_00"
+    },
+    {
+      "name": "Crysis® Remastered",
+      "platform": "PS4",
+      "icon": "https://image.api.playstation.com/gs2-sec/appkgo/prod/CUSA18671_00/4/i_8f29cebd31cecb0929597e409de41e6b23bec59e904b5baef8f40a12e956e0ca/i/icon0.png",
+      "entitlement_id": "EP4291-CUSA18671_00-CRYSISREMASTERED",
+      "title_id": "CUSA18671_00"
+    },
+    {
+      "name": "Lords of the Fallen",
+      "platform": "PS5",
+      "icon": "https://image.api.playstation.com/sgst/prod/00/PPSA03641_00/app/info/130/fi_f37c0a7f19a32d89355fd8cadbe54dac23336112002860ac41d9eecdb88f146e/icon0.png",
+      "entitlement_id": "EP4321-PPSA03641_00-0026114790873430",
+      "title_id": "PPSA03641_00"
+    },
+    {
+      "name": "Tropico 6",
+      "platform": "PS5",
+      "icon": "https://image.api.playstation.com/sgst/prod/00/PPSA05682_00/app/info/51/fi_cd2d522d9c892d275e17685ed13f4aec3d0ed2acfe21606c8a1e0627ff03234b/icon0.png",
+      "entitlement_id": "EP4365-PPSA05682_00-TROPICO600000001",
+      "title_id": "PPSA05682_00"
+    },
+    {
+      "name": "Desperados III",
+      "platform": "PS4",
+      "icon": "https://image.api.playstation.com/gs2-sec/appkgo/prod/CUSA11112_00/3/i_cfb5cf7a99a0613b260e694d0215974d22b821442957958a3ef3490c0100145f/i/icon0.png",
+      "entitlement_id": "EP4389-CUSA11112_00-THQNORDEUDESP000",
+      "title_id": "CUSA11112_00"
+    },
+    {
+      "name": "Alone in the Dark: The New Nightmare (2001)",
+      "platform": "PS4",
+      "icon": "https://image.api.playstation.com/gs2-sec/appkgo/prod/CUSA44781_00/1/i_8ee15b0882b07da6b6db66135b18c909fbbf802f5b162e6e2a1fd04c4ce483c6/i/icon0.png",
+      "entitlement_id": "EP4389-CUSA44781_00-SLES028010000000",
+      "title_id": "CUSA44781_00"
+    },
+    {
+      "name": "Alone in the Dark",
+      "platform": "PS5",
+      "icon": "https://image.api.playstation.com/sgst/prod/00/PPSA08135_00/app/info/35/fi_cc94c57721b7f7a08500953f4f43d437b98bbbe417b4a81a93aa4deb1e0b8396/icon0.png",
+      "entitlement_id": "EP4389-PPSA08135_00-ALONEINTHEDARKEU",
+      "title_id": "PPSA08135_00"
+    },
+    {
+      "name": "Alone in the Dark: The New Nightmare (2001)",
+      "platform": "PS5",
+      "icon": "https://image.api.playstation.com/sgst/prod/00/PPSA18071_00/app/info/5/fi_19be39bc08c2848b0a079e1aa79b2b5888bc8f1354184b95a69da7be367baf7c/icon0.png",
+      "entitlement_id": "EP4389-PPSA18071_00-SLES028010000000",
+      "title_id": "PPSA18071_00"
+    },
+    {
+      "name": "For The King",
+      "platform": "PS4",
+      "icon": "https://image.api.playstation.com/gs2-sec/appkgo/prod/CUSA12941_00/5/i_ace3e54ae6850c58e6a13ea359cfe9ded7ba14beaf9724d339c90b556c09769c/i/icon0.png",
+      "entitlement_id": "EP4395-CUSA12941_00-FORTHEKING000001",
+      "title_id": "CUSA12941_00"
+    },
+    {
+      "name": "Cyberpunk 2077",
+      "platform": "PS4",
+      "icon": "https://image.api.playstation.com/gs2-sec/appkgo/prod/CUSA16579_00/6/i_41f0c91f2e5de801a036baaac5d6485e6afd6e6af903270c018059241b5a3be1/i/icon0.png",
+      "entitlement_id": "EP4497-CUSA16579_00-0000000000000001",
+      "title_id": "CUSA16579_00"
+    },
+    {
+      "name": "Cyberpunk 2077",
+      "platform": "PS5",
+      "icon": "https://image.api.playstation.com/sgst/prod/00/PPSA04027_00/app/info/95/fi_ac51c5e098813fb23d9e88239403227f171347bdd78fd48b5f7e835c88ff2880/icon0.png",
+      "entitlement_id": "EP4497-PPSA04027_00-00000000000000N1",
+      "title_id": "PPSA04027_00"
+    },
+    {
+      "name": "Stranded Deep",
+      "platform": "PS4",
+      "icon": "https://image.api.playstation.com/gs2-sec/appkgo/prod/CUSA18152_00/2/i_f3941edae1ef8873be24700392217affe3829e755789bef78bf39a8765e8b9a0/i/icon0.png",
+      "entitlement_id": "EP5155-CUSA18152_00-STRANDEDDEEPSIEE",
+      "title_id": "CUSA18152_00"
+    },
+    {
+      "name": "FBC Firebreak",
+      "platform": "PS5",
+      "icon": "https://image.api.playstation.com/sgst/prod/00/PPSA25944_00/app/info/109/fi_d4586e7039fc5903c7aa5d48ca0563cda9f9abe7c1f1053eb570f430f33e390d/icon0.png",
+      "entitlement_id": "EP5291-PPSA25944_00-064838567952FBCF",
+      "title_id": "PPSA25944_00"
+    },
+    {
+      "name": "You Suck At Parking",
+      "platform": "PS4",
+      "icon": "https://image.api.playstation.com/gs2-sec/appkgo/prod/CUSA35113_00/15/i_d9ce09a675f65f77bf1e30822b0b6f57389b7473cad239627033269b83547f1c/i/icon0.png",
+      "entitlement_id": "EP6286-CUSA35113_00-4361296977979689",
+      "title_id": "CUSA35113_00"
+    },
+    {
+      "name": "You Suck At Parking",
+      "platform": "PS5",
+      "icon": "https://image.api.playstation.com/sgst/prod/00/PPSA08894_00/app/info/21/fi_72df8e163feafaf02964fa3d6d215363ec90c45b498494046a4b172408bbc981/icon0.png",
+      "entitlement_id": "EP6286-PPSA08894_00-7976729485038552",
+      "title_id": "PPSA08894_00"
+    },
+    {
+      "name": "Green Hell",
+      "platform": "PS4",
+      "icon": "https://image.api.playstation.com/gs2-sec/appkgo/prod/CUSA26347_00/2/i_483e604244dd9dce5d581c58b6b93919a06a76e16a76b8b64947c890b3375044/i/icon0.png",
+      "entitlement_id": "EP6468-CUSA26347_00-0000000000000000",
+      "title_id": "CUSA26347_00"
+    },
+    {
+      "name": "Green Hell",
+      "platform": "PS5",
+      "icon": "https://image.api.playstation.com/sgst/prod/00/PPSA21629_00/app/info/8/fi_7c76ac07bb20e87f77d82f9d631383763fa04c41c888684ecc2357f1cb434632/icon0.png",
+      "entitlement_id": "EP6468-PPSA21629_00-0323454533773134",
+      "title_id": "PPSA21629_00"
+    },
+    {
+      "name": "The Invincible",
+      "platform": "PS5",
+      "icon": "https://image.api.playstation.com/sgst/prod/00/PPSA06426_00/app/info/21/fi_bb067e0ebcd89db84218dc2c7f1517d81aeb4781d322419512ff5c5256b82d56/icon0.png",
+      "entitlement_id": "EP6520-PPSA06426_00-8179986038714673",
+      "title_id": "PPSA06426_00"
+    },
+    {
+      "name": "Session: Skate Sim",
+      "platform": "PS4",
+      "icon": "https://image.api.playstation.com/gs2-sec/appkgo/prod/CUSA32228_00/3/i_3f85b2ea30401f3145b99c805c26d4449690ef76c2702f7f549edde91d09a6bc/i/icon0.png",
+      "entitlement_id": "EP6665-CUSA32228_00-SSS0000000000000",
+      "title_id": "CUSA32228_00"
+    },
+    {
+      "name": "Robocop: Rogue City",
+      "platform": "PS5",
+      "icon": "https://image.api.playstation.com/sgst/prod/00/PPSA05059_00/app/info/36/fi_21d1d8f4546591a63143286a67a57cd64c4a8879a60a8a5b17692bb1ef262ac8/icon0.png",
+      "entitlement_id": "EP6665-PPSA05059_00-ROB0000000000000",
+      "title_id": "PPSA05059_00"
+    },
+    {
+      "name": "Session: Skate Sim",
+      "platform": "PS5",
+      "icon": "https://image.api.playstation.com/sgst/prod/00/PPSA06510_00/app/info/52/fi_25834aedad726fcbad19c8e31ba502925bed67adfae7904f71564d280fee09a0/icon0.png",
+      "entitlement_id": "EP6665-PPSA06510_00-SSS0000000000000",
+      "title_id": "PPSA06510_00"
+    },
+    {
+      "name": "Mordhau",
+      "platform": "PS5",
+      "icon": "https://image.api.playstation.com/sgst/prod/00/PPSA08087_00/app/info/49/fi_936e162aa3fc1a217738bf6ec8424f866279a789224e91645669f7d7d27cbbe8/icon0.png",
+      "entitlement_id": "EP6685-PPSA08087_00-MORDHAUSIEE00000",
+      "title_id": "PPSA08087_00"
+    },
+    {
+      "name": "Pacific Drive",
+      "platform": "PS5",
+      "icon": "https://image.api.playstation.com/sgst/prod/00/PPSA17476_00/app/info/114/fi_4310d48bc78ad92cd46c870954844df5dfd88770870c06499e482e21e40acf13/icon0.png",
+      "entitlement_id": "EP6847-PPSA17476_00-00000000000PS5EU",
+      "title_id": "PPSA17476_00"
+    },
+    {
+      "name": "Jusant",
+      "platform": "PS5",
+      "icon": "https://image.api.playstation.com/sgst/prod/00/PPSA10264_00/app/info/10/fi_259364148521df43b36858d08a556c53bd466b25ee556e6e1badb147b69054dc/icon0.png",
+      "entitlement_id": "EP8091-PPSA10264_00-4648066903011525",
+      "title_id": "PPSA10264_00"
+    },
+    {
+      "name": "Bloodborne™",
+      "platform": "PS4",
+      "icon": "https://image.api.playstation.com/gs2-sec/appkgo/prod/CUSA00207_00/2/i_a2f15ff7390bb9ccc13a3e945fb8e85396b51d912f46d9f11d6a6d9d23836d98/i/icon0.png",
+      "entitlement_id": "EP9000-CUSA00207_00-BLOODBORNE0000EU",
+      "title_id": "CUSA00207_00"
+    },
+    {
+      "name": "Beyond: Two Souls™",
+      "platform": "PS4",
+      "icon": "https://image.api.playstation.com/gs2-sec/appkgo/prod/CUSA00513_00/8/i_4ee357126af019978c3bacb00430d154d411cbd2c99bce4e70dd96a85697fbb5/i/icon0.png",
+      "entitlement_id": "EP9000-CUSA00513_00-GBEYONDTWO000001",
+      "title_id": "CUSA00513_00"
+    },
+    {
+      "name": "God of War® III Remastered",
+      "platform": "PS4",
+      "icon": "https://image.api.playstation.com/gs2-sec/appkgo/prod/CUSA01715_00/3/i_1ae43ebe870e936988965b40fdbc785ae46084ae3610d737ed09e547e0a9f75b/i/icon0.png",
+      "entitlement_id": "EP9000-CUSA01715_00-0000GODOFWAR3PS4",
+      "title_id": "CUSA01715_00"
+    },
+    {
+      "name": "Sackboy: A Big Adventure",
+      "platform": "PS4",
+      "icon": "https://image.api.playstation.com/gs2-sec/appkgo/prod/CUSA06313_00/3/i_a1ca2e1f0ebf67d4eab9bd7b792ea9efc954c3659244703742d98ba296a22d5c/i/icon0.png",
+      "entitlement_id": "EP9000-CUSA06313_00-SACKBOYADVENTURE",
+      "title_id": "CUSA06313_00"
+    },
+    {
+      "name": "DAYS GONE",
+      "platform": "PS4",
+      "icon": "https://image.api.playstation.com/gs2-sec/appkgo/prod/CUSA09175_00/2/i_53d18dc2da6a0ee0c56f010428a53c37b91ba301ba57dae4563e5d514dd28b20/i/icon0.png",
+      "entitlement_id": "EP9000-CUSA09175_00-DAYSGONECOMPLETE",
+      "title_id": "CUSA09175_00"
+    },
+    {
+      "name": "Detroit: Become Human™",
+      "platform": "PS4",
+      "icon": "https://image.api.playstation.com/gs2-sec/appkgo/prod/CUSA09417_00/2/i_9716e2cc18644ef6e3f3d60a2cb09b08d54c2119bd33a84b678020c06bd46ed2/i/icon0.png",
+      "entitlement_id": "EP9000-CUSA09417_00-DETROIT000000001",
+      "title_id": "CUSA09417_00"
+    },
+    {
+      "name": "Concrete Genie",
+      "platform": "PS4",
+      "icon": "https://image.api.playstation.com/gs2-sec/appkgo/prod/CUSA11875_00/1/i_b172e4c72af06ad2eb876eb489da281899736c80cb1b1990911f106855657ae8/i/icon0.png",
+      "entitlement_id": "EP9000-CUSA11875_00-CONCRETEGENIE000",
+      "title_id": "CUSA11875_00"
+    },
+    {
+      "name": "Erica",
+      "platform": "PS4",
+      "icon": "https://image.api.playstation.com/gs2-sec/appkgo/prod/CUSA11882_00/5/i_435a3bb225d3460637415b33f4a4a2a5f5b648982557e20c8e69d7e650d2bf57/i/icon0.png",
+      "entitlement_id": "EP9000-CUSA11882_00-ERICA00000000000",
+      "title_id": "CUSA11882_00"
+    },
+    {
+      "name": "Marvel's Spider-Man",
+      "platform": "PS4",
+      "icon": "https://image.api.playstation.com/gs2-sec/appkgo/prod/CUSA11993_00/1/i_296e22660685ccb74b037472966f62c9a5b561c44c733bb1ab5afe7d276b3e44/i/icon0.png",
+      "entitlement_id": "EP9000-CUSA11993_00-MARVELSSPIDERMAN",
+      "title_id": "CUSA11993_00"
+    },
+    {
+      "name": "DEATH STRANDING™",
+      "platform": "PS4",
+      "icon": "https://image.api.playstation.com/gs2-sec/appkgo/prod/CUSA12605_00/3/i_4118f04738699e6232be654f352839274cee9954e4d281bb7bb95e545df228c4/i/icon0.png",
+      "entitlement_id": "EP9000-CUSA12605_00-DEATHSTRAND00001",
+      "title_id": "CUSA12605_00"
+    },
+    {
+      "name": "Concrete Genie Bonus Content",
+      "platform": "PS4",
+      "icon": "https://image.api.playstation.com/gs2-sec/appkgo/prod/CUSA17018_00/2/i_325963e954e3ea4d59660a2e87127a2065ecf4ef93318162f952415e26218dd0/i/icon0.png",
+      "entitlement_id": "EP9000-CUSA17018_00-DIGITALARTSOUND0",
+      "title_id": "CUSA17018_00"
+    },
+    {
+      "name": "Sackboy: A Big Adventure",
+      "platform": "PS4",
+      "icon": "https://image.api.playstation.com/gs2-sec/appkgo/prod/CUSA18867_00/1/i_c2392391f371d566a4a47161ea0c81eea29059855a9f7587fe27475d0b1c421e/i/icon0.png",
+      "entitlement_id": "EP9000-CUSA18867_00-SACKBOYADVENTURE",
+      "title_id": "CUSA18867_00"
+    },
+    {
+      "name": "Returnal",
+      "platform": "PS5",
+      "icon": "https://image.api.playstation.com/sgst/prod/00/PPSA01285_00/app/info/43/fi_c63836010a7fbda33f64d2c423cde5e09d959695b3c1233e60542e2c705520a4/icon0.png",
+      "entitlement_id": "EP9000-PPSA01285_00-RETURNAL00000000",
+      "title_id": "PPSA01285_00"
+    },
+    {
+      "name": "Sackboy™: A Big Adventure",
+      "platform": "PS5",
+      "icon": "https://image.api.playstation.com/sgst/prod/00/PPSA01288_00/app/info/216/fi_04a3484f1a6cee752f5d4cf4e568a2d179d4e2a2a48dc9f3f4e74de2b726e757/icon0.png",
+      "entitlement_id": "EP9000-PPSA01288_00-SACKBOYADVENTURE",
+      "title_id": "PPSA01288_00"
+    },
+    {
+      "name": "Demon's Souls",
+      "platform": "PS5",
+      "icon": "https://image.api.playstation.com/sgst/prod/00/PPSA01341_00/app/info/33/fi_0896b7780f49dbd3ced0234f0fe611c967e09a88a9cce662a2f681d7af06afda/icon0.png",
+      "entitlement_id": "EP9000-PPSA01341_00-DEMONSSOULS00000",
+      "title_id": "PPSA01341_00"
+    },
+    {
+      "name": "Marvel's Spider-Man: Miles Morales",
+      "platform": "PS4",
+      "icon": "https://image.api.playstation.com/gs2-sec/appkgo/prod/CUSA17776_00/4/i_ba15677095f9b15e953e3c0c43363988a87664f507df34c307f3b80e2bf1c56c/i/icon0.png",
+      "entitlement_id": "EP9000-CUSA17776_00-MARVELSSMMORALES",
+      "title_id": "CUSA17776_00"
+    },
+    {
+      "name": "Ghost of Tsushima",
+      "platform": "PS4",
+      "icon": "https://image.api.playstation.com/gs2-sec/appkgo/prod/CUSA32709_00/1/i_54ed1f8e1ba92d5c1573d6f9e9897ef6c75a71a27b3d62bba9722d4c1c095f63/i/icon0.png",
+      "entitlement_id": "EP9000-CUSA32709_00-GHOSTSHIP0000000",
+      "title_id": "CUSA32709_00"
+    },
+    {
+      "name": "God of War Ragnarök",
+      "platform": "PS4",
+      "icon": "https://image.api.playstation.com/gs2-sec/appkgo/prod/CUSA34386_00/53/i_c6dd6261fc00449267971847466f8e89ff9e740a2f0ad66e59ed372535b2aa95/i/icon0.png",
+      "entitlement_id": "EP9000-CUSA34386_00-GOWRAGNAROK00000",
+      "title_id": "CUSA34386_00"
+    },
+    {
+      "name": "Marvel's Spider-Man: Miles Morales",
+      "platform": "PS5",
+      "icon": "https://image.api.playstation.com/sgst/prod/00/PPSA01417_00/app/info/49/fi_d59def80ecf41cdfeaa9b8a207029e95116132f8a224e57bedb04e9f8dcc1a91/icon0.png",
+      "entitlement_id": "EP9000-PPSA01417_00-MARVELSSMMORALES",
+      "title_id": "PPSA01417_00"
+    },
+    {
+      "name": "Marvel's Spider-Man Remastered",
+      "platform": "PS5",
+      "icon": "https://image.api.playstation.com/sgst/prod/00/PPSA01468_00/app/info/24/fi_07be347ea5ee19792d45337c6e69406b1d17071d741ade511f95214160e85dbc/icon0.png",
+      "entitlement_id": "EP9000-PPSA01468_00-MARVELSSPIDERMAN",
+      "title_id": "PPSA01468_00"
+    },
+    {
+      "name": "Ratchet & Clank: Rift Apart",
+      "platform": "PS5",
+      "icon": "https://image.api.playstation.com/sgst/prod/00/PPSA01474_00/app/info/51/fi_ccf668c809e837fa27df9a4da4c06bfcd994ed4340c8d399dd60d56f2c76fe48/icon0.png",
+      "entitlement_id": "EP9000-PPSA01474_00-RATCHETCLANKRIFT",
+      "title_id": "PPSA01474_00"
+    },
+    {
+      "name": "DEATH STRANDING DIRECTOR'S CUT",
+      "platform": "PS5",
+      "icon": "https://image.api.playstation.com/sgst/prod/00/PPSA01968_00/app/info/47/fi_1fd8ad715c5bb337697810171feffb304d7bd891ba4873f76630562e94713596/icon0.png",
+      "entitlement_id": "EP9000-PPSA01968_00-DEATHSTRANDINGEU",
+      "title_id": "PPSA01968_00"
+    },
+    {
+      "name": "Ghost of Tsushima",
+      "platform": "PS5",
+      "icon": "https://image.api.playstation.com/sgst/prod/00/PPSA05031_00/app/info/30/fi_93fea00d86de3c4c9ef7641700f5b1d83dfb7ed7fb608a3fd9f5a1d2c77b3a2d/icon0.png",
+      "entitlement_id": "EP9000-PPSA05031_00-GHOSTSHIP0000000",
+      "title_id": "PPSA05031_00"
+    },
+    {
+      "name": "Uncharted™: Legacy of Thieves Collection",
+      "platform": "PS5",
+      "icon": "https://image.api.playstation.com/sgst/prod/00/PPSA05684_00/app/info/10/fi_fb3b69c3feab585f169cb4324a3101f64037d7cca9fca21e9f39e0d5ebcc8345/icon0_01.png",
+      "entitlement_id": "EP9000-PPSA05684_00-UNCHARTED4R00000",
+      "title_id": "PPSA05684_00"
+    },
+    {
+      "name": "The Last of Us™ Part I",
+      "platform": "PS5",
+      "icon": "https://image.api.playstation.com/sgst/prod/00/PPSA07642_00/app/info/30/fi_b7ad3f691b9b1738b2c71626e12b74a2ccdf997f817586d4c00fb53a72acdf2a/icon0.png",
+      "entitlement_id": "EP9000-PPSA07642_00-THELASTOFUSPART1",
+      "title_id": "PPSA07642_00"
+    },
+    {
+      "name": "God of War Ragnarök",
+      "platform": "PS5",
+      "icon": "https://image.api.playstation.com/sgst/prod/00/PPSA08330_00/app/info/171/fi_09a9541dde508627c19bb82b87b71af3d85c063930c98c4627ecf8ad81b89208/icon0.png",
+      "entitlement_id": "EP9000-PPSA08330_00-GOWRAGNAROK00000",
+      "title_id": "PPSA08330_00"
+    },
+    {
+      "name": "Horizon Zero Dawn™ Remastered",
+      "platform": "PS5",
+      "icon": "https://image.api.playstation.com/sgst/prod/00/PPSA13427_00/app/info/19/fi_6547ef19cf54dc91d2a44c9233e6d51dcedf42ee83e4f48780f34e21030e2bd4/icon0.png",
+      "entitlement_id": "EP9000-PPSA13427_00-HORIZONREMASTER1",
+      "title_id": "PPSA13427_00"
+    },
+    {
+      "name": "Until Dawn",
+      "platform": "PS5",
+      "icon": "https://image.api.playstation.com/sgst/prod/00/PPSA15421_00/app/info/25/fi_6693db547a6b30fcfb789268f0f55dc815f309547bad8af3420f986d2755c4ed/icon0.png",
+      "entitlement_id": "EP9000-PPSA15421_00-FULLGAME00000001",
+      "title_id": "PPSA15421_00"
+    },
+    {
+      "name": "The Last of Us™ Part II Remastered",
+      "platform": "PS5",
+      "icon": "https://image.api.playstation.com/sgst/prod/00/PPSA15508_00/app/info/37/fi_4e0b4b4dd1ed03554d9bb9d39de45d1adf55a36c9ffc99303e70d3ecef784fac/icon0.png",
+      "entitlement_id": "EP9000-PPSA15508_00-THELASTOFUSPART2",
+      "title_id": "PPSA15508_00"
+    },
+    {
+      "name": "Horizon Zero Dawn™ Artbook",
+      "platform": "PS5",
+      "icon": "https://image.api.playstation.com/sgst/prod/00/PPSA24690_00/app/info/1/fi_97107e1d3e56f0911a0d0cb1d62f36b28a5a5a1b6e56d8cb44ce9e6598927583/icon0.png",
+      "entitlement_id": "EP9000-PPSA24690_00-0000000000000000",
+      "title_id": "PPSA24690_00"
+    },
+    {
+      "name": "Patapon 3",
+      "platform": "PS4",
+      "icon": "https://image.api.playstation.com/gs2-sec/appkgo/prod/CUSA41279_00/3/i_cfdd7759d29270febfda5367bb674d68a21272fa60751de1e4a9e9ff3f780647/i/icon0.png",
+      "entitlement_id": "UP9000-CUSA41279_00-UCUS987510000000",
+      "title_id": "CUSA41279_00"
+    },
+    {
+      "name": "Patapon 3",
+      "platform": "PS5",
+      "icon": "https://image.api.playstation.com/sgst/prod/00/PPSA14322_00/app/info/9/fi_c38c8f7b4912d63251136be1e22b075896fd9a5dd66f12eddd1bd26a372f61eb/icon0.png",
+      "entitlement_id": "UP9000-PPSA14322_00-UCUS987510000000",
+      "title_id": "PPSA14322_00"
+    },
+    {
+      "name": "NARAKA: BLADEPOINT",
+      "platform": "PS5",
+      "icon": "https://image.api.playstation.com/sgst/prod/00/PPSA15239_00/app/info/151/fi_a39fdf8edc538b85e5563e63b18e6166349445a4cca1a327b0936366c525f32a/icon0.png",
+      "entitlement_id": "EP7562-PPSA15239_00-0396466883843847",
+      "title_id": "PPSA15239_00"
+    },
+    {
+      "name": "Where Winds Meet",
+      "platform": "PS5",
+      "icon": "https://image.api.playstation.com/sgst/prod/00/PPSA23355_00/app/info/66/fi_9f814e20f037ff3e9e61c06185c530a90cacfef6bc0cf7fb3873cc424672823b/icon0.png",
+      "entitlement_id": "HP7588-PPSA23355_00-YYSLSYYSLS000001",
+      "title_id": "PPSA23355_00"
+    },
+    {
+      "name": "skate.",
+      "platform": "PS4",
+      "icon": "https://image.api.playstation.com/gs2-sec/appkgo/prod/CUSA37423_00/2/i_d2d9d98d6662e3c810885cf740ee7d9e6b3e8c4a3ca81af3b345865c295a6864/i/icon0_01.png",
+      "entitlement_id": "UP0006-CUSA37423_00-SKATEPS4GAME0000",
+      "title_id": "CUSA37423_00"
+    },
+    {
+      "name": "skate.",
+      "platform": "PS5",
+      "icon": "https://image.api.playstation.com/sgst/prod/00/PPSA10793_00/app/info/26/fi_f711b436ce88d158a3c92891c350984c0315e8ce83b5447e156528f70b7c32f7/icon0.png",
+      "entitlement_id": "UP0006-PPSA10793_00-SKATEPS5GAME0000",
+      "title_id": "PPSA10793_00"
+    },
+    {
+      "name": "ELDEN RING™",
+      "platform": "PS4",
+      "icon": "https://image.api.playstation.com/gs2-sec/appkgo/prod/CUSA18723_00/2/i_f124f803d998f5ca64d0c849cb9963b1f5943fff89e037aeb6404569b2e35cc2/i/icon0.png",
+      "entitlement_id": "EP0700-CUSA18723_00-ELDENRING0000000",
+      "title_id": "CUSA18723_00"
+    },
+    {
+      "name": "ELDEN RING™",
+      "platform": "PS5",
+      "icon": "https://image.api.playstation.com/sgst/prod/00/PPSA04609_00/app/info/37/fi_41a4507aac7b27dac6cfcb46de3b6039aedeee71eeadc3e142c9bad0574de157/icon0.png",
+      "entitlement_id": "EP0700-PPSA04609_00-ELDENRING0000000",
+      "title_id": "PPSA04609_00"
+    },
+    {
+      "name": "FragPunk",
+      "platform": "PS5",
+      "icon": "https://image.api.playstation.com/sgst/prod/00/PPSA26492_00/app/info/65/fi_3ef5f41c735d08f63eb22d686d82768b60f6766b17a85635f009ab14e7b820ae/icon0.png",
+      "entitlement_id": "HP7588-PPSA26492_00-FRAGPUNKBGNE0000",
+      "title_id": "PPSA26492_00"
+    },
+    {
+      "name": "Fortnite",
+      "platform": "PS5",
+      "icon": "https://image.api.playstation.com/sgst/prod/00/PPSA01923_00/app/info/261/fi_c19638d0a3fb9e967c7a317830e78826f6c6dd109453afe6383c075ae4005b60/icon0.png",
+      "entitlement_id": "EP1464-PPSA01923_00-FORTNITETESTING2",
+      "title_id": "PPSA01923_00"
+    },
+    {
+      "name": "World of Warships: Legends",
+      "platform": "PS5",
+      "icon": "https://image.api.playstation.com/sgst/prod/00/PPSA02218_00/app/info/145/fi_6081c0529f7027e24472987d4c9cfb1505e64654165db2d13ce628e3070f5790/icon0.png",
+      "entitlement_id": "EP1566-PPSA02218_00-5279532307632591",
+      "title_id": "PPSA02218_00"
+    },
+    {
+      "name": "Forza Horizon 5",
+      "platform": "PS5",
+      "icon": "https://image.api.playstation.com/sgst/prod/00/PPSA22327_00/app/info/119/fi_bbf54f01d9a94f05aa17885f7aa3c23231d2a3b478d20ee746a0b01b6a3e4442/icon0.png",
+      "entitlement_id": "UP6312-PPSA22327_00-0629872585919347",
+      "title_id": "PPSA22327_00"
+    },
+    {
+      "name": "Battlefield™ 2042",
+      "platform": "PS4",
+      "icon": "https://image.api.playstation.com/gs2-sec/appkgo/prod/CUSA23250_00/2/i_3e0133494c04a1abb75805f2a235898bb5c38e2e91259cb8dfae2eac5b16ae07/i/icon0_01.png",
+      "entitlement_id": "EP0006-CUSA23250_00-KINGSTONGAME0000",
+      "title_id": "CUSA23250_00"
+    },
+    {
+      "name": "Battlefield™ 2042",
+      "platform": "PS5",
+      "icon": "https://image.api.playstation.com/sgst/prod/00/PPSA01465_00/app/info/115/fi_a84c0390151112290874382bcee1c3fd2319d4621ff3a636ae444376a134b3a2/icon0.png",
+      "entitlement_id": "EP0006-PPSA01465_00-KINGSTONGAME0000",
+      "title_id": "PPSA01465_00"
+    },
+    {
+      "name": "Call of Duty®",
+      "platform": "PS4",
+      "icon": "https://image.api.playstation.com/gs2-sec/appkgo/prod/CUSA34029_00/1/i_532ba21101c795de06f02e70e4294337a45b091c5b2d3320ef85c750f0eede4c/i/icon0.png",
+      "entitlement_id": "EP0002-CUSA34029_00-COREGAME00000001",
+      "title_id": "CUSA34029_00"
+    },
+    {
+      "name": "Call of Duty®",
+      "platform": "PS5",
+      "icon": "https://image.api.playstation.com/sgst/prod/00/PPSA07950_00/app/info/351/fi_6b530d3adce54f25ffac4cfc0a86981d1574bef892cc61dc9e8963331ef5091c/icon0.png",
+      "entitlement_id": "EP0002-PPSA07950_00-COREGAME00000001",
+      "title_id": "PPSA07950_00"
+    },
+    {
+      "name": "Sea Of Thieves",
+      "platform": "PS5",
+      "icon": "https://image.api.playstation.com/sgst/prod/00/PPSA17668_00/app/info/205/fi_7479c7ddfb3858e1d6345761b778cdfa12306a1da8c0d22b46e4b7ef24b69ad9/icon0.png",
+      "entitlement_id": "EP6311-PPSA17668_00-MINERVA000000000",
+      "title_id": "PPSA17668_00"
+    },
+    {
+      "name": "Lost In Random™",
+      "platform": "PS4",
+      "icon": "https://image.api.playstation.com/gs2-sec/appkgo/prod/CUSA19591_00/3/i_ce2e0764a43c9b6022b6f1fde026eb97c493faf6c82d116e1841f60246a65f8b/i/icon0.png",
+      "entitlement_id": "EP0006-CUSA19591_00-ZOINKLOSTINRANDM",
+      "title_id": "CUSA19591_00"
+    },
+    {
+      "name": "Lost In Random™",
+      "platform": "PS5",
+      "icon": "https://image.api.playstation.com/sgst/prod/00/PPSA01694_00/app/info/6/f_ca47769fa101fddee1be9fc88c6fa6e7df46c2054fba03ec107e3797fc5c1000/icon0.png",
+      "entitlement_id": "EP0006-PPSA01694_00-LOSTINRANDOMGAME",
+      "title_id": "PPSA01694_00"
+    },
+    {
+      "name": "Red Dead Redemption 2",
+      "platform": "PS4",
+      "icon": "https://image.api.playstation.com/gs2-sec/appkgo/prod/CUSA08519_00/12/i_3da1cf7c41dc7652f9b639e1680d96436773658668c7dc3930c441291095713b/i/icon0.png",
+      "entitlement_id": "EP1004-CUSA08519_00-REDEMPTION000002",
+      "title_id": "CUSA08519_00"
+    },
+    {
+      "name": "Unravel TWO",
+      "platform": "PS4",
+      "icon": "https://image.api.playstation.com/gs2-sec/appkgo/prod/CUSA10416_00/2/i_4fe4d15bb224764655ece7202637197bfdd65939664f6d589ec21fc02a48995c/i/icon0.png",
+      "entitlement_id": "EP0006-CUSA10416_00-COLDWOODPIKE0000",
+      "title_id": "CUSA10416_00"
+    },
+    {
+      "name": "Mortal Kombat 11",
+      "platform": "PS4",
+      "icon": "https://image.api.playstation.com/gs2-sec/appkgo/prod/CUSA11379_00/3/i_f3c0a4a3d584ae9ee2d34c8a8ac0e8869ef8745091fe9a2fe4c9a366fb0c7940/i/icon0.png",
+      "entitlement_id": "EP1018-CUSA11379_00-00MORTALKOMBAT11",
+      "title_id": "CUSA11379_00"
+    },
+    {
+      "name": "Mortal Kombat 11",
+      "platform": "PS5",
+      "icon": "https://image.api.playstation.com/sgst/prod/00/PPSA01619_00/app/info/170/fi_bbc5f8b5d6d0089e4ce58d90c56db72a474e7e48f727f5f1d3042487dc82af93/icon0.png",
+      "entitlement_id": "EP1018-PPSA01619_00-00MORTALKOMBAT11",
+      "title_id": "PPSA01619_00"
+    },
+    {
+      "name": "Fall Guys: Ultimate Knockout",
+      "platform": "PS4",
+      "icon": "https://image.api.playstation.com/gs2-sec/appkgo/prod/CUSA29237_00/3/i_f0064eb90fbcaa7e93247b920cd5702108ca5a3544a2d3340526c6338c9a562a/i/icon0.png",
+      "entitlement_id": "EP1464-CUSA29237_00-FALLGUYS00000000",
+      "title_id": "CUSA29237_00"
+    },
+    {
+      "name": "Fall Guys",
+      "platform": "PS5",
+      "icon": "https://image.api.playstation.com/sgst/prod/00/PPSA04478_00/app/info/94/fi_60db562f8e7aab5041368b176dc15c636f84b4227f398b3cadaf704e8598b92d/icon0.png",
+      "entitlement_id": "EP1464-PPSA04478_00-XXXXXXXXXXXXXXXX",
+      "title_id": "PPSA04478_00"
+    },
+    {
+      "name": "Rocket League®",
+      "platform": "PS4",
+      "icon": "https://image.api.playstation.com/gs2-sec/appkgo/prod/CUSA01433_00/7/i_5c5e430a49994f22df5fd81f446ead7b6ae45027af490b415fe4e744a9918e4c/i/icon0.png",
+      "entitlement_id": "EP2002-CUSA01433_00-ROCKETLEAGUEEU01",
+      "title_id": "CUSA01433_00"
+    },
+    {
+      "name": "Apex Legends",
+      "platform": "PS5",
+      "icon": "https://image.api.playstation.com/sgst/prod/00/PPSA04874_00/app/info/433/fi_9142432b1cdd0b308a94ffea6079e9e1ad77565099fc348f48244ebff10e9b02/icon0.png",
+      "entitlement_id": "EP0006-PPSA04874_00-APEXLEGENDRSPWN1",
+      "title_id": "PPSA04874_00"
+    }
+  ],
+  "updated": "2026-06-02T16:58:34.776Z"
+}

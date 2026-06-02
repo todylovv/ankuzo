@@ -1,0 +1,116 @@
+@use './legacy';
+@import url('/live-network.css');
+@import url('/visual-polish.css');
+@import url('/studio-direction.css');
+
+:root {
+  --space-section: clamp(76px, 10vw, 148px);
+  --focus: #ff5a36;
+}
+
+html {
+  scroll-padding-top: 76px;
+}
+
+body {
+  min-width: 320px;
+}
+
+button,
+a,
+input,
+textarea {
+  &:focus-visible {
+    outline: 1px solid var(--focus);
+    outline-offset: 4px;
+  }
+}
+
+.skip-link,
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.skip-link:focus {
+  z-index: 10000000;
+  top: 12px;
+  left: 12px;
+  width: auto;
+  height: auto;
+  margin: 0;
+  clip: auto;
+  padding: 10px 14px;
+  background: #f0ede8;
+  color: #050507;
+  font: 11px 'JetBrains Mono', monospace;
+}
+
+.nav-logo {
+  color: inherit;
+  text-decoration: none;
+}
+
+.nav-burger {
+  border: 0;
+  background: transparent;
+}
+
+.discord-nav-status {
+  display: none;
+  align-items: center;
+  gap: 8px;
+}
+
+.discord-nav-dot {
+  width: 8px;
+  height: 8px;
+  flex-shrink: 0;
+  border-radius: 50%;
+}
+
+.discord-nav-copy {
+  font: 9px 'JetBrains Mono', monospace;
+  letter-spacing: .15em;
+  text-transform: uppercase;
+}
+
+#dsStatus { color: rgba(240, 237, 232, .35); }
+#dsGame { margin-left: 8px; color: rgba(240, 237, 232, .55); }
+
+.term-cmd-hint {
+  border: 0;
+  padding: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+
+.steam-stats-spaced { margin-top: 20px; }
+.steam-top { margin-top: 24px; }
+.steam-top-label,
+.steam-updated {
+  color: rgba(240, 237, 232, .25);
+  font-size: 9px;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+}
+.steam-top-label { margin-bottom: 12px; }
+.steam-updated { margin-top: 20px; color: rgba(240, 237, 232, .15); }
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+  }
+}

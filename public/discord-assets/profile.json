@@ -1,0 +1,40 @@
+{
+  "updated_at": "2026-06-02T16:56:51Z",
+  "discord_user": {
+    "avatar": "1ec21b4fa7d706883c206af493747f3c",
+    "avatar_decoration_data": {
+      "asset": "a_e018d593f1b7da324878339a50e23f36",
+      "expires_at": null,
+      "sku_id": "1428438924619022436"
+    },
+    "bot": false,
+    "collectibles": {
+      "nameplate": {
+        "asset": "nameplates/plastic/satoru_gojo/",
+        "expires_at": null,
+        "label": "COLLECTIBLES_PLASTIC_SATORU_GOJO_NP_A11Y",
+        "palette": "cobalt",
+        "sku_id": "1428438925046714408"
+      }
+    },
+    "discriminator": "0",
+    "display_name": "anku",
+    "display_name_styles": {
+      "colors": [
+        0,
+        16777215
+      ],
+      "effect_id": 2,
+      "font_id": 7
+    },
+    "global_name": "anku",
+    "id": "514852654552186880",
+    "primary_guild": null,
+    "public_flags": 64,
+    "username": "ankuz0"
+  },
+  "public_flags_array": [
+    "HOUSE_BRAVERY",
+    "NITRO"
+  ]
+}
