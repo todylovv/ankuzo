@@ -21,7 +21,7 @@
     <div class="ln-cursor-layer" id="lnCursorLayer" aria-hidden="true"></div>
     <div class="live-network">
       <div class="ln-stack">
-        <div class="ln-pill"><span class="ln-dot"></span><span id="lnOnline">1</span> online · <span id="lnVisits">—</span> visits</div>
+        <div class="ln-pill"><span class="ln-dot connecting" id="lnStatusDot"></span><span id="lnOnline">1</span> online · <span id="lnVisits">—</span> visits</div>
         <button class="ln-button ln-network-toggle ${cursorsOn ? 'on' : ''}" id="lnNetworkToggle">${isTouch ? 'taps' : 'cursors'} ${cursorsOn ? 'on' : 'off'}</button>
       </div>
       <button class="ln-button" id="lnSignalsButton">signals / <span id="lnSignalCount">00</span></button>
@@ -40,6 +40,7 @@
   const cursorLayer = document.getElementById('lnCursorLayer');
   const onlineEl = document.getElementById('lnOnline');
   const visitsEl = document.getElementById('lnVisits');
+  const statusDot = document.getElementById('lnStatusDot');
   const panel = document.getElementById('lnPanel');
   const list = document.getElementById('lnList');
   const more = document.getElementById('lnMore');
@@ -97,6 +98,7 @@
     clearTimeout(reconnectTimer);
     ws = new WebSocket(`${SB_URL.replace('https', 'wss')}/realtime/v1/websocket?apikey=${SB_KEY}&vsn=1.0.0`);
     ws.onopen = () => {
+      statusDot.className = 'ln-dot connecting';
       ws.send(JSON.stringify({
         topic: TOPIC,
         event: 'phx_join',
@@ -112,6 +114,7 @@
       let message;
       try { message = JSON.parse(event.data); } catch { return; }
       if (message.event === 'phx_reply' && message.topic === TOPIC && message.payload?.status === 'ok') {
+        statusDot.className = 'ln-dot';
         sendRealtime('presence', { type: 'presence', event: 'track', payload: { name: nodeName, online_at: new Date().toISOString() } });
       }
       if (message.event === 'presence_state') syncPresence(message.payload || {});
@@ -119,6 +122,7 @@
       if (message.event === 'broadcast') receiveBroadcast(message.payload || {});
     };
     ws.onclose = () => {
+      statusDot.className = 'ln-dot offline';
       clearInterval(heartbeat);
       reconnectTimer = setTimeout(connect, 3500);
     };
@@ -204,7 +208,9 @@
 
   addEventListener('pointerdown', event => {
     if (!isTouch || !cursorsOn) return;
-    broadcast('pulse', { x: event.clientX / innerWidth, y: event.clientY / innerHeight, scroll: scrollProgress() });
+    const pulse = { x: event.clientX / innerWidth, y: event.clientY / innerHeight, scroll: scrollProgress() };
+    renderPulse(pulse);
+    broadcast('pulse', pulse);
   }, { passive: true });
 
   setInterval(() => {

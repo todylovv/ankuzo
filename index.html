@@ -1635,11 +1635,12 @@ function applyPerfLevel(level){
 })();
 
 // ── VISITOR COUNTER ──
-fetch('https://hits.sh/todylovv.github.io/ankuzo.json')
-  .then(r=>r.json())
-  .then(d=>{
+fetch('https://hits.sh/todylovv.github.io/ankuzo.svg')
+  .then(r=>r.text())
+  .then(svg=>{
     const el = document.getElementById('visitorCount');
-    if(el && d.total) el.textContent = Number(d.total).toLocaleString('ru-RU');
+    const hits = svg.match(/aria-label="hits:\s*([\d,]+)"/)?.[1];
+    if(el && hits) el.textContent = Number(hits.replace(/,/g,'')).toLocaleString('ru-RU');
   })
   .catch(()=>{});
 

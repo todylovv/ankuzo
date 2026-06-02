@@ -13,6 +13,8 @@
 .ln-button{cursor:pointer;transition:color .2s,border-color .2s,background .2s;}
 .ln-button:hover,.ln-button.on{color:rgba(240,237,232,.9);border-color:rgba(240,237,232,.35);background:rgba(240,237,232,.07);}
 .ln-dot{width:5px;height:5px;border-radius:50%;background:rgba(100,220,130,.85);box-shadow:0 0 8px rgba(100,220,130,.5);animation:lnPulse 2s ease-in-out infinite;}
+.ln-dot.connecting{background:rgba(240,190,90,.82);box-shadow:0 0 8px rgba(240,190,90,.38);}
+.ln-dot.offline{background:rgba(240,90,90,.72);box-shadow:0 0 8px rgba(240,90,90,.3);animation:none;}
 .ln-panel{
   position:fixed;right:20px;bottom:112px;z-index:701;width:min(390px,calc(100vw - 40px));
   max-height:min(560px,calc(100vh - 150px));display:none;flex-direction:column;
