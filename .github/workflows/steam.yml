@@ -74,4 +74,9 @@ jobs:
           git stash pop
           git add steam-data.json public/steam-data.json
           git diff --staged --quiet || git commit -m "chore: update steam data [skip ci]"
-          git push
+          for attempt in 1 2 3; do
+            git pull --rebase origin main
+            git push && exit 0
+            sleep 2
+          done
+          exit 1
