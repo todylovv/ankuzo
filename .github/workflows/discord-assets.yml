@@ -66,6 +66,9 @@ jobs:
             public_flags_array: (.[1].data.public_flags_array // [])
           }' /tmp/lanyard.json /tmp/discord-profile.json > discord-assets/profile.json
 
+          mkdir -p public/discord-assets
+          rsync --archive --delete discord-assets/ public/discord-assets/
+
       - name: Commit mirrored assets
         run: |
           git config user.name "github-actions[bot]"
@@ -73,6 +76,6 @@ jobs:
           git stash --include-untracked
           git pull --rebase origin main
           git stash pop
-          git add discord-assets
+          git add discord-assets public/discord-assets
           git diff --staged --quiet || git commit -m "chore: mirror discord assets [skip ci]"
           git push
