@@ -16,15 +16,20 @@ export function Hero() {
         </div>
       </div>
       <div className="hero-inner">
-        <p className="hero-eyebrow">PERSONAL SYSTEM / 2026</p>
+        <div className="hero-introline"><p className="hero-eyebrow">PERSONAL SYSTEM / 2026</p><span>BASED IN MOSCOW / UTC+03</span></div>
         <h1 className="hero-name" data-text="ANKUZO">
           <span className="solid" id="heroName">ANKUZO</span>
           <span className="outline" aria-hidden="true">ANKUZO</span>
           {['a', 'b', 'c'].map(value => <span className={`hero-fragment hero-fragment-${value}`} aria-hidden="true" key={value}>ANKUZO</span>)}
         </h1>
-        <p className="hero-tagline">SECURITY · MACHINE LEARNING · DATA<br />Исследую системы. Нахожу слабые места.<br />Создаю вещи, которые <em>работают</em>.</p>
-        <div className="hero-pills">{['Cybersecurity', 'Machine Learning', 'Big Data', 'CS2 · 2500 ELO', 'PC + PS5'].map(value => <div className="pill" key={value}><div className="pill-dot" />{value}</div>)}</div>
-        <a href="https://discord.com/users/ankuz0" target="_blank" rel="noopener noreferrer" className="discord-hero"><div className="discord-hero-dot" /><DiscordIcon />ankuz0</a>
+        <div className="hero-editorial">
+          <p className="hero-tagline">SECURITY · MACHINE LEARNING · DATA<br />Исследую системы. Нахожу слабые места.<br />Создаю вещи, которые <em>работают</em>.</p>
+          <div className="hero-sidecopy"><span>DISCIPLINE / 01</span><strong>Systems<br /><em>with intent.</em></strong><small>SCROLL TO ENTER THE INDEX</small></div>
+        </div>
+        <div className="hero-actions">
+          <div className="hero-pills">{['Cybersecurity', 'Machine Learning', 'Big Data', 'CS2 · 2500 ELO', 'PC + PS5'].map(value => <div className="pill" key={value}><div className="pill-dot" />{value}</div>)}</div>
+          <a href="https://discord.com/users/ankuz0" target="_blank" rel="noopener noreferrer" className="discord-hero"><div className="discord-hero-dot" /><DiscordIcon />ankuz0</a>
+        </div>
       </div>
       <div className="hero-statusline" aria-hidden="true"><span>ANKUZO / INDEX</span><span className="hero-statusline-grow" /><span>SCROLL TO EXPLORE</span><span>001</span></div>
       <div className="scroll-hint" aria-hidden="true"><div className="scroll-line" />scroll</div>

@@ -3,9 +3,14 @@ import { SectionLabel } from '../ui/SectionLabel.jsx';
 export function About() {
   return (
     <section id="about">
-      <SectionLabel>02 — О себе</SectionLabel>
+      <SectionLabel>02 — Обо мне</SectionLabel>
+      <div className="about-manifesto reveal">
+        <span>APPROACH / MANIFESTO</span>
+        <h2>Системное<br /><em>мышление.</em></h2>
+        <p>Не отдельные инструменты.<br />Один способ смотреть глубже.</p>
+      </div>
       <div className="about-grid">
-        <div className="about-text reveal-left">Думаю как атакующий — строю как защитник.<br /><br />Занимаюсь тем, где ошибки стоят дорого: нахожу слабые места в системах раньше, чем их найдут другие, строю модели которые решают реальные задачи, работаю с данными в любом масштабе.<br /><br /><em>Кибербезопасность, машинное обучение и большие данные</em> — не три отдельных мира, а один способ видеть системы насквозь. Спокойно. Методично. До конца.</div>
+        <div className="about-text reveal-left"><span className="about-index">02.1 / METHOD</span>Думаю как атакующий — строю как защитник.<br /><br />Занимаюсь тем, где ошибки стоят дорого: нахожу слабые места в системах раньше, чем их найдут другие, строю модели которые решают реальные задачи, работаю с данными в любом масштабе.<br /><br /><em>Кибербезопасность, машинное обучение и большие данные</em> — не три отдельных мира, а один способ видеть системы насквозь. Спокойно. Методично. До конца.</div>
         <div className="about-right reveal-right"><DiscordCard /></div>
       </div>
     </section>
