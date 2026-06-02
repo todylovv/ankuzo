@@ -17,14 +17,22 @@
   document.body.insertAdjacentHTML('beforeend', `
     <div class="ln-cursor-layer" id="lnCursorLayer" aria-hidden="true"></div>
     <div class="live-network">
-      <div class="ln-stack">
-        <div class="ln-pill"><span class="ln-dot connecting" id="lnStatusDot"></span><span id="lnOnline">--</span> online · <span id="lnVisits">—</span> visits</div>
-        <button class="ln-button ln-network-toggle ${cursorsOn ? 'on' : ''}" id="lnNetworkToggle">${isTouch ? 'taps' : 'cursors'} ${cursorsOn ? 'on' : 'off'}</button>
+      <div class="ln-dock">
+        <div class="ln-dock-head">
+          <span class="ln-dock-name">live network</span>
+          <span class="ln-dock-node">${nodeName}</span>
+        </div>
+        <div class="ln-dock-body">
+          <div class="ln-pill"><span class="ln-dot connecting" id="lnStatusDot"></span><span id="lnOnline">--</span> online <span class="ln-sep">/</span> <span id="lnVisits">—</span> visits</div>
+          <div class="ln-actions">
+            <button class="ln-button ln-network-toggle ${cursorsOn ? 'on' : ''}" id="lnNetworkToggle">${isTouch ? 'taps' : 'cursors'} ${cursorsOn ? 'on' : 'off'}</button>
+            <button class="ln-button" id="lnSignalsButton">signals <span class="ln-sep">/</span> <span id="lnSignalCount">00</span></button>
+          </div>
+        </div>
       </div>
-      <button class="ln-button" id="lnSignalsButton">signals / <span id="lnSignalCount">00</span></button>
     </div>
     <aside class="ln-panel" id="lnPanel" aria-label="Signal wall">
-      <div class="ln-head"><div class="ln-title">signal wall</div><button class="ln-close" id="lnClose" aria-label="Закрыть">×</button></div>
+      <div class="ln-head"><div><div class="ln-title">signal wall</div><div class="ln-subtitle">ephemeral messages / ttl 24h</div></div><button class="ln-close" id="lnClose" aria-label="Закрыть">×</button></div>
       <div class="ln-list" id="lnList"></div>
       <button class="ln-more" id="lnMore" hidden>загрузить ещё</button>
       <form class="ln-form" id="lnForm">
