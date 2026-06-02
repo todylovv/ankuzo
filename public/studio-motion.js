@@ -45,7 +45,7 @@
   });
 
   const revealTargets = document.querySelectorAll(
-    '.about-text,.about-right,.skill-card,.ps-profile,.game-row,.steam-accounts,.steam-banners,.steam-stats-row,#steamTopGames,.contact-copy,.contact-action,footer'
+    '.about-text,.about-right,.skill-card,.terminal-intro,.terminal-console,.platform-intro,.platform-frame,.ps-profile,.game-row,.steam-intro,.steam-shell,.steam-accounts,.steam-banners,.steam-stats-row,#steamTopGames,.contact-copy,.contact-action,footer'
   );
   const revealObserver = new IntersectionObserver(entries => {
     entries.forEach(entry => {
@@ -112,7 +112,7 @@
   }
 
   if (typeof SplitType !== 'undefined') {
-    document.querySelectorAll('.games-intro h2,.contact-copy h2').forEach(title => {
+    document.querySelectorAll('.terminal-intro h2,.about-manifesto h2,.skills-heading h2,.platform-intro h2,.games-intro h2,.steam-intro h2,.contact-copy h2').forEach(title => {
       const split = new SplitType(title, {
         types: 'lines,chars',
         lineClass: 'split-line',

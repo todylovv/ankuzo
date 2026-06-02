@@ -70,10 +70,67 @@ section { max-width: 1360px; padding-inline: clamp(20px, 5vw, 76px); }
 .skill-card:hover .skill-arrow { transform: translate(5px, -5px); }
 
 /* Archive and close */
+.gen-section { max-width: 1360px; padding: clamp(104px, 14vw, 198px) clamp(20px, 5vw, 76px); }
+.terminal-layout { display: grid; grid-template-columns: minmax(270px, .78fr) minmax(520px, 1.45fr); gap: clamp(44px, 8vw, 120px); align-items: center; }
+.terminal-intro span, .platform-intro span, .steam-intro > span, .terminal-console-meta, .platform-frame-meta, .steam-shell-head {
+  color: rgba(240, 237, 232, .38); font: 8px 'JetBrains Mono', monospace; letter-spacing: .22em; text-transform: uppercase;
+}
+.terminal-intro h2, .platform-intro h2, .steam-intro h2 {
+  margin-top: 18px; color: var(--studio-paper); font: clamp(78px, 9vw, 142px)/.78 'Bebas Neue', sans-serif; letter-spacing: -.01em;
+}
+.terminal-intro h2 em, .platform-intro h2 em, .steam-intro h2 em { color: var(--studio-hot); font-family: var(--studio-serif); font-weight: 400; }
+.terminal-intro p, .platform-intro p, .steam-intro p { max-width: 440px; margin-top: 28px; color: rgba(240, 237, 232, .56); font: 11px/1.9 'JetBrains Mono', monospace; }
+.terminal-intro b { color: var(--studio-paper); font-weight: 400; }
+.terminal-index { display: flex; align-items: center; gap: 10px; margin-top: 46px; color: rgba(240, 237, 232, .34); font: 8px 'JetBrains Mono', monospace; letter-spacing: .22em; }
+.terminal-index i { width: 36px; height: 1px; background: var(--studio-hot); }
+.terminal-console { position: relative; padding: 18px; border: 1px solid rgba(240, 237, 232, .14); background: rgba(240, 237, 232, .018); }
+.terminal-console::before { content: ''; position: absolute; left: -18px; bottom: -18px; width: 86%; height: 86%; z-index: -1; border: 1px solid rgba(255, 90, 54, .26); }
+.terminal-console-meta, .platform-frame-meta, .steam-shell-head { display: flex; justify-content: space-between; padding-bottom: 13px; }
+.terminal-console-meta b, .steam-shell-head b { color: var(--studio-hot); font-weight: 400; }
+#termWrap { min-height: 360px; border-color: rgba(240, 237, 232, .17) !important; background: rgba(5, 5, 7, .88) !important; box-shadow: none !important; }
+.term-bar { border-bottom-color: rgba(240, 237, 232, .14) !important; background: rgba(240, 237, 232, .035) !important; }
+.term-input-row { border-top-color: rgba(255, 90, 54, .28) !important; }
+.term-prompt, .term-cmd-hint { color: var(--studio-hot) !important; }
+
+.platform-intro { display: grid; grid-template-columns: 1fr minmax(250px, 390px); gap: 50px; align-items: end; margin-bottom: 50px; }
+.platform-intro p { margin: 0 0 10px; }
+.platform-frame { padding: 18px; border: 1px solid rgba(240, 237, 232, .15); background: rgba(240, 237, 232, .016); }
+.platform-frame-meta b { color: var(--studio-hot); font-weight: 400; }
+.ps-profile { border-radius: 0; border-color: rgba(240, 237, 232, .16) !important; box-shadow: inset 0 1px rgba(255, 255, 255, .045), inset 0 -70px 120px rgba(0, 0, 0, .5) !important; }
+.ps-mark, .ps-trophy, .ps-panel, .ps-all-game { border-radius: 0 !important; }
+
 .games-intro h2 { font-size: clamp(68px, 8vw, 124px) !important; line-height: .84 !important; }
 .games-intro h2 em { color: var(--studio-hot); font-family: var(--studio-serif); font-weight: 400; }
-.game-stage { border-radius: 0 !important; }
-.game-row { min-height: 116px; }
+.games-intro { padding-bottom: 44px; border-bottom: 1px solid rgba(240, 237, 232, .16); }
+.games-intro p { color: var(--studio-hot) !important; }
+.games-showcase { gap: clamp(34px, 7vw, 104px) !important; padding-top: 44px; }
+.game-stage { min-height: 560px !important; border-radius: 0 !important; border-color: rgba(240, 237, 232, .18) !important; background: radial-gradient(circle at 50% 42%, rgba(255, 90, 54, .13), transparent 31%), #050507 !important; }
+.game-stage::after { content: 'ARCHIVE / ACTIVE ERA'; position: absolute; left: 18px; bottom: 16px; color: rgba(240, 237, 232, .28); font: 8px 'JetBrains Mono', monospace; letter-spacing: .2em; }
+.game-stage-orbit { border-color: rgba(255, 90, 54, .28) !important; }
+.game-stage-mark { color: rgba(255, 90, 54, .22) !important; }
+.game-row { min-height: 128px; padding-inline: 4px; }
+.game-row-active { background: linear-gradient(90deg, rgba(255, 90, 54, .1), transparent 82%); }
+.game-row-active::after { width: 3px; background: var(--studio-hot); }
+.game-row-active .game-title-text { color: var(--studio-hot); }
+.game-badge { border-radius: 0; }
+.marquee-wrap { border-block: 1px solid rgba(240, 237, 232, .1); background: var(--studio-hot) !important; }
+.marquee-inner { color: var(--studio-ink) !important; }
+
+.steam-intro { display: grid; grid-template-columns: 150px minmax(400px, 1fr) minmax(220px, 340px); gap: 28px; align-items: end; margin-bottom: 50px; }
+.steam-intro h2 { margin: 0; }
+.steam-intro p { margin: 0 0 10px; }
+.steam-shell { padding: 18px; border: 1px solid rgba(240, 237, 232, .15); background: rgba(240, 237, 232, .016); }
+.steam-accounts { border-top: 1px solid rgba(240, 237, 232, .12); }
+.steam-acc { border-color: rgba(240, 237, 232, .11) !important; background: transparent !important; }
+.steam-banners { gap: 1px !important; padding-top: 18px; }
+.steam-banner { border-radius: 0 !important; border-color: rgba(240, 237, 232, .12) !important; }
+.steam-banner img { filter: grayscale(.72) contrast(1.05); transition: transform .55s, filter .55s !important; }
+.steam-banner:hover img { filter: grayscale(.05) contrast(1.08); }
+.steam-stat { border-radius: 0 !important; border-color: rgba(240, 237, 232, .12) !important; background: transparent !important; }
+.steam-stat-num { color: var(--studio-paper) !important; font-size: clamp(58px, 7vw, 104px) !important; }
+.steam-top { padding-top: 12px; border-top: 1px solid rgba(240, 237, 232, .12); }
+.steam-game-bar { background: var(--studio-hot) !important; }
+
 .contact-section { max-width: none; min-height: 100vh; padding: clamp(100px, 13vw, 188px) clamp(20px, 7vw, 104px) 34px; overflow: hidden; }
 .contact-copy h2 { font-size: clamp(156px, 24vw, 390px) !important; line-height: .7 !important; letter-spacing: -.035em !important; }
 .contact-copy p { border-left: 1px solid var(--studio-hot); padding-left: 18px; }
@@ -84,6 +141,10 @@ section { max-width: 1360px; padding-inline: clamp(20px, 5vw, 76px); }
 .contact-orbit::before { inset: 13%; }.contact-orbit::after { inset: 28%; border-color: rgba(255, 90, 54, .28); }
 .contact-orbit span { position: absolute; left: 13%; top: 13%; color: var(--studio-hot); font: 8px 'JetBrains Mono', monospace; letter-spacing: .24em; }
 .contact-orbit i { position: absolute; inset: 49.7% 0 auto; height: 1px; background: rgba(240, 237, 232, .1); }
+.studio-reveal { transition-duration: .9s !important; transition-timing-function: cubic-bezier(.16, 1, .3, 1) !important; }
+.terminal-console.studio-reveal, .platform-frame.studio-reveal, .steam-shell.studio-reveal { transform: translateY(28px); }
+.terminal-console.studio-visible, .platform-frame.studio-visible, .steam-shell.studio-visible { transform: none; }
+.split-line { overflow: hidden; }
 
 @media (max-width: 900px) {
   .hero { padding-top: 106px; }
@@ -99,6 +160,15 @@ section { max-width: 1360px; padding-inline: clamp(20px, 5vw, 76px); }
   .skill-card { display: grid; grid-template-columns: 42px 1fr 22px; gap: 12px; min-height: auto; padding: 24px 0; }
   .skill-count { grid-column: 1; }.skill-icon { display: none; }.skill-title { grid-column: 2; }.skill-arrow { grid-column: 3; grid-row: 1; }
   .skill-desc, .skill-tags { grid-column: 2 / -1; }.skill-desc { margin-top: 4px; }
+  .gen-section { padding: 100px 20px; }
+  .terminal-layout { display: block; }.terminal-console { margin-top: 38px; padding: 10px; }.terminal-console::before { left: -9px; bottom: -9px; }#termWrap { min-height: 310px; }
+  .platform-intro, .steam-intro { display: block; }.platform-intro p, .steam-intro p { margin-top: 24px; }.platform-frame, .steam-shell { padding: 10px; }
+  .game-stage { min-height: 330px !important; margin-bottom: 24px; }.game-row { min-height: auto; }
+  .steam-intro { margin-bottom: 34px; }.steam-stat-num { font-size: 62px !important; }
   .contact-section { min-height: 82vh; }.contact-grid { display: block !important; }.contact-copy h2 { font-size: clamp(146px, 45vw, 238px) !important; margin-top: 38px; }
   .contact-action { margin-top: 58px; }.contact-orbit { width: 82vw; right: -36vw; top: 26%; opacity: .58; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .terminal-console.studio-reveal, .platform-frame.studio-reveal, .steam-shell.studio-reveal { transform: none; }
 }
