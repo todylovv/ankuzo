@@ -7,7 +7,7 @@ export function Terminal() {
       <div className="terminal-layout">
         <div className="terminal-intro reveal">
           <span>DIRECT ACCESS / ROOT</span>
-          <h2>ENTER<br /><em>THE SYSTEM.</em></h2>
+          <h2>Войди<br /><em>в систему.</em></h2>
           <p>Интерактивная точка входа. Набери <b>help</b>, чтобы открыть список доступных команд.</p>
           <div className="terminal-index"><i /> 01 / COMMAND LINE</div>
         </div>
