@@ -3,7 +3,7 @@
     ['terminal', '01', 'TERMINAL'],
     ['about', '02', 'PROFILE'],
     ['skills', '03', 'SYSTEMS'],
-    ['crystal', '04', 'OBJECT'],
+    ['playstation', '04', 'PS5'],
     ['games', '05', 'TIMELINE'],
     ['steam', '06', 'STEAM']
   ];

@@ -197,9 +197,6 @@ footer{
 }
 
 /* ── CRYSTAL CONTROLS ── */
-.cctrl{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:rgba(240,237,232,.35);background:none;border:1px solid rgba(240,237,232,.1);padding:7px 16px;cursor:pointer;transition:color .2s,border-color .2s;}
-.cctrl:hover,.cctrl.on{color:rgba(240,237,232,.88);border-color:rgba(240,237,232,.38);}
-
 /* ── DISCORD LOADER ── */
 #discordLoader{
   position:fixed;inset:0;z-index:99999;
@@ -473,6 +470,8 @@ body.perf-mid .marquee-inner{animation-duration:30s!important;}
 .game-profiles{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:20px;}
 .game-profile{display:block;background:rgba(240,237,232,.03);border:1px solid rgba(240,237,232,.07);padding:14px 16px;text-decoration:none;transition:background .2s,border-color .2s;}
 .game-profile:hover{background:rgba(240,237,232,.06);border-color:rgba(240,237,232,.18);}
+.game-profile.unavailable{opacity:.64;cursor:default;}
+.game-profile.unavailable:hover{background:rgba(240,237,232,.03);border-color:rgba(240,237,232,.07);}
 .game-profile-head{display:flex;justify-content:space-between;gap:12px;align-items:baseline;margin-bottom:10px;}
 .game-profile-service{font-size:10px;letter-spacing:.2em;color:#f0ede8;}
 .game-profile-account{font-size:9px;letter-spacing:.15em;color:rgba(240,237,232,.3);}
@@ -896,27 +895,13 @@ ASCII INTRO — ANKUZO
 
 <hr class="section-divider">
 
-<!-- CRYSTAL -->
-<section id="crystal" class="gen-section">
+<!-- PLAYSTATION -->
+<section id="playstation" class="gen-section">
   <div class="section-label" style="margin-bottom:48px;">
-    04 — Объект
+    04 — PlayStation
     <span style="flex:1;height:1px;background:rgba(240,237,232,0.1);display:block;"></span>
   </div>
-  <div style="display:flex;flex-direction:column;align-items:center;gap:0;" class="reveal-scale">
-    <canvas id="crystalCanvas" style="display:block;touch-action:none;cursor:grab;width:100%;max-width:560px;height:auto;aspect-ratio:560/440;border-radius:4px;"></canvas>
-    <div style="display:flex;gap:10px;margin-top:20px;flex-wrap:wrap;justify-content:center;">
-      <button class="cctrl on" data-s="crystal" onclick="csSetShape('crystal')">Кристалл</button>
-      <button class="cctrl" data-s="octa" onclick="csSetShape('octa')">Октаэдр</button>
-      <button class="cctrl" data-s="gem" onclick="csSetShape('gem')">Камень</button>
-      <button class="cctrl" data-s="ico" onclick="csSetShape('ico')">Икосаэдр</button>
-    </div>
-    <div style="display:flex;gap:10px;margin-top:8px;flex-wrap:wrap;justify-content:center;">
-      <button class="cctrl on" id="csHatchBtn" onclick="csToggleHatch()">Штриховка</button>
-      <button class="cctrl on" id="csEdgeBtn" onclick="csToggleEdge()">Контуры</button>
-      <button class="cctrl" id="csSpinBtn" onclick="csToggleSpin()">Авто-вращение</button>
-    </div>
-    <div style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.2em;color:rgba(240,237,232,.18);text-transform:uppercase;margin-top:14px;">тяни мышкой · колёсико = масштаб</div>
-  </div>
+  <div id="psProfile" class="ps-profile reveal-scale" aria-live="polite"></div>
 </section>
 
 <hr class="section-divider">
@@ -1314,10 +1299,18 @@ ASCII INTRO — ANKUZO
       }
 
       const profilesEl=document.getElementById('gameProfiles');
-      if(profilesEl&&data.profiles&&data.profiles.length){
+      if(profilesEl){
         const value=(label,val)=>val!==null&&val!==undefined&&val!==''?`<div class="game-profile-stat"><strong>${val}</strong>${label}</div>`:'';
+        const profiles=data.profiles||[];
+        const statuses=data.integration_status||{};
+        const unavailable=[
+          ['FACEIT','b1',statuses.faceit],
+          ['APEX','b2',statuses.apex]
+        ].filter(([service,,status])=>status&&status!=='200'&&!profiles.some(p=>p.service===service));
+        const statusLabel=status=>status==='missing'?'API KEY NOT CONFIGURED':`SYNC UNAVAILABLE · HTTP ${status}`;
+        if(profiles.length||unavailable.length){
         profilesEl.style.display='grid';
-        profilesEl.innerHTML=data.profiles.map(p=>`
+        profilesEl.innerHTML=profiles.map(p=>`
           <a class="game-profile" href="${p.url}" target="_blank" rel="noopener noreferrer">
             <div class="game-profile-head">
               <span class="game-profile-service">${p.service}</span>
@@ -1329,7 +1322,15 @@ ASCII INTRO — ANKUZO
                 : value('RANK',p.rank)+value('RP',p.rp)+value('LEVEL',p.level)+value('KILLS',p.kills)+value('DAMAGE',p.damage)}
             </div>
             ${p.service==='APEX'?'<div class="game-profile-source">Data provided by Tracker Network</div>':''}
-          </a>`).join('');
+          </a>`).join('')+unavailable.map(([service,account,status])=>`
+          <div class="game-profile unavailable">
+            <div class="game-profile-head">
+              <span class="game-profile-service">${service}</span>
+              <span class="game-profile-account">${account}</span>
+            </div>
+            <div class="game-profile-source">${statusLabel(status)}</div>
+          </div>`).join('');
+        }
       }
 
       // banners top 3
@@ -1465,16 +1466,6 @@ function applyPerfLevel(level){
   if(isMobile){
     const dc = document.getElementById('dcBannerCanvas');
     if(dc) dc.style.display = 'none';
-  }
-
-  // 2. Пауза кристалла когда не виден
-  const crystalSection = document.getElementById('crystal');
-  if(crystalSection){
-    window._crystalPaused = false;
-    const cio = new IntersectionObserver(entries=>{
-      window._crystalPaused = !entries[0].isIntersecting;
-    },{threshold:0.01});
-    cio.observe(crystalSection);
   }
 
 })();
@@ -1943,164 +1934,6 @@ document.querySelectorAll('.game-row').forEach(row=>{
   row.addEventListener('mouseleave',()=>{if(title)title.style.transform='';});
 });
 
-// ── CRYSTAL 3D ──
-(function(){
-  const cv=document.getElementById('crystalCanvas');
-  if(!cv)return;
-  const dpr=Math.min(window.devicePixelRatio||1,2);
-  const W=Math.min(document.documentElement.clientWidth||window.innerWidth, 560);
-  const H=Math.round(W*440/560);
-  cv.width=W*dpr; cv.height=H*dpr;
-  cv.style.width=W+'px'; cv.style.height=H+'px';
-  const CX=W/2, CY=H/2;
-  const ctx=cv.getContext('2d');
-  ctx.setTransform(dpr,0,0,dpr,0,0);
-  // CX, CY defined above based on canvas size
-  let rotX=-.4,rotY=.3,tRotX=-.4,tRotY=.3;
-  let scl=1,tScl=1;
-  let drag=false,lx=0,ly=0;
-  window.csAutoSpin=false;
-  window.csShowHatch=true;
-  window.csShowEdge=true;
-  window.csShape='crystal';
-
-  cv.addEventListener('mousedown',e=>{drag=true;lx=e.offsetX;ly=e.offsetY;e.preventDefault();});
-  window.addEventListener('mousemove',e=>{
-    if(!drag)return;
-    const r=cv.getBoundingClientRect();
-    const ox=e.clientX-r.left,oy=e.clientY-r.top;
-    tRotY+=(ox-lx)*.012;tRotX+=(oy-ly)*.012;
-    tRotX=Math.max(-1.5,Math.min(1.5,tRotX));lx=ox;ly=oy;
-  });
-  window.addEventListener('mouseup',()=>drag=false);
-  cv.addEventListener('touchstart',e=>{drag=true;lx=e.touches[0].clientX;ly=e.touches[0].clientY;e.preventDefault();},{passive:false});
-  cv.addEventListener('touchmove',e=>{
-    const ox=e.touches[0].clientX,oy=e.touches[0].clientY;
-    tRotY+=(ox-lx)*.012;tRotX+=(oy-ly)*.012;
-    tRotX=Math.max(-1.5,Math.min(1.5,tRotX));lx=ox;ly=oy;e.preventDefault();
-  },{passive:false});
-  cv.addEventListener('touchend',()=>drag=false);
-  cv.addEventListener('wheel',e=>{tScl=Math.max(.4,Math.min(2.2,tScl-e.deltaY*.001));e.preventDefault();},{passive:false});
-
-  window.csSetShape=function(s){
-    window.csShape=s;
-    document.querySelectorAll('.cctrl[data-s]').forEach(b=>b.classList.toggle('on',b.dataset.s===s));
-  };
-  window.csToggleHatch=function(){window.csShowHatch=!window.csShowHatch;document.getElementById('csHatchBtn').classList.toggle('on',window.csShowHatch);};
-  window.csToggleEdge=function(){window.csShowEdge=!window.csShowEdge;document.getElementById('csEdgeBtn').classList.toggle('on',window.csShowEdge);};
-  window.csToggleSpin=function(){window.csAutoSpin=!window.csAutoSpin;document.getElementById('csSpinBtn').classList.toggle('on',window.csAutoSpin);};
-
-  function crystalVerts(){return[[0,1.6,0],[0,-1.6,0],[0.55,0.5,0],[0.17,0.5,0.52],[-0.45,0.5,0.32],[-0.45,0.5,-0.32],[0.17,0.5,-0.52],[0.45,-0.4,0],[0.14,-0.4,0.43],[-0.37,-0.4,0.27],[-0.37,-0.4,-0.27],[0.14,-0.4,-0.43]];}
-  function crystalFaces(){return[[0,2,3],[0,3,4],[0,4,5],[0,5,6],[0,6,2],[2,7,8,3],[3,8,9,4],[4,9,10,5],[5,10,11,6],[6,11,7,2],[1,8,7],[1,9,8],[1,10,9],[1,11,10],[1,7,11]];}
-  function octaVerts(){const r=1.1;return[[0,r*1.4,0],[0,-r*1.4,0],[r,0,0],[-r,0,0],[0,0,r],[0,0,-r]];}
-  function octaFaces(){return[[0,2,4],[0,4,3],[0,3,5],[0,5,2],[1,4,2],[1,3,4],[1,5,3],[1,2,5]];}
-  function gemVerts(){const v=[],n=6;for(let i=0;i<n;i++){const a=i/n*Math.PI*2;v.push([Math.cos(a)*.9,.3,Math.sin(a)*.9]);}for(let i=0;i<n;i++){const a=(i+.5)/n*Math.PI*2;v.push([Math.cos(a)*.7,-.4,Math.sin(a)*.7]);}v.push([0,1.1,0]);v.push([0,-1.3,0]);return v;}
-  function gemFaces(){const f=[],n=6;for(let i=0;i<n;i++)f.push([12,i,(i+1)%n]);for(let i=0;i<n;i++)f.push([i,(i+1)%n,n+((i+1)%n),n+i]);for(let i=0;i<n;i++)f.push([13,n+i,n+(i+1)%n]);return f;}
-  function icoVerts(){const t=(1+Math.sqrt(5))/2,s=1.05,r=[[-1,t,0],[1,t,0],[-1,-t,0],[1,-t,0],[0,-1,t],[0,1,t],[0,-1,-t],[0,1,-t],[t,0,-1],[t,0,1],[-t,0,-1],[-t,0,1]];return r.map(([x,y,z])=>{const l=Math.sqrt(x*x+y*y+z*z);return[x/l*s,y/l*s,z/l*s];});}
-  function icoFaces(){return[[0,11,5],[0,5,1],[0,1,7],[0,7,10],[0,10,11],[1,5,9],[5,11,4],[11,10,2],[10,7,6],[7,1,8],[3,9,4],[3,4,2],[3,2,6],[3,6,8],[3,8,9],[4,9,5],[2,4,11],[6,2,10],[8,6,7],[9,8,1]];}
-  function getGeom(){
-    if(window.csShape==='crystal')return{v:crystalVerts(),f:crystalFaces()};
-    if(window.csShape==='octa')return{v:octaVerts(),f:octaFaces()};
-    if(window.csShape==='gem')return{v:gemVerts(),f:gemFaces()};
-    return{v:icoVerts(),f:icoFaces()};
-  }
-  function rotVec([x,y,z],rx,ry){
-    const y2=y*Math.cos(rx)-z*Math.sin(rx),z2=y*Math.sin(rx)+z*Math.cos(rx);
-    const x3=x*Math.cos(ry)+z2*Math.sin(ry),z3=-x*Math.sin(ry)+z2*Math.cos(ry);
-    return[x3,y2,z3];
-  }
-  const baseScale=Math.min(W,H)*0.42;
-  function proj([x,y,z],s){const fov=420,f=fov/(fov+z*s*120+200);return[CX+x*s*baseScale*f,CY+y*s*baseScale*f,z];}
-  function faceNorm(rv,fi){
-    const a=rv[fi[0]],b=rv[fi[1]],c=rv[fi[2]];
-    const u=[b[0]-a[0],b[1]-a[1],b[2]-a[2]],w=[c[0]-a[0],c[1]-a[1],c[2]-a[2]];
-    const n=[u[1]*w[2]-u[2]*w[1],u[2]*w[0]-u[0]*w[2],u[0]*w[1]-u[1]*w[0]];
-    const l=Math.sqrt(n[0]**2+n[1]**2+n[2]**2)||1;return n.map(x=>x/l);
-  }
-  function hatchFace(pts,tone,angle){
-    if(!window.csShowHatch)return;
-    const density=Math.round((1-tone)*5);if(density===0)return;
-    const sp=8*(1/(density+.5));
-    ctx.save();ctx.beginPath();ctx.moveTo(pts[0][0],pts[0][1]);
-    for(let i=1;i<pts.length;i++)ctx.lineTo(pts[i][0],pts[i][1]);
-    ctx.closePath();ctx.clip();
-    const xs=pts.map(p=>p[0]),ys=pts.map(p=>p[1]);
-    const minX=Math.min(...xs)-2,maxX=Math.max(...xs)+2,minY=Math.min(...ys)-2,maxY=Math.max(...ys)+2;
-    const diag=Math.hypot(maxX-minX,maxY-minY)+4,cx2=(minX+maxX)/2,cy2=(minY+maxY)/2;
-    const cos=Math.cos(angle),sin=Math.sin(angle);
-    ctx.strokeStyle='rgba(0,0,0,0.85)';ctx.lineWidth=density>3?.9:.7;
-    for(let d=-diag;d<diag;d+=sp){
-      const ax=cx2+d*cos-diag*sin,ay=cy2+d*sin+diag*cos,bx=cx2+d*cos+diag*sin,by=cy2+d*sin-diag*cos;
-      ctx.beginPath();ctx.moveTo(ax,ay);ctx.lineTo(bx,by);ctx.stroke();
-    }
-    if(density>=4){
-      const a2=angle+Math.PI/3,co2=Math.cos(a2),si2=Math.sin(a2);
-      ctx.lineWidth=.6;
-      for(let d=-diag;d<diag;d+=sp*1.4){
-        ctx.beginPath();ctx.moveTo(cx2+d*co2-diag*si2,cy2+d*si2+diag*co2);ctx.lineTo(cx2+d*co2+diag*si2,cy2+d*si2-diag*co2);ctx.stroke();
-      }
-    }
-    ctx.restore();
-  }
-
-  function draw(){
-    ctx.setTransform(dpr,0,0,dpr,0,0);
-    ctx.fillStyle='#07070a';ctx.fillRect(0,0,W,H);
-    const grd=ctx.createRadialGradient(CX,CY,10,CX,CY,Math.min(W,H)*.85);
-    grd.addColorStop(0,'rgba(255,255,255,0.025)');grd.addColorStop(1,'rgba(0,0,0,0)');
-    ctx.fillStyle=grd;ctx.fillRect(0,0,W,H);
-
-    rotX+=(tRotX-rotX)*.1;rotY+=(tRotY-rotY)*.1;scl+=(tScl-scl)*.1;
-    if(window.csAutoSpin)tRotY+=.009;
-
-    const{v,f}=getGeom();
-    const light=[-0.5,-1,0.7],llen=Math.sqrt(.5**2+1**2+.7**2);
-    light[0]/=llen;light[1]/=llen;light[2]/=llen;
-
-    const rv=v.map(vt=>rotVec(vt,rotX,rotY));
-    const pv=rv.map(vt=>proj(vt,scl));
-
-    const faces=f.map(fi=>{
-      const rn=faceNorm(rv,fi);
-      const dot=Math.max(0,rn[0]*light[0]+rn[1]*light[1]+rn[2]*light[2]);
-      const avgZ=fi.reduce((s,i)=>s+rv[i][2],0)/fi.length;
-      return{fi,rn,dot,avgZ};
-    }).sort((a,b)=>b.avgZ-a.avgZ);
-
-    faces.forEach(({fi,rn,dot})=>{
-      const pts=fi.map(i=>[pv[i][0],pv[i][1]]);
-      const ax=pts[1][0]-pts[0][0],ay=pts[1][1]-pts[0][1];
-      const bx=pts[2][0]-pts[0][0],by=pts[2][1]-pts[0][1];
-      if(ax*by-ay*bx>0)return;
-      const tone=dot<.15?0:dot<.4?.25:dot<.7?.55:1;
-      const fill=tone===1?'#f0ede8':tone>.5?'#c0bdb6':tone>.2?'#6e6b66':'#161514';
-      ctx.beginPath();ctx.moveTo(pts[0][0],pts[0][1]);
-      for(let i=1;i<pts.length;i++)ctx.lineTo(pts[i][0],pts[i][1]);
-      ctx.closePath();ctx.fillStyle=fill;ctx.fill();
-      if(tone<.55)hatchFace(pts,tone,Math.atan2(rn[1],rn[0])+Math.PI/4);
-      if(window.csShowEdge){
-        ctx.beginPath();ctx.moveTo(pts[0][0],pts[0][1]);
-        for(let i=1;i<pts.length;i++)ctx.lineTo(pts[i][0],pts[i][1]);
-        ctx.closePath();ctx.strokeStyle='#07070a';ctx.lineWidth=tone<.3?2.2:1.3;ctx.lineJoin='round';ctx.stroke();
-      }
-    });
-    // manga highlight
-    const hx=CX-38*scl,hy=CY-48*scl;
-    const hg=ctx.createRadialGradient(hx,hy,0,hx,hy,26*scl);
-    hg.addColorStop(0,'rgba(255,255,255,0.88)');hg.addColorStop(.35,'rgba(255,255,255,0.35)');hg.addColorStop(1,'rgba(255,255,255,0)');
-    ctx.fillStyle=hg;ctx.fillRect(hx-32*scl,hy-32*scl,64*scl,64*scl);
-    ctx.strokeStyle='rgba(255,255,255,0.65)';ctx.lineWidth=1.5;
-    ctx.beginPath();ctx.moveTo(hx-9,hy+4);ctx.lineTo(hx+3,hy-8);ctx.stroke();
-    if(!window._crystalPaused) requestAnimationFrame(draw);
-  }
-  // Запускаем через IntersectionObserver
-  const _cio = new IntersectionObserver(entries=>{
-    if(entries[0].isIntersecting){ window._crystalPaused=false; draw(); }
-    else window._crystalPaused=true;
-  },{threshold:0.01});
-  _cio.observe(document.getElementById('crystal')||cv);
-})();
-
 // ── SCROLL REVEAL — matveyan style ──
 const allReveal = document.querySelectorAll(
   '.reveal,.reveal-left,.reveal-right,.reveal-scale,.section-label,.skill-card,.game-row,.fact-row'
@@ -2383,6 +2216,7 @@ setInterval(()=>{
 </script>
 <script src="intro-engine.js"></script>
 <script src="scroll-experience.js"></script>
+<script src="ps5-profile.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="live-network.js"></script>
 </body>
