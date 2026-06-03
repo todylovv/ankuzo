@@ -139,7 +139,7 @@ section { max-width: 1360px; padding-inline: clamp(20px, 5vw, 76px); }
 .steam-game-bar { background: var(--studio-hot) !important; }
 
 .contact-section { max-width: none; min-height: 100vh; padding: clamp(100px, 13vw, 188px) clamp(20px, 7vw, 104px) 34px; overflow: hidden; }
-.contact-copy h2 { font-size: clamp(48px, 6vw, 96px) !important; line-height: .9 !important; letter-spacing: -.035em !important; }
+.contact-copy h2 { line-height: .9 !important; letter-spacing: -.035em !important; }
 .contact-copy p { border-left: 1px solid var(--studio-hot); padding-left: 18px; }
 .contact-action { position: relative; z-index: 2; }
 .contact-action a { border-radius: 0 !important; background: rgba(255, 90, 54, .08) !important; border-color: rgba(255, 90, 54, .6) !important; }
