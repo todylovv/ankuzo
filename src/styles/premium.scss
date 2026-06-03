@@ -49,7 +49,7 @@ section { max-width: 1360px; padding-inline: clamp(20px, 5vw, 76px); }
 /* Manifesto */
 #about { padding-top: clamp(100px, 14vw, 196px); }
 .about-manifesto { display: grid; grid-template-columns: 130px minmax(280px, 1fr) 280px; gap: 30px; align-items: end; padding-bottom: clamp(52px, 7vw, 92px); border-bottom: 1px solid rgba(240, 237, 232, .16); }
-.about-manifesto h2, .skills-heading h2 { color: var(--studio-paper); font: 500 clamp(54px, 7vw, 108px)/1.02 var(--studio-display-cyr); letter-spacing: -.04em; }
+.about-manifesto h2, .skills-heading h2 { color: var(--studio-paper); font: 500 clamp(27px, 3.5vw, 54px)/1.02 var(--studio-display-cyr); letter-spacing: -.04em; }
 .about-manifesto p { color: rgba(240, 237, 232, .7); font: 500 15px/1.75 var(--studio-body); letter-spacing: 0; }
 .about-grid { grid-template-columns: minmax(0, 1fr) minmax(320px, 460px); gap: clamp(50px, 9vw, 146px); padding-top: clamp(52px, 7vw, 88px); }
 .about-index { display: block; margin-bottom: 28px; color: var(--studio-hot); font: 9px var(--studio-mono); letter-spacing: .18em; }
@@ -60,7 +60,7 @@ section { max-width: 1360px; padding-inline: clamp(20px, 5vw, 76px); }
 /* Expertise index */
 #skills { padding-top: clamp(110px, 15vw, 210px); }
 .skills-heading { display: flex; justify-content: space-between; gap: 30px; align-items: end; margin-bottom: 54px; }
-.skills-heading h2 { font-size: clamp(52px, 6.3vw, 102px); text-align: right; }
+.skills-heading h2 { font-size: clamp(26px, 3.15vw, 51px); text-align: right; }
 .skills-grid { display: block; border-top: 1px solid rgba(240, 237, 232, .2); }
 .skill-card { display: grid; grid-template-columns: 66px 90px minmax(190px, .8fr) minmax(240px, 1.35fr) 1fr 34px; gap: 20px; align-items: center; min-height: 160px; padding: 28px 0; border: 0; border-bottom: 1px solid rgba(240, 237, 232, .15); background: transparent; }
 .skill-card::before { background: linear-gradient(90deg, rgba(255, 90, 54, .12), transparent 62%); }
@@ -68,7 +68,7 @@ section { max-width: 1360px; padding-inline: clamp(20px, 5vw, 76px); }
 .skill-card:hover { transform: none; background: rgba(255, 255, 255, .018); }
 .skill-count { color: rgba(240, 237, 232, .3); font: 10px 'JetBrains Mono', monospace; letter-spacing: .18em; }
 .skill-icon { margin: 0; color: rgba(240, 237, 232, .1); font: 54px/.8 'Bebas Neue', sans-serif; }
-.skill-title { margin: 0; font: 500 clamp(18px, 1.7vw, 25px)/1.2 var(--studio-display-cyr); letter-spacing: -.025em; }
+.skill-title { margin: 0; font: 500 clamp(13px, 1.2vw, 18px)/1.2 var(--studio-display-cyr); letter-spacing: -.025em; word-break: break-word; }
 .skill-desc { max-width: 500px; color: rgba(240, 237, 232, .68); font: 500 14px/1.7 var(--studio-body); letter-spacing: -.005em; }
 .skill-tags { margin: 0; }
 .skill-tag { border: 0; border-bottom: 1px solid rgba(240, 237, 232, .16); border-radius: 0; padding: 4px 0; }
@@ -82,7 +82,7 @@ section { max-width: 1360px; padding-inline: clamp(20px, 5vw, 76px); }
   color: rgba(240, 237, 232, .38); font: 8px 'JetBrains Mono', monospace; letter-spacing: .22em; text-transform: uppercase;
 }
 .terminal-intro h2, .platform-intro h2, .steam-intro h2 {
-  margin-top: 18px; color: var(--studio-paper); font: clamp(78px, 9vw, 142px)/.78 var(--studio-display); letter-spacing: -.01em;
+  margin-top: 18px; color: var(--studio-paper); font: clamp(58px, 6.75vw, 106px)/.78 var(--studio-display); letter-spacing: -.01em;
 }
 .terminal-intro h2 em, .platform-intro h2 em, .steam-intro h2 em { color: var(--studio-hot); font-family: var(--studio-serif); font-weight: 400; }
 .terminal-intro p, .platform-intro p, .steam-intro p { max-width: 480px; margin-top: 28px; color: rgba(240, 237, 232, .68); font: 500 15px/1.75 var(--studio-body); letter-spacing: -.005em; }
@@ -105,7 +105,7 @@ section { max-width: 1360px; padding-inline: clamp(20px, 5vw, 76px); }
 .ps-profile { border-radius: 0; border-color: rgba(240, 237, 232, .16) !important; box-shadow: inset 0 1px rgba(255, 255, 255, .045), inset 0 -70px 120px rgba(0, 0, 0, .5) !important; }
 .ps-mark, .ps-trophy, .ps-panel, .ps-all-game { border-radius: 0 !important; }
 
-.games-intro h2 { font-family: var(--studio-display-cyr) !important; font-size: clamp(50px, 6vw, 96px) !important; font-weight: 500 !important; line-height: 1.03 !important; letter-spacing: -.05em !important; }
+.games-intro h2 { font-family: var(--studio-display-cyr) !important; font-size: clamp(37px, 4.5vw, 72px) !important; font-weight: 500 !important; line-height: 1.03 !important; letter-spacing: -.05em !important; }
 .games-intro h2 em { color: var(--studio-hot); font-family: var(--studio-serif); font-weight: 400; }
 .games-intro > span { color: rgba(240, 237, 232, .7) !important; font: 500 15px/1.75 var(--studio-body) !important; letter-spacing: 0 !important; }
 .games-intro { padding-bottom: 44px; border-bottom: 1px solid rgba(240, 237, 232, .16); }
@@ -139,7 +139,7 @@ section { max-width: 1360px; padding-inline: clamp(20px, 5vw, 76px); }
 .steam-game-bar { background: var(--studio-hot) !important; }
 
 .contact-section { max-width: none; min-height: 100vh; padding: clamp(100px, 13vw, 188px) clamp(20px, 7vw, 104px) 34px; overflow: hidden; }
-.contact-copy h2 { font-size: clamp(156px, 24vw, 390px) !important; line-height: .7 !important; letter-spacing: -.035em !important; }
+.contact-copy h2 { font-size: clamp(48px, 6vw, 96px) !important; line-height: .9 !important; letter-spacing: -.035em !important; }
 .contact-copy p { border-left: 1px solid var(--studio-hot); padding-left: 18px; }
 .contact-action { position: relative; z-index: 2; }
 .contact-action a { border-radius: 0 !important; background: rgba(255, 90, 54, .08) !important; border-color: rgba(255, 90, 54, .6) !important; }
@@ -172,9 +172,9 @@ section { max-width: 1360px; padding-inline: clamp(20px, 5vw, 76px); }
   .hero-eyebrow, .hero-name .solid, .hero-name .outline, .hero-tagline, .hero-pills, .discord-hero, .scroll-hint { animation: none !important; opacity: 1 !important; transform: none !important; }
   #discordLoader { display: none !important; }
   #asciiIntro, .intro-wipe { display: none !important; }
-  .about-manifesto { display: block; }.about-manifesto h2 { margin: 18px 0 20px; font-size: clamp(46px, 12vw, 68px); }.about-manifesto p { font-size: 15px; }
+  .about-manifesto { display: block; }.about-manifesto h2 { margin: 18px 0 20px; font-size: clamp(23px, 6vw, 34px); }.about-manifesto p { font-size: 15px; }
   .about-grid { display: block; }.about-right { position: relative; top: auto; margin-top: 44px; }
-  .skills-heading { display: block; }.skills-heading h2 { margin-top: 18px; text-align: left; font-size: clamp(48px, 13vw, 72px); }
+  .skills-heading { display: block; }.skills-heading h2 { margin-top: 18px; text-align: left; font-size: clamp(24px, 6.5vw, 36px); }
   .skill-card { display: grid; grid-template-columns: 42px 1fr 22px; gap: 12px; min-height: auto; padding: 24px 0; }
   .skill-count { grid-column: 1; }.skill-icon { display: none; }.skill-title { grid-column: 2; }.skill-arrow { grid-column: 3; grid-row: 1; }
   .skill-desc, .skill-tags { grid-column: 2 / -1; }.skill-desc { margin-top: 4px; }
@@ -183,7 +183,7 @@ section { max-width: 1360px; padding-inline: clamp(20px, 5vw, 76px); }
   .platform-intro, .steam-intro { display: block; }.platform-intro p, .steam-intro p { margin-top: 24px; }.platform-frame, .steam-shell { padding: 10px; }
   .game-stage { min-height: 330px !important; margin-bottom: 24px; }.game-row { min-height: auto; }
   .steam-intro { margin-bottom: 34px; }.steam-stat-num { font-size: 62px !important; }
-  .contact-section { min-height: 82vh; }.contact-grid { display: block !important; }.contact-copy h2 { font-size: clamp(146px, 45vw, 238px) !important; margin-top: 38px; }
+  .contact-section { min-height: 82vh; }.contact-grid { display: block !important; }.contact-copy h2 { font-size: clamp(40px, 10vw, 72px) !important; margin-top: 38px; }
   .contact-action { margin-top: 58px; }.contact-orbit { width: 82vw; right: -36vw; top: 26%; opacity: .58; }
   #cur, #cur2, .scroll-atmosphere, .studio-frame { display: none !important; }
   body::after { display: none !important; }
