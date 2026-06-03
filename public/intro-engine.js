@@ -1,3 +1,35 @@
+// 3D ASCII mask render
+(function(){
+  var el = document.getElementById('introAscii');
+  if(!el) return;
+  var img = new Image();
+  img.crossOrigin = 'anonymous';
+  img.onload = function(){
+    var cols = 72, rows = 40;
+    var cv = document.createElement('canvas');
+    cv.width = cols; cv.height = rows;
+    var cx = cv.getContext('2d');
+    cx.drawImage(img, 0, 0, cols, rows);
+    var px = cx.getImageData(0, 0, cols, rows).data;
+    // chars ordered light→dense, matching brightness 0(black)→255(white)
+    var ch = ' .·:;=+-*o0#@';
+    var s = '';
+    for(var y = 0; y < rows; y++){
+      for(var x = 0; x < cols; x++){
+        var i = (y * cols + x) * 4;
+        var b = px[i]*0.299 + px[i+1]*0.587 + px[i+2]*0.114;
+        s += ch[Math.round(b / 255 * (ch.length - 1))];
+      }
+      if(y < rows - 1) s += '\n';
+    }
+    el.textContent = s;
+  };
+  img.onerror = function(){ el.style.display = 'none'; };
+  var base = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+    ? '/' : '/ankuzo/';
+  img.src = base + 'assets/mask-intro.png';
+})();
+
 (() => {
   const intro = document.getElementById('asciiIntro');
   const progress = document.getElementById('introProgress');

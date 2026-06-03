@@ -1,5 +1,5 @@
 :root {
-  --studio-hot: #b2b8cc;
+  --studio-hot: #8890a0;
   --studio-paper: #f0ede8;
   --studio-ink: #050507;
   --studio-display: 'Bebas Neue', Impact, sans-serif;
@@ -126,7 +126,7 @@ section { max-width: 1360px; padding-inline: clamp(20px, 5vw, 76px); }
 .game-row-active::after { width: 3px; background: var(--studio-hot); }
 .game-row-active .game-title-text { color: var(--studio-hot); }
 .game-badge { border-radius: 0; }
-.marquee-wrap { border-block: 1px solid rgba(240, 237, 232, .1); background: var(--studio-hot) !important; }
+.marquee-wrap { border-block: 1px solid rgba(240, 237, 232, .1); background: linear-gradient(90deg, #252c3a 0%, #6878a0 18%, #b0bac8 34%, #d8dce8 50%, #b0bac8 66%, #6878a0 82%, #252c3a 100%) !important; }
 .marquee-inner { color: var(--studio-ink) !important; }
 
 .steam-intro { display: grid; grid-template-columns: 150px minmax(400px, 1fr) minmax(220px, 340px); gap: 28px; align-items: end; margin-bottom: 50px; }

@@ -834,6 +834,22 @@ if('IntersectionObserver' in window){
 } // end _initAll
 _initAll();
 
+// ── CHROME SCROLL SHIFT ──
+(function(){
+  var raf = null;
+  var root = document.documentElement;
+  function update(){
+    raf = null;
+    var maxScroll = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
+    var progress = window.scrollY / maxScroll;
+    root.style.setProperty('--chrome-angle', (progress * 42).toFixed(1) + 'deg');
+    root.style.setProperty('--chrome-pos', (10 + progress * 70).toFixed(1) + '%');
+  }
+  window.addEventListener('scroll', function(){
+    if(!raf) raf = requestAnimationFrame(update);
+  }, { passive: true });
+})();
+
 
 
 

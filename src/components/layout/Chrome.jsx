@@ -5,11 +5,11 @@ export function Chrome() {
       <div id="asciiIntro" aria-label="Загрузка ANKUZO">
         <div className="intro-grid" />
         <div className="intro-meta intro-meta-top"><span>ANKUZO® DIGITAL SYSTEM</span><span>MOSCOW / UTC+03</span></div>
+        <pre id="introAscii" aria-hidden="true" />
         <div className="intro-stage">
-          <p>SECURITY · MACHINE LEARNING · DATA</p>
-          <div className="intro-word"><span>AN</span><span>KU</span><span>ZO</span></div>
-          <div className="intro-progress"><i id="introProgress" /></div>
           <div className="intro-status"><span id="introStatus">INITIALIZING EXPERIENCE</span><b id="introPercent">000%</b></div>
+          <div className="intro-progress"><i id="introProgress" /></div>
+          <div className="intro-word"><span>AN</span><span>KU</span><span>ZO</span></div>
         </div>
         <div className="intro-meta intro-meta-bottom"><span>CLICK ANYWHERE TO ENTER</span><span>PERSONAL SYSTEM / 2026</span></div>
       </div>
