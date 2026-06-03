@@ -5,14 +5,14 @@
   var img = new Image();
   img.crossOrigin = 'anonymous';
   img.onload = function(){
-    var cols = 72, rows = 40;
+    var cols = 54, rows = 32;
     var cv = document.createElement('canvas');
     cv.width = cols; cv.height = rows;
     var cx = cv.getContext('2d');
     cx.drawImage(img, 0, 0, cols, rows);
     var px = cx.getImageData(0, 0, cols, rows).data;
-    // chars ordered light→dense, matching brightness 0(black)→255(white)
-    var ch = ' .·:;=+-*o0#@';
+    // dark(black)→bright(white): space for bg, dense chars for highlights
+    var ch = '  ..::;;==++--**oo##@@';
     var s = '';
     for(var y = 0; y < rows; y++){
       for(var x = 0; x < cols; x++){
