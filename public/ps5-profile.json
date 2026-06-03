@@ -36,7 +36,7 @@
     {
       "name": "EA SPORTS FC 26",
       "platform": "PS5",
-      "icon": "https://image.api.playstation.com/sgst/prod/00/PPSA27360_00/app/info/48/fi_7f5335bcf95ac62506ce2fb2496f0472380846833da98eecd8a3ad7d440710fa/icon0.png",
+      "icon": "https://image.api.playstation.com/sgst/prod/00/PPSA27360_00/app/info/50/fi_60e4c3082397d7f7a74cb3047c7d2adcf19bd10c9a4e03c525f40e29745c1b73/icon0.png",
       "last_played": "2026-05-22T19:46:22.680000Z"
     },
     {
@@ -134,7 +134,7 @@
     {
       "name": "EA SPORTS FC 26",
       "platform": "PS5",
-      "icon": "https://image.api.playstation.com/sgst/prod/00/PPSA27360_00/app/info/48/fi_7f5335bcf95ac62506ce2fb2496f0472380846833da98eecd8a3ad7d440710fa/icon0.png",
+      "icon": "https://image.api.playstation.com/sgst/prod/00/PPSA27360_00/app/info/50/fi_60e4c3082397d7f7a74cb3047c7d2adcf19bd10c9a4e03c525f40e29745c1b73/icon0.png",
       "entitlement_id": "UP0006-PPSA27360_00-EASPORTSFC2026BG",
       "title_id": "PPSA27360_00"
     },
@@ -1366,7 +1366,7 @@
     {
       "name": "skate.",
       "platform": "PS5",
-      "icon": "https://image.api.playstation.com/sgst/prod/00/PPSA10793_00/app/info/26/fi_f711b436ce88d158a3c92891c350984c0315e8ce83b5447e156528f70b7c32f7/icon0.png",
+      "icon": "https://image.api.playstation.com/sgst/prod/00/PPSA10793_00/app/info/29/fi_eed0f1e80166834350a1a00656a5cfe358bff3501f6acc324e695a3edf7c090a/icon0.png",
       "entitlement_id": "UP0006-PPSA10793_00-SKATEPS5GAME0000",
       "title_id": "PPSA10793_00"
     },
@@ -1387,7 +1387,7 @@
     {
       "name": "FragPunk",
       "platform": "PS5",
-      "icon": "https://image.api.playstation.com/sgst/prod/00/PPSA26492_00/app/info/65/fi_3ef5f41c735d08f63eb22d686d82768b60f6766b17a85635f009ab14e7b820ae/icon0.png",
+      "icon": "https://image.api.playstation.com/sgst/prod/00/PPSA26492_00/app/info/66/fi_113b348500afca5532cf76387bb8751eab489c3cbbdc9e1af814d392f4093690/icon0.png",
       "entitlement_id": "HP7588-PPSA26492_00-FRAGPUNKBGNE0000",
       "title_id": "PPSA26492_00"
     },
@@ -1518,5 +1518,5 @@
       "title_id": "PPSA04874_00"
     }
   ],
-  "updated": "2026-06-02T16:58:34.776Z"
+  "updated": "2026-06-03T17:23:32.265Z"
 }
