@@ -596,7 +596,7 @@
     {
       "name": "ARK Survival Ascended",
       "platform": "PS5",
-      "icon": "https://image.api.playstation.com/sgst/prod/00/PPSA17101_00/app/info/762/fi_4a581a2c1daefb38701c1a2b8e2a1ee28503913ae37c3ad5e3cf381183aadc7c/icon0.png",
+      "icon": "https://image.api.playstation.com/sgst/prod/00/PPSA17101_00/app/info/774/fi_8392e78447fb6f002a3b1a6c7e5219705497beafd51f81758c99eca9e1ff9105/icon0.png",
       "entitlement_id": "EP0688-PPSA17101_00-SURVIVALASCENDED",
       "title_id": "PPSA17101_00"
     },
@@ -1518,5 +1518,5 @@
       "title_id": "PPSA04874_00"
     }
   ],
-  "updated": "2026-06-03T17:23:32.265Z"
+  "updated": "2026-06-03T21:32:37.948Z"
 }
