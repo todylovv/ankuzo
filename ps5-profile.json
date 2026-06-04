@@ -1436,7 +1436,7 @@
     {
       "name": "Call of Duty®",
       "platform": "PS5",
-      "icon": "https://image.api.playstation.com/sgst/prod/00/PPSA07950_00/app/info/351/fi_6b530d3adce54f25ffac4cfc0a86981d1574bef892cc61dc9e8963331ef5091c/icon0.png",
+      "icon": "https://image.api.playstation.com/sgst/prod/00/PPSA07950_00/app/info/357/fi_47a725a374a520b3e0882a0e282d503d5b23b0ec018847a4030c4148280e0e15/icon0.png",
       "entitlement_id": "EP0002-PPSA07950_00-COREGAME00000001",
       "title_id": "PPSA07950_00"
     },
@@ -1518,5 +1518,5 @@
       "title_id": "PPSA04874_00"
     }
   ],
-  "updated": "2026-06-04T15:50:36.090Z"
+  "updated": "2026-06-04T20:28:03.969Z"
 }
