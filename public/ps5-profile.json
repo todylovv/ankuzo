@@ -139,41 +139,6 @@
       "title_id": "PPSA27360_00"
     },
     {
-      "name": "Assassin's Creed® IV Black Flag",
-      "platform": "PS4",
-      "icon": "https://image.api.playstation.com/gs2-sec/appkgo/prod/CUSA00009_00/2/i_bb56e3087ed420e514ddd26c731396aac8cd65aaa26a4d6247d013f417bfae55/i/icon0.png",
-      "entitlement_id": "EP0001-CUSA00009_00-AC4GAMEPS4000001",
-      "title_id": "CUSA00009_00"
-    },
-    {
-      "name": "WATCH_DOGS™",
-      "platform": "PS4",
-      "icon": "https://image.api.playstation.com/gs2-sec/appkgo/prod/CUSA00016_00/3/i_36e2b7c37c766c3c8028a3740918af1bec0cd873f2583ffc0264aeae38683cca/i/icon0.png",
-      "entitlement_id": "EP0001-CUSA00016_00-WATCHDOGS0000000",
-      "title_id": "CUSA00016_00"
-    },
-    {
-      "name": "Rayman Legends",
-      "platform": "PS4",
-      "icon": "https://image.api.playstation.com/gs2-sec/appkgo/prod/CUSA00031_00/1/i_de7f2d4471d56be1911987fdae0711e95cd6f21b0ae43c57c70d0bf785ae4acb/i/icon0.png",
-      "entitlement_id": "EP0001-CUSA00031_00-RAYMANLEGENDS001",
-      "title_id": "CUSA00031_00"
-    },
-    {
-      "name": "Assassin's Creed® Freedom Cry",
-      "platform": "PS4",
-      "icon": "https://image.api.playstation.com/gs2-sec/appkgo/prod/CUSA00435_00/1/i_22fd08ba55dffe7d490ddeb52ee140dbcad92b61bf44369e45700236533c53e4/i/icon0.png",
-      "entitlement_id": "EP0001-CUSA00435_00-ACBFDLCSPSA00001",
-      "title_id": "CUSA00435_00"
-    },
-    {
-      "name": "Far Cry® 4",
-      "platform": "PS4",
-      "icon": "https://image.api.playstation.com/gs2-sec/appkgo/prod/CUSA00462_00/3/i_f949708af1851db4e2c353b5ae0f577e3fad30658f8381b0485267663aac769a/i/icon0.png",
-      "entitlement_id": "EP0001-CUSA00462_00-FC4GAMEPS4000001",
-      "title_id": "CUSA00462_00"
-    },
-    {
       "name": "Stalker: Shadow of Chornobyl",
       "platform": "PS4",
       "icon": "https://image.api.playstation.com/gs2-sec/appkgo/prod/CUSA43932_00/3/i_9d7c040c8b65cab04615ce8a23b6789d842d2461d687200c13ed1e86e4aa6352/i/icon0.png",
@@ -214,6 +179,41 @@
       "icon": "https://image.api.playstation.com/sgst/prod/00/PPSA21734_00/app/info/13/fi_210eda8a4d066d2f109c59926405b33faff926b21981c2f32f91a5044e9f3168/icon0.png",
       "entitlement_id": "EB0236-PPSA21734_00-0778461500088717",
       "title_id": "PPSA21734_00"
+    },
+    {
+      "name": "Assassin's Creed® IV Black Flag",
+      "platform": "PS4",
+      "icon": "https://image.api.playstation.com/gs2-sec/appkgo/prod/CUSA00009_00/2/i_bb56e3087ed420e514ddd26c731396aac8cd65aaa26a4d6247d013f417bfae55/i/icon0.png",
+      "entitlement_id": "EP0001-CUSA00009_00-AC4GAMEPS4000001",
+      "title_id": "CUSA00009_00"
+    },
+    {
+      "name": "WATCH_DOGS™",
+      "platform": "PS4",
+      "icon": "https://image.api.playstation.com/gs2-sec/appkgo/prod/CUSA00016_00/3/i_36e2b7c37c766c3c8028a3740918af1bec0cd873f2583ffc0264aeae38683cca/i/icon0.png",
+      "entitlement_id": "EP0001-CUSA00016_00-WATCHDOGS0000000",
+      "title_id": "CUSA00016_00"
+    },
+    {
+      "name": "Rayman Legends",
+      "platform": "PS4",
+      "icon": "https://image.api.playstation.com/gs2-sec/appkgo/prod/CUSA00031_00/1/i_de7f2d4471d56be1911987fdae0711e95cd6f21b0ae43c57c70d0bf785ae4acb/i/icon0.png",
+      "entitlement_id": "EP0001-CUSA00031_00-RAYMANLEGENDS001",
+      "title_id": "CUSA00031_00"
+    },
+    {
+      "name": "Assassin's Creed® Freedom Cry",
+      "platform": "PS4",
+      "icon": "https://image.api.playstation.com/gs2-sec/appkgo/prod/CUSA00435_00/1/i_22fd08ba55dffe7d490ddeb52ee140dbcad92b61bf44369e45700236533c53e4/i/icon0.png",
+      "entitlement_id": "EP0001-CUSA00435_00-ACBFDLCSPSA00001",
+      "title_id": "CUSA00435_00"
+    },
+    {
+      "name": "Far Cry® 4",
+      "platform": "PS4",
+      "icon": "https://image.api.playstation.com/gs2-sec/appkgo/prod/CUSA00462_00/3/i_f949708af1851db4e2c353b5ae0f577e3fad30658f8381b0485267663aac769a/i/icon0.png",
+      "entitlement_id": "EP0001-CUSA00462_00-FC4GAMEPS4000001",
+      "title_id": "CUSA00462_00"
     },
     {
       "name": "Valiant Hearts: The Great War",
@@ -263,6 +263,13 @@
       "icon": "https://image.api.playstation.com/gs2-sec/appkgo/prod/CUSA03309_00/4/i_d86f4491b78f62dd5a94ad4d2e329d3df268296da678ec8440c3ad5865c66614/i/icon0.png",
       "entitlement_id": "EP0001-CUSA03309_00-PRIMALGAME000001",
       "title_id": "CUSA03309_00"
+    },
+    {
+      "name": "UNO®",
+      "platform": "PS4",
+      "icon": "https://image.api.playstation.com/gs2-sec/appkgo/prod/CUSA04040_00/4/i_789ad0144152e7e36ed265830b2591c54c3842cbd4dbedc733cd2faa02caf458/i/icon0.png",
+      "entitlement_id": "EP0001-CUSA04040_00-UBISOFTUNOFULL00",
+      "title_id": "CUSA04040_00"
     },
     {
       "name": "WATCH_DOGS® 2",
@@ -356,46 +363,18 @@
       "title_id": "CUSA13886_00"
     },
     {
-      "name": "Tom Clancy’s Ghost Recon® Breakpoint",
-      "platform": "PS4",
-      "icon": "https://image.api.playstation.com/gs2-sec/appkgo/prod/CUSA16001_00/1/i_0785ec3816c6e336523cbac1a05ea30377164292d120edd9f894734840a1e5ce/i/icon0.png",
-      "entitlement_id": "EP0001-CUSA16001_00-GRW2SCEEUKRUS000",
-      "title_id": "CUSA16001_00"
-    },
-    {
-      "name": "RIDERS REPUBLIC™",
-      "platform": "PS4",
-      "icon": "https://image.api.playstation.com/gs2-sec/appkgo/prod/CUSA19394_00/2/i_523767e01813d99294f6e4b3be7e630deddcf332004f40756dc69ff2ad4a8239/i/icon0.png",
-      "entitlement_id": "EP0001-CUSA19394_00-MADGAMESCEEEUR00",
-      "title_id": "CUSA19394_00"
-    },
-    {
-      "name": "RIDERS REPUBLIC™",
-      "platform": "PS5",
-      "icon": "https://image.api.playstation.com/sgst/prod/00/PPSA01372_00/app/info/78/fi_f30d00bc4c57147ccad4becccb2997ef8921896256dcb71876ed04006171270d/icon0.png",
-      "entitlement_id": "EP0001-PPSA01372_00-MADGAMESCEEEUR00",
-      "title_id": "PPSA01372_00"
-    },
-    {
-      "name": "Watch Dogs®: Legion",
-      "platform": "PS5",
-      "icon": "https://image.api.playstation.com/sgst/prod/00/PPSA01500_00/app/info/35/fi_6e5af594e56beb1368be79fe17ce365a6cdafa70eced318e64b76d3436b18e21/icon0.png",
-      "entitlement_id": "EP0001-PPSA01500_00-ORWFULLGAME00000",
-      "title_id": "PPSA01500_00"
-    },
-    {
-      "name": "UNO®",
-      "platform": "PS4",
-      "icon": "https://image.api.playstation.com/gs2-sec/appkgo/prod/CUSA04040_00/4/i_789ad0144152e7e36ed265830b2591c54c3842cbd4dbedc733cd2faa02caf458/i/icon0.png",
-      "entitlement_id": "EP0001-CUSA04040_00-UBISOFTUNOFULL00",
-      "title_id": "CUSA04040_00"
-    },
-    {
       "name": "Far Cry® 6",
       "platform": "PS4",
       "icon": "https://image.api.playstation.com/gs2-sec/appkgo/prod/CUSA15779_00/3/i_ddd8a007ac2be9dc47dd765d64398aefb92a66048f62374a2189b87f6c5d6c6b/i/icon0.png",
       "entitlement_id": "EP0001-CUSA15779_00-FARCRY6GAME00000",
       "title_id": "CUSA15779_00"
+    },
+    {
+      "name": "Tom Clancy’s Ghost Recon® Breakpoint",
+      "platform": "PS4",
+      "icon": "https://image.api.playstation.com/gs2-sec/appkgo/prod/CUSA16001_00/1/i_0785ec3816c6e336523cbac1a05ea30377164292d120edd9f894734840a1e5ce/i/icon0.png",
+      "entitlement_id": "EP0001-CUSA16001_00-GRW2SCEEUKRUS000",
+      "title_id": "CUSA16001_00"
     },
     {
       "name": "Tom Clancy’s Rainbow Six® Extraction",
@@ -412,6 +391,13 @@
       "title_id": "CUSA18535_00"
     },
     {
+      "name": "RIDERS REPUBLIC™",
+      "platform": "PS4",
+      "icon": "https://image.api.playstation.com/gs2-sec/appkgo/prod/CUSA19394_00/2/i_523767e01813d99294f6e4b3be7e630deddcf332004f40756dc69ff2ad4a8239/i/icon0.png",
+      "entitlement_id": "EP0001-CUSA19394_00-MADGAMESCEEEUR00",
+      "title_id": "CUSA19394_00"
+    },
+    {
       "name": "Assassin's Creed® Mirage",
       "platform": "PS4",
       "icon": "https://image.api.playstation.com/gs2-sec/appkgo/prod/CUSA40975_00/3/i_8b83eb8f9352b4b0a70b508abed5d2f80a06a3d2a33e7e36448a60725f9c2e31/i/icon0.png",
@@ -424,6 +410,20 @@
       "icon": "https://image.api.playstation.com/gs2-sec/appkgo/prod/CUSA44227_00/2/i_f7d4e3ba8086c150aa02bff7c50e4779eab69375d1db1bbd50164068bad80523/i/icon0.png",
       "entitlement_id": "EP0001-CUSA44227_00-GAME000000000000",
       "title_id": "CUSA44227_00"
+    },
+    {
+      "name": "RIDERS REPUBLIC™",
+      "platform": "PS5",
+      "icon": "https://image.api.playstation.com/sgst/prod/00/PPSA01372_00/app/info/78/fi_f30d00bc4c57147ccad4becccb2997ef8921896256dcb71876ed04006171270d/icon0.png",
+      "entitlement_id": "EP0001-PPSA01372_00-MADGAMESCEEEUR00",
+      "title_id": "PPSA01372_00"
+    },
+    {
+      "name": "Watch Dogs®: Legion",
+      "platform": "PS5",
+      "icon": "https://image.api.playstation.com/sgst/prod/00/PPSA01500_00/app/info/35/fi_6e5af594e56beb1368be79fe17ce365a6cdafa70eced318e64b76d3436b18e21/icon0.png",
+      "entitlement_id": "EP0001-PPSA01500_00-ORWFULLGAME00000",
+      "title_id": "PPSA01500_00"
     },
     {
       "name": "Tom Clancy's Rainbow Six® Extraction",
@@ -1196,11 +1196,32 @@
       "title_id": "CUSA17018_00"
     },
     {
+      "name": "Marvel's Spider-Man: Miles Morales",
+      "platform": "PS4",
+      "icon": "https://image.api.playstation.com/gs2-sec/appkgo/prod/CUSA17776_00/4/i_ba15677095f9b15e953e3c0c43363988a87664f507df34c307f3b80e2bf1c56c/i/icon0.png",
+      "entitlement_id": "EP9000-CUSA17776_00-MARVELSSMMORALES",
+      "title_id": "CUSA17776_00"
+    },
+    {
       "name": "Sackboy: A Big Adventure",
       "platform": "PS4",
       "icon": "https://image.api.playstation.com/gs2-sec/appkgo/prod/CUSA18867_00/1/i_c2392391f371d566a4a47161ea0c81eea29059855a9f7587fe27475d0b1c421e/i/icon0.png",
       "entitlement_id": "EP9000-CUSA18867_00-SACKBOYADVENTURE",
       "title_id": "CUSA18867_00"
+    },
+    {
+      "name": "Ghost of Tsushima",
+      "platform": "PS4",
+      "icon": "https://image.api.playstation.com/gs2-sec/appkgo/prod/CUSA32709_00/1/i_54ed1f8e1ba92d5c1573d6f9e9897ef6c75a71a27b3d62bba9722d4c1c095f63/i/icon0.png",
+      "entitlement_id": "EP9000-CUSA32709_00-GHOSTSHIP0000000",
+      "title_id": "CUSA32709_00"
+    },
+    {
+      "name": "God of War Ragnarök",
+      "platform": "PS4",
+      "icon": "https://image.api.playstation.com/gs2-sec/appkgo/prod/CUSA34386_00/53/i_c6dd6261fc00449267971847466f8e89ff9e740a2f0ad66e59ed372535b2aa95/i/icon0.png",
+      "entitlement_id": "EP9000-CUSA34386_00-GOWRAGNAROK00000",
+      "title_id": "CUSA34386_00"
     },
     {
       "name": "Returnal",
@@ -1222,27 +1243,6 @@
       "icon": "https://image.api.playstation.com/sgst/prod/00/PPSA01341_00/app/info/33/fi_0896b7780f49dbd3ced0234f0fe611c967e09a88a9cce662a2f681d7af06afda/icon0.png",
       "entitlement_id": "EP9000-PPSA01341_00-DEMONSSOULS00000",
       "title_id": "PPSA01341_00"
-    },
-    {
-      "name": "Marvel's Spider-Man: Miles Morales",
-      "platform": "PS4",
-      "icon": "https://image.api.playstation.com/gs2-sec/appkgo/prod/CUSA17776_00/4/i_ba15677095f9b15e953e3c0c43363988a87664f507df34c307f3b80e2bf1c56c/i/icon0.png",
-      "entitlement_id": "EP9000-CUSA17776_00-MARVELSSMMORALES",
-      "title_id": "CUSA17776_00"
-    },
-    {
-      "name": "Ghost of Tsushima",
-      "platform": "PS4",
-      "icon": "https://image.api.playstation.com/gs2-sec/appkgo/prod/CUSA32709_00/1/i_54ed1f8e1ba92d5c1573d6f9e9897ef6c75a71a27b3d62bba9722d4c1c095f63/i/icon0.png",
-      "entitlement_id": "EP9000-CUSA32709_00-GHOSTSHIP0000000",
-      "title_id": "CUSA32709_00"
-    },
-    {
-      "name": "God of War Ragnarök",
-      "platform": "PS4",
-      "icon": "https://image.api.playstation.com/gs2-sec/appkgo/prod/CUSA34386_00/53/i_c6dd6261fc00449267971847466f8e89ff9e740a2f0ad66e59ed372535b2aa95/i/icon0.png",
-      "entitlement_id": "EP9000-CUSA34386_00-GOWRAGNAROK00000",
-      "title_id": "CUSA34386_00"
     },
     {
       "name": "Marvel's Spider-Man: Miles Morales",
@@ -1518,5 +1518,5 @@
       "title_id": "PPSA04874_00"
     }
   ],
-  "updated": "2026-06-03T21:32:37.948Z"
+  "updated": "2026-06-04T05:14:27.517Z"
 }
