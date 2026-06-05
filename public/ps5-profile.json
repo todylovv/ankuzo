@@ -1345,7 +1345,7 @@
     {
       "name": "NARAKA: BLADEPOINT",
       "platform": "PS5",
-      "icon": "https://image.api.playstation.com/sgst/prod/00/PPSA15239_00/app/info/151/fi_a39fdf8edc538b85e5563e63b18e6166349445a4cca1a327b0936366c525f32a/icon0.png",
+      "icon": "https://image.api.playstation.com/sgst/prod/00/PPSA15239_00/app/info/153/fi_829d3c904ad99b9bf453a74a0475e59d431ef9717855bbb17eccfd51f9a5315f/icon0.png",
       "entitlement_id": "EP7562-PPSA15239_00-0396466883843847",
       "title_id": "PPSA15239_00"
     },
@@ -1518,5 +1518,5 @@
       "title_id": "PPSA04874_00"
     }
   ],
-  "updated": "2026-06-04T20:28:03.969Z"
+  "updated": "2026-06-05T04:52:09.475Z"
 }
