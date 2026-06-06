@@ -967,7 +967,7 @@
     {
       "name": "Lords of the Fallen",
       "platform": "PS5",
-      "icon": "https://image.api.playstation.com/sgst/prod/00/PPSA03641_00/app/info/130/fi_f37c0a7f19a32d89355fd8cadbe54dac23336112002860ac41d9eecdb88f146e/icon0.png",
+      "icon": "https://image.api.playstation.com/sgst/prod/00/PPSA03641_00/app/info/131/fi_99f07799929d77af48dfe1c13586200de2bd723643fa1374849c724fb21d6c93/icon0.png",
       "entitlement_id": "EP4321-PPSA03641_00-0026114790873430",
       "title_id": "PPSA03641_00"
     },
@@ -1394,7 +1394,7 @@
     {
       "name": "Fortnite",
       "platform": "PS5",
-      "icon": "https://image.api.playstation.com/sgst/prod/00/PPSA01923_00/app/info/261/fi_c19638d0a3fb9e967c7a317830e78826f6c6dd109453afe6383c075ae4005b60/icon0.png",
+      "icon": "https://image.api.playstation.com/sgst/prod/00/PPSA01923_00/app/info/262/fi_8047452becb05c06dfd03f41ea8a06fd22a732d8e984896c1446224596d76ac2/icon0.png",
       "entitlement_id": "EP1464-PPSA01923_00-FORTNITETESTING2",
       "title_id": "PPSA01923_00"
     },
@@ -1518,5 +1518,5 @@
       "title_id": "PPSA04874_00"
     }
   ],
-  "updated": "2026-06-05T20:18:29.972Z"
+  "updated": "2026-06-06T04:32:01.165Z"
 }
