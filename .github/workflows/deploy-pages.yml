@@ -26,16 +26,12 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: '24'
-          cache: npm
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Build Vite site
-        run: npm run build
+          node-version: "22"
 
       - uses: actions/configure-pages@v5
+
+      - name: Build static site
+        run: npm run build
 
       - uses: actions/upload-pages-artifact@v3
         with:

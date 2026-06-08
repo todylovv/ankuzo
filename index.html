@@ -1,23 +1,259 @@
 <!doctype html>
 <html lang="ru">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>ANKUZO — Personal Digital System</title>
-    <meta name="description" content="ANKUZO — персональная digital-система о cybersecurity, machine learning, big data и игровых профилях." />
-    <meta name="theme-color" content="#050507" />
-    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%23050507'/%3E%3Cpath d='M12 50 27 14h10l15 36H41l-3-8H25l-3 8Zm16-17h7l-3-9Z' fill='%23ff5a36'/%3E%3C/svg%3E" />
-    <link rel="preload" href="%BASE_URL%fonts/bebas-neue-latin.woff2" as="font" type="font/woff2" crossorigin />
-    <link rel="preload" href="%BASE_URL%fonts/manrope-latin.woff2" as="font" type="font/woff2" crossorigin />
-    <link rel="preload" href="%BASE_URL%fonts/manrope-cyrillic.woff2" as="font" type="font/woff2" crossorigin />
-    <meta property="og:title" content="ANKUZO — Personal Digital System" />
-    <meta property="og:description" content="Cybersecurity, machine learning, big data and gaming profiles in one personal digital system." />
-    <meta property="og:type" content="website" />
-    <meta property="og:locale" content="ru_RU" />
-    <link rel="canonical" href="https://todylovv.github.io/ankuzo/" />
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
-  </body>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="ANKUZO — приватная персональная цифровая система: Steam, PS5 и Discord.">
+  <meta name="theme-color" content="#050605">
+  <meta property="og:title" content="ANKUZO — Персональная система">
+  <meta property="og:description" content="Приватный цифровой интерфейс ANKUZO.">
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="ru_RU">
+  <title>ANKUZO — Персональная система</title>
+  <link rel="canonical" href="https://todylovv.github.io/ankuzo/">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%23050605'/%3E%3Cpath d='M12 50 27 14h10l15 36H41l-3-8H25l-3 8Zm16-17h7l-3-9Z' fill='%23c2ff1a'/%3E%3C/svg%3E">
+  <link rel="preload" href="fonts/manrope-cyrillic.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="fonts/jetbrains-mono-cyrillic.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="css/system.css">
+</head>
+<body>
+  <div class="fx fx-grid"></div>
+  <div class="fx fx-vignette"></div>
+  <div class="fx fx-scan"></div>
+  <div class="fx fx-noise"></div>
+
+  <div id="cursor"></div>
+  <div id="cursor-tag">0000 . 0000</div>
+
+  <div id="boot" aria-live="polite">
+    <div class="boot-wrap">
+      <div class="boot-head"><span>СИСТЕМА ANKUZO</span><span>ядро / 2.6.0</span></div>
+      <div id="boot-log"></div>
+      <div class="boot-bar"><i id="boot-bar-fill"></i></div>
+      <div class="boot-foot">
+        <span id="boot-pct">0%</span>
+        <span class="boot-skip">нажмите <span>[любую клавишу]</span>, чтобы пропустить</span>
+      </div>
+    </div>
+  </div>
+
+  <header class="chrome topbar">
+    <button class="cell brand" type="button" aria-label="Повторить загрузку"><span class="dot live"></span>ANKUZO</button>
+    <div class="cell hide-s">ПЕРСОНАЛЬНАЯ СИСТЕМА</div>
+    <div class="cell grow"><span id="clock">--:--:-- UTC</span></div>
+    <div class="cell right hide-s pill"><span class="dot live"></span><b>ЯДРО</b> стабильно</div>
+    <div class="cell hide-s pill"><span class="dot blue"></span><b>СИГНАЛ</b> Discord</div>
+    <div class="cell right-edge hide-xs">55.75°N / 37.62°E</div>
+  </header>
+
+  <nav class="rail" id="rail" aria-label="Модули системы">
+    <div class="rail-label">// модули системы</div>
+    <a href="#core" data-go="core"><span class="idx">00</span><span class="nm">/ЯДРО</span><span class="sdot"></span></a>
+    <a href="#identity" data-go="identity"><span class="idx">01</span><span class="nm">/ИДЕНТИЧНОСТЬ</span><span class="sdot"></span></a>
+    <a href="#steam" data-go="steam"><span class="idx">02</span><span class="nm">/Steam</span><span class="sdot"></span></a>
+    <a href="#ps5" data-go="ps5"><span class="idx">03</span><span class="nm">/PS5</span><span class="sdot"></span></a>
+    <a href="#signal" data-go="signal"><span class="idx">04</span><span class="nm">/Discord · СИГНАЛ</span><span class="sdot"></span></a>
+    <div class="rail-foot">
+      <div>узел <b>ANKUZO</b></div>
+      <div>аптайм <b id="uptime">00:00:00</b></div>
+      <div>связь <b>ТОЛЬКО Discord</b></div>
+    </div>
+  </nav>
+
+  <main class="stage">
+    <section id="hero" aria-labelledby="hero-title">
+      <div class="hero-left">
+        <div class="hero-kicker rv"><span class="dot live"></span> DISCIPLINE / 01</div>
+        <p class="hero-brand rv">ANKUZO <span>ПЕРСОНАЛЬНАЯ СИСТЕМА</span></p>
+        <h1 class="hero-title rv rv-d1" id="hero-title">Система.</h1>
+        <div class="hero-log">
+          <div class="l rv rv-d2"><span class="k">//</span><span>ядро системы <b>стабильно</b></span></div>
+          <div class="l rv rv-d3"><span class="k">//</span><span>слой идентичности <b>активен</b></span></div>
+          <div class="l rv rv-d4"><span class="k">//</span><span>основной сигнал <b>Discord</b></span></div>
+        </div>
+        <div class="hero-foot rv rv-d5">
+          <span class="scrollcue"><i></i> прокрутка для входа</span>
+          <span>глубина 000</span>
+        </div>
+      </div>
+
+      <div class="core-stage rv rv-d2">
+        <canvas id="heroShaderCanvas" aria-label="Интерактивное ядро системы"></canvas>
+        <div class="core-ring"></div>
+        <div class="core-ring r2"></div>
+        <div class="core-crosshair"></div>
+        <div class="core-label tl"><div class="hd"><span class="dot live"></span> ЯДРО СИСТЕМЫ</div><div class="v acid">ЯДРО СТАБИЛЬНО</div></div>
+        <div class="core-label tr"><div class="hd">УЗЕЛ</div><div class="v">ANKUZO</div><div class="v muted">ГЛУБИНА 000</div></div>
+        <div class="core-label bl"><div class="hd"><span class="dot live"></span> СЛОЙ ИДЕНТИЧНОСТИ</div><div class="v acid">АКТИВЕН</div></div>
+        <div class="core-label br"><div class="hd"><span class="dot blue"></span> ОСНОВНОЙ СИГНАЛ</div><div class="v discord-text">ТОЛЬКО Discord</div></div>
+        <div class="core-tick t1">ПРИВАТНЫЙ ДОСТУП</div>
+        <div class="core-tick t2">ЯДРО · СЛОЙ · СИГНАЛ</div>
+      </div>
+    </section>
+
+    <section id="core">
+      <div class="sec-head rv">
+        <span class="num">00</span><span class="tag">/ЯДРО</span>
+        <h2>Ядро системы</h2>
+        <span class="meta">статус ядра<br>стабильно · приватно</span>
+      </div>
+      <div class="core-grid">
+        <article class="panel bigstat rv">
+          <span class="corner tl"></span><span class="corner tr"></span><span class="corner bl"></span><span class="corner br"></span>
+          <p class="lead">Центральный визуальный объект персональной системы <em>ANKUZO</em>.</p>
+          <p class="sub">Приватный интерфейс объединяет игровой профиль, подключенные узлы и единственный активный маршрут связи.</p>
+          <div class="ind"><span class="dot live"></span> ЯДРО СТАБИЛЬНО</div>
+        </article>
+        <article class="panel monitor rv rv-d1">
+          <span class="corner tl"></span><span class="corner tr"></span><span class="corner bl"></span><span class="corner br"></span>
+          <div class="bar"><span>монитор ядра</span><span>только чтение</span></div>
+          <div class="kv"><span class="k">статус ядра</span><span class="v acid"><span class="dot live"></span>стабильно</span></div>
+          <div class="kv"><span class="k">уровень доступа</span><span class="v">приватный</span></div>
+          <div class="kv"><span class="k">слой идентичности</span><span class="v acid">активен</span></div>
+          <div class="kv"><span class="k">подключенные узлы</span><span class="v">Steam / PS5</span></div>
+          <div class="kv"><span class="k">маршрут связи</span><span class="v discord-text">только Discord</span></div>
+        </article>
+      </div>
+    </section>
+
+    <section id="identity">
+      <div class="sec-head rv">
+        <span class="num">01</span><span class="tag">/ИДЕНТИЧНОСТЬ</span>
+        <h2>Слой идентичности</h2>
+        <span class="meta">состояние слоя<br>онлайн · верифицирован</span>
+      </div>
+      <div class="id-grid">
+        <article class="panel id-scan rv">
+          <span class="corner tl"></span><span class="corner tr"></span><span class="corner bl"></span><span class="corner br"></span>
+          <div class="recdot"><span class="dot live"></span> сканирование</div>
+          <div class="scan"></div>
+          <div class="glyph">A0</div>
+          <div class="lbl">[ слой идентичности активен ]</div>
+        </article>
+        <div class="id-body">
+          <p class="id-statement rv rv-d1">ANKUZO — приватная цифровая система вокруг <em>игрового присутствия</em>, подключенных узлов и контролируемой связи.</p>
+          <div class="id-fields rv rv-d2">
+            <div class="f"><div class="k">оператор</div><div class="v">ANKUZO</div></div>
+            <div class="f"><div class="k">тип</div><div class="v">персональная система</div></div>
+            <div class="f"><div class="k">режим</div><div class="v">приватный</div></div>
+            <div class="f"><div class="k">статус</div><div class="v acid">онлайн</div></div>
+            <div class="f"><div class="k">PSN ID</div><div class="v">ankkui</div></div>
+            <div class="f"><div class="k">связь</div><div class="v discord-text">только Discord</div></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="steam" class="data-section">
+      <div class="sec-head rv">
+        <span class="num">02</span><span class="tag">/Steam</span>
+        <h2>Steam телеметрия</h2>
+        <span class="meta" id="steam-source">данные<br>загрузка</span>
+      </div>
+      <div class="metric-grid steam-metrics rv">
+        <article class="metric panel"><span>СУММА ДВУХ ПРОФИЛЕЙ</span><strong id="steam-hours">—</strong><small>часов</small></article>
+        <article class="metric panel"><span>ВСЕГО ИГР</span><strong id="steam-games">—</strong><small>обнаружено</small></article>
+        <article class="metric panel"><span>ПРОФИЛИ</span><strong id="steam-profiles">02</strong><small>объединены</small></article>
+      </div>
+      <div id="steam-account-cards" class="steam-account-cards rv" aria-label="Steam-профили"></div>
+      <div class="steam-layout">
+        <article class="panel data-panel rv">
+          <div class="bar"><span>ТОП-3 ЯДРА АКТИВНОСТИ</span><span>часов</span></div>
+          <div id="steam-top-three" class="top-three"></div>
+        </article>
+        <article class="panel data-panel rv rv-d1">
+          <div class="bar"><span>ТОП-10 ПО ЧАСАМ</span><span>суммарно</span></div>
+          <ol id="steam-top-ten" class="rank-list"></ol>
+        </article>
+      </div>
+    </section>
+
+    <section id="ps5" class="data-section">
+      <div class="sec-head rv">
+        <span class="num">03</span><span class="tag">/PS5</span>
+        <h2>PS5 профиль</h2>
+        <span class="meta" id="psn-source">PSN ID<br>ankkui</span>
+      </div>
+      <div class="psn-head rv">
+        <div><span>ПРОФИЛЬ ПРИВЯЗАН</span><strong id="psn-id">ankkui</strong></div>
+        <div><span>УРОВЕНЬ КУБКОВ</span><strong id="psn-level">—</strong></div>
+      </div>
+      <div class="trophy-grid rv">
+        <article class="trophy panel total"><span class="trophy-mark trophy-total-mark" aria-hidden="true">★</span><span>КУБКИ</span><strong id="trophy-total">—</strong></article>
+        <article class="trophy panel platinum"><span class="trophy-mark" aria-hidden="true">◇</span><span>ПЛАТИНА</span><strong id="trophy-platinum">—</strong></article>
+        <article class="trophy panel gold"><span class="trophy-mark" aria-hidden="true">●</span><span>ЗОЛОТО</span><strong id="trophy-gold">—</strong></article>
+        <article class="trophy panel silver"><span class="trophy-mark" aria-hidden="true">●</span><span>СЕРЕБРО</span><strong id="trophy-silver">—</strong></article>
+        <article class="trophy panel bronze"><span class="trophy-mark" aria-hidden="true">●</span><span>БРОНЗА</span><strong id="trophy-bronze">—</strong></article>
+      </div>
+      <article class="panel data-panel library-panel rv">
+        <div class="bar">
+          <span>ПРИОБРЕТЕННЫЕ ИГРЫ <b id="psn-library-count">—</b></span>
+          <button class="library-toggle" id="psn-library-toggle" type="button" aria-expanded="false" aria-controls="psn-library">ПОКАЗАТЬ БИБЛИОТЕКУ</button>
+        </div>
+        <div id="psn-library" class="game-library is-collapsed"></div>
+      </article>
+    </section>
+
+    <section id="signal">
+      <div class="sec-head rv">
+        <span class="num">04</span><span class="tag">/СИГНАЛ</span>
+        <h2>Основной сигнал</h2>
+        <span class="meta">маршрут<br>Discord · активен</span>
+      </div>
+      <div class="signal-grid">
+        <article class="discord-card rv" id="discord-profile-card">
+          <span class="corner tl"></span><span class="corner tr"></span><span class="corner bl"></span><span class="corner br"></span>
+          <div class="discord-banner" id="discord-banner"></div>
+          <div class="discord-profile-body">
+            <div class="discord-visual">
+              <div class="discord-avatar-shell">
+                <div class="discord-avatar" id="discord-avatar">A0</div>
+                <img class="discord-decoration" id="discord-decoration" alt="" aria-hidden="true">
+              </div>
+              <span class="discord-presence" id="discord-presence" aria-label="Статус Discord"></span>
+            </div>
+            <div class="discord-copy">
+              <span>ОСНОВНОЙ СИГНАЛ</span>
+              <h3 id="discord-name">anku</h3>
+              <div class="discord-username">@<span id="discord-username">ankuz0</span></div>
+              <p id="discord-bio">Discord — единственный активный канал связи.</p>
+              <div class="discord-badges" id="discord-badges"></div>
+            </div>
+            <button class="copybtn" type="button" data-copy="ankuz0"><span>СКОПИРОВАТЬ Discord</span><span class="arr">⧉</span></button>
+          </div>
+        </article>
+        <article class="panel cmds rv rv-d1">
+          <div class="bar"><span>системные команды</span><span>03</span></div>
+          <a class="cmd" href="https://steamcommunity.com/profiles/76561199770575251/" target="_blank" rel="noopener noreferrer"><span class="l"><span class="k">игровой узел</span><span class="v">ОТКРЫТЬ Steam УЗЕЛ_01</span></span><span class="arr">↗</span></a>
+          <a class="cmd" href="https://steamcommunity.com/profiles/76561198165374024/" target="_blank" rel="noopener noreferrer"><span class="l"><span class="k">игровой узел</span><span class="v">ОТКРЫТЬ Steam УЗЕЛ_02</span></span><span class="arr">↗</span></a>
+          <button class="cmd" id="psn-copy" type="button"><span class="l"><span class="k">консольная идентичность</span><span class="v">PSN ID: ankkui</span></span><span class="arr">⧉</span></button>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <footer class="closing">
+    <div class="big">ANKUZO</div>
+    <div class="closing-foot">
+      <span>ANKUZO <b>ПЕРСОНАЛЬНАЯ СИСТЕМА</b></span>
+      <span>ЯДРО <b>ОНЛАЙН</b></span>
+      <span>СИГНАЛ: <b>ТОЛЬКО Discord</b></span>
+      <span>© 2026 ANKUZO</span>
+    </div>
+  </footer>
+
+  <div class="chrome botbar">
+    <div class="cell" id="cursor-readout">x 0000 · y 0000</div>
+    <div class="cell grow"><div class="marq" id="marq"></div></div>
+    <div class="cell hide-s">узел <span class="cell-value">ANKUZO</span></div>
+    <div class="cell hide-s">связь <span class="discord-text cell-value">Discord</span></div>
+    <div class="cell">// конец</div>
+  </div>
+
+  <div id="toast" role="status">СКОПИРОВАНО</div>
+
+  <script src="js/boot.js"></script>
+  <script src="js/interface.js"></script>
+  <script src="js/hero-shader.js"></script>
+</body>
 </html>

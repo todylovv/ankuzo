@@ -1,0 +1,58 @@
+name: Update public profile data
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/update-data.yml"
+      - "scripts/update-data.js"
+  schedule:
+    - cron: "7,37 * * * *"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: update-public-data
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Install PlayStation API client
+        run: npm install --no-save --ignore-scripts psn-api@2.18.0
+
+      - name: Update safe public JSON
+        env:
+          STEAM_KEY: ${{ secrets.STEAM_KEY }}
+          PSN_NPSSO: ${{ secrets.PSN_NPSSO }}
+          FACEIT_KEY: ${{ secrets.FACEIT_KEY }}
+          TRN_KEY: ${{ secrets.TRN_KEY }}
+          PSN_ONLINE_ID: ankkui
+          DISCORD_USER_ID: ${{ vars.DISCORD_USER_ID || '514852654552186880' }}
+          DISCORD_BIO: ${{ vars.DISCORD_BIO }}
+          FACEIT_NICKNAME: ${{ vars.FACEIT_NICKNAME }}
+          TRN_PLATFORM: ${{ vars.TRN_PLATFORM }}
+          TRN_USERNAME: ${{ vars.TRN_USERNAME }}
+        run: node scripts/update-data.js
+
+      - name: Commit changed JSON
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/*.json
+          git diff --staged --quiet && exit 0
+          git commit -m "chore: update public profile data"
+          git pull --rebase origin main
+          git push

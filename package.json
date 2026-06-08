@@ -1,23 +1,11 @@
 {
   "name": "ankuzo-personal-system",
   "private": true,
-  "version": "2.0.0",
+  "version": "3.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "preview": "vite preview"
-  },
-  "dependencies": {
-    "gsap": "^3.13.0",
-    "lenis": "^1.3.23",
-    "react": "^19.1.0",
-    "react-dom": "^19.1.0",
-    "split-type": "^0.3.4"
-  },
-  "devDependencies": {
-    "@vitejs/plugin-react": "^4.4.1",
-    "sass": "^1.89.0",
-    "vite": "^6.3.5"
+    "build": "node scripts/build-static.js",
+    "serve": "npx --yes serve .",
+    "update-data": "node scripts/update-data.js"
   }
 }

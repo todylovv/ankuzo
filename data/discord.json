@@ -1,0 +1,17 @@
+{
+  "username": "ankuz0",
+  "displayName": "anku",
+  "status": "ОСНОВНОЙ СИГНАЛ",
+  "avatarUrl": "./assets/discord-avatar.webp",
+  "updatedAt": "2026-06-08T08:39:25.282Z",
+  "source": "fallback",
+  "bio": "Discord — единственный активный канал связи.",
+  "presence": "dnd",
+  "bannerUrl": "./assets/discord-banner.webp",
+  "decorationUrl": "./assets/discord-avatar-decoration.png",
+  "accentColor": "#6f7bf7",
+  "badges": [
+    "Nitro",
+    "HypeSquad Bravery"
+  ]
+}
