@@ -192,7 +192,7 @@ async function updateDiscord() {
       username: user.username || fallback.username,
       displayName: user.global_name || user.username || fallback.displayName,
       bio: (process.env.DISCORD_BIO || "").trim() ||
-        fallback.bio || "Discord — единственный активный канал связи.",
+        "Discord — единственный активный канал связи.",
       presence,
       avatarUrl,
       bannerUrl,
@@ -212,11 +212,14 @@ async function updateFaceit() {
   const fallback = await readFallback("faceit.json", {});
   const key = (process.env.FACEIT_KEY || "").trim();
   const nickname = (process.env.FACEIT_NICKNAME || "").trim();
-  if (!key || !nickname) {
+  if (!key) {
     return writeJson("faceit.json", { ...fallback, updatedAt, source: "fallback", status: "unavailable" });
   }
+  const lookup = nickname
+    ? `nickname=${encodeURIComponent(nickname)}`
+    : `game=cs2&game_player_id=${steamIds[0]}`;
   const player = await requestJson(
-    `https://open.faceit.com/data/v4/players?nickname=${encodeURIComponent(nickname)}`,
+    `https://open.faceit.com/data/v4/players?${lookup}`,
     { headers: { Authorization: `Bearer ${key}` } }
   );
   return writeJson("faceit.json", {
@@ -233,9 +236,9 @@ async function updateFaceit() {
 async function updateTrn() {
   const fallback = await readFallback("trn.json", {});
   const key = (process.env.TRN_KEY || "").trim();
-  const platform = (process.env.TRN_PLATFORM || "").trim();
-  const username = (process.env.TRN_USERNAME || "").trim();
-  if (!key || !platform || !username) {
+  const platform = (process.env.TRN_PLATFORM || "steam").trim();
+  const username = (process.env.TRN_USERNAME || steamIds[1]).trim();
+  if (!key) {
     return writeJson("trn.json", { ...fallback, updatedAt, source: "fallback", status: "unavailable" });
   }
   const profile = await requestJson(
