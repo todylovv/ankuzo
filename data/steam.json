@@ -1,9 +1,9 @@
 {
-  "updatedAt": "2026-06-11T19:41:24.916Z",
+  "updatedAt": "2026-06-11T22:10:07.403Z",
   "source": "api",
   "status": "available",
   "stats": {
-    "totalHours": 4961.1,
+    "totalHours": 4962.1,
     "totalGames": 192
   },
   "profiles": [
@@ -837,7 +837,7 @@
       "currentGame": "",
       "profileUrl": "https://steamcommunity.com/profiles/76561198165374024/",
       "gameCount": 75,
-      "totalHours": 3403.2,
+      "totalHours": 3404.2,
       "games": [
         {
           "appId": 730,
@@ -848,7 +848,7 @@
         {
           "appId": 1172470,
           "name": "Apex Legends",
-          "hours": 480.7,
+          "hours": 481.7,
           "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/1172470/8986dd626da56db5f3fe09bc1b8871739de8b00d.jpg"
         },
         {
@@ -1302,7 +1302,7 @@
     {
       "appId": 1172470,
       "name": "Apex Legends",
-      "hours": 530.4,
+      "hours": 531.4,
       "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/1172470/8986dd626da56db5f3fe09bc1b8871739de8b00d.jpg"
     },
     {
