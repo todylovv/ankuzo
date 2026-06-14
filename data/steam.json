@@ -1,9 +1,9 @@
 {
-  "updatedAt": "2026-06-14T17:00:25.838Z",
+  "updatedAt": "2026-06-14T18:20:46.969Z",
   "source": "api",
   "status": "available",
   "stats": {
-    "totalHours": 4965.9,
+    "totalHours": 4966.4,
     "totalGames": 192
   },
   "profiles": [
@@ -837,12 +837,12 @@
       "currentGame": "",
       "profileUrl": "https://steamcommunity.com/profiles/76561198165374024/",
       "gameCount": 75,
-      "totalHours": 3408,
+      "totalHours": 3408.5,
       "games": [
         {
           "appId": 730,
           "name": "Counter-Strike 2",
-          "hours": 2441.3,
+          "hours": 2441.8,
           "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/730/8dbc71957312bbd3baea65848b545be9eae2a355.jpg"
         },
         {
@@ -1296,7 +1296,7 @@
     {
       "appId": 730,
       "name": "Counter-Strike 2",
-      "hours": 3260.7000000000003,
+      "hours": 3261.2000000000003,
       "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/730/8dbc71957312bbd3baea65848b545be9eae2a355.jpg"
     },
     {
