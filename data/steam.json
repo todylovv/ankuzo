@@ -1,9 +1,9 @@
 {
-  "updatedAt": "2026-06-14T13:18:17.589Z",
+  "updatedAt": "2026-06-14T15:27:37.187Z",
   "source": "api",
   "status": "available",
   "stats": {
-    "totalHours": 4962.8,
+    "totalHours": 4964.4,
     "totalGames": 192
   },
   "profiles": [
@@ -837,18 +837,18 @@
       "currentGame": "",
       "profileUrl": "https://steamcommunity.com/profiles/76561198165374024/",
       "gameCount": 75,
-      "totalHours": 3404.9,
+      "totalHours": 3406.5,
       "games": [
         {
           "appId": 730,
           "name": "Counter-Strike 2",
-          "hours": 2438.8,
+          "hours": 2439.8,
           "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/730/8dbc71957312bbd3baea65848b545be9eae2a355.jpg"
         },
         {
           "appId": 1172470,
           "name": "Apex Legends",
-          "hours": 482.4,
+          "hours": 483,
           "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/1172470/8986dd626da56db5f3fe09bc1b8871739de8b00d.jpg"
         },
         {
@@ -1296,13 +1296,13 @@
     {
       "appId": 730,
       "name": "Counter-Strike 2",
-      "hours": 3258.2000000000003,
+      "hours": 3259.2000000000003,
       "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/730/8dbc71957312bbd3baea65848b545be9eae2a355.jpg"
     },
     {
       "appId": 1172470,
       "name": "Apex Legends",
-      "hours": 532.1,
+      "hours": 532.7,
       "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/1172470/8986dd626da56db5f3fe09bc1b8871739de8b00d.jpg"
     },
     {
