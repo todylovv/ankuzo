@@ -1,9 +1,9 @@
 {
-  "updatedAt": "2026-06-15T18:14:10.057Z",
+  "updatedAt": "2026-06-15T21:35:11.678Z",
   "source": "api",
   "status": "available",
   "stats": {
-    "totalHours": 4967.9,
+    "totalHours": 4970.6,
     "totalGames": 192
   },
   "profiles": [
@@ -15,7 +15,7 @@
       "currentGame": "",
       "profileUrl": "https://steamcommunity.com/profiles/76561199770575251/",
       "gameCount": 135,
-      "totalHours": 1559.4,
+      "totalHours": 1562.1,
       "games": [
         {
           "appId": 730,
@@ -126,6 +126,12 @@
           "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/3949040/cd01f1daaaa3fb022e9913dc2d66a23c5091b5d5.jpg"
         },
         {
+          "appId": 275850,
+          "name": "No Man's Sky",
+          "hours": 8.6,
+          "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/275850/fccb20f309ac5ae05b3cb4576a8a3357edf86f2e.jpg"
+        },
+        {
           "appId": 3164500,
           "name": "Schedule I",
           "hours": 8.3,
@@ -148,12 +154,6 @@
           "name": "Hunt: Showdown 1896",
           "hours": 6.2,
           "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/594650/06c70772db40f714537f4d80c11859a68560a6b3.jpg"
-        },
-        {
-          "appId": 275850,
-          "name": "No Man's Sky",
-          "hours": 5.9,
-          "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/275850/fccb20f309ac5ae05b3cb4576a8a3357edf86f2e.jpg"
         },
         {
           "appId": 1159690,
