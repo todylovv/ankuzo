@@ -1,9 +1,9 @@
 {
-  "updatedAt": "2026-06-15T13:35:46.614Z",
+  "updatedAt": "2026-06-15T18:14:10.057Z",
   "source": "api",
   "status": "available",
   "stats": {
-    "totalHours": 4966.4,
+    "totalHours": 4967.9,
     "totalGames": 192
   },
   "profiles": [
@@ -15,7 +15,7 @@
       "currentGame": "",
       "profileUrl": "https://steamcommunity.com/profiles/76561199770575251/",
       "gameCount": 135,
-      "totalHours": 1557.9,
+      "totalHours": 1559.4,
       "games": [
         {
           "appId": 730,
@@ -150,6 +150,12 @@
           "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/594650/06c70772db40f714537f4d80c11859a68560a6b3.jpg"
         },
         {
+          "appId": 275850,
+          "name": "No Man's Sky",
+          "hours": 5.9,
+          "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/275850/fccb20f309ac5ae05b3cb4576a8a3357edf86f2e.jpg"
+        },
+        {
           "appId": 1159690,
           "name": "Voidtrain",
           "hours": 5.9,
@@ -184,12 +190,6 @@
           "name": "Neighbors: Suburban Warfare",
           "hours": 4.5,
           "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/1732430/996b65710a05ddbe8ec26a26f757faa736c67000.jpg"
-        },
-        {
-          "appId": 275850,
-          "name": "No Man's Sky",
-          "hours": 4.4,
-          "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/275850/fccb20f309ac5ae05b3cb4576a8a3357edf86f2e.jpg"
         },
         {
           "appId": 251570,
