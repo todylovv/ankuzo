@@ -1,9 +1,9 @@
 {
-  "updatedAt": "2026-06-16T13:16:46.626Z",
+  "updatedAt": "2026-06-16T18:18:58.010Z",
   "source": "api",
   "status": "available",
   "stats": {
-    "totalHours": 4970.6,
+    "totalHours": 4971.1,
     "totalGames": 192
   },
   "profiles": [
@@ -15,7 +15,7 @@
       "currentGame": "",
       "profileUrl": "https://steamcommunity.com/profiles/76561199770575251/",
       "gameCount": 135,
-      "totalHours": 1562.1,
+      "totalHours": 1562.6,
       "games": [
         {
           "appId": 730,
@@ -128,7 +128,7 @@
         {
           "appId": 275850,
           "name": "No Man's Sky",
-          "hours": 8.6,
+          "hours": 9.1,
           "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/275850/fccb20f309ac5ae05b3cb4576a8a3357edf86f2e.jpg"
         },
         {
