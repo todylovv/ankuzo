@@ -1,9 +1,9 @@
 {
-  "updatedAt": "2026-06-16T18:18:58.010Z",
+  "updatedAt": "2026-06-16T21:33:32.811Z",
   "source": "api",
   "status": "available",
   "stats": {
-    "totalHours": 4971.1,
+    "totalHours": 4973.5,
     "totalGames": 192
   },
   "profiles": [
@@ -15,7 +15,7 @@
       "currentGame": "",
       "profileUrl": "https://steamcommunity.com/profiles/76561199770575251/",
       "gameCount": 135,
-      "totalHours": 1562.6,
+      "totalHours": 1565,
       "games": [
         {
           "appId": 730,
@@ -114,6 +114,12 @@
           "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/323190/0561084dfe24c469c905fe0681da82aa31102836.jpg"
         },
         {
+          "appId": 275850,
+          "name": "No Man's Sky",
+          "hours": 11.5,
+          "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/275850/fccb20f309ac5ae05b3cb4576a8a3357edf86f2e.jpg"
+        },
+        {
           "appId": 1818450,
           "name": "STALCRAFT: X",
           "hours": 10.6,
@@ -124,12 +130,6 @@
           "name": "RV There Yet?",
           "hours": 10.4,
           "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/3949040/cd01f1daaaa3fb022e9913dc2d66a23c5091b5d5.jpg"
-        },
-        {
-          "appId": 275850,
-          "name": "No Man's Sky",
-          "hours": 9.1,
-          "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/275850/fccb20f309ac5ae05b3cb4576a8a3357edf86f2e.jpg"
         },
         {
           "appId": 3164500,
