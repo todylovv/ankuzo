@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-06-17T07:25:28.087Z",
+  "updatedAt": "2026-06-17T12:06:20.863Z",
   "source": "api",
   "status": "available",
   "stats": {
@@ -121,9 +121,9 @@
         },
         {
           "appId": 1818450,
-          "name": "STALCRAFT: X",
+          "name": "STALZONE",
           "hours": 10.6,
-          "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/1818450/00c5eba3fac85119527b5f8a1a8fadd6bf5988fc.jpg"
+          "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/1818450/ad73a63f0263e057b592dcb4e715085418a8c18b.jpg"
         },
         {
           "appId": 3949040,
@@ -949,9 +949,9 @@
         },
         {
           "appId": 1818450,
-          "name": "STALCRAFT: X",
+          "name": "STALZONE",
           "hours": 3.6,
-          "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/1818450/00c5eba3fac85119527b5f8a1a8fadd6bf5988fc.jpg"
+          "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/1818450/ad73a63f0263e057b592dcb4e715085418a8c18b.jpg"
         },
         {
           "appId": 1332010,
