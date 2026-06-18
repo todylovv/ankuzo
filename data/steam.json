@@ -1,9 +1,9 @@
 {
-  "updatedAt": "2026-06-18T16:40:32.341Z",
+  "updatedAt": "2026-06-18T19:34:57.473Z",
   "source": "api",
   "status": "available",
   "stats": {
-    "totalHours": 4973.5,
+    "totalHours": 4973.8,
     "totalGames": 192
   },
   "profiles": [
@@ -15,7 +15,7 @@
       "currentGame": "",
       "profileUrl": "https://steamcommunity.com/profiles/76561199770575251/",
       "gameCount": 135,
-      "totalHours": 1565,
+      "totalHours": 1565.3,
       "games": [
         {
           "appId": 730,
@@ -432,6 +432,12 @@
           "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/1326470/bd28fe592b339cff5a3eef743f31e3166c984c68.jpg"
         },
         {
+          "appId": 1557740,
+          "name": "ROUNDS",
+          "hours": 0.3,
+          "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/1557740/f087183f42804b06bcd59b47536c23b398061fc1.jpg"
+        },
+        {
           "appId": 1601330,
           "name": "Survival Machine",
           "hours": 0.3,
@@ -754,12 +760,6 @@
           "name": "The Walking Dead: The Telltale Definitive Series",
           "hours": 0,
           "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/1449690/bd1fd090e72bc6584f1b271341a1be6d7fe6881e.jpg"
-        },
-        {
-          "appId": 1557740,
-          "name": "ROUNDS",
-          "hours": 0,
-          "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/1557740/f087183f42804b06bcd59b47536c23b398061fc1.jpg"
         },
         {
           "appId": 1608450,
