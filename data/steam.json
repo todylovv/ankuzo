@@ -1,9 +1,9 @@
 {
-  "updatedAt": "2026-06-22T11:18:27.676Z",
+  "updatedAt": "2026-06-22T16:14:56.464Z",
   "source": "api",
   "status": "available",
   "stats": {
-    "totalHours": 4979.9,
+    "totalHours": 4980.6,
     "totalGames": 192
   },
   "profiles": [
@@ -15,7 +15,7 @@
       "currentGame": "",
       "profileUrl": "https://steamcommunity.com/profiles/76561199770575251/",
       "gameCount": 135,
-      "totalHours": 1570.5,
+      "totalHours": 1571,
       "games": [
         {
           "appId": 730,
@@ -74,7 +74,7 @@
         {
           "appId": 578080,
           "name": "PUBG: BATTLEGROUNDS",
-          "hours": 20.4,
+          "hours": 20.9,
           "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/578080/609f27278aa70697c13bf99f32c5a0248c381f9d.jpg"
         },
         {
@@ -837,7 +837,7 @@
       "currentGame": "",
       "profileUrl": "https://steamcommunity.com/profiles/76561198165374024/",
       "gameCount": 75,
-      "totalHours": 3409.4,
+      "totalHours": 3409.6,
       "games": [
         {
           "appId": 730,
@@ -848,7 +848,7 @@
         {
           "appId": 1172470,
           "name": "Apex Legends",
-          "hours": 483.9,
+          "hours": 484.1,
           "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/1172470/8986dd626da56db5f3fe09bc1b8871739de8b00d.jpg"
         },
         {
@@ -1302,7 +1302,7 @@
     {
       "appId": 1172470,
       "name": "Apex Legends",
-      "hours": 533.6999999999999,
+      "hours": 533.9,
       "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/1172470/8986dd626da56db5f3fe09bc1b8871739de8b00d.jpg"
     },
     {
