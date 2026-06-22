@@ -1,9 +1,9 @@
 {
-  "updatedAt": "2026-06-22T16:14:56.464Z",
+  "updatedAt": "2026-06-22T19:55:52.118Z",
   "source": "api",
   "status": "available",
   "stats": {
-    "totalHours": 4980.6,
+    "totalHours": 4981.4,
     "totalGames": 192
   },
   "profiles": [
@@ -15,7 +15,7 @@
       "currentGame": "",
       "profileUrl": "https://steamcommunity.com/profiles/76561199770575251/",
       "gameCount": 135,
-      "totalHours": 1571,
+      "totalHours": 1571.8,
       "games": [
         {
           "appId": 730,
@@ -74,7 +74,7 @@
         {
           "appId": 578080,
           "name": "PUBG: BATTLEGROUNDS",
-          "hours": 20.9,
+          "hours": 21.3,
           "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/578080/609f27278aa70697c13bf99f32c5a0248c381f9d.jpg"
         },
         {
@@ -162,16 +162,16 @@
           "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/1159690/42ac88f2a79b018eafbffb48c6fc17dc60957b6f.jpg"
         },
         {
+          "appId": 3199170,
+          "name": "BLOODSTRIKE",
+          "hours": 5.4,
+          "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/3199170/5f2e15107da6729366b19636be3ae4d3c7337abb.jpg"
+        },
+        {
           "appId": 534380,
           "name": "Dying Light 2: Reloaded Edition",
           "hours": 5.2,
           "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/534380/4036cc941abaeeed5ee8bd433ca69388723f7f19.jpg"
-        },
-        {
-          "appId": 3199170,
-          "name": "BLOODSTRIKE",
-          "hours": 5,
-          "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/3199170/5f2e15107da6729366b19636be3ae4d3c7337abb.jpg"
         },
         {
           "appId": 2073850,
