@@ -1,9 +1,9 @@
 {
-  "updatedAt": "2026-06-23T18:27:22.385Z",
+  "updatedAt": "2026-06-23T20:36:55.641Z",
   "source": "api",
   "status": "available",
   "stats": {
-    "totalHours": 4981.4,
+    "totalHours": 4981.5,
     "totalGames": 192
   },
   "profiles": [
@@ -15,7 +15,7 @@
       "currentGame": "",
       "profileUrl": "https://steamcommunity.com/profiles/76561199770575251/",
       "gameCount": 135,
-      "totalHours": 1571.8,
+      "totalHours": 1571.9,
       "games": [
         {
           "appId": 730,
@@ -240,6 +240,12 @@
           "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/322330/a80aa6cff8eebc1cbc18c367d9ab063e1553b0ee.jpg"
         },
         {
+          "appId": 431960,
+          "name": "Wallpaper Engine",
+          "hours": 2.8,
+          "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/431960/72edaed9d748c6cf7397ffb1c83f0b837b9ebd9d.jpg"
+        },
+        {
           "appId": 1517290,
           "name": "Battlefield™ 2042",
           "hours": 2.8,
@@ -256,12 +262,6 @@
           "name": "GeoGuessr Steam Edition",
           "hours": 2.8,
           "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/3478870/b00bdaf4b696b337e8cd38cb7f0db07c044f6f90.jpg"
-        },
-        {
-          "appId": 431960,
-          "name": "Wallpaper Engine",
-          "hours": 2.7,
-          "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/431960/72edaed9d748c6cf7397ffb1c83f0b837b9ebd9d.jpg"
         },
         {
           "appId": 381210,
