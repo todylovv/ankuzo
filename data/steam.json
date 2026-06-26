@@ -1,10 +1,10 @@
 {
-  "updatedAt": "2026-06-26T21:37:50.544Z",
+  "updatedAt": "2026-06-26T23:18:51.215Z",
   "source": "api",
   "status": "available",
   "stats": {
-    "totalHours": 4981.5,
-    "totalGames": 192
+    "totalHours": 4982,
+    "totalGames": 193
   },
   "profiles": [
     {
@@ -14,8 +14,8 @@
       "online": false,
       "currentGame": "",
       "profileUrl": "https://steamcommunity.com/profiles/76561199770575251/",
-      "gameCount": 135,
-      "totalHours": 1571.9,
+      "gameCount": 136,
+      "totalHours": 1572.4,
       "games": [
         {
           "appId": 730,
@@ -418,6 +418,12 @@
           "name": "Planet Zoo",
           "hours": 0.5,
           "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/703080/68c7a610498955f547b0ece0aff081d23f2025b5.jpg"
+        },
+        {
+          "appId": 2507950,
+          "name": "Delta Force",
+          "hours": 0.5,
+          "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/2507950/52bc6c4bf0c232cf30d66eb3d1638bf099bc6061.jpg"
         },
         {
           "appId": 548430,
