@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-06-29T16:26:30.310Z",
+  "updatedAt": "2026-06-29T18:31:28.472Z",
   "source": "api",
   "status": "available",
   "stats": {
@@ -11,8 +11,8 @@
       "steamId": "76561199770575251",
       "nickname": "b1",
       "avatarUrl": "https://avatars.steamstatic.com/6a30a26c019394587a828b964f6156b6a17e36a2_full.jpg",
-      "online": false,
-      "currentGame": "",
+      "online": true,
+      "currentGame": "R.E.P.O.",
       "profileUrl": "https://steamcommunity.com/profiles/76561199770575251/",
       "gameCount": 137,
       "totalHours": 1573.8,
