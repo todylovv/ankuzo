@@ -1,10 +1,10 @@
 {
-  "updatedAt": "2026-06-29T12:10:30.588Z",
+  "updatedAt": "2026-06-29T16:26:30.310Z",
   "source": "api",
   "status": "available",
   "stats": {
     "totalHours": 4984.4,
-    "totalGames": 193
+    "totalGames": 194
   },
   "profiles": [
     {
@@ -14,7 +14,7 @@
       "online": false,
       "currentGame": "",
       "profileUrl": "https://steamcommunity.com/profiles/76561199770575251/",
-      "gameCount": 136,
+      "gameCount": 137,
       "totalHours": 1573.8,
       "games": [
         {
@@ -706,6 +706,12 @@
           "name": "Cybarian: The Time Travelling Warrior",
           "hours": 0,
           "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/928840/105e82d194e2c728655d7f6dc42a1f68ce5877fa.jpg"
+        },
+        {
+          "appId": 945360,
+          "name": "Among Us",
+          "hours": 0,
+          "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/945360/b82c3f46da8f3c918e1c9e0d18bd6fa8fcef6801.jpg"
         },
         {
           "appId": 960990,
