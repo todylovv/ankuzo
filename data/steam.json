@@ -1,9 +1,9 @@
 {
-  "updatedAt": "2026-06-29T18:31:28.472Z",
+  "updatedAt": "2026-06-29T20:29:12.829Z",
   "source": "api",
   "status": "available",
   "stats": {
-    "totalHours": 4984.4,
+    "totalHours": 4988,
     "totalGames": 194
   },
   "profiles": [
@@ -11,11 +11,11 @@
       "steamId": "76561199770575251",
       "nickname": "b1",
       "avatarUrl": "https://avatars.steamstatic.com/6a30a26c019394587a828b964f6156b6a17e36a2_full.jpg",
-      "online": true,
-      "currentGame": "R.E.P.O.",
+      "online": false,
+      "currentGame": "",
       "profileUrl": "https://steamcommunity.com/profiles/76561199770575251/",
       "gameCount": 137,
-      "totalHours": 1573.8,
+      "totalHours": 1577.4,
       "games": [
         {
           "appId": 730,
@@ -32,7 +32,7 @@
         {
           "appId": 629520,
           "name": "Soundpad",
-          "hours": 89.1,
+          "hours": 91,
           "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/629520/f261c8f5948de73428a1dbed573ec964fcbecb67.jpg"
         },
         {
@@ -98,7 +98,7 @@
         {
           "appId": 3241660,
           "name": "R.E.P.O.",
-          "hours": 14.5,
+          "hours": 16.2,
           "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/3241660/b8bf4770408fc369e15cebd42e0026a27b67aaa8.jpg"
         },
         {
@@ -1338,7 +1338,7 @@
     {
       "appId": 629520,
       "name": "Soundpad",
-      "hours": 89.1,
+      "hours": 91,
       "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/629520/f261c8f5948de73428a1dbed573ec964fcbecb67.jpg"
     },
     {
