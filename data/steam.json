@@ -1,9 +1,9 @@
 {
-  "updatedAt": "2026-07-09T20:53:56.070Z",
+  "updatedAt": "2026-07-09T22:40:44.237Z",
   "source": "api",
   "status": "available",
   "stats": {
-    "totalHours": 4989.6,
+    "totalHours": 4990.8,
     "totalGames": 195
   },
   "profiles": [
@@ -11,11 +11,11 @@
       "steamId": "76561199770575251",
       "nickname": "b1",
       "avatarUrl": "https://avatars.steamstatic.com/6a30a26c019394587a828b964f6156b6a17e36a2_full.jpg",
-      "online": true,
-      "currentGame": "MECCHA CHAMELEON",
+      "online": false,
+      "currentGame": "",
       "profileUrl": "https://steamcommunity.com/profiles/76561199770575251/",
       "gameCount": 138,
-      "totalHours": 1579,
+      "totalHours": 1580.2,
       "games": [
         {
           "appId": 730,
@@ -264,6 +264,12 @@
           "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/3478870/b00bdaf4b696b337e8cd38cb7f0db07c044f6f90.jpg"
         },
         {
+          "appId": 4704690,
+          "name": "MECCHA CHAMELEON",
+          "hours": 2.8,
+          "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/4704690/fbef288370f6ae51cb0a5066d7fb13d26147c94a.jpg"
+        },
+        {
           "appId": 381210,
           "name": "Dead by Daylight",
           "hours": 2.6,
@@ -328,12 +334,6 @@
           "name": "Super Battle Golf",
           "hours": 1.6,
           "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/4069520/8de662d89d7bbabbccb9ada6c082dcc3c5c61c9d.jpg"
-        },
-        {
-          "appId": 4704690,
-          "name": "MECCHA CHAMELEON",
-          "hours": 1.6,
-          "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/4704690/fbef288370f6ae51cb0a5066d7fb13d26147c94a.jpg"
         },
         {
           "appId": 413150,
