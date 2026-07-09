@@ -1,9 +1,9 @@
 {
-  "updatedAt": "2026-07-09T18:57:44.604Z",
+  "updatedAt": "2026-07-09T20:53:56.070Z",
   "source": "api",
   "status": "available",
   "stats": {
-    "totalHours": 4988,
+    "totalHours": 4989.6,
     "totalGames": 195
   },
   "profiles": [
@@ -15,7 +15,7 @@
       "currentGame": "MECCHA CHAMELEON",
       "profileUrl": "https://steamcommunity.com/profiles/76561199770575251/",
       "gameCount": 138,
-      "totalHours": 1577.4,
+      "totalHours": 1579,
       "games": [
         {
           "appId": 730,
@@ -328,6 +328,12 @@
           "name": "Super Battle Golf",
           "hours": 1.6,
           "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/4069520/8de662d89d7bbabbccb9ada6c082dcc3c5c61c9d.jpg"
+        },
+        {
+          "appId": 4704690,
+          "name": "MECCHA CHAMELEON",
+          "hours": 1.6,
+          "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/4704690/fbef288370f6ae51cb0a5066d7fb13d26147c94a.jpg"
         },
         {
           "appId": 413150,
@@ -838,12 +844,6 @@
           "name": "REMATCH BETA TEST",
           "hours": 0,
           "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/3432970/70ff37ff1627bc7fe2b24629dda158da59478262.jpg"
-        },
-        {
-          "appId": 4704690,
-          "name": "MECCHA CHAMELEON",
-          "hours": 0,
-          "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/4704690/fbef288370f6ae51cb0a5066d7fb13d26147c94a.jpg"
         }
       ]
     },
