@@ -1,10 +1,10 @@
 {
-  "updatedAt": "2026-07-09T17:03:17.957Z",
+  "updatedAt": "2026-07-09T18:57:44.604Z",
   "source": "api",
   "status": "available",
   "stats": {
     "totalHours": 4988,
-    "totalGames": 194
+    "totalGames": 195
   },
   "profiles": [
     {
@@ -12,9 +12,9 @@
       "nickname": "b1",
       "avatarUrl": "https://avatars.steamstatic.com/6a30a26c019394587a828b964f6156b6a17e36a2_full.jpg",
       "online": true,
-      "currentGame": "",
+      "currentGame": "MECCHA CHAMELEON",
       "profileUrl": "https://steamcommunity.com/profiles/76561199770575251/",
-      "gameCount": 137,
+      "gameCount": 138,
       "totalHours": 1577.4,
       "games": [
         {
@@ -838,6 +838,12 @@
           "name": "REMATCH BETA TEST",
           "hours": 0,
           "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/3432970/70ff37ff1627bc7fe2b24629dda158da59478262.jpg"
+        },
+        {
+          "appId": 4704690,
+          "name": "MECCHA CHAMELEON",
+          "hours": 0,
+          "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/4704690/fbef288370f6ae51cb0a5066d7fb13d26147c94a.jpg"
         }
       ]
     },
