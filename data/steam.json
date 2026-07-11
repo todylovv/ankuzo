@@ -1,9 +1,9 @@
 {
-  "updatedAt": "2026-07-11T21:01:12.391Z",
+  "updatedAt": "2026-07-11T22:00:49.543Z",
   "source": "api",
   "status": "available",
   "stats": {
-    "totalHours": 4993.8,
+    "totalHours": 4994.8,
     "totalGames": 196
   },
   "profiles": [
@@ -15,7 +15,7 @@
       "currentGame": "Esports Manager 2026",
       "profileUrl": "https://steamcommunity.com/profiles/76561199770575251/",
       "gameCount": 139,
-      "totalHours": 1583.2,
+      "totalHours": 1584.2,
       "games": [
         {
           "appId": 730,
@@ -198,6 +198,12 @@
           "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/251570/f6515dd177b2992aebcb563151fbe836a600f364.jpg"
         },
         {
+          "appId": 2749950,
+          "name": "Esports Manager 2026",
+          "hours": 4,
+          "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/2749950/df89f44011541824f49149794c3a3c3795ad2473.jpg"
+        },
+        {
           "appId": 2807960,
           "name": "Battlefield™ 6",
           "hours": 3.7,
@@ -232,12 +238,6 @@
           "name": "Dying Light",
           "hours": 3.1,
           "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/239140/d575b4ba3480fe20aaeda8e8f498c3e47033069d.jpg"
-        },
-        {
-          "appId": 2749950,
-          "name": "Esports Manager 2026",
-          "hours": 3,
-          "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/2749950/df89f44011541824f49149794c3a3c3795ad2473.jpg"
         },
         {
           "appId": 322330,
