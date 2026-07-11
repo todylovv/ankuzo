@@ -1,9 +1,9 @@
 {
-  "updatedAt": "2026-07-11T22:00:49.543Z",
+  "updatedAt": "2026-07-11T23:02:51.395Z",
   "source": "api",
   "status": "available",
   "stats": {
-    "totalHours": 4994.8,
+    "totalHours": 4996.2,
     "totalGames": 196
   },
   "profiles": [
@@ -11,11 +11,11 @@
       "steamId": "76561199770575251",
       "nickname": "b1",
       "avatarUrl": "https://avatars.steamstatic.com/6a30a26c019394587a828b964f6156b6a17e36a2_full.jpg",
-      "online": true,
-      "currentGame": "Esports Manager 2026",
+      "online": false,
+      "currentGame": "",
       "profileUrl": "https://steamcommunity.com/profiles/76561199770575251/",
       "gameCount": 139,
-      "totalHours": 1584.2,
+      "totalHours": 1585.6,
       "games": [
         {
           "appId": 730,
@@ -162,6 +162,12 @@
           "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/1159690/42ac88f2a79b018eafbffb48c6fc17dc60957b6f.jpg"
         },
         {
+          "appId": 2749950,
+          "name": "Esports Manager 2026",
+          "hours": 5.4,
+          "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/2749950/df89f44011541824f49149794c3a3c3795ad2473.jpg"
+        },
+        {
           "appId": 3199170,
           "name": "BLOODSTRIKE",
           "hours": 5.4,
@@ -196,12 +202,6 @@
           "name": "7 Days to Die",
           "hours": 4.2,
           "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/251570/f6515dd177b2992aebcb563151fbe836a600f364.jpg"
-        },
-        {
-          "appId": 2749950,
-          "name": "Esports Manager 2026",
-          "hours": 4,
-          "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/2749950/df89f44011541824f49149794c3a3c3795ad2473.jpg"
         },
         {
           "appId": 2807960,
