@@ -1,10 +1,10 @@
 {
-  "updatedAt": "2026-07-11T17:35:45.379Z",
+  "updatedAt": "2026-07-11T18:32:12.069Z",
   "source": "api",
   "status": "available",
   "stats": {
-    "totalHours": 4990.8,
-    "totalGames": 195
+    "totalHours": 4991.3,
+    "totalGames": 196
   },
   "profiles": [
     {
@@ -12,10 +12,10 @@
       "nickname": "b1",
       "avatarUrl": "https://avatars.steamstatic.com/6a30a26c019394587a828b964f6156b6a17e36a2_full.jpg",
       "online": true,
-      "currentGame": "",
+      "currentGame": "Esports Manager 2026",
       "profileUrl": "https://steamcommunity.com/profiles/76561199770575251/",
-      "gameCount": 138,
-      "totalHours": 1580.2,
+      "gameCount": 139,
+      "totalHours": 1580.7,
       "games": [
         {
           "appId": 730,
@@ -430,6 +430,12 @@
           "name": "Delta Force",
           "hours": 0.5,
           "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/2507950/52bc6c4bf0c232cf30d66eb3d1638bf099bc6061.jpg"
+        },
+        {
+          "appId": 2749950,
+          "name": "Esports Manager 2026",
+          "hours": 0.5,
+          "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/2749950/df89f44011541824f49149794c3a3c3795ad2473.jpg"
         },
         {
           "appId": 548430,
