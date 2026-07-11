@@ -1,9 +1,9 @@
 {
-  "updatedAt": "2026-07-11T19:47:02.952Z",
+  "updatedAt": "2026-07-11T21:01:12.391Z",
   "source": "api",
   "status": "available",
   "stats": {
-    "totalHours": 4992.8,
+    "totalHours": 4993.8,
     "totalGames": 196
   },
   "profiles": [
@@ -15,7 +15,7 @@
       "currentGame": "Esports Manager 2026",
       "profileUrl": "https://steamcommunity.com/profiles/76561199770575251/",
       "gameCount": 139,
-      "totalHours": 1582.2,
+      "totalHours": 1583.2,
       "games": [
         {
           "appId": 730,
@@ -234,6 +234,12 @@
           "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/239140/d575b4ba3480fe20aaeda8e8f498c3e47033069d.jpg"
         },
         {
+          "appId": 2749950,
+          "name": "Esports Manager 2026",
+          "hours": 3,
+          "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/2749950/df89f44011541824f49149794c3a3c3795ad2473.jpg"
+        },
+        {
           "appId": 322330,
           "name": "Don't Starve Together",
           "hours": 2.8,
@@ -298,12 +304,6 @@
           "name": "Where Winds Meet",
           "hours": 2.2,
           "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/3564740/531ce29af277670c3aedc30d3b0bef92ee1b18c4.jpg"
-        },
-        {
-          "appId": 2749950,
-          "name": "Esports Manager 2026",
-          "hours": 2,
-          "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/2749950/df89f44011541824f49149794c3a3c3795ad2473.jpg"
         },
         {
           "appId": 2794590,
