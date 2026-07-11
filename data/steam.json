@@ -1,9 +1,9 @@
 {
-  "updatedAt": "2026-07-11T18:32:12.069Z",
+  "updatedAt": "2026-07-11T19:47:02.952Z",
   "source": "api",
   "status": "available",
   "stats": {
-    "totalHours": 4991.3,
+    "totalHours": 4992.8,
     "totalGames": 196
   },
   "profiles": [
@@ -15,7 +15,7 @@
       "currentGame": "Esports Manager 2026",
       "profileUrl": "https://steamcommunity.com/profiles/76561199770575251/",
       "gameCount": 139,
-      "totalHours": 1580.7,
+      "totalHours": 1582.2,
       "games": [
         {
           "appId": 730,
@@ -300,6 +300,12 @@
           "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/3564740/531ce29af277670c3aedc30d3b0bef92ee1b18c4.jpg"
         },
         {
+          "appId": 2749950,
+          "name": "Esports Manager 2026",
+          "hours": 2,
+          "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/2749950/df89f44011541824f49149794c3a3c3795ad2473.jpg"
+        },
+        {
           "appId": 2794590,
           "name": "Scam Line",
           "hours": 2,
@@ -430,12 +436,6 @@
           "name": "Delta Force",
           "hours": 0.5,
           "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/2507950/52bc6c4bf0c232cf30d66eb3d1638bf099bc6061.jpg"
-        },
-        {
-          "appId": 2749950,
-          "name": "Esports Manager 2026",
-          "hours": 0.5,
-          "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/2749950/df89f44011541824f49149794c3a3c3795ad2473.jpg"
         },
         {
           "appId": 548430,
