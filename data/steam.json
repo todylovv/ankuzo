@@ -1,9 +1,9 @@
 {
-  "updatedAt": "2026-07-14T18:44:04.791Z",
+  "updatedAt": "2026-07-14T20:19:54.147Z",
   "source": "api",
   "status": "available",
   "stats": {
-    "totalHours": 4997.3,
+    "totalHours": 4998.8,
     "totalGames": 197
   },
   "profiles": [
@@ -15,7 +15,7 @@
       "currentGame": "",
       "profileUrl": "https://steamcommunity.com/profiles/76561199770575251/",
       "gameCount": 140,
-      "totalHours": 1586.7,
+      "totalHours": 1588.2,
       "games": [
         {
           "appId": 730,
@@ -282,6 +282,12 @@
           "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/381210/aa152097a700fd6f4707397ce41794ea30874790.jpg"
         },
         {
+          "appId": 2073620,
+          "name": "Arena Breakout: Infinite",
+          "hours": 2.6,
+          "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/2073620/3c3cb9ae001821040f4a5c255bc577fb0143dadd.jpg"
+        },
+        {
           "appId": 1174180,
           "name": "Red Dead Redemption 2",
           "hours": 2.5,
@@ -382,12 +388,6 @@
           "name": "REMATCH",
           "hours": 1.2,
           "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/2138720/fe863eabc2365b3a7bce66297d95f843867cc483.jpg"
-        },
-        {
-          "appId": 2073620,
-          "name": "Arena Breakout: Infinite",
-          "hours": 1.1,
-          "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/2073620/3c3cb9ae001821040f4a5c255bc577fb0143dadd.jpg"
         },
         {
           "appId": 105600,
