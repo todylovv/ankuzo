@@ -1,10 +1,10 @@
 {
-  "updatedAt": "2026-07-14T17:24:00.832Z",
+  "updatedAt": "2026-07-14T18:44:04.791Z",
   "source": "api",
   "status": "available",
   "stats": {
-    "totalHours": 4996.2,
-    "totalGames": 196
+    "totalHours": 4997.3,
+    "totalGames": 197
   },
   "profiles": [
     {
@@ -14,8 +14,8 @@
       "online": false,
       "currentGame": "",
       "profileUrl": "https://steamcommunity.com/profiles/76561199770575251/",
-      "gameCount": 139,
-      "totalHours": 1585.6,
+      "gameCount": 140,
+      "totalHours": 1586.7,
       "games": [
         {
           "appId": 730,
@@ -382,6 +382,12 @@
           "name": "REMATCH",
           "hours": 1.2,
           "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/2138720/fe863eabc2365b3a7bce66297d95f843867cc483.jpg"
+        },
+        {
+          "appId": 2073620,
+          "name": "Arena Breakout: Infinite",
+          "hours": 1.1,
+          "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/2073620/3c3cb9ae001821040f4a5c255bc577fb0143dadd.jpg"
         },
         {
           "appId": 105600,
