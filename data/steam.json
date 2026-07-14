@@ -1,9 +1,9 @@
 {
-  "updatedAt": "2026-07-14T20:19:54.147Z",
+  "updatedAt": "2026-07-14T21:33:13.353Z",
   "source": "api",
   "status": "available",
   "stats": {
-    "totalHours": 4998.8,
+    "totalHours": 4999.8,
     "totalGames": 197
   },
   "profiles": [
@@ -15,7 +15,7 @@
       "currentGame": "",
       "profileUrl": "https://steamcommunity.com/profiles/76561199770575251/",
       "gameCount": 140,
-      "totalHours": 1588.2,
+      "totalHours": 1589.2,
       "games": [
         {
           "appId": 730,
@@ -210,6 +210,12 @@
           "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/2807960/a758cc85720fc89b5c97995bd8eafb38b3604e47.jpg"
         },
         {
+          "appId": 2073620,
+          "name": "Arena Breakout: Infinite",
+          "hours": 3.6,
+          "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/2073620/3c3cb9ae001821040f4a5c255bc577fb0143dadd.jpg"
+        },
+        {
           "appId": 3326230,
           "name": "Hozy",
           "hours": 3.5,
@@ -280,12 +286,6 @@
           "name": "Dead by Daylight",
           "hours": 2.6,
           "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/381210/aa152097a700fd6f4707397ce41794ea30874790.jpg"
-        },
-        {
-          "appId": 2073620,
-          "name": "Arena Breakout: Infinite",
-          "hours": 2.6,
-          "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/2073620/3c3cb9ae001821040f4a5c255bc577fb0143dadd.jpg"
         },
         {
           "appId": 1174180,
