@@ -1,9 +1,9 @@
 {
-  "updatedAt": "2026-07-15T16:40:59.934Z",
+  "updatedAt": "2026-07-15T18:16:48.505Z",
   "source": "api",
   "status": "available",
   "stats": {
-    "totalHours": 5001.3,
+    "totalHours": 5002.9,
     "totalGames": 197
   },
   "profiles": [
@@ -15,7 +15,7 @@
       "currentGame": "",
       "profileUrl": "https://steamcommunity.com/profiles/76561199770575251/",
       "gameCount": 140,
-      "totalHours": 1590.7,
+      "totalHours": 1592.3,
       "games": [
         {
           "appId": 730,
@@ -150,6 +150,12 @@
           "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/1966720/80d2453285274e4723c884a671cdd3f8fe2f766f.jpg"
         },
         {
+          "appId": 2073620,
+          "name": "Arena Breakout: Infinite",
+          "hours": 6.7,
+          "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/2073620/3c3cb9ae001821040f4a5c255bc577fb0143dadd.jpg"
+        },
+        {
           "appId": 594650,
           "name": "Hunt: Showdown 1896",
           "hours": 6.2,
@@ -178,12 +184,6 @@
           "name": "Dying Light 2: Reloaded Edition",
           "hours": 5.2,
           "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/534380/4036cc941abaeeed5ee8bd433ca69388723f7f19.jpg"
-        },
-        {
-          "appId": 2073620,
-          "name": "Arena Breakout: Infinite",
-          "hours": 5.1,
-          "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/2073620/3c3cb9ae001821040f4a5c255bc577fb0143dadd.jpg"
         },
         {
           "appId": 2073850,
