@@ -1,9 +1,9 @@
 {
-  "updatedAt": "2026-07-15T14:59:30.504Z",
+  "updatedAt": "2026-07-15T16:40:59.934Z",
   "source": "api",
   "status": "available",
   "stats": {
-    "totalHours": 4999.8,
+    "totalHours": 5001.3,
     "totalGames": 197
   },
   "profiles": [
@@ -15,7 +15,7 @@
       "currentGame": "",
       "profileUrl": "https://steamcommunity.com/profiles/76561199770575251/",
       "gameCount": 140,
-      "totalHours": 1589.2,
+      "totalHours": 1590.7,
       "games": [
         {
           "appId": 730,
@@ -180,6 +180,12 @@
           "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/534380/4036cc941abaeeed5ee8bd433ca69388723f7f19.jpg"
         },
         {
+          "appId": 2073620,
+          "name": "Arena Breakout: Infinite",
+          "hours": 5.1,
+          "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/2073620/3c3cb9ae001821040f4a5c255bc577fb0143dadd.jpg"
+        },
+        {
           "appId": 2073850,
           "name": "THE FINALS",
           "hours": 4.9,
@@ -208,12 +214,6 @@
           "name": "Battlefield™ 6",
           "hours": 3.7,
           "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/2807960/a758cc85720fc89b5c97995bd8eafb38b3604e47.jpg"
-        },
-        {
-          "appId": 2073620,
-          "name": "Arena Breakout: Infinite",
-          "hours": 3.6,
-          "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/2073620/3c3cb9ae001821040f4a5c255bc577fb0143dadd.jpg"
         },
         {
           "appId": 3326230,
