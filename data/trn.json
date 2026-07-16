@@ -4,5 +4,6 @@
   "status": "unavailable",
   "platform": "",
   "username": "",
-  "message": "Укажите TRN_PLATFORM и TRN_USERNAME для подключения точного аккаунта."
+  "message": "Укажите TRN_PLATFORM и TRN_USERNAME для подключения точного аккаунта.",
+  "lastAttemptAt": "2026-07-16T11:06:43.463Z"
 }

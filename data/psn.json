@@ -1272,5 +1272,6 @@
   ],
   "updatedAt": "2026-07-16T09:23:44.208Z",
   "source": "fallback",
-  "status": "unavailable"
+  "status": "unavailable",
+  "lastAttemptAt": "2026-07-16T11:06:43.463Z"
 }

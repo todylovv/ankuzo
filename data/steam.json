@@ -1,5 +1,7 @@
 {
-  "updatedAt": "2026-07-16T09:23:44.208Z",
+  "updatedAt": "2026-07-16T11:06:43.463Z",
+  "lastSuccessfulAt": "2026-07-16T11:06:43.463Z",
+  "lastAttemptAt": "2026-07-16T11:06:43.463Z",
   "source": "api",
   "status": "available",
   "stats": {
@@ -11,7 +13,7 @@
       "steamId": "76561199770575251",
       "nickname": "b1",
       "avatarUrl": "https://avatars.steamstatic.com/6a30a26c019394587a828b964f6156b6a17e36a2_full.jpg",
-      "online": false,
+      "online": true,
       "currentGame": "",
       "profileUrl": "https://steamcommunity.com/profiles/76561199770575251/",
       "gameCount": 140,
