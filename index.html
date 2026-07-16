@@ -3,18 +3,28 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="ANKUZO — приватная персональная цифровая система: Steam, PS5 и Discord.">
+  <meta name="description" content="Игровой профиль ANKUZO: статистика Steam, PlayStation и основной канал связи в Discord.">
   <meta name="theme-color" content="#050605">
   <meta property="og:title" content="ANKUZO — Персональная система">
   <meta property="og:description" content="Приватный цифровой интерфейс ANKUZO.">
   <meta property="og:type" content="website">
   <meta property="og:locale" content="ru_RU">
+  <meta property="og:url" content="https://todylovv.github.io/ankuzo/">
+  <meta property="og:image" content="https://todylovv.github.io/ankuzo/assets/discord-banner.webp">
+  <meta property="og:image:alt" content="Персональная игровая система ANKUZO">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="ANKUZO — Персональная игровая система">
+  <meta name="twitter:description" content="Steam, PlayStation и основной канал связи ANKUZO.">
+  <meta name="twitter:image" content="https://todylovv.github.io/ankuzo/assets/discord-banner.webp">
   <title>ANKUZO — Персональная система</title>
   <link rel="canonical" href="https://todylovv.github.io/ankuzo/">
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%23050605'/%3E%3Cpath d='M12 50 27 14h10l15 36H41l-3-8H25l-3 8Zm16-17h7l-3-9Z' fill='%23c2ff1a'/%3E%3C/svg%3E">
   <link rel="preload" href="fonts/manrope-cyrillic.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="fonts/jetbrains-mono-cyrillic.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="stylesheet" href="css/system.css">
+  <link rel="stylesheet" href="css/system.css?v=3.1.0">
+  <script type="application/ld+json">
+    {"@context":"https://schema.org","@type":"ProfilePage","url":"https://todylovv.github.io/ankuzo/","mainEntity":{"@type":"Person","name":"ANKUZO","sameAs":["https://steamcommunity.com/profiles/76561199770575251/","https://steamcommunity.com/profiles/76561198165374024/"]}}
+  </script>
 </head>
 <body>
   <div class="fx fx-grid"></div>
@@ -51,7 +61,7 @@
     <a href="#core" data-go="core"><span class="idx">00</span><span class="nm">/ЯДРО</span><span class="sdot"></span></a>
     <a href="#identity" data-go="identity"><span class="idx">01</span><span class="nm">/ИДЕНТИЧНОСТЬ</span><span class="sdot"></span></a>
     <a href="#steam" data-go="steam"><span class="idx">02</span><span class="nm">/Steam</span><span class="sdot"></span></a>
-    <a href="#ps5" data-go="ps5"><span class="idx">03</span><span class="nm">/PS5</span><span class="sdot"></span></a>
+    <a href="#ps5" data-go="ps5"><span class="idx">03</span><span class="nm">/PlayStation</span><span class="sdot"></span></a>
     <a href="#signal" data-go="signal"><span class="idx">04</span><span class="nm">/Discord · СИГНАЛ</span><span class="sdot"></span></a>
     <div class="rail-foot">
       <div>узел <b>ANKUZO</b></div>
@@ -78,7 +88,7 @@
       </div>
 
       <div class="core-stage rv rv-d2">
-        <canvas id="heroShaderCanvas" aria-label="Интерактивное ядро системы"></canvas>
+        <canvas id="heroShaderCanvas" aria-hidden="true"></canvas>
         <div class="core-ring"></div>
         <div class="core-ring r2"></div>
         <div class="core-crosshair"></div>
@@ -100,8 +110,8 @@
       <div class="core-grid">
         <article class="panel bigstat rv">
           <span class="corner tl"></span><span class="corner tr"></span><span class="corner bl"></span><span class="corner br"></span>
-          <p class="lead">Центральный визуальный объект персональной системы <em>ANKUZO</em>.</p>
-          <p class="sub">Приватный интерфейс объединяет игровой профиль, подключенные узлы и единственный активный маршрут связи.</p>
+          <p class="lead">Игровой профиль <em>ANKUZO</em> в едином цифровом интерфейсе.</p>
+          <p class="sub">Здесь собраны актуальная статистика Steam, профиль PlayStation и основной маршрут связи через Discord.</p>
           <div class="ind"><span class="dot live"></span> ЯДРО СТАБИЛЬНО</div>
         </article>
         <article class="panel monitor rv rv-d1">
@@ -110,7 +120,7 @@
           <div class="kv"><span class="k">статус ядра</span><span class="v acid"><span class="dot live"></span>стабильно</span></div>
           <div class="kv"><span class="k">уровень доступа</span><span class="v">приватный</span></div>
           <div class="kv"><span class="k">слой идентичности</span><span class="v acid">активен</span></div>
-          <div class="kv"><span class="k">подключенные узлы</span><span class="v">Steam / PS5</span></div>
+          <div class="kv"><span class="k">подключенные узлы</span><span class="v">Steam / PSN</span></div>
           <div class="kv"><span class="k">маршрут связи</span><span class="v discord-text">только Discord</span></div>
         </article>
       </div>
@@ -131,7 +141,7 @@
           <div class="lbl">[ слой идентичности активен ]</div>
         </article>
         <div class="id-body">
-          <p class="id-statement rv rv-d1">ANKUZO — приватная цифровая система вокруг <em>игрового присутствия</em>, подключенных узлов и контролируемой связи.</p>
+          <p class="id-statement rv rv-d1">ANKUZO объединяет <em>игровую активность</em>, подключенные профили и прямой способ связи в одном интерфейсе.</p>
           <div class="id-fields rv rv-d2">
             <div class="f"><div class="k">оператор</div><div class="v">ANKUZO</div></div>
             <div class="f"><div class="k">тип</div><div class="v">персональная система</div></div>
@@ -170,8 +180,8 @@
 
     <section id="ps5" class="data-section">
       <div class="sec-head rv">
-        <span class="num">03</span><span class="tag">/PS5</span>
-        <h2>PS5 профиль</h2>
+        <span class="num">03</span><span class="tag">/PlayStation</span>
+        <h2>PlayStation профиль</h2>
         <span class="meta" id="psn-source">PSN ID<br>ankkui</span>
       </div>
       <div class="psn-head rv">
@@ -190,7 +200,7 @@
           <span>ПРИОБРЕТЕННЫЕ ИГРЫ <b id="psn-library-count">—</b></span>
           <button class="library-toggle" id="psn-library-toggle" type="button" aria-expanded="false" aria-controls="psn-library">ПОКАЗАТЬ БИБЛИОТЕКУ</button>
         </div>
-        <div id="psn-library" class="game-library is-collapsed"></div>
+        <div id="psn-library" class="game-library" hidden></div>
       </article>
     </section>
 
@@ -198,7 +208,7 @@
       <div class="sec-head rv">
         <span class="num">04</span><span class="tag">/СИГНАЛ</span>
         <h2>Основной сигнал</h2>
-        <span class="meta">маршрут<br>Discord · активен</span>
+        <span class="meta" id="signal-source">Discord<br>проверка данных</span>
       </div>
       <div class="signal-grid">
         <article class="discord-card rv" id="discord-profile-card">
@@ -213,7 +223,7 @@
               <span class="discord-presence" id="discord-presence" aria-label="Статус Discord"></span>
             </div>
             <div class="discord-copy">
-              <span>ОСНОВНОЙ СИГНАЛ</span>
+              <span id="discord-signal-state">ОСНОВНОЙ СИГНАЛ</span>
               <h3 id="discord-name">anku</h3>
               <div class="discord-username">@<span id="discord-username">ankuz0</span></div>
               <p id="discord-bio">Discord — единственный активный канал связи.</p>
@@ -252,8 +262,8 @@
 
   <div id="toast" role="status">СКОПИРОВАНО</div>
 
-  <script src="js/boot.js"></script>
-  <script src="js/interface.js"></script>
-  <script src="js/hero-shader.js"></script>
+  <script src="js/boot.js?v=3.1.0"></script>
+  <script src="js/interface.js?v=3.1.0"></script>
+  <script src="js/hero-shader.js?v=3.1.0"></script>
 </body>
 </html>

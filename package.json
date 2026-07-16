@@ -5,7 +5,9 @@
   "type": "module",
   "scripts": {
     "build": "node scripts/build-static.js",
+    "check": "node --test tests/project.test.js",
     "serve": "npx --yes serve .",
+    "test": "npm run check && npm run build",
     "update-data": "node scripts/update-data.js"
   }
 }

@@ -153,9 +153,9 @@
   const metallic = location('metallic');
   const roughness = location('roughness');
   const fresnel = location('fresnel');
-  const fps = document.getElementById('heroShaderFps');
   const swatches = [...document.querySelectorAll('.shader-swatch')];
   const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const maxFps = matchMedia('(max-width: 768px)').matches ? 30 : 60;
   const presets = [
     { colors: [[.95, .74, .03], [.34, .72, .08], [.9, .16, .56]], blend: .82, metallic: .62, roughness: .07, fresnel: 1.05 },
     { colors: [[.62, .62, .61], [.48, .49, .51], [.72, .72, .71]], blend: .3, metallic: .22, roughness: .08, fresnel: .2 },
@@ -196,8 +196,9 @@
   let grabOffsetY = 0;
   let lastWidth = 0;
   let lastHeight = 0;
-  let previousFrame = performance.now();
-  let fpsAverage = 60;
+  let lastRenderedAt = 0;
+  let framePending = false;
+  let heroVisible = true;
 
   gl.useProgram(program);
   gl.clearColor(0., 0., 0., 0.);
@@ -312,17 +313,36 @@
   }
 
   function render(timestamp) {
+    framePending = false;
+    if (!heroVisible || document.hidden) return;
+    if (!reducedMotion && timestamp - lastRenderedAt < 1000 / maxFps) {
+      scheduleRender();
+      return;
+    }
+    lastRenderedAt = timestamp;
     resize();
-    const elapsed = Math.min(timestamp - previousFrame, 1000);
-    previousFrame = timestamp;
-    fpsAverage = fpsAverage * .94 + (elapsed ? 1000 / elapsed : 60) * .06;
-    if (fps) fps.textContent = `${Math.round(Math.min(fpsAverage, 99))} FPS`;
     updateMaterial();
     updateBlobs(reducedMotion ? 0 : timestamp * .001);
     gl.clear(gl.COLOR_BUFFER_BIT);
     gl.drawArrays(gl.TRIANGLES, 0, 6);
-    if (!reducedMotion) requestAnimationFrame(render);
+    if (!reducedMotion) scheduleRender();
   }
 
-  requestAnimationFrame(render);
+  function scheduleRender() {
+    if (framePending || !heroVisible || document.hidden) return;
+    framePending = true;
+    requestAnimationFrame(render);
+  }
+
+  if ('IntersectionObserver' in window) {
+    const observer = new IntersectionObserver(entries => {
+      heroVisible = entries.some(entry => entry.isIntersecting);
+      if (heroVisible) scheduleRender();
+    }, { threshold: .01 });
+    observer.observe(canvas);
+  }
+  document.addEventListener('visibilitychange', () => {
+    if (!document.hidden) scheduleRender();
+  });
+  scheduleRender();
 })();

@@ -6,7 +6,7 @@ import { createRequire } from "node:module";
 const require = createRequire(import.meta.url);
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const dataDir = path.join(root, "data");
-const updatedAt = new Date().toISOString();
+const attemptedAt = new Date().toISOString();
 const steamIds = ["76561199770575251", "76561198165374024"];
 
 async function readFallback(name, defaults) {
@@ -22,6 +22,27 @@ async function writeJson(name, value) {
   await fs.writeFile(path.join(dataDir, name), `${JSON.stringify(value, null, 2)}\n`, "utf8");
 }
 
+function unavailable(fallback) {
+  return {
+    ...fallback,
+    lastAttemptAt: attemptedAt,
+    source: "fallback",
+    status: "unavailable"
+  };
+}
+
+function normalizeTitle(value) {
+  return String(value || "")
+    .normalize("NFKD")
+    .toLowerCase()
+    .replace(/[™®©]/g, "")
+    .replace(/\b(complete|deluxe|ultimate|standard|definitive|remastered|anniversary|game of the year|goty)\s+edition\b/g, "")
+    .replace(/\b(ps4|ps5|playstation 4|playstation 5)\b/g, "")
+    .replace(/[^\p{L}\p{N}]+/gu, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
 async function requestJson(url, options = {}) {
   const response = await fetch(url, {
     ...options,
@@ -35,7 +56,7 @@ async function requestJson(url, options = {}) {
 async function updateSteam() {
   const fallback = await readFallback("steam.json", { profiles: [] });
   const key = (process.env.STEAM_KEY || "").trim();
-  if (!key) return writeJson("steam.json", { ...fallback, updatedAt, source: "fallback", status: "unavailable" });
+  if (!key) return writeJson("steam.json", unavailable(fallback));
 
   const summaryParams = new URLSearchParams({ key, steamids: steamIds.join(",") });
   const summary = await requestJson(
@@ -82,7 +103,9 @@ async function updateSteam() {
   }
   const top = [...mergedGames.values()].sort((a, b) => b.hours - a.hours).slice(0, 10);
   return writeJson("steam.json", {
-    updatedAt,
+    updatedAt: attemptedAt,
+    lastSuccessfulAt: attemptedAt,
+    lastAttemptAt: attemptedAt,
     source: "api",
     status: "available",
     stats: {
@@ -97,7 +120,7 @@ async function updateSteam() {
 async function updatePsn() {
   const fallback = await readFallback("psn.json", { psnId: "ankkui", trophies: {}, library: [] });
   const npsso = (process.env.PSN_NPSSO || "").trim();
-  if (!npsso) return writeJson("psn.json", { ...fallback, updatedAt, source: "fallback", status: "unavailable" });
+  if (!npsso) return writeJson("psn.json", unavailable(fallback));
 
   const {
     exchangeAccessCodeForAuthTokens,
@@ -132,8 +155,26 @@ async function updatePsn() {
   const total = Number(earned.platinum || 0) + Number(earned.gold || 0) +
     Number(earned.silver || 0) + Number(earned.bronze || 0);
 
+  const trophyTitles = new Map();
+  titles.forEach((title) => {
+    const normalized = normalizeTitle(title.trophyTitleName);
+    if (!normalized) return;
+    const current = trophyTitles.get(normalized);
+    if (!current || Number(title.progress || 0) > Number(current.progress || 0)) {
+      trophyTitles.set(normalized, title);
+    }
+  });
+  const uniquePurchasedGames = new Map();
+  purchasedGames.forEach((game) => {
+    const platform = Array.isArray(game.platform) ? game.platform.join("/") : game.platform || "PlayStation";
+    const key = `${normalizeTitle(game.name)}|${String(platform).toLowerCase()}`;
+    if (key !== "|playstation" && !uniquePurchasedGames.has(key)) uniquePurchasedGames.set(key, { game, platform });
+  });
+
   return writeJson("psn.json", {
-    updatedAt,
+    updatedAt: attemptedAt,
+    lastSuccessfulAt: attemptedAt,
+    lastAttemptAt: attemptedAt,
     source: "api",
     status: "available",
     psnId: profile.onlineId || psnId,
@@ -145,15 +186,13 @@ async function updatePsn() {
       bronze: earned.bronze || 0,
       level: summary.level || 0
     },
-    library: purchasedGames.map((game) => {
-      const trophy = titles.find((title) =>
-        title.trophyTitleName && game.name &&
-        title.trophyTitleName.toLowerCase() === game.name.toLowerCase()
-      );
+    library: [...uniquePurchasedGames.values()].map(({ game, platform }) => {
+      const trophy = trophyTitles.get(normalizeTitle(game.name));
       return {
         title: game.name,
-        platform: game.platform || "PlayStation",
-        trophyProgress: trophy?.progress || 0,
+        platform,
+        trophyProgress: trophy ? Number(trophy.progress || 0) : null,
+        trophyMatched: Boolean(trophy),
         iconUrl: game.image?.url || trophy?.trophyTitleIconUrl || ""
       };
     })
@@ -168,7 +207,7 @@ async function updateDiscord() {
     avatarUrl: ""
   });
   const userId = (process.env.DISCORD_USER_ID || "").trim();
-  if (!userId) return writeJson("discord.json", { ...fallback, updatedAt, source: "fallback" });
+  if (!userId) return writeJson("discord.json", unavailable(fallback));
 
   try {
     const [lanyard, profile] = await Promise.all([
@@ -187,8 +226,11 @@ async function updateDiscord() {
       ? `https://cdn.discordapp.com/avatar-decoration-presets/${user.avatar_decoration_data.asset}.png?size=512&passthrough=true`
       : "";
     return writeJson("discord.json", {
-      updatedAt,
+      updatedAt: attemptedAt,
+      lastSuccessfulAt: attemptedAt,
+      lastAttemptAt: attemptedAt,
       source: "api",
+      status: "available",
       username: user.username || fallback.username,
       displayName: user.global_name || user.username || fallback.displayName,
       bio: (process.env.DISCORD_BIO || "").trim() ||
@@ -204,7 +246,7 @@ async function updateDiscord() {
       ]
     });
   } catch {
-    return writeJson("discord.json", { ...fallback, updatedAt, source: "fallback", status: "unavailable" });
+    return writeJson("discord.json", unavailable(fallback));
   }
 }
 
@@ -213,7 +255,7 @@ async function updateFaceit() {
   const key = (process.env.FACEIT_KEY || "").trim();
   const nickname = (process.env.FACEIT_NICKNAME || "").trim();
   if (!key) {
-    return writeJson("faceit.json", { ...fallback, updatedAt, source: "fallback", status: "unavailable" });
+    return writeJson("faceit.json", unavailable(fallback));
   }
   const lookup = nickname
     ? `nickname=${encodeURIComponent(nickname)}`
@@ -223,7 +265,9 @@ async function updateFaceit() {
     { headers: { Authorization: `Bearer ${key}` } }
   );
   return writeJson("faceit.json", {
-    updatedAt,
+    updatedAt: attemptedAt,
+    lastSuccessfulAt: attemptedAt,
+    lastAttemptAt: attemptedAt,
     source: "api",
     status: "available",
     nickname: player.nickname || nickname,
@@ -239,14 +283,16 @@ async function updateTrn() {
   const platform = (process.env.TRN_PLATFORM || "steam").trim();
   const username = (process.env.TRN_USERNAME || steamIds[1]).trim();
   if (!key) {
-    return writeJson("trn.json", { ...fallback, updatedAt, source: "fallback", status: "unavailable" });
+    return writeJson("trn.json", unavailable(fallback));
   }
   const profile = await requestJson(
     `https://public-api.tracker.gg/v2/apex/standard/profile/${encodeURIComponent(platform)}/${encodeURIComponent(username)}`,
     { headers: { "TRN-Api-Key": key } }
   );
   return writeJson("trn.json", {
-    updatedAt,
+    updatedAt: attemptedAt,
+    lastSuccessfulAt: attemptedAt,
+    lastAttemptAt: attemptedAt,
     source: "api",
     status: "available",
     platform,
@@ -273,7 +319,7 @@ for (const [label, task] of tasks) {
     console.warn(`${label}: источник недоступен, сохранен предыдущий fallback (${error.message})`);
     const file = label === "PlayStation" ? "psn.json" : `${label.toLowerCase()}.json`;
     const fallback = await readFallback(file, {});
-    await writeJson(file, { ...fallback, updatedAt, source: "fallback", status: "unavailable" });
+    await writeJson(file, unavailable(fallback));
   }
 }
 

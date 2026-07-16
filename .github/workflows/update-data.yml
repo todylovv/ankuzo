@@ -9,7 +9,7 @@ on:
       - ".github/workflows/update-data.yml"
       - "scripts/update-data.js"
   schedule:
-    - cron: "7,37 * * * *"
+    - cron: "17 */6 * * *"
 
 permissions:
   contents: write
@@ -52,12 +52,15 @@ jobs:
           TRN_USERNAME: ${{ vars.TRN_USERNAME }}
         run: node scripts/update-data.js
 
+      - name: Verify updated project
+        run: npm run check
+
       - name: Commit changed JSON
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add data/*.json
-          git diff --staged --quiet && exit 0
+          git diff --staged --quiet -I '"lastAttemptAt":' && exit 0
           git commit -m "chore: update public profile data"
           git pull --rebase origin main
           git push

@@ -132,7 +132,7 @@
       tag.style.left = tx + "px"; tag.style.top = ty + "px";
       requestAnimationFrame(raf);
     })();
-    var hotSel = "a,button,.node,.cmd,.copybtn,.bigcopy,.act,#psn-copy,#psn-copy-2,.rail a";
+    var hotSel = "a,button";
     document.addEventListener("mouseover", function (e) { if (e.target.closest(hotSel)) cur.classList.add("hot"); });
     document.addEventListener("mouseout", function (e) {
       if (e.target.closest(hotSel) && !(e.relatedTarget && e.relatedTarget.closest && e.relatedTarget.closest(hotSel)))
