@@ -57,9 +57,9 @@
   var marq = document.getElementById("marq");
   if (marq) {
     var bits = [
-      "// приватный интерфейс инициализирован", "ядро стабильно", "слой идентичности активен",
-      "подключённые узлы обнаружены", "основной сигнал: Discord", "публичные каналы отключены",
-      "маршрут связи: только Discord", "присутствие включено", "узел ANKUZO активен"
+      "// личная игровая страница", "ник: Anku / Ankuzo", "Steam: игры и часы",
+      "PlayStation: трофеи и библиотека", "Discord: @ankuz0", "данные обновляются автоматически",
+      "два Steam-профиля подключены", "PSN ID: ankkui", "страница ANKUZO активна"
     ];
     var html = "";
     bits.forEach(function (b) { html += "<span>" + (b.indexOf("//") === 0 ? "<i>" + b + "</i>" : b) + "</span>"; });
@@ -362,7 +362,7 @@
     setText("discord-bio", safeText(data.bio, "Discord — единственный активный канал связи."));
     setSource("signal-source", "Discord", data);
     var live = data.source === "api" && data.status !== "unavailable";
-    setText("discord-signal-state", live ? "сигнал актуален" : "резервные данные");
+    setText("discord-signal-state", live ? "данные профиля актуальны" : "резервные данные");
     document.querySelectorAll("[data-copy]").forEach(function (button) {
       button.setAttribute("data-copy", username);
     });
@@ -396,10 +396,16 @@
     var badges = document.getElementById("discord-badges");
     if (badges) {
       badges.textContent = "";
+      var badgeLabels = {
+        HOUSE_BRAVERY: "HypeSquad Bravery",
+        DISCORD_NAMEPLATE: "Nameplate",
+        "DISCORD NAMEPLATE": "Nameplate",
+        NITRO: "Nitro"
+      };
       (Array.isArray(data.badges) ? data.badges : []).forEach(function (badge) {
         var el = document.createElement("span");
         el.className = "discord-badge";
-        el.textContent = badge;
+        el.textContent = badgeLabels[badge] || badge;
         badges.appendChild(el);
       });
     }

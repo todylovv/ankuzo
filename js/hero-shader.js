@@ -183,8 +183,6 @@
     roughness: .08,
     fresnel: .84
   };
-  let activeBlob = -1;
-  let dragging = false;
   let pointerInside = false;
   let pointerX = 0;
   let pointerY = 0;
@@ -192,8 +190,6 @@
   let pointerVelocityY = 0;
   let previousPointerX = 0;
   let previousPointerY = 0;
-  let grabOffsetX = 0;
-  let grabOffsetY = 0;
   let lastWidth = 0;
   let lastHeight = 0;
   let lastRenderedAt = 0;
@@ -227,31 +223,8 @@
   canvas.addEventListener('pointerenter', () => { pointerInside = true; });
   canvas.addEventListener('pointerleave', () => {
     pointerInside = false;
-    dragging = false;
-    activeBlob = -1;
   });
   canvas.addEventListener('pointermove', updatePointer);
-  canvas.addEventListener('pointerdown', event => {
-    event.preventDefault();
-    updatePointer(event);
-    let bestDistance = Infinity;
-    blobs.forEach((blob, index) => {
-      const distance = Math.hypot(blob.x - pointerX, blob.y - pointerY);
-      if (distance < bestDistance) {
-        bestDistance = distance;
-        activeBlob = index;
-      }
-    });
-    grabOffsetX = blobs[activeBlob].x - pointerX;
-    grabOffsetY = blobs[activeBlob].y - pointerY;
-    dragging = true;
-    canvas.setPointerCapture(event.pointerId);
-  });
-  canvas.addEventListener('pointerup', event => {
-    dragging = false;
-    activeBlob = -1;
-    if (canvas.hasPointerCapture(event.pointerId)) canvas.releasePointerCapture(event.pointerId);
-  });
   swatches.forEach((swatch, index) => {
     swatch.addEventListener('click', event => {
       event.stopPropagation();
@@ -289,19 +262,16 @@
       blob.ty = Math.sin(phase * (.78 + (index + 1) % 3 * .2)) * blob.radius;
       blob.tz = Math.sin(phase * .62 + index) * .36;
 
-      if (pointerInside && dragging && activeBlob === index) {
-        blob.tx = pointerX + grabOffsetX;
-        blob.ty = pointerY + grabOffsetY;
-      } else if (pointerInside && !dragging) {
+      if (pointerInside) {
         const distance = Math.hypot(pointerX - blob.x, pointerY - blob.y);
-        const pull = .3 / (1 + distance * 1.45);
+        const pull = .18 / (1 + distance * 1.8);
         blob.tx += (pointerX - blob.x) * pull;
         blob.ty += (pointerY - blob.y) * pull;
-        blob.tx += pointerVelocityX * .07 / (1 + index * .4);
-        blob.ty += pointerVelocityY * .07 / (1 + index * .4);
+        blob.tx += pointerVelocityX * .025 / (1 + index * .4);
+        blob.ty += pointerVelocityY * .025 / (1 + index * .4);
       }
 
-      const easing = activeBlob === index ? .16 : .038;
+      const easing = .038;
       blob.x += (blob.tx - blob.x) * easing;
       blob.y += (blob.ty - blob.y) * easing;
       blob.z += (blob.tz - blob.z) * easing;
