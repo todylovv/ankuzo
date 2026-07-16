@@ -176,6 +176,7 @@
     };
   });
   const packedBlobs = new Float32Array(15);
+  const desktopBackdrop = matchMedia('(min-width: 1101px)').matches;
   let activePreset = {
     colors: [[.30, .38, .035], [.64, .86, .08], [.08, .11, .02]],
     blend: .7,
@@ -183,6 +184,13 @@
     roughness: .08,
     fresnel: .84
   };
+  let groupX = desktopBackdrop ? .9 : 0;
+  let groupY = 0;
+  let targetGroupX = groupX;
+  let targetGroupY = groupY;
+  let dragging = false;
+  let grabOffsetX = 0;
+  let grabOffsetY = 0;
   let pointerInside = false;
   let pointerX = 0;
   let pointerY = 0;
@@ -218,6 +226,14 @@
     pointerY = next.y;
     pointerVelocityX = (pointerX - previousPointerX) * 7;
     pointerVelocityY = (pointerY - previousPointerY) * 7;
+    if (dragging) {
+      const bounds = canvas.getBoundingClientRect();
+      const scale = 3.25 / 1.85;
+      const maxX = Math.max(.25, bounds.width / bounds.height * scale - 1.02);
+      const maxY = Math.max(.25, scale - 1.02);
+      targetGroupX = Math.max(-maxX, Math.min(maxX, pointerX + grabOffsetX));
+      targetGroupY = Math.max(-maxY, Math.min(maxY, pointerY + grabOffsetY));
+    }
   }
 
   canvas.addEventListener('pointerenter', () => { pointerInside = true; });
@@ -225,6 +241,23 @@
     pointerInside = false;
   });
   canvas.addEventListener('pointermove', updatePointer);
+  canvas.addEventListener('pointerdown', event => {
+    updatePointer(event);
+    if (Math.hypot(pointerX - groupX, pointerY - groupY) > 1.2) return;
+    event.preventDefault();
+    dragging = true;
+    grabOffsetX = groupX - pointerX;
+    grabOffsetY = groupY - pointerY;
+    canvas.classList.add('dragging');
+    canvas.setPointerCapture(event.pointerId);
+  });
+  function finishDrag(event) {
+    dragging = false;
+    canvas.classList.remove('dragging');
+    if (canvas.hasPointerCapture(event.pointerId)) canvas.releasePointerCapture(event.pointerId);
+  }
+  canvas.addEventListener('pointerup', finishDrag);
+  canvas.addEventListener('pointercancel', finishDrag);
   swatches.forEach((swatch, index) => {
     swatch.addEventListener('click', event => {
       event.stopPropagation();
@@ -254,6 +287,8 @@
   }
 
   function updateBlobs(now) {
+    groupX += (targetGroupX - groupX) * (dragging ? .22 : .09);
+    groupY += (targetGroupY - groupY) * (dragging ? .22 : .09);
     pointerVelocityX *= .9;
     pointerVelocityY *= .9;
     blobs.forEach((blob, index) => {
@@ -262,7 +297,7 @@
       blob.ty = Math.sin(phase * (.78 + (index + 1) % 3 * .2)) * blob.radius;
       blob.tz = Math.sin(phase * .62 + index) * .36;
 
-      if (pointerInside) {
+      if (pointerInside && !dragging) {
         const distance = Math.hypot(pointerX - blob.x, pointerY - blob.y);
         const pull = .18 / (1 + distance * 1.8);
         blob.tx += (pointerX - blob.x) * pull;
@@ -270,6 +305,9 @@
         blob.tx += pointerVelocityX * .025 / (1 + index * .4);
         blob.ty += pointerVelocityY * .025 / (1 + index * .4);
       }
+
+      blob.tx += groupX;
+      blob.ty += groupY;
 
       const easing = .038;
       blob.x += (blob.tx - blob.x) * easing;

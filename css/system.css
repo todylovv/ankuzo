@@ -280,7 +280,8 @@ section{ position:relative; padding:0 clamp(28px,5.5vw,104px); scroll-margin-top
 /* --- core stage --- */
 .core-stage{ position:relative; width:100%; aspect-ratio:1/1; max-height:76vh; z-index:2;
   filter:drop-shadow(0 40px 90px rgba(0,0,0,.38)); }
-#heroShaderCanvas{ position:absolute; inset:0; width:100%; height:100%; display:block; }
+#heroShaderCanvas{ position:absolute; inset:0; width:100%; height:100%; display:block; touch-action:none; }
+#heroShaderCanvas.dragging{ cursor:grabbing; }
 .core-ring{ position:absolute; inset:8%; border:1px solid var(--border); border-radius:50%;
   pointer-events:none; opacity:.5; }
 .core-ring.r2{ inset:1%; border-style:dashed; opacity:.28; animation:spin 60s linear infinite; }
@@ -305,6 +306,27 @@ section{ position:relative; padding:0 clamp(28px,5.5vw,104px); scroll-margin-top
   text-transform:uppercase; pointer-events:none; }
 .core-tick.t1{ top:50%; left:-4%; transform:translateY(-50%) rotate(-90deg); transform-origin:left; }
 .core-tick.t2{ top:50%; right:-4%; transform:translateY(-50%) rotate(90deg); transform-origin:right; }
+
+@media (min-width:1101px){
+  #hero{ display:block; isolation:isolate; }
+  .hero-left{ width:min(48%,590px); min-height:calc(100vh - var(--bar-h) - 106px); display:flex;
+    flex-direction:column; justify-content:center; position:relative; z-index:5; pointer-events:none; }
+  .hero-left a,.hero-left button{ pointer-events:auto; }
+  .core-stage{ position:absolute; inset:0; max-height:none; aspect-ratio:auto; z-index:2; filter:none; }
+  #heroShaderCanvas{ z-index:1; }
+  .core-ring{ inset:auto; width:min(48vw,680px); aspect-ratio:1; right:2.5%; top:50%;
+    transform:translateY(-50%); z-index:2; }
+  .core-ring.r2{ inset:auto; width:min(55vw,780px); right:-.5%; top:50%; transform:translateY(-50%); }
+  .core-crosshair{ left:73%; z-index:2; }
+  .core-label{ z-index:3; }
+  .core-label.tl{ top:15%; left:54%; }
+  .core-label.tr{ top:18%; right:2%; }
+  .core-label.bl{ bottom:15%; left:55%; }
+  .core-label.br{ bottom:10%; right:2%; }
+  .core-tick{ z-index:3; }
+  .core-tick.t1{ left:52%; }
+  .core-tick.t2{ right:1%; }
+}
 
 /* kinetic interlude */
 .showreel-marquee{ width:100%; overflow:hidden; border-block:1px solid var(--border); padding:19px 0;
