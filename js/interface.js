@@ -418,3 +418,57 @@
   else window.addEventListener("ankuzo:ready", init, { once: true });
   setTimeout(function () { if (!document.querySelector(".rv.in")) bindReveals(); }, 4500);
 })();
+
+/* ---------- showcase motion layer ---------- */
+(function () {
+  "use strict";
+  var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var fine = window.matchMedia("(pointer: fine)").matches;
+  var progress = document.getElementById("scroll-progress-fill");
+  var core = document.querySelector(".core-stage");
+  var ticking = false;
+
+  function updateScroll() {
+    var max = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
+    if (progress) progress.style.setProperty("--scroll-progress", Math.min(100, window.scrollY / max * 100) + "%");
+    ticking = false;
+  }
+
+  window.addEventListener("scroll", function () {
+    if (!ticking) {
+      ticking = true;
+      requestAnimationFrame(updateScroll);
+    }
+  }, { passive: true });
+  updateScroll();
+
+  if (!fine || reduce) return;
+
+  document.addEventListener("pointermove", function (event) {
+    document.body.style.setProperty("--pointer-x", event.clientX + "px");
+    document.body.style.setProperty("--pointer-y", event.clientY + "px");
+    if (core && window.scrollY < window.innerHeight) {
+      var dx = (event.clientX / window.innerWidth - .5) * 12;
+      var dy = (event.clientY / window.innerHeight - .5) * 10;
+      core.style.transform = "translate3d(" + dx + "px," + dy + "px,0)";
+    }
+
+    var card = event.target.closest(".metric,.steam-account,.trophy,.discord-card");
+    if (!card) return;
+    card.classList.add("tilt-card");
+    var rect = card.getBoundingClientRect();
+    var px = (event.clientX - rect.left) / rect.width;
+    var py = (event.clientY - rect.top) / rect.height;
+    card.style.setProperty("--tilt-x", ((.5 - py) * 5).toFixed(2) + "deg");
+    card.style.setProperty("--tilt-y", ((px - .5) * 6).toFixed(2) + "deg");
+    card.style.setProperty("--glare-x", (px * 100).toFixed(1) + "%");
+    card.style.setProperty("--glare-y", (py * 100).toFixed(1) + "%");
+  }, { passive: true });
+
+  document.addEventListener("pointerout", function (event) {
+    var card = event.target.closest(".tilt-card");
+    if (!card || (event.relatedTarget && card.contains(event.relatedTarget))) return;
+    card.style.setProperty("--tilt-x", "0deg");
+    card.style.setProperty("--tilt-y", "0deg");
+  });
+})();
