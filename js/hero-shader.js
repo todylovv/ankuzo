@@ -188,6 +188,8 @@
   let groupY = 0;
   let targetGroupX = groupX;
   let targetGroupY = groupY;
+  let groupVelocityX = 0;
+  let groupVelocityY = 0;
   let dragging = false;
   let grabOffsetX = 0;
   let grabOffsetY = 0;
@@ -218,6 +220,26 @@
     };
   }
 
+  function movementBounds() {
+    const bounds = canvas.getBoundingClientRect();
+    const scale = 3.25 / 1.85;
+    return {
+      x: Math.max(.25, bounds.width / bounds.height * scale - 1.02),
+      y: Math.max(.25, scale - 1.02)
+    };
+  }
+
+  function clamp(value, min, max) {
+    return Math.max(min, Math.min(max, value));
+  }
+
+  function resetObject() {
+    targetGroupX = desktopBackdrop ? .9 : 0;
+    targetGroupY = 0;
+    groupVelocityX = 0;
+    groupVelocityY = 0;
+  }
+
   function updatePointer(event) {
     const next = localPointer(event);
     previousPointerX = pointerX;
@@ -227,12 +249,13 @@
     pointerVelocityX = (pointerX - previousPointerX) * 7;
     pointerVelocityY = (pointerY - previousPointerY) * 7;
     if (dragging) {
-      const bounds = canvas.getBoundingClientRect();
-      const scale = 3.25 / 1.85;
-      const maxX = Math.max(.25, bounds.width / bounds.height * scale - 1.02);
-      const maxY = Math.max(.25, scale - 1.02);
-      targetGroupX = Math.max(-maxX, Math.min(maxX, pointerX + grabOffsetX));
-      targetGroupY = Math.max(-maxY, Math.min(maxY, pointerY + grabOffsetY));
+      const bounds = movementBounds();
+      const nextX = clamp(pointerX + grabOffsetX, -bounds.x, bounds.x);
+      const nextY = clamp(pointerY + grabOffsetY, -bounds.y, bounds.y);
+      groupVelocityX = clamp((nextX - targetGroupX) * .48, -.14, .14);
+      groupVelocityY = clamp((nextY - targetGroupY) * .48, -.14, .14);
+      targetGroupX = nextX;
+      targetGroupY = nextY;
     }
   }
 
@@ -246,9 +269,12 @@
     if (Math.hypot(pointerX - groupX, pointerY - groupY) > 1.2) return;
     event.preventDefault();
     dragging = true;
+    groupVelocityX = 0;
+    groupVelocityY = 0;
     grabOffsetX = groupX - pointerX;
     grabOffsetY = groupY - pointerY;
     canvas.classList.add('dragging');
+    document.querySelector('.drag-hint')?.classList.add('used');
     canvas.setPointerCapture(event.pointerId);
   });
   function finishDrag(event) {
@@ -258,6 +284,7 @@
   }
   canvas.addEventListener('pointerup', finishDrag);
   canvas.addEventListener('pointercancel', finishDrag);
+  canvas.addEventListener('dblclick', resetObject);
   swatches.forEach((swatch, index) => {
     swatch.addEventListener('click', event => {
       event.stopPropagation();
@@ -287,6 +314,23 @@
   }
 
   function updateBlobs(now) {
+    if (!dragging && !reducedMotion) {
+      const bounds = movementBounds();
+      targetGroupX += groupVelocityX;
+      targetGroupY += groupVelocityY;
+      if (targetGroupX <= -bounds.x || targetGroupX >= bounds.x) {
+        targetGroupX = clamp(targetGroupX, -bounds.x, bounds.x);
+        groupVelocityX *= -.42;
+      }
+      if (targetGroupY <= -bounds.y || targetGroupY >= bounds.y) {
+        targetGroupY = clamp(targetGroupY, -bounds.y, bounds.y);
+        groupVelocityY *= -.42;
+      }
+      groupVelocityX *= .94;
+      groupVelocityY *= .94;
+      if (Math.abs(groupVelocityX) < .0004) groupVelocityX = 0;
+      if (Math.abs(groupVelocityY) < .0004) groupVelocityY = 0;
+    }
     groupX += (targetGroupX - groupX) * (dragging ? .22 : .09);
     groupY += (targetGroupY - groupY) * (dragging ? .22 : .09);
     pointerVelocityX *= .9;

@@ -215,7 +215,7 @@ section{ position:relative; padding:0 clamp(28px,5.5vw,104px); scroll-margin-top
 .sec-head .tag{ font-size:11px; letter-spacing:.2em; color:var(--acid); text-transform:uppercase; }
 .sec-head .num{ font-size:11px; color:var(--dimmer); letter-spacing:.16em; }
 .sec-head h2{ font-family:var(--disp); font-weight:560; font-size:clamp(30px,3.7vw,54px);
-  letter-spacing:-.045em; line-height:.98; color:var(--text); }
+  letter-spacing:-.045em; line-height:.98; color:var(--text); text-wrap:balance; }
 .sec-head .meta{ margin-left:auto; font-size:10.5px; color:var(--dimmer); letter-spacing:.14em;
   text-transform:uppercase; text-align:right; }
 .sec-intro{ max-width:62ch; font-size:14px; color:var(--dim); line-height:1.7; margin-bottom:40px; text-wrap:pretty; }
@@ -282,6 +282,12 @@ section{ position:relative; padding:0 clamp(28px,5.5vw,104px); scroll-margin-top
   filter:drop-shadow(0 40px 90px rgba(0,0,0,.38)); }
 #heroShaderCanvas{ position:absolute; inset:0; width:100%; height:100%; display:block; touch-action:none; }
 #heroShaderCanvas.dragging{ cursor:grabbing; }
+.drag-hint{ position:absolute; z-index:6; font:500 9px/1 var(--mono); letter-spacing:.15em;
+  text-transform:uppercase; backdrop-filter:blur(14px); transition:.35s var(--ease); }
+.drag-hint{ left:55%; bottom:10%; display:flex; align-items:center; gap:9px; color:var(--dim);
+  padding:10px 12px; border:1px solid var(--border); border-radius:999px; background:rgba(7,8,7,.52); pointer-events:none; }
+.drag-hint span{ color:var(--acid); font-size:13px; }
+.drag-hint.used{ opacity:0; transform:translateY(6px); }
 .core-ring{ position:absolute; inset:8%; border:1px solid var(--border); border-radius:50%;
   pointer-events:none; opacity:.5; }
 .core-ring.r2{ inset:1%; border-style:dashed; opacity:.28; animation:spin 60s linear infinite; }
@@ -308,11 +314,17 @@ section{ position:relative; padding:0 clamp(28px,5.5vw,104px); scroll-margin-top
 .core-tick.t2{ top:50%; right:-4%; transform:translateY(-50%) rotate(90deg); transform-origin:right; }
 
 @media (min-width:1101px){
-  #hero{ display:block; isolation:isolate; }
+  #hero{ display:block; isolation:isolate; --node-opacity:0; --node-scale:.45; }
+  #hero::after{ content:""; position:absolute; right:5.4%; bottom:-78px; z-index:4; width:12px; height:12px;
+    border-radius:50%; background:var(--acid); box-shadow:0 0 28px var(--acid); pointer-events:none;
+    opacity:var(--node-opacity); transform:scale(var(--node-scale)); }
   .hero-left{ width:min(48%,590px); min-height:calc(100vh - var(--bar-h) - 106px); display:flex;
     flex-direction:column; justify-content:center; position:relative; z-index:5; pointer-events:none; }
   .hero-left a,.hero-left button{ pointer-events:auto; }
-  .core-stage{ position:absolute; inset:0; max-height:none; aspect-ratio:auto; z-index:2; filter:none; }
+  .core-stage.rv{ --parallax-x:0px; --parallax-y:0px; --journey-x:0px; --journey-y:0px;
+    --journey-scale:1; --journey-opacity:1; position:absolute; inset:0; max-height:none; aspect-ratio:auto;
+    z-index:2; filter:none; transform:translate3d(calc(var(--journey-x) + var(--parallax-x)),calc(var(--journey-y) + var(--parallax-y)),0)
+    scale(var(--journey-scale)); transform-origin:76% 52%; opacity:var(--journey-opacity); will-change:transform,opacity; }
   #heroShaderCanvas{ z-index:1; }
   .core-ring{ inset:auto; width:min(48vw,680px); aspect-ratio:1; right:2.5%; top:50%;
     transform:translateY(-50%); z-index:2; }
@@ -483,6 +495,19 @@ section{ position:relative; padding:0 clamp(28px,5.5vw,104px); scroll-margin-top
 .trophy strong{ font-family:var(--disp); font-size:clamp(28px,3.5vw,48px); font-weight:500; }
 .trophy.platinum,.trophy.platinum strong{ color:#d9e8ef; }.trophy.gold,.trophy.gold strong{ color:#e4c45f; }
 .trophy.silver,.trophy.silver strong{ color:#aeb6bc; }.trophy.bronze,.trophy.bronze strong{ color:#b27a52; }
+
+@media (min-width:769px){
+  .steam-metrics{ grid-template-columns:minmax(0,1.45fr) minmax(240px,.7fr); grid-template-rows:1fr 1fr; }
+  .steam-metrics .metric:first-child{ grid-row:1/3; min-height:356px; padding:38px; }
+  .steam-metrics .metric:first-child strong{ font-size:clamp(76px,9vw,132px); letter-spacing:-.065em; }
+  .steam-metrics .metric:not(:first-child){ min-height:169px; }
+  .steam-layout{ grid-template-columns:minmax(0,1.35fr) minmax(320px,.65fr); }
+  .trophy-grid{ grid-template-columns:minmax(260px,1.35fr) repeat(2,1fr); grid-template-rows:1fr 1fr; }
+  .trophy.total{ grid-row:1/3; min-height:310px; padding:30px; }
+  .trophy.total strong{ font-size:clamp(64px,7vw,108px); }
+  .trophy.total .trophy-mark{ font-size:90px; opacity:.35; }
+  .signal-grid{ grid-template-columns:minmax(430px,1.15fr) minmax(340px,.85fr); }
+}
 .library-panel{ padding-bottom:12px; }
 .library-toggle{ min-height:40px; padding:0 16px; border:1px solid var(--border-2); border-radius:9px; color:var(--acid);
   font-size:9px; letter-spacing:.14em; text-transform:uppercase; cursor:pointer; }
@@ -566,7 +591,6 @@ section{ position:relative; padding:0 clamp(28px,5.5vw,104px); scroll-margin-top
   .id-fields{ grid-template-columns:repeat(2,1fr); }
 }
 @media (max-width:1024px){
-  .trophy-grid{ grid-template-columns:repeat(3,1fr); }
   .game-library{ grid-template-columns:repeat(4,minmax(0,1fr)); }
 }
 @media (max-width:768px){
@@ -577,13 +601,20 @@ section{ position:relative; padding:0 clamp(28px,5.5vw,104px); scroll-margin-top
   .hero-title{ font-size:clamp(58px,17vw,108px); }
   .hero-title span+span{ margin-left:.18em; }
   .core-stage{ width:min(100%,560px); height:auto; min-height:300px; align-self:center; flex:none; }
-  .metric-grid{ grid-template-columns:1fr; }
-  .metric{ min-height:124px; }
-  .steam-account-cards{ grid-template-columns:1fr; }
-  .trophy-grid{ grid-template-columns:repeat(2,1fr); }
-  .trophy:first-child{ grid-column:1/3; }
+  .metric-grid,.steam-account-cards,.trophy-grid{ display:flex; overflow-x:auto; overscroll-behavior-inline:contain;
+    scroll-snap-type:x mandatory; scrollbar-width:none; margin-right:-20px; padding-right:20px; gap:12px; }
+  .metric-grid::-webkit-scrollbar,.steam-account-cards::-webkit-scrollbar,.trophy-grid::-webkit-scrollbar{ display:none; }
+  .metric,.steam-account,.trophy{ flex:0 0 min(82vw,390px); scroll-snap-align:start; }
+  .metric{ min-height:168px; }
+  .steam-account{ min-height:184px; }
+  .trophy{ min-height:174px; }
+  .trophy:first-child{ grid-column:auto; }
   .closing{ padding-left:20px; padding-right:20px; }
   .game-library{ grid-template-columns:repeat(3,minmax(0,1fr)); }
+  .drag-hint{ left:50%; right:auto; bottom:4%; transform:translateX(-50%); white-space:nowrap; }
+  .drag-hint.used{ transform:translate(-50%,6px); }
+  .drag-hint span{ font-size:0; }
+  .drag-hint span::after{ content:"↕"; font-size:13px; }
 }
 @media (max-width:680px){
   .topbar .cell.hide-s,.botbar .cell.hide-s{ display:none; }
@@ -629,14 +660,37 @@ section{ position:relative; padding:0 clamp(28px,5.5vw,104px); scroll-margin-top
   .copybtn{ min-height:48px; padding:14px 16px; font-size:10px; white-space:normal; }
   .closing{ padding-left:16px; padding-right:16px; }
   .botbar .cell:first-child{ display:none; }
+  .sec-head h2{ font-size:clamp(30px,10vw,42px); line-height:1.02; }
+  .sec-head{ padding-top:22px; }
+  .hero-about{ font-size:14px; line-height:1.65; }
+  .metric-grid,.steam-account-cards,.trophy-grid{ margin-right:-16px; padding-right:16px; }
+  .metric,.steam-account,.trophy{ flex-basis:86vw; }
 }
 @media (max-width:360px){
   .hero-title{ font-size:50px; }
   .hero-foot{ font-size:9px; }
   .core-label.bl,.core-label.br{ display:none; }
-  .trophy-grid{ grid-template-columns:1fr; }
-  .trophy:first-child{ grid-column:auto; }
   .rank-list li{ grid-template-columns:24px minmax(0,1fr) auto; gap:7px; font-size:10px; }
+}
+
+@media (min-width:1600px){
+  :root{ --rail-w:252px; }
+  body{ font-size:16px; }
+  section{ max-width:1660px; margin-inline:auto; }
+  #hero{ min-height:calc(100vh - var(--bar-h)); }
+  .hero-left{ width:min(46%,680px); }
+  .hero-title{ font-size:clamp(112px,7.4vw,156px); }
+  .hero-about{ max-width:600px; font-size:18px; }
+  .sec-head h2{ font-size:60px; }
+}
+
+@media (min-width:2200px){
+  :root{ --rail-w:280px; --bar-h:62px; }
+  body{ font-size:17px; }
+  section{ max-width:1960px; }
+  .hero-title{ font-size:176px; }
+  .sec-head h2{ font-size:72px; }
+  .metric-grid,.steam-account-cards,.steam-layout{ gap:24px; }
 }
 
 @media (prefers-reduced-motion:reduce){

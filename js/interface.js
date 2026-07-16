@@ -432,11 +432,21 @@
   var fine = window.matchMedia("(pointer: fine)").matches;
   var progress = document.getElementById("scroll-progress-fill");
   var core = document.querySelector(".core-stage");
+  var hero = document.getElementById("hero");
   var ticking = false;
 
   function updateScroll() {
     var max = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
     if (progress) progress.style.setProperty("--scroll-progress", Math.min(100, window.scrollY / max * 100) + "%");
+    if (core && hero && !reduce && window.innerWidth > 1100) {
+      var heroProgress = Math.max(0, Math.min(1, window.scrollY / Math.max(1, hero.offsetHeight * .82)));
+      core.style.setProperty("--journey-x", (heroProgress * 84).toFixed(1) + "px");
+      core.style.setProperty("--journey-y", (heroProgress * 330).toFixed(1) + "px");
+      core.style.setProperty("--journey-scale", (1 - heroProgress * .58).toFixed(3));
+      core.style.setProperty("--journey-opacity", (1 - heroProgress * .78).toFixed(3));
+      hero.style.setProperty("--node-opacity", heroProgress.toFixed(3));
+      hero.style.setProperty("--node-scale", (.45 + heroProgress * .8).toFixed(3));
+    }
     ticking = false;
   }
 
@@ -456,7 +466,8 @@
     if (core && window.scrollY < window.innerHeight) {
       var dx = (event.clientX / window.innerWidth - .5) * 12;
       var dy = (event.clientY / window.innerHeight - .5) * 10;
-      core.style.transform = "translate3d(" + dx + "px," + dy + "px,0)";
+      core.style.setProperty("--parallax-x", dx.toFixed(1) + "px");
+      core.style.setProperty("--parallax-y", dy.toFixed(1) + "px");
     }
 
     var card = event.target.closest(".metric,.steam-account,.trophy,.discord-card");
