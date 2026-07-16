@@ -1,7 +1,7 @@
 {
-  "updatedAt": "2026-07-16T11:48:02.264Z",
-  "lastSuccessfulAt": "2026-07-16T11:48:02.264Z",
-  "lastAttemptAt": "2026-07-16T11:48:02.264Z",
+  "updatedAt": "2026-07-16T14:22:47.266Z",
+  "lastSuccessfulAt": "2026-07-16T14:22:47.266Z",
+  "lastAttemptAt": "2026-07-16T14:22:47.266Z",
   "source": "api",
   "status": "available",
   "psnId": "ankkui",
@@ -19,7 +19,7 @@
       "platform": "PS5",
       "trophyProgress": null,
       "trophyMatched": false,
-      "iconUrl": "https://image.api.playstation.com/sgst/prod/00/PPSA28183_00/app/info/60/fi_38a700d70e86e3c93d55d85e2e5987a93cbc2e5c6061de553e2d3eea760a826c/icon0.png"
+      "iconUrl": "https://image.api.playstation.com/sgst/prod/00/PPSA28183_00/app/info/63/fi_7b766cb69526af6435ff445dc82960ba95ff0ee2edfa34bfa73c2362f3a8d195/icon0.png"
     },
     {
       "title": "For The King II",
