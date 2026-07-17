@@ -27,9 +27,14 @@
     window.scrollTo({ top: top, behavior: reduce ? "auto" : "smooth" });
   }
   railLinks.forEach(function (a) {
-    a.addEventListener("click", function (e) { e.preventDefault(); scrollToId(a.getAttribute("data-go")); });
+    a.addEventListener("click", function (e) {
+      e.preventDefault();
+      var target = a.getAttribute("data-go");
+      setActive(target);
+      scrollToId(target);
+    });
   });
-  var sectionIds = ["core", "identity", "steam", "ps5", "signal"];
+  var sectionIds = ["playing", "core", "steam", "ps5", "signal"];
   function setActive(go) {
     railLinks.forEach(function (a) {
       var active = a.getAttribute("data-go") === go;
@@ -44,7 +49,7 @@
     }, { rootMargin: "-45% 0px -50% 0px", threshold: 0 });
     sectionIds.forEach(function (id) { var el = document.getElementById(id); if (el) sio.observe(el); });
   }
-  setActive("core");
+  setActive("playing");
 
   /* ---------- replay boot from brand badge ---------- */
   var brand = document.querySelector(".topbar .brand");
@@ -433,11 +438,18 @@
   var progress = document.getElementById("scroll-progress-fill");
   var core = document.querySelector(".core-stage");
   var hero = document.getElementById("hero");
+  var bridge = document.getElementById("stats-bridge");
   var ticking = false;
 
   function updateScroll() {
     var max = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
     if (progress) progress.style.setProperty("--scroll-progress", Math.min(100, window.scrollY / max * 100) + "%");
+    document.body.style.setProperty("--ambient-y", (18 + Math.min(64, window.scrollY / max * 64)).toFixed(1) + "%");
+    if (bridge) {
+      var bridgeRange = Math.max(1, bridge.offsetHeight - window.innerHeight);
+      var bridgeProgress = Math.max(0, Math.min(1, (window.scrollY - bridge.offsetTop) / bridgeRange));
+      bridge.style.setProperty("--bridge-progress", bridgeProgress.toFixed(3));
+    }
     if (core && hero && !reduce && window.innerWidth > 1100) {
       var heroProgress = Math.max(0, Math.min(1, window.scrollY / Math.max(1, hero.offsetHeight * .82)));
       core.style.setProperty("--journey-x", (heroProgress * 84).toFixed(1) + "px");
@@ -488,4 +500,171 @@
     card.style.setProperty("--tilt-x", "0deg");
     card.style.setProperty("--tilt-y", "0deg");
   });
+})();
+
+/* ---------- authored game reel ---------- */
+(function () {
+  "use strict";
+  var chapter = document.getElementById("playing");
+  var pin = chapter && chapter.querySelector(".play-pin");
+  var track = document.getElementById("play-track");
+  var scenes = track ? Array.from(track.querySelectorAll(".game-scene")) : [];
+  var current = document.getElementById("play-current");
+  var progressFill = document.getElementById("play-progress-fill");
+  var reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var mobileQuery = matchMedia("(max-width: 768px)");
+  var activeIndex = -1;
+  var framePending = false;
+  if (!chapter || !pin || !track || !scenes.length) return;
+
+  function activate(index) {
+    index = Math.max(0, Math.min(scenes.length - 1, index));
+    if (index === activeIndex) return;
+    activeIndex = index;
+    scenes.forEach(function (scene, sceneIndex) {
+      scene.classList.toggle("active", sceneIndex === index);
+    });
+    var style = getComputedStyle(scenes[index]);
+    var colorA = style.getPropertyValue("--scene-a").trim() || "194,255,26";
+    var colorB = style.getPropertyValue("--scene-b").trim() || "77,117,255";
+    document.body.style.setProperty("--ambient-a", colorA);
+    document.body.style.setProperty("--ambient-b", colorB);
+    if (current) current.textContent = String(index + 1).padStart(2, "0");
+    window.dispatchEvent(new CustomEvent("ankuzo:game-theme", {
+      detail: { index: index, colorA: colorA, colorB: colorB }
+    }));
+  }
+
+  function setProgress(value) {
+    value = Math.max(0, Math.min(1, value));
+    if (progressFill) progressFill.style.setProperty("--play-progress", (value * 100).toFixed(2) + "%");
+    activate(Math.round(value * (scenes.length - 1)));
+  }
+
+  function update() {
+    framePending = false;
+    var value;
+    if (mobileQuery.matches || reduce) {
+      var scrollable = Math.max(1, track.scrollWidth - track.clientWidth);
+      value = track.scrollLeft / scrollable;
+      track.style.transform = "none";
+    } else {
+      var range = Math.max(1, chapter.offsetHeight - pin.offsetHeight);
+      value = (window.scrollY - chapter.offsetTop) / range;
+      value = Math.max(0, Math.min(1, value));
+      var distance = Math.max(0, track.scrollWidth - pin.clientWidth);
+      track.style.transform = "translate3d(" + (-distance * value).toFixed(1) + "px,0,0)";
+    }
+    setProgress(value);
+  }
+
+  function requestUpdate() {
+    if (framePending) return;
+    framePending = true;
+    requestAnimationFrame(update);
+  }
+
+  window.addEventListener("scroll", requestUpdate, { passive: true });
+  window.addEventListener("resize", requestUpdate, { passive: true });
+  track.addEventListener("scroll", requestUpdate, { passive: true });
+  if (mobileQuery.addEventListener) mobileQuery.addEventListener("change", requestUpdate);
+  activate(0);
+  update();
+})();
+
+/* ---------- optional generative ambience ---------- */
+(function () {
+  "use strict";
+  var button = document.getElementById("sound-toggle");
+  var label = document.getElementById("sound-label");
+  var AudioContextClass = window.AudioContext || window.webkitAudioContext;
+  var context;
+  var master;
+  var filter;
+  var oscillators = [];
+  var soundOn = false;
+  var themeIndex = 0;
+  var themes = [
+    [46, 74, 260], [42, 63, 210], [51, 81, 340],
+    [57, 92, 420], [54, 86, 380], [44, 69, 290]
+  ];
+  if (!button || !AudioContextClass) {
+    if (button) button.hidden = true;
+    return;
+  }
+
+  function createAtmosphere() {
+    if (context) return;
+    context = new AudioContextClass();
+    master = context.createGain();
+    filter = context.createBiquadFilter();
+    filter.type = "lowpass";
+    filter.Q.value = .7;
+    filter.connect(master);
+    master.connect(context.destination);
+    master.gain.value = 0;
+
+    ["sine", "triangle"].forEach(function (type, index) {
+      var oscillator = context.createOscillator();
+      var gain = context.createGain();
+      oscillator.type = type;
+      gain.gain.value = index ? .22 : .34;
+      oscillator.connect(gain).connect(filter);
+      oscillator.start();
+      oscillators.push(oscillator);
+    });
+
+    var length = Math.max(1, Math.floor(context.sampleRate * 2));
+    var noiseBuffer = context.createBuffer(1, length, context.sampleRate);
+    var channel = noiseBuffer.getChannelData(0);
+    for (var i = 0; i < length; i++) channel[i] = Math.random() * 2 - 1;
+    var noise = context.createBufferSource();
+    var noiseGain = context.createGain();
+    noise.buffer = noiseBuffer;
+    noise.loop = true;
+    noiseGain.gain.value = .018;
+    noise.connect(noiseGain).connect(filter);
+    noise.start();
+    applyTheme(themeIndex, true);
+  }
+
+  function applyTheme(index, immediate) {
+    themeIndex = Math.max(0, Math.min(themes.length - 1, index));
+    if (!context) return;
+    var values = themes[themeIndex];
+    var time = context.currentTime;
+    var glide = immediate ? .01 : 1.4;
+    oscillators[0].frequency.cancelScheduledValues(time);
+    oscillators[1].frequency.cancelScheduledValues(time);
+    filter.frequency.cancelScheduledValues(time);
+    oscillators[0].frequency.linearRampToValueAtTime(values[0], time + glide);
+    oscillators[1].frequency.linearRampToValueAtTime(values[1], time + glide);
+    filter.frequency.linearRampToValueAtTime(values[2], time + glide);
+  }
+
+  function updateButton() {
+    button.setAttribute("aria-pressed", String(soundOn));
+    button.setAttribute("aria-label", soundOn ? "Выключить звуковую атмосферу" : "Включить звуковую атмосферу");
+    if (label) label.textContent = soundOn ? "ЗВУК ВКЛ" : "ЗВУК ВЫКЛ";
+  }
+
+  button.addEventListener("click", function () {
+    createAtmosphere();
+    soundOn = !soundOn;
+    context.resume().then(function () {
+      master.gain.cancelScheduledValues(context.currentTime);
+      master.gain.setTargetAtTime(soundOn ? .028 : 0, context.currentTime, soundOn ? .65 : .12);
+    });
+    updateButton();
+  });
+
+  window.addEventListener("ankuzo:game-theme", function (event) {
+    applyTheme(event.detail && Number.isFinite(event.detail.index) ? event.detail.index : 0, false);
+  });
+  document.addEventListener("visibilitychange", function () {
+    if (!context) return;
+    if (document.hidden) context.suspend();
+    else if (soundOn) context.resume();
+  });
+  updateButton();
 })();

@@ -2,11 +2,19 @@
   const canvas = document.getElementById('heroShaderCanvas');
   if (!canvas) return;
 
+  const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+  const mobileViewport = matchMedia('(max-width: 768px)').matches;
+  const lowPower = mobileViewport ||
+    (navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 4) ||
+    (navigator.deviceMemory && navigator.deviceMemory <= 4) ||
+    Boolean(connection && connection.saveData);
+  const raySteps = lowPower ? 48 : 76;
+
   const gl = canvas.getContext('webgl', {
     alpha: true,
     antialias: false,
     premultipliedAlpha: false,
-    powerPreference: 'high-performance'
+    powerPreference: lowPower ? 'low-power' : 'high-performance'
   });
   if (!gl) return;
 
@@ -81,7 +89,7 @@
       vec3 point = origin;
       bool hit = false;
 
-      for (int i = 0; i < 76; i++) {
+      for (int i = 0; i < ${raySteps}; i++) {
         point = origin + direction * travelled;
         float stepSize = mapScene(point);
         travelled += stepSize;
@@ -155,7 +163,7 @@
   const fresnel = location('fresnel');
   const swatches = [...document.querySelectorAll('.shader-swatch')];
   const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const maxFps = matchMedia('(max-width: 768px)').matches ? 30 : 60;
+  const maxFps = lowPower ? (mobileViewport ? 24 : 40) : 60;
   const presets = [
     { colors: [[.95, .74, .03], [.34, .72, .08], [.9, .16, .56]], blend: .82, metallic: .62, roughness: .07, fresnel: 1.05 },
     { colors: [[.62, .62, .61], [.48, .49, .51], [.72, .72, .71]], blend: .3, metallic: .22, roughness: .08, fresnel: .2 },
@@ -295,7 +303,7 @@
   });
 
   function resize() {
-    const density = Math.min(devicePixelRatio || 1, innerWidth < 900 ? .72 : 1.1);
+    const density = Math.min(devicePixelRatio || 1, lowPower ? (mobileViewport ? .56 : .7) : 1.1);
     const width = Math.max(1, Math.floor(canvas.clientWidth * density));
     const height = Math.max(1, Math.floor(canvas.clientHeight * density));
     if (width === lastWidth && height === lastHeight) return;

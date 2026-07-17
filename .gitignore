@@ -8,3 +8,5 @@ _site/
 .chrome-qa-*/
 .codex-*
 .DS_Store
+.edge-mobile/
+*-check.png

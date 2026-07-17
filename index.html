@@ -21,7 +21,7 @@
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%23050605'/%3E%3Cpath d='M12 50 27 14h10l15 36H41l-3-8H25l-3 8Zm16-17h7l-3-9Z' fill='%23c2ff1a'/%3E%3C/svg%3E">
   <link rel="preload" href="fonts/manrope-cyrillic.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="fonts/jetbrains-mono-cyrillic.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="stylesheet" href="css/system.css?v=5.0.0">
+  <link rel="stylesheet" href="css/system.css?v=6.0.0">
   <script type="application/ld+json">
     {"@context":"https://schema.org","@type":"ProfilePage","url":"https://todylovv.github.io/ankuzo/","mainEntity":{"@type":"Person","name":"Anku","alternateName":"Ankuzo","sameAs":["https://steamcommunity.com/profiles/76561199770575251/","https://steamcommunity.com/profiles/76561198165374024/"]}}
   </script>
@@ -32,18 +32,20 @@
   <div class="fx fx-vignette"></div>
   <div class="fx fx-scan"></div>
   <div class="fx fx-noise"></div>
+  <div class="fx fx-ambient" aria-hidden="true"></div>
 
   <div id="cursor"></div>
   <div id="cursor-tag">0000 . 0000</div>
 
   <div id="boot" aria-live="polite">
     <div class="boot-wrap">
-      <div class="boot-head"><span>СТРАНИЦА ANKUZO</span><span>версия / 5.0.0</span></div>
-      <div id="boot-log"></div>
+      <div class="boot-head"><span>ANKU / ANKUZO</span><span>ЛИЧНАЯ ИГРОВАЯ СТРАНИЦА</span></div>
+      <div class="boot-title">Мои игры<span>.</span></div>
+      <div class="boot-chapters"><span>STEAM</span><span>PLAYSTATION</span><span>DISCORD</span></div>
       <div class="boot-bar"><i id="boot-bar-fill"></i></div>
       <div class="boot-foot">
         <span id="boot-pct">0%</span>
-        <span class="boot-skip">нажмите <span>[любую клавишу]</span>, чтобы пропустить</span>
+        <span class="boot-skip">нажмите, чтобы войти</span>
       </div>
     </div>
   </div>
@@ -54,15 +56,17 @@
     <div class="cell grow"><span id="clock">--:--:-- UTC</span></div>
     <div class="cell right hide-s pill"><span class="dot live"></span><b>ДАННЫЕ</b> актуальны</div>
     <div class="cell hide-s pill"><span class="dot blue"></span><b>СИГНАЛ</b> Discord</div>
+    <button class="cell sound-toggle" id="sound-toggle" type="button" aria-pressed="false" aria-label="Включить звуковую атмосферу"><span class="sound-bars" aria-hidden="true"><i></i><i></i><i></i></span><span id="sound-label">ЗВУК ВЫКЛ</span></button>
     <div class="cell right-edge hide-xs">55.75°N / 37.62°E</div>
   </header>
 
   <nav class="rail" id="rail" aria-label="Модули системы">
     <div class="rail-label">// разделы страницы</div>
-    <a href="#core" data-go="core"><span class="idx">00</span><span class="nm">/О СТРАНИЦЕ</span><span class="sdot"></span></a>
-    <a href="#steam" data-go="steam"><span class="idx">01</span><span class="nm">/Steam</span><span class="sdot"></span></a>
-    <a href="#ps5" data-go="ps5"><span class="idx">02</span><span class="nm">/PlayStation</span><span class="sdot"></span></a>
-    <a href="#signal" data-go="signal"><span class="idx">03</span><span class="nm">/Discord</span><span class="sdot"></span></a>
+    <a href="#playing" data-go="playing"><span class="idx">00</span><span class="nm">/ИГРАЮ СЕЙЧАС</span><span class="sdot"></span></a>
+    <a href="#core" data-go="core"><span class="idx">01</span><span class="nm">/О СТРАНИЦЕ</span><span class="sdot"></span></a>
+    <a href="#steam" data-go="steam"><span class="idx">02</span><span class="nm">/Steam</span><span class="sdot"></span></a>
+    <a href="#ps5" data-go="ps5"><span class="idx">03</span><span class="nm">/PlayStation</span><span class="sdot"></span></a>
+    <a href="#signal" data-go="signal"><span class="idx">04</span><span class="nm">/Discord</span><span class="sdot"></span></a>
     <div class="rail-foot">
       <div>профиль <b>ANKUZO</b></div>
       <div>аптайм <b id="uptime">00:00:00</b></div>
@@ -105,9 +109,61 @@
       </div>
     </div>
 
+    <section id="playing" class="play-chapter" aria-labelledby="playing-title">
+      <div class="play-pin">
+        <div class="play-head">
+          <span><b>00</b> / ИГРАЮ СЕЙЧАС</span>
+          <h2 id="playing-title">Не список. Мои ощущения.</h2>
+          <div class="play-counter"><b id="play-current">01</b><span>/ 06</span></div>
+        </div>
+        <div class="play-track" id="play-track">
+          <article class="game-scene active" data-theme="arena" style="--game-image:url('https://cdn.akamai.steamstatic.com/steam/apps/2073620/library_hero.jpg')">
+            <div class="game-art" aria-hidden="true"></div>
+            <div class="game-copy"><span class="game-state">СЕЙЧАС · PC</span><h3>Arena Breakout<br><i>Infinite</i></h3><p>Пока нравится больше, чем ARC Raiders: стрельба ощущается приятнее, а общий вайб цепляет сильнее. PUBG для меня слишком медленный и деревянный.</p><div class="game-tags"><span>тактический шутер</span><span>главная сейчас</span></div></div>
+            <span class="game-index">01</span>
+          </article>
+          <article class="game-scene" data-theme="kingdom" style="--game-image:url('https://image.api.playstation.com/sgst/prod/00/PPSA21704_00/app/info/43/fi_7e1156a1efd55888469965f5bd82150cc530d550b55e8253ea907c1fa4c43642/icon0.png')">
+            <div class="game-art" aria-hidden="true"></div>
+            <div class="game-copy"><span class="game-state">СЕЙЧАС · PS5</span><h3>Kingdom Come:<br><i>Deliverance II</i></h3><p>Сейчас прохожу на PlayStation. Здесь хочется не спешить, изучать мир и проживать каждую историю.</p><div class="game-tags"><span>RPG</span><span>PS5</span></div></div>
+            <span class="game-index">02</span>
+          </article>
+          <article class="game-scene" data-theme="blackflag" style="--game-image:url('https://image.api.playstation.com/sgst/prod/00/PPSA28183_00/app/info/60/fi_38a700d70e86e3c93d55d85e2e5987a93cbc2e5c6061de553e2d3eea760a826c/icon0.png')">
+            <div class="game-art" aria-hidden="true"></div>
+            <div class="game-copy"><span class="game-state">СЕЙЧАС · PS5</span><h3>Black Flag<br><i>Resynced</i></h3><p>Новый Black Flag только вышел — играю на PlayStation и заново возвращаюсь к пиратскому настроению.</p><div class="game-tags"><span>новый релиз</span><span>PS5</span></div></div>
+            <span class="game-index">03</span>
+          </article>
+          <article class="game-scene" data-theme="valorant">
+            <div class="game-art game-art-symbol" aria-hidden="true"><i>V</i></div>
+            <div class="game-copy"><span class="game-state">ИНОГДА · PC</span><h3>VALORANT</h3><p>Иногда захожу сыграть несколько матчей. Не основная игра, но время от времени возвращаюсь.</p><div class="game-tags"><span>соревновательный</span><span>иногда</span></div></div>
+            <span class="game-index">04</span>
+          </article>
+          <article class="game-scene" data-theme="apex" style="--game-image:url('https://cdn.akamai.steamstatic.com/steam/apps/1172470/library_hero.jpg')">
+            <div class="game-art" aria-hidden="true"></div>
+            <div class="game-copy"><span class="game-state">ИНОГДА · PC / PS5</span><h3>Apex<br><i>Legends</i></h3><p>Очень нравится мувмент — игра ощущается быстро и свободно. Но часто просто не с кем пойти в команду.</p><div class="game-tags"><span>movement</span><span>командная</span></div></div>
+            <span class="game-index">05</span>
+          </article>
+          <article class="game-scene" data-theme="counter" style="--game-image:url('https://cdn.akamai.steamstatic.com/steam/apps/730/library_hero.jpg')">
+            <div class="game-art" aria-hidden="true"></div>
+            <div class="game-copy"><span class="game-state">ИСТОРИЯ · 3 264 Ч</span><h3>Counter-Strike<br><i>2</i></h3><p>Игра, в которую я играл больше всего. Сейчас перестал — эта глава осталась в статистике.</p><div class="game-tags"><span>больше всего часов</span><span>сейчас не играю</span></div></div>
+            <span class="game-index">06</span>
+          </article>
+        </div>
+        <div class="play-progress"><i id="play-progress-fill"></i></div>
+        <span class="play-instruction">прокручивай →</span>
+      </div>
+    </section>
+
+    <section class="stats-bridge" id="stats-bridge" aria-label="Переход к статистике">
+      <div class="stats-bridge-pin">
+        <p>Ощущения заканчиваются.</p>
+        <h2>Начинаются<br><span>цифры.</span></h2>
+        <div class="bridge-number"><strong>5 003</strong><small>часа в Steam</small></div>
+      </div>
+    </section>
+
     <section id="core">
       <div class="sec-head rv">
-        <span class="num">00</span><span class="tag">/О СТРАНИЦЕ</span>
+        <span class="num">01</span><span class="tag">/О СТРАНИЦЕ</span>
         <h2>Моя игровая страница</h2>
         <span class="meta">ANKU / ANKUZO<br>игры · профили · статистика</span>
       </div>
@@ -132,7 +188,7 @@
 
     <section id="steam" class="data-section">
       <div class="sec-head rv">
-        <span class="num">01</span><span class="tag">/Steam</span>
+        <span class="num">02</span><span class="tag">/Steam</span>
         <h2>Steam активность</h2>
         <span class="meta" id="steam-source">данные<br>загрузка</span>
       </div>
@@ -156,7 +212,7 @@
 
     <section id="ps5" class="data-section">
       <div class="sec-head rv">
-        <span class="num">02</span><span class="tag">/PlayStation</span>
+        <span class="num">03</span><span class="tag">/PlayStation</span>
         <h2>PlayStation трофеи</h2>
         <span class="meta" id="psn-source">PSN ID<br>ankkui</span>
       </div>
@@ -182,7 +238,7 @@
 
     <section id="signal">
       <div class="sec-head rv">
-        <span class="num">03</span><span class="tag">/Discord</span>
+        <span class="num">04</span><span class="tag">/Discord</span>
         <h2>Discord для связи</h2>
         <span class="meta" id="signal-source">Discord<br>проверка данных</span>
       </div>
@@ -238,8 +294,8 @@
 
   <div id="toast" role="status">СКОПИРОВАНО</div>
 
-  <script src="js/boot.js?v=5.0.0"></script>
-  <script src="js/interface.js?v=5.0.0"></script>
-  <script src="js/hero-shader.js?v=5.0.0"></script>
+  <script src="js/boot.js?v=6.0.0"></script>
+  <script src="js/interface.js?v=6.0.0"></script>
+  <script src="js/hero-shader.js?v=6.0.0"></script>
 </body>
 </html>
