@@ -21,7 +21,7 @@
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%23050605'/%3E%3Cpath d='M12 50 27 14h10l15 36H41l-3-8H25l-3 8Zm16-17h7l-3-9Z' fill='%23c2ff1a'/%3E%3C/svg%3E">
   <link rel="preload" href="fonts/manrope-cyrillic.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="fonts/jetbrains-mono-cyrillic.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="stylesheet" href="css/system.css?v=6.0.0">
+  <link rel="stylesheet" href="css/system.css?v=6.1.0">
   <script type="application/ld+json">
     {"@context":"https://schema.org","@type":"ProfilePage","url":"https://todylovv.github.io/ankuzo/","mainEntity":{"@type":"Person","name":"Anku","alternateName":"Ankuzo","sameAs":["https://steamcommunity.com/profiles/76561199770575251/","https://steamcommunity.com/profiles/76561198165374024/"]}}
   </script>
@@ -35,7 +35,6 @@
   <div class="fx fx-ambient" aria-hidden="true"></div>
 
   <div id="cursor"></div>
-  <div id="cursor-tag">0000 . 0000</div>
 
   <div id="boot" aria-live="polite">
     <div class="boot-wrap">
@@ -61,6 +60,10 @@
   </header>
 
   <nav class="rail" id="rail" aria-label="Модули системы">
+    <button class="rail-toggle" id="rail-toggle" type="button" aria-expanded="true" aria-controls="rail">
+      <span class="rail-toggle-icon" aria-hidden="true"><i></i><i></i></span>
+      <span class="rail-toggle-label">СВЕРНУТЬ</span>
+    </button>
     <div class="rail-label">// разделы страницы</div>
     <a href="#playing" data-go="playing"><span class="idx">00</span><span class="nm">/ИГРАЮ СЕЙЧАС</span><span class="sdot"></span></a>
     <a href="#core" data-go="core"><span class="idx">01</span><span class="nm">/О СТРАНИЦЕ</span><span class="sdot"></span></a>
@@ -101,13 +104,6 @@
         <div class="core-tick t2">STEAM · PLAYSTATION · DISCORD</div>
       </div>
     </section>
-
-    <div class="showreel-marquee" aria-hidden="true">
-      <div class="showreel-track">
-        <span>МОИ ИГРЫ</span><i>✦</i><span>STEAM АКТИВНОСТЬ</span><i>✦</i><span>PLAYSTATION ТРОФЕИ</span><i>✦</i><span>DISCORD ДЛЯ СВЯЗИ</span><i>✦</i>
-        <span>МОИ ИГРЫ</span><i>✦</i><span>STEAM АКТИВНОСТЬ</span><i>✦</i><span>PLAYSTATION ТРОФЕИ</span><i>✦</i><span>DISCORD ДЛЯ СВЯЗИ</span><i>✦</i>
-      </div>
-    </div>
 
     <section id="playing" class="play-chapter" aria-labelledby="playing-title">
       <div class="play-pin">
@@ -155,9 +151,17 @@
 
     <section class="stats-bridge" id="stats-bridge" aria-label="Переход к статистике">
       <div class="stats-bridge-pin">
-        <p>Ощущения заканчиваются.</p>
-        <h2>Начинаются<br><span>цифры.</span></h2>
-        <div class="bridge-number"><strong>5 003</strong><small>часа в Steam</small></div>
+        <div class="bridge-curtain bridge-curtain-left" aria-hidden="true"></div>
+        <div class="bridge-curtain bridge-curtain-right" aria-hidden="true"></div>
+        <div class="bridge-kicker"><span>ОЩУЩЕНИЯ</span><i></i><span>ДАННЫЕ</span></div>
+        <p class="bridge-exit" aria-hidden="true">ИГРАЮ</p>
+        <div class="bridge-total">
+          <span class="bridge-total-ghost" aria-hidden="true">5003</span>
+          <strong>5 003</strong>
+          <small>часа в Steam · два профиля · всё время</small>
+        </div>
+        <h2><span>То, что чувствую,</span><b>становится измеримым.</b></h2>
+        <div class="bridge-axis" aria-hidden="true"><i></i><span>01 — 05</span><i></i></div>
       </div>
     </section>
 
@@ -284,18 +288,10 @@
     </div>
   </footer>
 
-  <div class="chrome botbar">
-    <div class="cell" id="cursor-readout">x 0000 · y 0000</div>
-    <div class="cell grow"><div class="marq" id="marq"></div></div>
-    <div class="cell hide-s">ник <span class="cell-value">ANKU / ANKUZO</span></div>
-    <div class="cell hide-s">связь <span class="discord-text cell-value">Discord</span></div>
-    <div class="cell">// конец</div>
-  </div>
-
   <div id="toast" role="status">СКОПИРОВАНО</div>
 
-  <script src="js/boot.js?v=6.0.0"></script>
-  <script src="js/interface.js?v=6.0.0"></script>
-  <script src="js/hero-shader.js?v=6.0.0"></script>
+  <script src="js/boot.js?v=6.1.0"></script>
+  <script src="js/interface.js?v=6.1.0"></script>
+  <script src="js/hero-shader.js?v=6.1.0"></script>
 </body>
 </html>

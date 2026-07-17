@@ -83,24 +83,16 @@
 
   /* custom cursor */
   var cur = document.getElementById("cursor");
-  var tag = document.getElementById("cursor-tag");
-  var readout = document.getElementById("cursor-readout");
-  function pad4(n) { n = "" + n; while (n.length < 4) n = "0" + n; return n; }
-  if (cur && tag && window.matchMedia("(pointer:fine)").matches) {
-    var tx = 0, ty = 0;
+  if (cur && window.matchMedia("(pointer:fine)").matches) {
+    var tx = -40, ty = -40, cx = -40, cy = -40;
     document.addEventListener("mousemove", function (event) {
       tx = event.clientX;
       ty = event.clientY;
-      tag.classList.add("on");
-      var sx = pad4(Math.round(tx));
-      var sy = pad4(Math.round(ty));
-      tag.textContent = sx + " . " + sy;
-      if (readout) readout.textContent = "x " + sx + " · y " + sy;
     });
     (function animateCursor() {
-      cur.style.transform = "translate(" + tx + "px," + ty + "px) translate(-50%,-50%)";
-      tag.style.left = tx + "px";
-      tag.style.top = ty + "px";
+      cx += (tx - cx) * .24;
+      cy += (ty - cy) * .24;
+      cur.style.transform = "translate(" + cx + "px," + cy + "px) translate(-50%,-50%)";
       requestAnimationFrame(animateCursor);
     })();
     document.addEventListener("mouseover", function (event) {
@@ -111,5 +103,8 @@
         cur.classList.remove("hot");
       }
     });
+    document.addEventListener("pointerdown", function () { cur.classList.add("pressed"); });
+    document.addEventListener("pointerup", function () { cur.classList.remove("pressed"); });
+    document.addEventListener("pointercancel", function () { cur.classList.remove("pressed"); });
   }
 })();

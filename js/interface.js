@@ -51,24 +51,32 @@
   }
   setActive("playing");
 
+  /* ---------- collapsible navigation rail ---------- */
+  var railToggle = document.getElementById("rail-toggle");
+  function setRailCollapsed(collapsed) {
+    document.body.classList.toggle("rail-collapsed", collapsed);
+    if (!railToggle) return;
+    railToggle.setAttribute("aria-expanded", String(!collapsed));
+    railToggle.setAttribute("aria-label", collapsed ? "Развернуть боковую панель" : "Свернуть боковую панель");
+    var label = railToggle.querySelector(".rail-toggle-label");
+    if (label) label.textContent = collapsed ? "РАЗВЕРНУТЬ" : "СВЕРНУТЬ";
+  }
+  if (railToggle) {
+    var savedRailState = false;
+    try { savedRailState = localStorage.getItem("ankuzo-rail") === "collapsed"; } catch (error) {}
+    setRailCollapsed(savedRailState);
+    railToggle.addEventListener("click", function () {
+      var collapsed = !document.body.classList.contains("rail-collapsed");
+      setRailCollapsed(collapsed);
+      try { localStorage.setItem("ankuzo-rail", collapsed ? "collapsed" : "open"); } catch (error) {}
+    });
+  }
+
   /* ---------- replay boot from brand badge ---------- */
   var brand = document.querySelector(".topbar .brand");
   if (brand) {
     brand.addEventListener("click", function () { if (window.ankuzoReplayBoot) window.ankuzoReplayBoot(); });
     brand.title = "перезапустить загрузку";
-  }
-
-  /* ---------- bottom marquee ---------- */
-  var marq = document.getElementById("marq");
-  if (marq) {
-    var bits = [
-      "// личная игровая страница", "ник: Anku / Ankuzo", "Steam: игры и часы",
-      "PlayStation: трофеи и библиотека", "Discord: @ankuz0", "данные обновляются автоматически",
-      "два Steam-профиля подключены", "PSN ID: ankkui", "страница ANKUZO активна"
-    ];
-    var html = "";
-    bits.forEach(function (b) { html += "<span>" + (b.indexOf("//") === 0 ? "<i>" + b + "</i>" : b) + "</span>"; });
-    marq.innerHTML = html + html;
   }
 
   /* ---------- copy buttons (Discord + PSN) ---------- */
