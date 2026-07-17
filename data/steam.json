@@ -1,11 +1,11 @@
 {
-  "updatedAt": "2026-07-16T19:34:25.474Z",
-  "lastSuccessfulAt": "2026-07-16T19:34:25.474Z",
-  "lastAttemptAt": "2026-07-16T19:34:25.474Z",
+  "updatedAt": "2026-07-17T03:36:44.251Z",
+  "lastSuccessfulAt": "2026-07-17T03:36:44.251Z",
+  "lastAttemptAt": "2026-07-17T03:36:44.251Z",
   "source": "api",
   "status": "available",
   "stats": {
-    "totalHours": 5006.4,
+    "totalHours": 5007.8,
     "totalGames": 197
   },
   "profiles": [
@@ -17,7 +17,7 @@
       "currentGame": "",
       "profileUrl": "https://steamcommunity.com/profiles/76561199770575251/",
       "gameCount": 140,
-      "totalHours": 1595.8,
+      "totalHours": 1597.2,
       "games": [
         {
           "appId": 730,
@@ -122,6 +122,12 @@
           "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/323190/0561084dfe24c469c905fe0681da82aa31102836.jpg"
         },
         {
+          "appId": 2073620,
+          "name": "Arena Breakout: Infinite",
+          "hours": 11.6,
+          "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/2073620/3c3cb9ae001821040f4a5c255bc577fb0143dadd.jpg"
+        },
+        {
           "appId": 1818450,
           "name": "STALZONE",
           "hours": 10.6,
@@ -132,12 +138,6 @@
           "name": "RV There Yet?",
           "hours": 10.4,
           "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/3949040/cd01f1daaaa3fb022e9913dc2d66a23c5091b5d5.jpg"
-        },
-        {
-          "appId": 2073620,
-          "name": "Arena Breakout: Infinite",
-          "hours": 10.2,
-          "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/2073620/3c3cb9ae001821040f4a5c255bc577fb0143dadd.jpg"
         },
         {
           "appId": 3164500,
