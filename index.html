@@ -21,7 +21,7 @@
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%23050605'/%3E%3Cpath d='M12 50 27 14h10l15 36H41l-3-8H25l-3 8Zm16-17h7l-3-9Z' fill='%23c2ff1a'/%3E%3C/svg%3E">
   <link rel="preload" href="fonts/manrope-cyrillic.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="fonts/jetbrains-mono-cyrillic.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="stylesheet" href="css/system.css?v=6.1.0">
+  <link rel="stylesheet" href="css/system.css?v=6.2.0">
   <script type="application/ld+json">
     {"@context":"https://schema.org","@type":"ProfilePage","url":"https://todylovv.github.io/ankuzo/","mainEntity":{"@type":"Person","name":"Anku","alternateName":"Ankuzo","sameAs":["https://steamcommunity.com/profiles/76561199770575251/","https://steamcommunity.com/profiles/76561198165374024/"]}}
   </script>
@@ -165,22 +165,21 @@
       </div>
     </section>
 
-    <section id="core">
+    <section id="core" class="editorial-chapter profile-chapter">
       <div class="sec-head rv">
         <span class="num">01</span><span class="tag">/О СТРАНИЦЕ</span>
         <h2>Моя игровая страница</h2>
         <span class="meta">ANKU / ANKUZO<br>игры · профили · статистика</span>
       </div>
       <div class="core-grid">
-        <article class="panel bigstat rv">
-          <span class="corner tl"></span><span class="corner tr"></span><span class="corner bl"></span><span class="corner br"></span>
-          <p class="lead">Я — <em>Anku</em>, также использую ник Ankuzo.</p>
+        <article class="bigstat rv">
+          <span class="chapter-eyebrow">КТО ИГРАЕТ ЗА ЭКРАНОМ</span>
+          <p class="lead">Я — <em>Anku</em><br>/ Ankuzo.</p>
           <p class="sub">Это моя личная страница об играх. Здесь собраны игровые часы, любимые игры, Steam-профили, трофеи PlayStation и Discord для связи.</p>
-          <div class="ind"><span class="dot live"></span> ДАННЫЕ ОБНОВЛЯЮТСЯ</div>
+          <div class="profile-tags" aria-label="Содержание страницы"><span>играю сейчас</span><span>моя история</span><span>живые данные</span></div>
         </article>
-        <article class="panel monitor rv rv-d1">
-          <span class="corner tl"></span><span class="corner tr"></span><span class="corner bl"></span><span class="corner br"></span>
-          <div class="bar"><span>что здесь есть</span><span>актуальные данные</span></div>
+        <article class="monitor rv rv-d1">
+          <div class="bar"><span>содержание</span><span class="monitor-live"><i class="dot live"></i>актуально</span></div>
           <div class="kv"><span class="k">Steam</span><span class="v acid"><span class="dot live"></span>игры и часы</span></div>
           <div class="kv"><span class="k">PlayStation</span><span class="v">трофеи и библиотека</span></div>
           <div class="kv"><span class="k">Discord</span><span class="v discord-text">профиль и связь</span></div>
@@ -190,48 +189,50 @@
       </div>
     </section>
 
-    <section id="steam" class="data-section">
+    <section id="steam" class="data-section editorial-chapter steam-chapter">
       <div class="sec-head rv">
         <span class="num">02</span><span class="tag">/Steam</span>
-        <h2>Steam активность</h2>
+        <h2>Моя история в Steam</h2>
         <span class="meta" id="steam-source">данные<br>загрузка</span>
       </div>
+      <p class="chapter-copy rv">Два профиля, сотни игр и тысячи часов. Здесь не просто счётчик — это игры, к которым я возвращался чаще всего.</p>
       <div class="metric-grid steam-metrics rv">
-        <article class="metric panel"><span>ИГРОВОЕ ВРЕМЯ В ДВУХ ПРОФИЛЯХ</span><strong id="steam-hours">—</strong><small>часов</small></article>
-        <article class="metric panel"><span>ИГРЫ В ПРОФИЛЯХ</span><strong id="steam-games">—</strong><small>в библиотеке</small></article>
-        <article class="metric panel"><span>STEAM-ПРОФИЛИ</span><strong id="steam-profiles">02</strong><small>подключено</small></article>
+        <article class="metric"><span>ИГРОВОЕ ВРЕМЯ В ДВУХ ПРОФИЛЯХ</span><strong id="steam-hours">—</strong><small>часов в играх</small></article>
+        <article class="metric"><span>ИГРЫ В ПРОФИЛЯХ</span><strong id="steam-games">—</strong><small>в библиотеке</small></article>
+        <article class="metric"><span>STEAM-ПРОФИЛИ</span><strong id="steam-profiles">02</strong><small>подключено</small></article>
       </div>
       <div id="steam-account-cards" class="steam-account-cards rv" aria-label="Steam-профили"></div>
       <div class="steam-layout">
-        <article class="panel data-panel rv">
+        <article class="data-panel steam-podium rv">
           <div class="bar"><span>БОЛЬШЕ ВСЕГО ВРЕМЕНИ</span><span>часов</span></div>
           <div id="steam-top-three" class="top-three"></div>
         </article>
-        <article class="panel data-panel rv rv-d1">
+        <article class="data-panel steam-ranking rv rv-d1">
           <div class="bar"><span>ТОП-10 ПО ЧАСАМ</span><span>суммарно</span></div>
           <ol id="steam-top-ten" class="rank-list"></ol>
         </article>
       </div>
     </section>
 
-    <section id="ps5" class="data-section">
+    <section id="ps5" class="data-section editorial-chapter ps-chapter">
       <div class="sec-head rv">
         <span class="num">03</span><span class="tag">/PlayStation</span>
-        <h2>PlayStation трофеи</h2>
+        <h2>То, что прохожу не спеша</h2>
         <span class="meta" id="psn-source">PSN ID<br>ankkui</span>
       </div>
+      <p class="chapter-copy rv">На PlayStation я чаще выбираю большие одиночные истории. Трофеи здесь — следы пройденных миров, а не цель любой ценой.</p>
       <div class="psn-head rv">
         <div><span>ПРОФИЛЬ ПРИВЯЗАН</span><strong id="psn-id">ankkui</strong></div>
         <div><span>УРОВЕНЬ ТРОФЕЕВ</span><strong id="psn-level">—</strong></div>
       </div>
       <div class="trophy-grid rv">
-        <article class="trophy panel total"><span class="trophy-mark trophy-total-mark" aria-hidden="true">★</span><span>ТРОФЕИ</span><strong id="trophy-total">—</strong></article>
-        <article class="trophy panel platinum"><span class="trophy-mark" aria-hidden="true">◇</span><span>ПЛАТИНА</span><strong id="trophy-platinum">—</strong></article>
-        <article class="trophy panel gold"><span class="trophy-mark" aria-hidden="true">●</span><span>ЗОЛОТО</span><strong id="trophy-gold">—</strong></article>
-        <article class="trophy panel silver"><span class="trophy-mark" aria-hidden="true">●</span><span>СЕРЕБРО</span><strong id="trophy-silver">—</strong></article>
-        <article class="trophy panel bronze"><span class="trophy-mark" aria-hidden="true">●</span><span>БРОНЗА</span><strong id="trophy-bronze">—</strong></article>
+        <article class="trophy total"><span class="trophy-mark trophy-total-mark" aria-hidden="true">★</span><span>ВСЕ ТРОФЕИ</span><strong id="trophy-total">—</strong></article>
+        <article class="trophy platinum"><span class="trophy-mark" aria-hidden="true">◇</span><span>ПЛАТИНА</span><strong id="trophy-platinum">—</strong></article>
+        <article class="trophy gold"><span class="trophy-mark" aria-hidden="true">●</span><span>ЗОЛОТО</span><strong id="trophy-gold">—</strong></article>
+        <article class="trophy silver"><span class="trophy-mark" aria-hidden="true">●</span><span>СЕРЕБРО</span><strong id="trophy-silver">—</strong></article>
+        <article class="trophy bronze"><span class="trophy-mark" aria-hidden="true">●</span><span>БРОНЗА</span><strong id="trophy-bronze">—</strong></article>
       </div>
-      <article class="panel data-panel library-panel rv">
+      <article class="data-panel library-panel rv">
         <div class="bar">
           <span>ИГРЫ ПРОФИЛЯ <b id="psn-library-count">—</b></span>
           <button class="library-toggle" id="psn-library-toggle" type="button" aria-expanded="false" aria-controls="psn-library">ПОКАЗАТЬ БИБЛИОТЕКУ</button>
@@ -240,12 +241,13 @@
       </article>
     </section>
 
-    <section id="signal">
+    <section id="signal" class="editorial-chapter signal-chapter">
       <div class="sec-head rv">
         <span class="num">04</span><span class="tag">/Discord</span>
-        <h2>Discord для связи</h2>
+        <h2>Если хочешь сыграть — пиши</h2>
         <span class="meta" id="signal-source">Discord<br>проверка данных</span>
       </div>
+      <p class="chapter-copy rv">Discord — мой основной канал связи. Можно позвать в игру, обсудить релиз или просто написать.</p>
       <div class="signal-grid">
         <article class="discord-card rv" id="discord-profile-card">
           <span class="corner tl"></span><span class="corner tr"></span><span class="corner bl"></span><span class="corner br"></span>
@@ -268,7 +270,7 @@
             <button class="copybtn" type="button" data-copy="ankuz0"><span>СКОПИРОВАТЬ Discord</span><span class="arr">⧉</span></button>
           </div>
         </article>
-        <article class="panel cmds rv rv-d1">
+        <article class="cmds rv rv-d1">
           <div class="bar"><span>ссылки и контакты</span><span>03</span></div>
           <a class="cmd" href="https://steamcommunity.com/profiles/76561199770575251/" target="_blank" rel="noopener noreferrer"><span class="l"><span class="k">Steam-профиль</span><span class="v">ОТКРЫТЬ ПРОФИЛЬ b1</span></span><span class="arr">↗</span></a>
           <a class="cmd" href="https://steamcommunity.com/profiles/76561198165374024/" target="_blank" rel="noopener noreferrer"><span class="l"><span class="k">Steam-профиль</span><span class="v">ОТКРЫТЬ ПРОФИЛЬ b2</span></span><span class="arr">↗</span></a>
@@ -290,8 +292,8 @@
 
   <div id="toast" role="status">СКОПИРОВАНО</div>
 
-  <script src="js/boot.js?v=6.1.0"></script>
-  <script src="js/interface.js?v=6.1.0"></script>
-  <script src="js/hero-shader.js?v=6.1.0"></script>
+  <script src="js/boot.js?v=6.2.0"></script>
+  <script src="js/interface.js?v=6.2.0"></script>
+  <script src="js/hero-shader.js?v=6.2.0"></script>
 </body>
 </html>
