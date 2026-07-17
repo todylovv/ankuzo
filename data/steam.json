@@ -1,7 +1,7 @@
 {
-  "updatedAt": "2026-07-17T14:02:47.558Z",
-  "lastSuccessfulAt": "2026-07-17T14:02:47.558Z",
-  "lastAttemptAt": "2026-07-17T14:02:47.558Z",
+  "updatedAt": "2026-07-17T19:32:49.773Z",
+  "lastSuccessfulAt": "2026-07-17T19:32:49.773Z",
+  "lastAttemptAt": "2026-07-17T19:32:49.773Z",
   "source": "api",
   "status": "available",
   "stats": {
@@ -131,7 +131,7 @@
           "appId": 1818450,
           "name": "STALZONE",
           "hours": 10.6,
-          "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/1818450/ad73a63f0263e057b592dcb4e715085418a8c18b.jpg"
+          "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/1818450/8265f15e66aa2ee0bc0dbf0b96ba3911475239ea.jpg"
         },
         {
           "appId": 3949040,
@@ -983,7 +983,7 @@
           "appId": 1818450,
           "name": "STALZONE",
           "hours": 3.6,
-          "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/1818450/ad73a63f0263e057b592dcb4e715085418a8c18b.jpg"
+          "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/1818450/8265f15e66aa2ee0bc0dbf0b96ba3911475239ea.jpg"
         },
         {
           "appId": 1332010,

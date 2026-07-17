@@ -1,7 +1,7 @@
 {
-  "updatedAt": "2026-07-17T14:02:47.558Z",
-  "lastSuccessfulAt": "2026-07-17T14:02:47.558Z",
-  "lastAttemptAt": "2026-07-17T14:02:47.558Z",
+  "updatedAt": "2026-07-17T19:32:49.773Z",
+  "lastSuccessfulAt": "2026-07-17T19:32:49.773Z",
+  "lastAttemptAt": "2026-07-17T19:32:49.773Z",
   "source": "api",
   "status": "available",
   "psnId": "ankkui",
@@ -397,7 +397,7 @@
       "platform": "PS5",
       "trophyProgress": 6,
       "trophyMatched": true,
-      "iconUrl": "https://image.api.playstation.com/sgst/prod/00/PPSA08595_00/app/info/136/fi_f18ba5e0612f8ae74676c5de4e150ce4ba94c2d37779fe0454f2339170f87f54/icon0.png"
+      "iconUrl": "https://image.api.playstation.com/sgst/prod/00/PPSA08595_00/app/info/137/fi_1dab064a97d5bfd290ac6686bf8307077c2c5f9fbb22ab6a95f89ad209999543/icon0.png"
     },
     {
       "title": "EA SPORTS™ WRC",
