@@ -234,7 +234,7 @@ async function updateDiscord() {
       username: user.username || fallback.username,
       displayName: user.global_name || user.username || fallback.displayName,
       bio: (process.env.DISCORD_BIO || "").trim() ||
-        "Discord — единственный активный канал связи.",
+        "Чаще всего я здесь. Пиши, если хочешь сыграть вместе или просто пообщаться.",
       presence,
       avatarUrl,
       bannerUrl,

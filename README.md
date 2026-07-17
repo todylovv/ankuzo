@@ -32,7 +32,8 @@ npm run update-data
 ## Структура
 
 - `index.html` — семантика и контент страницы;
-- `css/system.css` — дизайн и адаптив;
+- `css/system.css` — базовая визуальная система, hero, игровая лента и адаптив;
+- `css/editorial.css` — редакционные главы Steam, PlayStation, Discord и профиль;
 - `js/` — интерфейс и WebGL;
 - `data/` — безопасные публичные данные;
 - `scripts/update-data.js` — серверное обновление API;

@@ -21,22 +21,23 @@
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%23050605'/%3E%3Cpath d='M12 50 27 14h10l15 36H41l-3-8H25l-3 8Zm16-17h7l-3-9Z' fill='%23c2ff1a'/%3E%3C/svg%3E">
   <link rel="preload" href="fonts/manrope-cyrillic.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="fonts/jetbrains-mono-cyrillic.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="stylesheet" href="css/system.css?v=6.2.0">
+  <link rel="stylesheet" href="css/system.css?v=6.3.3">
+  <link rel="stylesheet" href="css/editorial.css?v=6.3.3">
   <script type="application/ld+json">
     {"@context":"https://schema.org","@type":"ProfilePage","url":"https://todylovv.github.io/ankuzo/","mainEntity":{"@type":"Person","name":"Anku","alternateName":"Ankuzo","sameAs":["https://steamcommunity.com/profiles/76561199770575251/","https://steamcommunity.com/profiles/76561198165374024/"]}}
   </script>
 </head>
 <body>
   <div class="scroll-progress" aria-hidden="true"><i id="scroll-progress-fill"></i></div>
-  <div class="fx fx-grid"></div>
-  <div class="fx fx-vignette"></div>
-  <div class="fx fx-scan"></div>
-  <div class="fx fx-noise"></div>
+  <div class="fx fx-grid" aria-hidden="true"></div>
+  <div class="fx fx-vignette" aria-hidden="true"></div>
+  <div class="fx fx-scan" aria-hidden="true"></div>
+  <div class="fx fx-noise" aria-hidden="true"></div>
   <div class="fx fx-ambient" aria-hidden="true"></div>
 
-  <div id="cursor"></div>
+  <div id="cursor" aria-hidden="true"></div>
 
-  <div id="boot" aria-live="polite">
+  <div id="boot" role="status" aria-live="polite">
     <div class="boot-wrap">
       <div class="boot-head"><span>ANKU / ANKUZO</span><span>ЛИЧНАЯ ИГРОВАЯ СТРАНИЦА</span></div>
       <div class="boot-title">Мои игры<span>.</span></div>
@@ -53,7 +54,7 @@
     <button class="cell brand" type="button" aria-label="Повторить загрузку"><span class="dot live"></span>ANKUZO</button>
     <div class="cell hide-s">ЛИЧНАЯ ИГРОВАЯ СТРАНИЦА</div>
     <div class="cell grow"><span id="clock">--:--:-- UTC</span></div>
-    <div class="cell right hide-s pill"><span class="dot live"></span><b>ДАННЫЕ</b> актуальны</div>
+    <div class="cell right hide-s pill"><span class="dot live" id="global-data-dot"></span><b>ДАННЫЕ</b> <span id="global-data-status">проверка</span></div>
     <div class="cell hide-s pill"><span class="dot blue"></span><b>СИГНАЛ</b> Discord</div>
     <button class="cell sound-toggle" id="sound-toggle" type="button" aria-pressed="false" aria-label="Включить звуковую атмосферу"><span class="sound-bars" aria-hidden="true"><i></i><i></i><i></i></span><span id="sound-label">ЗВУК ВЫКЛ</span></button>
     <div class="cell right-edge hide-xs">55.75°N / 37.62°E</div>
@@ -83,21 +84,21 @@
         <div class="hero-kicker rv"><span class="dot live"></span> ЛИЧНАЯ ИГРОВАЯ СТРАНИЦА</div>
         <p class="hero-brand rv">ANKUZO <span>ANKU / ANKUZO</span></p>
         <h1 class="hero-title rv rv-d1" id="hero-title"><span>Мои</span><span>игры<i>.</i></span></h1>
-        <p class="hero-about rv rv-d2">Я — <b>Anku</b>, также использую ник <b>Ankuzo</b>. Здесь можно посмотреть, во что я играю, мою статистику Steam, трофеи PlayStation и профиль Discord.</p>
+        <p class="hero-about rv rv-d2">Я — <b>Anku / Ankuzo</b>. Здесь показываю, во что играю сейчас, к каким играм возвращаюсь и сколько времени во всё это ушло.</p>
         <div class="hero-foot rv rv-d5">
-          <span class="scrollcue"><i></i> смотреть игровые профили</span>
+          <span class="scrollcue"><i></i> листай — дальше мои игры</span>
           <span>данные обновляются автоматически</span>
         </div>
       </div>
 
       <div class="core-stage rv rv-d2">
-        <canvas id="heroShaderCanvas" aria-hidden="true"></canvas>
+        <canvas id="heroShaderCanvas" tabindex="0" aria-label="Интерактивный 3D-объект. Перетаскивайте указателем или перемещайте клавишами со стрелками. Нажмите Home, чтобы вернуть его на место.">Интерактивный 3D-объект.</canvas>
         <div class="drag-hint" aria-hidden="true"><span>↔</span> перетащи · двойной клик — вернуть</div>
         <div class="core-ring"></div>
         <div class="core-ring r2"></div>
         <div class="core-crosshair"></div>
-        <div class="core-label tl"><div class="hd"><span class="dot live"></span> СТРАНИЦА</div><div class="v acid">ДАННЫЕ АКТУАЛЬНЫ</div></div>
-        <div class="core-label tr"><div class="hd">НИК</div><div class="v">ANKUZO</div><div class="v muted">ANKU</div></div>
+        <div class="core-label tl"><div class="hd"><span class="dot live"></span> СТРАНИЦА</div><div class="v acid" id="hero-data-status">ПРОВЕРКА ДАННЫХ</div></div>
+        <div class="core-label tr"><div class="hd">ИМЯ</div><div class="v">ANKU / ANKUZO</div></div>
         <div class="core-label bl"><div class="hd"><span class="dot live"></span> ИГРОВЫЕ ПРОФИЛИ</div><div class="v acid">STEAM + PSN</div></div>
         <div class="core-label br"><div class="hd"><span class="dot blue"></span> СВЯЗЬ</div><div class="v discord-text">Discord @ankuz0</div></div>
         <div class="core-tick t1">ИГРЫ И СТАТИСТИКА</div>
@@ -109,38 +110,38 @@
       <div class="play-pin">
         <div class="play-head">
           <span><b>00</b> / ИГРАЮ СЕЙЧАС</span>
-          <h2 id="playing-title">Не список. Мои ощущения.</h2>
+          <h2 id="playing-title">Во что играю — и что чувствую.</h2>
           <div class="play-counter"><b id="play-current">01</b><span>/ 06</span></div>
         </div>
         <div class="play-track" id="play-track">
-          <article class="game-scene active" data-theme="arena" style="--game-image:url('https://cdn.akamai.steamstatic.com/steam/apps/2073620/library_hero.jpg')">
-            <div class="game-art" aria-hidden="true"></div>
-            <div class="game-copy"><span class="game-state">СЕЙЧАС · PC</span><h3>Arena Breakout<br><i>Infinite</i></h3><p>Пока нравится больше, чем ARC Raiders: стрельба ощущается приятнее, а общий вайб цепляет сильнее. PUBG для меня слишком медленный и деревянный.</p><div class="game-tags"><span>тактический шутер</span><span>главная сейчас</span></div></div>
+          <article class="game-scene active" data-theme="arena" data-game-image="./assets/games/arena.jpg">
+            <div class="game-art" aria-hidden="true"><img class="game-art-img" alt="" decoding="async"></div>
+            <div class="game-copy"><span class="game-state">СЕЙЧАС · PC</span><h3>Arena Breakout<br><i>Infinite</i></h3><p>Сейчас это моя главная игра. По сравнению с ARC Raiders стрельба здесь ощущается приятнее, а общий вайб цепляет сильнее. PUBG так и не зашёл — для меня он слишком медленный и деревянный.</p><div class="game-tags"><span>тактический шутер</span><span>главная сейчас</span></div></div>
             <span class="game-index">01</span>
           </article>
-          <article class="game-scene" data-theme="kingdom" style="--game-image:url('https://image.api.playstation.com/sgst/prod/00/PPSA21704_00/app/info/43/fi_7e1156a1efd55888469965f5bd82150cc530d550b55e8253ea907c1fa4c43642/icon0.png')">
-            <div class="game-art" aria-hidden="true"></div>
-            <div class="game-copy"><span class="game-state">СЕЙЧАС · PS5</span><h3>Kingdom Come:<br><i>Deliverance II</i></h3><p>Сейчас прохожу на PlayStation. Здесь хочется не спешить, изучать мир и проживать каждую историю.</p><div class="game-tags"><span>RPG</span><span>PS5</span></div></div>
+          <article class="game-scene" data-theme="kingdom" data-game-image="./assets/games/kingdom.jpg">
+            <div class="game-art" aria-hidden="true"><img class="game-art-img" alt="" loading="lazy" decoding="async"></div>
+            <div class="game-copy"><span class="game-state">СЕЙЧАС · PS5</span><h3>Kingdom Come:<br><i>Deliverance II</i></h3><p>Прохожу на PlayStation. Нравится, что игра не торопит: можно спокойно изучать мир, вникать в истории и действительно чувствовать себя его частью.</p><div class="game-tags"><span>RPG</span><span>PS5</span></div></div>
             <span class="game-index">02</span>
           </article>
-          <article class="game-scene" data-theme="blackflag" style="--game-image:url('https://image.api.playstation.com/sgst/prod/00/PPSA28183_00/app/info/60/fi_38a700d70e86e3c93d55d85e2e5987a93cbc2e5c6061de553e2d3eea760a826c/icon0.png')">
-            <div class="game-art" aria-hidden="true"></div>
-            <div class="game-copy"><span class="game-state">СЕЙЧАС · PS5</span><h3>Black Flag<br><i>Resynced</i></h3><p>Новый Black Flag только вышел — играю на PlayStation и заново возвращаюсь к пиратскому настроению.</p><div class="game-tags"><span>новый релиз</span><span>PS5</span></div></div>
+          <article class="game-scene" data-theme="blackflag" data-game-image="./assets/games/black-flag.jpg">
+            <div class="game-art" aria-hidden="true"><img class="game-art-img" alt="" loading="lazy" decoding="async"></div>
+            <div class="game-copy"><span class="game-state">СЕЙЧАС · PS5</span><h3>Black Flag<br><i>Resynced</i></h3><p>Только начал проходить новый Black Flag на PlayStation. Пока наслаждаюсь морем, кораблями и возвращением того самого пиратского вайба.</p><div class="game-tags"><span>новый релиз</span><span>PS5</span></div></div>
             <span class="game-index">03</span>
           </article>
           <article class="game-scene" data-theme="valorant">
             <div class="game-art game-art-symbol" aria-hidden="true"><i>V</i></div>
-            <div class="game-copy"><span class="game-state">ИНОГДА · PC</span><h3>VALORANT</h3><p>Иногда захожу сыграть несколько матчей. Не основная игра, но время от времени возвращаюсь.</p><div class="game-tags"><span>соревновательный</span><span>иногда</span></div></div>
+            <div class="game-copy"><span class="game-state">ИНОГДА · PC</span><h3>VALORANT</h3><p>Иногда захожу на несколько матчей. Не основная игра — скорее знакомый соревновательный ритм, к которому бывает приятно вернуться.</p><div class="game-tags"><span>соревновательный</span><span>иногда</span></div></div>
             <span class="game-index">04</span>
           </article>
-          <article class="game-scene" data-theme="apex" style="--game-image:url('https://cdn.akamai.steamstatic.com/steam/apps/1172470/library_hero.jpg')">
-            <div class="game-art" aria-hidden="true"></div>
-            <div class="game-copy"><span class="game-state">ИНОГДА · PC / PS5</span><h3>Apex<br><i>Legends</i></h3><p>Очень нравится мувмент — игра ощущается быстро и свободно. Но часто просто не с кем пойти в команду.</p><div class="game-tags"><span>movement</span><span>командная</span></div></div>
+          <article class="game-scene" data-theme="apex" data-game-image="./assets/games/apex.jpg">
+            <div class="game-art" aria-hidden="true"><img class="game-art-img" alt="" loading="lazy" decoding="async"></div>
+            <div class="game-copy"><span class="game-state">ИНОГДА · PC / PS5</span><h3>Apex<br><i>Legends</i></h3><p>Очень нравится мувмент: игра ощущается быстрой и свободной. Жаль, что часто просто не с кем собрать команду.</p><div class="game-tags"><span>мувмент</span><span>командная</span></div></div>
             <span class="game-index">05</span>
           </article>
-          <article class="game-scene" data-theme="counter" style="--game-image:url('https://cdn.akamai.steamstatic.com/steam/apps/730/library_hero.jpg')">
-            <div class="game-art" aria-hidden="true"></div>
-            <div class="game-copy"><span class="game-state">ИСТОРИЯ · 3 264 Ч</span><h3>Counter-Strike<br><i>2</i></h3><p>Игра, в которую я играл больше всего. Сейчас перестал — эта глава осталась в статистике.</p><div class="game-tags"><span>больше всего часов</span><span>сейчас не играю</span></div></div>
+          <article class="game-scene" data-theme="counter" data-game-image="./assets/games/counter-strike.jpg">
+            <div class="game-art" aria-hidden="true"><img class="game-art-img" alt="" loading="lazy" decoding="async"></div>
+            <div class="game-copy"><span class="game-state" id="counter-hours">ИСТОРИЯ · МНОГО ЧАСОВ</span><h3>Counter-Strike<br><i>2</i></h3><p>Игра, в которую я играл больше всего. Сейчас перестал — эта глава осталась в статистике.</p><div class="game-tags"><span>больше всего часов</span><span>сейчас не играю</span></div></div>
             <span class="game-index">06</span>
           </article>
         </div>
@@ -153,33 +154,33 @@
       <div class="stats-bridge-pin">
         <div class="bridge-curtain bridge-curtain-left" aria-hidden="true"></div>
         <div class="bridge-curtain bridge-curtain-right" aria-hidden="true"></div>
-        <div class="bridge-kicker"><span>ОЩУЩЕНИЯ</span><i></i><span>ДАННЫЕ</span></div>
+        <div class="bridge-kicker"><span>ИГРЫ</span><i></i><span>ЦИФРЫ</span></div>
         <p class="bridge-exit" aria-hidden="true">ИГРАЮ</p>
         <div class="bridge-total">
-          <span class="bridge-total-ghost" aria-hidden="true">5003</span>
-          <strong>5 003</strong>
-          <small>часа в Steam · два профиля · всё время</small>
+          <span class="bridge-total-ghost" id="bridge-hours-ghost" aria-hidden="true">—</span>
+          <strong id="bridge-hours">—</strong>
+          <small id="bridge-hours-caption">часов в Steam · два профиля · всё время</small>
         </div>
-        <h2><span>То, что чувствую,</span><b>становится измеримым.</b></h2>
-        <div class="bridge-axis" aria-hidden="true"><i></i><span>01 — 05</span><i></i></div>
+        <h2><span>Игры меняются.</span><b>Часы остаются.</b></h2>
+        <div class="bridge-axis" aria-hidden="true"><i></i><span>ИГРЫ — СТАТИСТИКА</span><i></i></div>
       </div>
     </section>
 
-    <section id="core" class="editorial-chapter profile-chapter">
+    <section id="core" class="editorial-chapter profile-chapter" aria-labelledby="core-title">
       <div class="sec-head rv">
         <span class="num">01</span><span class="tag">/О СТРАНИЦЕ</span>
-        <h2>Моя игровая страница</h2>
+        <h2 id="core-title">Моя игровая страница</h2>
         <span class="meta">ANKU / ANKUZO<br>игры · профили · статистика</span>
       </div>
       <div class="core-grid">
         <article class="bigstat rv">
-          <span class="chapter-eyebrow">КТО ИГРАЕТ ЗА ЭКРАНОМ</span>
+          <span class="chapter-eyebrow">КТО ЗДЕСЬ ИГРАЕТ</span>
           <p class="lead">Я — <em>Anku</em><br>/ Ankuzo.</p>
-          <p class="sub">Это моя личная страница об играх. Здесь собраны игровые часы, любимые игры, Steam-профили, трофеи PlayStation и Discord для связи.</p>
+          <p class="sub">Игры для меня — не коллекция достижений. В одни я возвращаюсь годами, другие оставляю после первого вечера. Здесь сохраняю то, во что играю сейчас, и историю того, во что играл раньше.</p>
           <div class="profile-tags" aria-label="Содержание страницы"><span>играю сейчас</span><span>моя история</span><span>живые данные</span></div>
         </article>
         <article class="monitor rv rv-d1">
-          <div class="bar"><span>содержание</span><span class="monitor-live"><i class="dot live"></i>актуально</span></div>
+          <div class="bar"><span>что здесь есть</span><span class="monitor-live"><i class="dot live"></i>обновляется</span></div>
           <div class="kv"><span class="k">Steam</span><span class="v acid"><span class="dot live"></span>игры и часы</span></div>
           <div class="kv"><span class="k">PlayStation</span><span class="v">трофеи и библиотека</span></div>
           <div class="kv"><span class="k">Discord</span><span class="v discord-text">профиль и связь</span></div>
@@ -189,13 +190,13 @@
       </div>
     </section>
 
-    <section id="steam" class="data-section editorial-chapter steam-chapter">
+    <section id="steam" class="data-section editorial-chapter steam-chapter" aria-labelledby="steam-title">
       <div class="sec-head rv">
         <span class="num">02</span><span class="tag">/Steam</span>
-        <h2>Моя история в Steam</h2>
+        <h2 id="steam-title">Моя история в Steam</h2>
         <span class="meta" id="steam-source">данные<br>загрузка</span>
       </div>
-      <p class="chapter-copy rv">Два профиля, сотни игр и тысячи часов. Здесь не просто счётчик — это игры, к которым я возвращался чаще всего.</p>
+      <p class="chapter-copy rv">Два профиля, сотни игр и тысячи часов. Здесь видно, к каким играм я возвращался чаще всего и какие из них забрали больше всего времени.</p>
       <div class="metric-grid steam-metrics rv">
         <article class="metric"><span>ИГРОВОЕ ВРЕМЯ В ДВУХ ПРОФИЛЯХ</span><strong id="steam-hours">—</strong><small>часов в играх</small></article>
         <article class="metric"><span>ИГРЫ В ПРОФИЛЯХ</span><strong id="steam-games">—</strong><small>в библиотеке</small></article>
@@ -214,13 +215,13 @@
       </div>
     </section>
 
-    <section id="ps5" class="data-section editorial-chapter ps-chapter">
+    <section id="ps5" class="data-section editorial-chapter ps-chapter" aria-labelledby="ps5-title">
       <div class="sec-head rv">
         <span class="num">03</span><span class="tag">/PlayStation</span>
-        <h2>То, что прохожу не спеша</h2>
+        <h2 id="ps5-title">То, что прохожу не спеша</h2>
         <span class="meta" id="psn-source">PSN ID<br>ankkui</span>
       </div>
-      <p class="chapter-copy rv">На PlayStation я чаще выбираю большие одиночные истории. Трофеи здесь — следы пройденных миров, а не цель любой ценой.</p>
+      <p class="chapter-copy rv">На PlayStation я чаще выбираю большие одиночные истории. За трофеями специально не гоняюсь — они просто остаются после пройденных игр.</p>
       <div class="psn-head rv">
         <div><span>ПРОФИЛЬ ПРИВЯЗАН</span><strong id="psn-id">ankkui</strong></div>
         <div><span>УРОВЕНЬ ТРОФЕЕВ</span><strong id="psn-level">—</strong></div>
@@ -241,10 +242,10 @@
       </article>
     </section>
 
-    <section id="signal" class="editorial-chapter signal-chapter">
+    <section id="signal" class="editorial-chapter signal-chapter" aria-labelledby="signal-title">
       <div class="sec-head rv">
         <span class="num">04</span><span class="tag">/Discord</span>
-        <h2>Если хочешь сыграть — пиши</h2>
+        <h2 id="signal-title">Если хочешь сыграть — пиши</h2>
         <span class="meta" id="signal-source">Discord<br>проверка данных</span>
       </div>
       <p class="chapter-copy rv">Discord — мой основной канал связи. Можно позвать в игру, обсудить релиз или просто написать.</p>
@@ -264,7 +265,7 @@
               <span id="discord-signal-state">ОСНОВНОЙ СИГНАЛ</span>
               <h3 id="discord-name">anku</h3>
               <div class="discord-username">@<span id="discord-username">ankuz0</span></div>
-              <p id="discord-bio">Discord — единственный активный канал связи.</p>
+              <p id="discord-bio">Чаще всего я здесь. Пиши, если хочешь сыграть вместе или просто пообщаться.</p>
               <div class="discord-badges" id="discord-badges"></div>
             </div>
             <button class="copybtn" type="button" data-copy="ankuz0"><span>СКОПИРОВАТЬ Discord</span><span class="arr">⧉</span></button>
@@ -290,10 +291,10 @@
     </div>
   </footer>
 
-  <div id="toast" role="status">СКОПИРОВАНО</div>
+  <div id="toast" role="status" aria-live="polite"></div>
 
-  <script src="js/boot.js?v=6.2.0"></script>
-  <script src="js/interface.js?v=6.2.0"></script>
-  <script src="js/hero-shader.js?v=6.2.0"></script>
+  <script src="js/boot.js?v=6.3.3"></script>
+  <script src="js/interface.js?v=6.3.3"></script>
+  <script src="js/hero-shader.js?v=6.3.3"></script>
 </body>
 </html>

@@ -33,6 +33,53 @@ test("static DOM references exist", async () => {
   assert.deepEqual(missing, []);
 });
 
+test("release version is synchronized across public assets", async () => {
+  const html = await read("index.html");
+  const pkg = JSON.parse(await read("package.json"));
+  for (const asset of ["css/system.css", "css/editorial.css", "js/boot.js", "js/interface.js", "js/hero-shader.js"]) {
+    assert.match(html, new RegExp(`${asset.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}\\?v=${pkg.version.replace(/\./g, "\\.")}`));
+  }
+});
+
+test("headline statistics come from public data instead of hardcoded copy", async () => {
+  const html = await read("index.html");
+  const script = await read("js/interface.js");
+  assert.match(html, /id="bridge-hours"/);
+  assert.match(html, /id="counter-hours"/);
+  assert.doesNotMatch(html, />5 003</);
+  assert.match(script, /setText\("bridge-hours"/);
+  assert.match(script, /setText\("counter-hours"/);
+});
+
+test("public copy uses one identity and accessible interaction labels", async () => {
+  const html = await read("index.html");
+  assert.doesNotMatch(html, /также использую ник/i);
+  assert.match(html, /Я — <b>Anku \/ Ankuzo<\/b>/);
+  assert.match(html, /id="heroShaderCanvas"[^>]*tabindex="0"[^>]*aria-label=/);
+  assert.match(html, /class="fx fx-grid" aria-hidden="true"/);
+  for (const id of ["core", "steam", "ps5", "signal"]) {
+    assert.match(html, new RegExp(`<section id="${id}"[^>]*aria-labelledby="[^"]+"`));
+  }
+  assert.match(html, /id="toast" role="status" aria-live="polite"><\/div>/);
+});
+
+test("authored game art is local and deployable", async () => {
+  const html = await read("index.html");
+  const images = [...html.matchAll(/data-game-image="\.\/([^"]+)"/g)].map((match) => match[1]);
+  assert.equal(images.length, 5);
+  for (const image of images) {
+    assert.ok((await stat(path.join(root, image))).isFile(), `${image} is missing`);
+  }
+  assert.doesNotMatch(html, /data-game-image="https?:/);
+});
+
+test("stylesheets have balanced blocks", async () => {
+  for (const file of ["css/system.css", "css/editorial.css"]) {
+    const css = await read(file);
+    assert.equal((css.match(/{/g) || []).length, (css.match(/}/g) || []).length, `${file}: unbalanced braces`);
+  }
+});
+
 test("public JSON has consistent source state and valid dates", async () => {
   for (const file of ["steam", "psn", "discord", "faceit", "trn"]) {
     const data = JSON.parse(await read(`data/${file}.json`));
@@ -55,7 +102,7 @@ test("PlayStation progress values are bounded", async () => {
 });
 
 test("required deploy files exist", async () => {
-  for (const file of ["index.html", "robots.txt", "sitemap.xml", "css/system.css"]) {
+  for (const file of ["index.html", "robots.txt", "sitemap.xml", "css/system.css", "css/editorial.css"]) {
     assert.ok((await stat(path.join(root, file))).isFile(), `${file} is missing`);
   }
 });

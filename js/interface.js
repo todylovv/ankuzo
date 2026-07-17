@@ -176,7 +176,7 @@
     source: "fallback",
     username: "ankuz0",
     displayName: "anku",
-    bio: "Discord — единственный активный канал связи.",
+    bio: "Чаще всего я здесь. Пиши, если хочешь сыграть вместе или просто пообщаться.",
     presence: "dnd",
     bannerUrl: "./assets/discord-banner.webp",
     decorationUrl: "",
@@ -245,9 +245,22 @@
     }, 0);
     var totalHours = Number(data.stats && data.stats.totalHours) || profileHours ||
       games.reduce(function (sum, game) { return sum + Number(game.hours || 0); }, 0);
-    setText("steam-hours", Math.round(totalHours).toLocaleString("ru-RU"));
+    var roundedTotalHours = Math.round(totalHours);
+    var formattedTotalHours = roundedTotalHours.toLocaleString("ru-RU");
+    var profileCount = profiles.length || 2;
+    var profileWord = profileCount === 1 ? "профиль" : (profileCount < 5 ? "профиля" : "профилей");
+    setText("steam-hours", formattedTotalHours);
     setText("steam-games", Number(data.stats && data.stats.totalGames) || games.length);
-    setText("steam-profiles", profiles.length || 2);
+    setText("steam-profiles", profileCount);
+    setText("bridge-hours", formattedTotalHours);
+    setText("bridge-hours-ghost", String(roundedTotalHours));
+    setText("bridge-hours-caption", "часов в Steam · " + profileCount + " " + profileWord + " · всё время");
+    var counterStrike = games.find(function (game) {
+      return normalizeTitle(game.name) === "counter strike 2";
+    });
+    if (counterStrike) {
+      setText("counter-hours", "ИСТОРИЯ · " + Math.round(counterStrike.hours).toLocaleString("ru-RU") + " Ч");
+    }
     setSource("steam-source", "данные", data);
 
     var cards = document.getElementById("steam-account-cards");
@@ -266,7 +279,7 @@
         avatar.loading = "lazy";
         avatar.alt = "Аватар Steam " + safeText(profile.nickname, "профиля");
         avatar.addEventListener("error", function () { avatar.src = fallbackAvatar; }, { once: true });
-        card.querySelector("small").textContent = "STEAM УЗЕЛ_0" + (index + 1);
+        card.querySelector("small").textContent = "ПРОФИЛЬ 0" + (index + 1);
         card.querySelector("h3").textContent = safeText(profile.nickname, "Профиль " + (index + 1));
         card.querySelector("p").textContent = profile.online ? "В СЕТИ" : "НЕ В СЕТИ";
         card.querySelector("strong").textContent = profile.totalHours === null || profile.totalHours === undefined
@@ -372,7 +385,11 @@
     var username = safeText(data.username, "ankuz0");
     setText("discord-name", safeText(data.displayName, username));
     setText("discord-username", username);
-    setText("discord-bio", safeText(data.bio, "Discord — единственный активный канал связи."));
+    var bio = safeText(data.bio, "");
+    if (!bio || /единственный активный канал связи/i.test(bio)) {
+      bio = "Чаще всего я здесь. Пиши, если хочешь сыграть вместе или просто пообщаться.";
+    }
+    setText("discord-bio", bio);
     setSource("signal-source", "Discord", data);
     var live = data.source === "api" && data.status !== "unavailable";
     setText("discord-signal-state", live ? "данные профиля актуальны" : "резервные данные");
@@ -423,12 +440,26 @@
       });
     }
   }
+  function updateGlobalDataStatus(sources) {
+    var status = document.getElementById("global-data-status");
+    var heroStatus = document.getElementById("hero-data-status");
+    var dot = document.getElementById("global-data-dot");
+    var allLive = sources.every(function (data) {
+      return data && data.source === "api" && data.status !== "unavailable";
+    });
+    if (status) status.textContent = allLive ? "актуальны" : "частично из резерва";
+    if (heroStatus) heroStatus.textContent = allLive ? "ДАННЫЕ АКТУАЛЬНЫ" : "ЧАСТИЧНО ИЗ РЕЗЕРВА";
+    if (dot) {
+      dot.classList.toggle("live", allLive);
+      dot.classList.toggle("amber", !allLive);
+    }
+  }
   function loadPublicData() {
     return Promise.all([
-      loadJson("./data/steam.json", steamMockData).then(renderSteam),
-      loadJson("./data/psn.json", psnMockData).then(renderPsn),
-      loadJson("./data/discord.json", discordMockData).then(renderDiscord)
-    ]);
+      loadJson("./data/steam.json", steamMockData).then(function (data) { renderSteam(data); return data; }),
+      loadJson("./data/psn.json", psnMockData).then(function (data) { renderPsn(data); return data; }),
+      loadJson("./data/discord.json", discordMockData).then(function (data) { renderDiscord(data); return data; })
+    ]).then(updateGlobalDataStatus);
   }
 
   /* ---------- init ---------- */
@@ -529,6 +560,15 @@
     index = Math.max(0, Math.min(scenes.length - 1, index));
     if (index === activeIndex) return;
     activeIndex = index;
+    [index - 1, index, index + 1].forEach(function (sceneIndex) {
+      var scene = scenes[sceneIndex];
+      if (!scene || scene.dataset.imageReady === "true" || !scene.dataset.gameImage) return;
+      var imageUrl = new URL(scene.dataset.gameImage, document.baseURI).href;
+      var image = scene.querySelector(".game-art-img");
+      if (image) image.src = imageUrl;
+      else scene.style.setProperty("--game-image", "url('" + imageUrl.replace(/'/g, "%27") + "')");
+      scene.dataset.imageReady = "true";
+    });
     scenes.forEach(function (scene, sceneIndex) {
       scene.classList.toggle("active", sceneIndex === index);
     });

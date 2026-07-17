@@ -293,6 +293,29 @@
   canvas.addEventListener('pointerup', finishDrag);
   canvas.addEventListener('pointercancel', finishDrag);
   canvas.addEventListener('dblclick', resetObject);
+  canvas.addEventListener('keydown', event => {
+    const step = event.shiftKey ? .34 : .18;
+    const bounds = movementBounds();
+    if (event.key === 'Home' || event.key === 'Enter') {
+      event.preventDefault();
+      resetObject();
+      return;
+    }
+    const movement = {
+      ArrowLeft: [-step, 0],
+      ArrowRight: [step, 0],
+      ArrowUp: [0, step],
+      ArrowDown: [0, -step]
+    }[event.key];
+    if (!movement) return;
+    event.preventDefault();
+    targetGroupX = clamp(targetGroupX + movement[0], -bounds.x, bounds.x);
+    targetGroupY = clamp(targetGroupY + movement[1], -bounds.y, bounds.y);
+    groupVelocityX = 0;
+    groupVelocityY = 0;
+    document.querySelector('.drag-hint')?.classList.add('used');
+    scheduleRender();
+  });
   swatches.forEach((swatch, index) => {
     swatch.addEventListener('click', event => {
       event.stopPropagation();
