@@ -1,11 +1,11 @@
 {
-  "updatedAt": "2026-07-18T08:07:55.245Z",
-  "lastSuccessfulAt": "2026-07-18T08:07:55.245Z",
-  "lastAttemptAt": "2026-07-18T08:07:55.245Z",
+  "updatedAt": "2026-07-18T13:48:59.481Z",
+  "lastSuccessfulAt": "2026-07-18T13:48:59.481Z",
+  "lastAttemptAt": "2026-07-18T13:48:59.481Z",
   "source": "api",
   "status": "available",
   "stats": {
-    "totalHours": 5008.3,
+    "totalHours": 5013.8,
     "totalGames": 197
   },
   "profiles": [
@@ -17,7 +17,7 @@
       "currentGame": "",
       "profileUrl": "https://steamcommunity.com/profiles/76561199770575251/",
       "gameCount": 140,
-      "totalHours": 1597.7,
+      "totalHours": 1603.2,
       "games": [
         {
           "appId": 730,
@@ -92,6 +92,12 @@
           "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/289070/9dc914132fec244adcede62fb8e7524a72a7398c.jpg"
         },
         {
+          "appId": 2073620,
+          "name": "Arena Breakout: Infinite",
+          "hours": 17.6,
+          "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/2073620/3c3cb9ae001821040f4a5c255bc577fb0143dadd.jpg"
+        },
+        {
           "appId": 275850,
           "name": "No Man's Sky",
           "hours": 16.5,
@@ -120,12 +126,6 @@
           "name": "Frostpunk",
           "hours": 12.8,
           "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/323190/0561084dfe24c469c905fe0681da82aa31102836.jpg"
-        },
-        {
-          "appId": 2073620,
-          "name": "Arena Breakout: Infinite",
-          "hours": 12.1,
-          "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/2073620/3c3cb9ae001821040f4a5c255bc577fb0143dadd.jpg"
         },
         {
           "appId": 1818450,
