@@ -1,11 +1,11 @@
 {
-  "updatedAt": "2026-07-18T19:31:19.801Z",
-  "lastSuccessfulAt": "2026-07-18T19:31:19.801Z",
-  "lastAttemptAt": "2026-07-18T19:31:19.801Z",
+  "updatedAt": "2026-07-19T03:53:49.290Z",
+  "lastSuccessfulAt": "2026-07-19T03:53:49.290Z",
+  "lastAttemptAt": "2026-07-19T03:53:49.290Z",
   "source": "api",
   "status": "available",
   "stats": {
-    "totalHours": 5013.8,
+    "totalHours": 5016.5,
     "totalGames": 197
   },
   "profiles": [
@@ -17,7 +17,7 @@
       "currentGame": "",
       "profileUrl": "https://steamcommunity.com/profiles/76561199770575251/",
       "gameCount": 140,
-      "totalHours": 1603.2,
+      "totalHours": 1605.9,
       "games": [
         {
           "appId": 730,
@@ -80,6 +80,12 @@
           "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/578080/609f27278aa70697c13bf99f32c5a0248c381f9d.jpg"
         },
         {
+          "appId": 2073620,
+          "name": "Arena Breakout: Infinite",
+          "hours": 20.3,
+          "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/2073620/3c3cb9ae001821040f4a5c255bc577fb0143dadd.jpg"
+        },
+        {
           "appId": 1282270,
           "name": "Strinova",
           "hours": 19.9,
@@ -90,12 +96,6 @@
           "name": "Sid Meier's Civilization VI",
           "hours": 19.1,
           "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/289070/9dc914132fec244adcede62fb8e7524a72a7398c.jpg"
-        },
-        {
-          "appId": 2073620,
-          "name": "Arena Breakout: Infinite",
-          "hours": 17.6,
-          "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/2073620/3c3cb9ae001821040f4a5c255bc577fb0143dadd.jpg"
         },
         {
           "appId": 275850,
