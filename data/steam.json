@@ -1,11 +1,11 @@
 {
-  "updatedAt": "2026-07-19T13:53:07.869Z",
-  "lastSuccessfulAt": "2026-07-19T13:53:07.869Z",
-  "lastAttemptAt": "2026-07-19T13:53:07.869Z",
+  "updatedAt": "2026-07-19T19:31:42.708Z",
+  "lastSuccessfulAt": "2026-07-19T19:31:42.708Z",
+  "lastAttemptAt": "2026-07-19T19:31:42.708Z",
   "source": "api",
   "status": "available",
   "stats": {
-    "totalHours": 5019,
+    "totalHours": 5024.1,
     "totalGames": 197
   },
   "profiles": [
@@ -17,7 +17,7 @@
       "currentGame": "",
       "profileUrl": "https://steamcommunity.com/profiles/76561199770575251/",
       "gameCount": 140,
-      "totalHours": 1608.4,
+      "totalHours": 1613.5,
       "games": [
         {
           "appId": 730,
@@ -62,6 +62,12 @@
           "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/1172470/8986dd626da56db5f3fe09bc1b8871739de8b00d.jpg"
         },
         {
+          "appId": 2073620,
+          "name": "Arena Breakout: Infinite",
+          "hours": 27.9,
+          "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/2073620/3c3cb9ae001821040f4a5c255bc577fb0143dadd.jpg"
+        },
+        {
           "appId": 252490,
           "name": "Rust",
           "hours": 23.2,
@@ -72,12 +78,6 @@
           "name": "Satisfactory",
           "hours": 23.2,
           "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/526870/ee3406fe5ec813b1987ad67e37e5cd6fb4f620e6.jpg"
-        },
-        {
-          "appId": 2073620,
-          "name": "Arena Breakout: Infinite",
-          "hours": 22.8,
-          "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/2073620/3c3cb9ae001821040f4a5c255bc577fb0143dadd.jpg"
         },
         {
           "appId": 578080,
