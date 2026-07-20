@@ -1,7 +1,7 @@
 {
-  "updatedAt": "2026-07-20T09:33:50.997Z",
-  "lastSuccessfulAt": "2026-07-20T09:33:50.997Z",
-  "lastAttemptAt": "2026-07-20T09:33:50.997Z",
+  "updatedAt": "2026-07-20T14:33:09.585Z",
+  "lastSuccessfulAt": "2026-07-20T14:33:09.585Z",
+  "lastAttemptAt": "2026-07-20T14:33:09.585Z",
   "source": "api",
   "status": "available",
   "psnId": "ankkui",
@@ -61,21 +61,21 @@
       "platform": "PS5",
       "trophyProgress": null,
       "trophyMatched": false,
-      "iconUrl": "https://image.api.playstation.com/sgst/prod/00/PPSA21732_00/app/info/12/fi_45d4f2f01807e56fae7a373d5b06f6d522b4ffdf05ffe441988798f2a9e4f1fa/icon0.png"
+      "iconUrl": "https://image.api.playstation.com/sgst/prod/00/PPSA21732_00/app/info/14/fi_65ea588dc9e551a20b16f30b863ffd3b4a211da2eee6747e4f5838143d5ee15d/icon0.png"
     },
     {
       "title": "S.T.A.L.K.E.R.: Clear Sky",
       "platform": "PS5",
       "trophyProgress": null,
       "trophyMatched": false,
-      "iconUrl": "https://image.api.playstation.com/sgst/prod/00/PPSA21733_00/app/info/11/fi_ad453df608bb76170cefb81864a57ccd85cbf84cb397ed27c8865bb7afccae3d/icon0.png"
+      "iconUrl": "https://image.api.playstation.com/sgst/prod/00/PPSA21733_00/app/info/12/fi_4bd23c8b4467710ee363d91122177682f0e868415b5488dbdf9c8468b4d4f987/icon0.png"
     },
     {
       "title": "S.T.A.L.K.E.R.: Shadow of Chornobyl",
       "platform": "PS5",
       "trophyProgress": null,
       "trophyMatched": false,
-      "iconUrl": "https://image.api.playstation.com/sgst/prod/00/PPSA21734_00/app/info/13/fi_210eda8a4d066d2f109c59926405b33faff926b21981c2f32f91a5044e9f3168/icon0.png"
+      "iconUrl": "https://image.api.playstation.com/sgst/prod/00/PPSA21734_00/app/info/14/fi_209e09c16f7e579d8931eb8871cdedf2fca496d9fc3efab49b8b2cd8f82c75ea/icon0.png"
     },
     {
       "title": "Assassin's Creed® IV Black Flag",
@@ -1377,7 +1377,7 @@
       "platform": "PS5",
       "trophyProgress": null,
       "trophyMatched": false,
-      "iconUrl": "https://image.api.playstation.com/sgst/prod/00/PPSA15239_00/app/info/162/fi_e0ecde9c4056280f32bb5633e8e65688e70d4e160e756061a18be1e798e92c92/icon0.png"
+      "iconUrl": "https://image.api.playstation.com/sgst/prod/00/PPSA15239_00/app/info/163/fi_1d22c766bb3aa71f678dd0214a2fc8a639b58fc370044da38284301b1002cd12/icon0.png"
     },
     {
       "title": "Where Winds Meet",
