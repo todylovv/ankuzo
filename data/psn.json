@@ -1,7 +1,7 @@
 {
-  "updatedAt": "2026-07-20T04:04:13.225Z",
-  "lastSuccessfulAt": "2026-07-20T04:04:13.225Z",
-  "lastAttemptAt": "2026-07-20T04:04:13.225Z",
+  "updatedAt": "2026-07-20T09:33:50.997Z",
+  "lastSuccessfulAt": "2026-07-20T09:33:50.997Z",
+  "lastAttemptAt": "2026-07-20T09:33:50.997Z",
   "source": "api",
   "status": "available",
   "psnId": "ankkui",
@@ -369,7 +369,7 @@
       "platform": "PS5",
       "trophyProgress": 4,
       "trophyMatched": true,
-      "iconUrl": "https://image.api.playstation.com/sgst/prod/00/PPSA15316_00/app/info/39/fi_4648908235b8e6f763d981ed684c6bcba0536ccad0ed1c6b9bd4f5026ae6114e/icon0.png"
+      "iconUrl": "https://image.api.playstation.com/sgst/prod/00/PPSA15316_00/app/info/46/fi_e7aba90fb0db9b968b11690f77992e6cd3d4de07bae8d086b0251915b2105854/icon0.png"
     },
     {
       "title": "MONOPOLY®",
