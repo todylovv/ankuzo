@@ -1,7 +1,7 @@
 {
-  "updatedAt": "2026-07-21T08:44:20.494Z",
-  "lastSuccessfulAt": "2026-07-21T08:44:20.494Z",
-  "lastAttemptAt": "2026-07-21T08:44:20.494Z",
+  "updatedAt": "2026-07-21T14:21:17.205Z",
+  "lastSuccessfulAt": "2026-07-21T14:21:17.205Z",
+  "lastAttemptAt": "2026-07-21T14:21:17.205Z",
   "source": "api",
   "status": "available",
   "stats": {
@@ -215,7 +215,7 @@
           "appId": 2807960,
           "name": "Battlefield™ 6",
           "hours": 3.7,
-          "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/2807960/a758cc85720fc89b5c97995bd8eafb38b3604e47.jpg"
+          "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/2807960/195cfd006af0fc4ab13b35bbb0c1a4f46416d303.jpg"
         },
         {
           "appId": 3326230,
