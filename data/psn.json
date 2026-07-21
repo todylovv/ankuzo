@@ -1,7 +1,7 @@
 {
-  "updatedAt": "2026-07-21T03:44:37.384Z",
-  "lastSuccessfulAt": "2026-07-21T03:44:37.384Z",
-  "lastAttemptAt": "2026-07-21T03:44:37.384Z",
+  "updatedAt": "2026-07-21T08:44:20.494Z",
+  "lastSuccessfulAt": "2026-07-21T08:44:20.494Z",
+  "lastAttemptAt": "2026-07-21T08:44:20.494Z",
   "source": "api",
   "status": "available",
   "psnId": "ankkui",
@@ -516,7 +516,7 @@
       "platform": "PS5",
       "trophyProgress": 0,
       "trophyMatched": true,
-      "iconUrl": "https://image.api.playstation.com/sgst/prod/00/PPSA17101_00/app/info/868/fi_492952d402e0db572b08670a41c0a281185511adb34f81c060ec218ab38f374a/icon0.png"
+      "iconUrl": "https://image.api.playstation.com/sgst/prod/00/PPSA17101_00/app/info/878/fi_eef502a523e6ba376666ed1265553cc088f001878f7fc8f6b21a652b3c83ce2c/icon0.png"
     },
     {
       "title": "Digimon Story: Cyber Sleuth - Hacker's Memory",
