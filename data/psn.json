@@ -1,7 +1,7 @@
 {
-  "updatedAt": "2026-07-21T14:21:17.205Z",
-  "lastSuccessfulAt": "2026-07-21T14:21:17.205Z",
-  "lastAttemptAt": "2026-07-21T14:21:17.205Z",
+  "updatedAt": "2026-07-21T19:50:59.009Z",
+  "lastSuccessfulAt": "2026-07-21T19:50:59.009Z",
+  "lastAttemptAt": "2026-07-21T19:50:59.009Z",
   "source": "api",
   "status": "available",
   "psnId": "ankkui",
@@ -789,7 +789,7 @@
       "platform": "PS5",
       "trophyProgress": null,
       "trophyMatched": false,
-      "iconUrl": "https://image.api.playstation.com/sgst/prod/00/PPSA02049_00/app/info/332/fi_e72fa7bf5506f8a3b74639e83627eb16ed6fe2a5c7dc4ca7e82e0302f68858d2/icon0.png"
+      "iconUrl": "https://image.api.playstation.com/sgst/prod/00/PPSA02049_00/app/info/333/fi_eea642ae5fa236e1f11a3c3d661f60a6f6172c7e53c784a3337ab76b38c87a4e/icon0.png"
     },
     {
       "title": "Balatro",
@@ -1398,7 +1398,7 @@
       "platform": "PS5",
       "trophyProgress": 7,
       "trophyMatched": true,
-      "iconUrl": "https://image.api.playstation.com/sgst/prod/00/PPSA10793_00/app/info/31/fi_b2ec489034cf311ca1d5968ed7c92c25c6007eac9b9841e39ed6ae1c243531cc/icon0.png"
+      "iconUrl": "https://image.api.playstation.com/sgst/prod/00/PPSA10793_00/app/info/35/fi_b68bf27155682e18191d105d562132d685ae8f6f9c41a5720d5861de7b3cee5c/icon0.png"
     },
     {
       "title": "ELDEN RING™",

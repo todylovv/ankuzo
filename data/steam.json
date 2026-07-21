@@ -1,11 +1,11 @@
 {
-  "updatedAt": "2026-07-21T14:21:17.205Z",
-  "lastSuccessfulAt": "2026-07-21T14:21:17.205Z",
-  "lastAttemptAt": "2026-07-21T14:21:17.205Z",
+  "updatedAt": "2026-07-21T19:50:59.009Z",
+  "lastSuccessfulAt": "2026-07-21T19:50:59.009Z",
+  "lastAttemptAt": "2026-07-21T19:50:59.009Z",
   "source": "api",
   "status": "available",
   "stats": {
-    "totalHours": 5024.1,
+    "totalHours": 5024.5,
     "totalGames": 197
   },
   "profiles": [
@@ -869,7 +869,7 @@
       "currentGame": "",
       "profileUrl": "https://steamcommunity.com/profiles/76561198165374024/",
       "gameCount": 75,
-      "totalHours": 3410.6,
+      "totalHours": 3411,
       "games": [
         {
           "appId": 730,
@@ -892,7 +892,7 @@
         {
           "appId": 739630,
           "name": "Phasmophobia",
-          "hours": 94.5,
+          "hours": 94.9,
           "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/739630/125673b382059f666ec81477173380a76e1df0be.jpg"
         },
         {
@@ -1352,7 +1352,7 @@
     {
       "appId": 739630,
       "name": "Phasmophobia",
-      "hours": 94.5,
+      "hours": 94.9,
       "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/739630/125673b382059f666ec81477173380a76e1df0be.jpg"
     },
     {
