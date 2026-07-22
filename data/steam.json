@@ -1,11 +1,11 @@
 {
-  "updatedAt": "2026-07-21T19:50:59.009Z",
-  "lastSuccessfulAt": "2026-07-21T19:50:59.009Z",
-  "lastAttemptAt": "2026-07-21T19:50:59.009Z",
+  "updatedAt": "2026-07-22T03:45:45.215Z",
+  "lastSuccessfulAt": "2026-07-22T03:45:45.215Z",
+  "lastAttemptAt": "2026-07-22T03:45:45.215Z",
   "source": "api",
   "status": "available",
   "stats": {
-    "totalHours": 5024.5,
+    "totalHours": 5025.1,
     "totalGames": 197
   },
   "profiles": [
@@ -17,7 +17,7 @@
       "currentGame": "",
       "profileUrl": "https://steamcommunity.com/profiles/76561199770575251/",
       "gameCount": 140,
-      "totalHours": 1613.5,
+      "totalHours": 1614.1,
       "games": [
         {
           "appId": 730,
@@ -230,6 +230,12 @@
           "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/3097560/5342338ad1fd3561c1ed8c6d2ed4ae0e6ada2e9c.jpg"
         },
         {
+          "appId": 4704690,
+          "name": "MECCHA CHAMELEON",
+          "hours": 3.4,
+          "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/4704690/fbef288370f6ae51cb0a5066d7fb13d26147c94a.jpg"
+        },
+        {
           "appId": 457140,
           "name": "Oxygen Not Included",
           "hours": 3.3,
@@ -276,12 +282,6 @@
           "name": "GeoGuessr Steam Edition",
           "hours": 2.8,
           "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/3478870/b00bdaf4b696b337e8cd38cb7f0db07c044f6f90.jpg"
-        },
-        {
-          "appId": 4704690,
-          "name": "MECCHA CHAMELEON",
-          "hours": 2.8,
-          "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/4704690/fbef288370f6ae51cb0a5066d7fb13d26147c94a.jpg"
         },
         {
           "appId": 381210,
