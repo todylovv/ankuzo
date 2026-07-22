@@ -1,7 +1,7 @@
 {
-  "updatedAt": "2026-07-22T03:45:45.215Z",
-  "lastSuccessfulAt": "2026-07-22T03:45:45.215Z",
-  "lastAttemptAt": "2026-07-22T03:45:45.215Z",
+  "updatedAt": "2026-07-22T08:44:01.065Z",
+  "lastSuccessfulAt": "2026-07-22T08:44:01.065Z",
+  "lastAttemptAt": "2026-07-22T08:44:01.065Z",
   "source": "api",
   "status": "available",
   "psnId": "ankkui",
@@ -1314,7 +1314,7 @@
       "platform": "PS5",
       "trophyProgress": null,
       "trophyMatched": false,
-      "iconUrl": "https://image.api.playstation.com/sgst/prod/00/PPSA27360_00/app/info/57/fi_2dc9f41b8198f1ebae98582b006d83479f111164e3650189bf5466a19eeeb127/icon0.png"
+      "iconUrl": "https://image.api.playstation.com/sgst/prod/00/PPSA27360_00/app/info/58/fi_27db3096ca9a25377d623aba71088db0b8cd0a5ec4527ae4749c33a3251604a2/icon0.png"
     },
     {
       "title": "Patapon 3",
