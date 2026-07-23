@@ -1,7 +1,7 @@
 {
-  "updatedAt": "2026-07-23T14:31:08.579Z",
-  "lastSuccessfulAt": "2026-07-23T14:31:08.579Z",
-  "lastAttemptAt": "2026-07-23T14:31:08.579Z",
+  "updatedAt": "2026-07-23T19:45:28.828Z",
+  "lastSuccessfulAt": "2026-07-23T19:45:28.828Z",
+  "lastAttemptAt": "2026-07-23T19:45:28.828Z",
   "source": "api",
   "status": "available",
   "psnId": "ankkui",
@@ -159,7 +159,7 @@
       "platform": "PS5",
       "trophyProgress": null,
       "trophyMatched": false,
-      "iconUrl": "https://image.api.playstation.com/sgst/prod/00/PPSA07950_00/app/info/365/fi_4501ffbc43a8074e201941cd66e27a7c30a980fc67ecdd4e9be4b6a38df7616a/icon0.png"
+      "iconUrl": "https://image.api.playstation.com/sgst/prod/00/PPSA07950_00/app/info/368/fi_a32dad77757cba994b425d28e7b6212e86811e5c7493f0f621a6d593b9066ada/icon0.png"
     },
     {
       "title": "Sea Of Thieves",
