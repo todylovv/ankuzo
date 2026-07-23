@@ -1,7 +1,7 @@
 {
-  "updatedAt": "2026-07-23T03:44:18.960Z",
-  "lastSuccessfulAt": "2026-07-23T03:44:18.960Z",
-  "lastAttemptAt": "2026-07-23T03:44:18.960Z",
+  "updatedAt": "2026-07-23T08:44:41.007Z",
+  "lastSuccessfulAt": "2026-07-23T08:44:41.007Z",
+  "lastAttemptAt": "2026-07-23T08:44:41.007Z",
   "source": "api",
   "status": "available",
   "psnId": "ankkui",
@@ -741,20 +741,6 @@
       "trophyProgress": null,
       "trophyMatched": false,
       "iconUrl": "https://image.api.playstation.com/sgst/prod/00/PPSA30659_00/app/info/15/fi_3b2e9928bd2fe0f7c1ad880d3da3a75c14f98d986fb3dc22008c8b97ec91f42c/icon0.png"
-    },
-    {
-      "title": "Hundred Days - Winemaking Simulator",
-      "platform": "PS4",
-      "trophyProgress": null,
-      "trophyMatched": false,
-      "iconUrl": "https://image.api.playstation.com/gs2-sec/appkgo/prod/CUSA32294_00/5/i_45714efda6aa076024ea2ea955c918163e5363942bbed0b6f241366a530c0e5b/i/icon0.png"
-    },
-    {
-      "title": "HundredDays - Winemaking Simulator",
-      "platform": "PS5",
-      "trophyProgress": null,
-      "trophyMatched": false,
-      "iconUrl": "https://image.api.playstation.com/sgst/prod/00/PPSA06577_00/app/info/19/fi_68d763ec5aa56865077e3680c3b73fe42ec9a69d22d3810c94ebfa41e7a339a3/icon0.png"
     },
     {
       "title": "Totally Accurate Battle Simulator",
