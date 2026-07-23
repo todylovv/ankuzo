@@ -1,7 +1,7 @@
 {
-  "updatedAt": "2026-07-22T19:42:43.823Z",
-  "lastSuccessfulAt": "2026-07-22T19:42:43.823Z",
-  "lastAttemptAt": "2026-07-22T19:42:43.823Z",
+  "updatedAt": "2026-07-23T03:44:18.960Z",
+  "lastSuccessfulAt": "2026-07-23T03:44:18.960Z",
+  "lastAttemptAt": "2026-07-23T03:44:18.960Z",
   "source": "api",
   "status": "available",
   "psnId": "ankkui",
@@ -904,13 +904,6 @@
       "iconUrl": "https://image.api.playstation.com/sgst/prod/00/PPSA03641_00/app/info/132/fi_abcf753ec0b79df96601c912bf4ddd653c2ec76fb2a78ded50dc53854b15d197/icon0.png"
     },
     {
-      "title": "Tropico 6",
-      "platform": "PS5",
-      "trophyProgress": 0,
-      "trophyMatched": true,
-      "iconUrl": "https://image.api.playstation.com/sgst/prod/00/PPSA05682_00/app/info/51/fi_cd2d522d9c892d275e17685ed13f4aec3d0ed2acfe21606c8a1e0627ff03234b/icon0.png"
-    },
-    {
       "title": "Desperados III",
       "platform": "PS4",
       "trophyProgress": null,
@@ -1384,7 +1377,7 @@
       "platform": "PS5",
       "trophyProgress": 0,
       "trophyMatched": true,
-      "iconUrl": "https://image.api.playstation.com/sgst/prod/00/PPSA23355_00/app/info/71/fi_a32f4e32ed1ff52e6fbd153246f47eac914346a5496bbd23ba48e86f727f426c/icon0.png"
+      "iconUrl": "https://image.api.playstation.com/sgst/prod/00/PPSA23355_00/app/info/73/fi_502a4d516a1dbd1307dfa7af3e3e61dc84c925f50547f99e5217a4a166517f39/icon0.png"
     },
     {
       "title": "skate.",
