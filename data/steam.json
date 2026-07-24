@@ -1,11 +1,11 @@
 {
-  "updatedAt": "2026-07-24T14:12:40.804Z",
-  "lastSuccessfulAt": "2026-07-24T14:12:40.804Z",
-  "lastAttemptAt": "2026-07-24T14:12:40.804Z",
+  "updatedAt": "2026-07-24T19:46:26.823Z",
+  "lastSuccessfulAt": "2026-07-24T19:46:26.823Z",
+  "lastAttemptAt": "2026-07-24T19:46:26.823Z",
   "source": "api",
   "status": "available",
   "stats": {
-    "totalHours": 5028.1,
+    "totalHours": 5028.6,
     "totalGames": 197
   },
   "profiles": [
@@ -17,7 +17,7 @@
       "currentGame": "",
       "profileUrl": "https://steamcommunity.com/profiles/76561199770575251/",
       "gameCount": 140,
-      "totalHours": 1616.5,
+      "totalHours": 1617,
       "games": [
         {
           "appId": 730,
@@ -34,7 +34,7 @@
         {
           "appId": 629520,
           "name": "Soundpad",
-          "hours": 91,
+          "hours": 91.5,
           "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/629520/f261c8f5948de73428a1dbed573ec964fcbecb67.jpg"
         },
         {
@@ -1358,7 +1358,7 @@
     {
       "appId": 629520,
       "name": "Soundpad",
-      "hours": 91,
+      "hours": 91.5,
       "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/629520/f261c8f5948de73428a1dbed573ec964fcbecb67.jpg"
     },
     {
