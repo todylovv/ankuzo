@@ -1,7 +1,7 @@
 {
-  "updatedAt": "2026-07-27T15:13:12.456Z",
-  "lastSuccessfulAt": "2026-07-27T15:13:12.456Z",
-  "lastAttemptAt": "2026-07-27T15:13:12.456Z",
+  "updatedAt": "2026-07-27T19:53:51.865Z",
+  "lastSuccessfulAt": "2026-07-27T19:53:51.865Z",
+  "lastAttemptAt": "2026-07-27T19:53:51.865Z",
   "source": "api",
   "status": "available",
   "psnId": "ankkui",
@@ -75,7 +75,7 @@
       "platform": "PS5",
       "trophyProgress": 0,
       "trophyMatched": true,
-      "iconUrl": "https://image.api.playstation.com/sgst/prod/00/PPSA23355_00/app/info/74/fi_4b1421fa9e6e2975ebf7e4a1a9dfb6cb3f9b22213c97bf094e341435befd2bcd/icon0.png"
+      "iconUrl": "https://image.api.playstation.com/sgst/prod/00/PPSA23355_00/app/info/75/fi_e1d397272d59e0136d54ea8b3982b7cc87428e201eb68b4cf1231d7bcc51caab/icon0.png"
     },
     {
       "title": "skate.",
