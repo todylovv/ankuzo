@@ -1,11 +1,11 @@
 {
-  "updatedAt": "2026-07-26T19:34:47.638Z",
-  "lastSuccessfulAt": "2026-07-26T19:34:47.638Z",
-  "lastAttemptAt": "2026-07-26T19:34:47.638Z",
+  "updatedAt": "2026-07-27T04:01:37.619Z",
+  "lastSuccessfulAt": "2026-07-27T04:01:37.619Z",
+  "lastAttemptAt": "2026-07-27T04:01:37.619Z",
   "source": "api",
   "status": "available",
   "stats": {
-    "totalHours": 5043.4,
+    "totalHours": 5044,
     "totalGames": 197
   },
   "profiles": [
@@ -17,7 +17,7 @@
       "currentGame": "",
       "profileUrl": "https://steamcommunity.com/profiles/76561199770575251/",
       "gameCount": 140,
-      "totalHours": 1631.8,
+      "totalHours": 1632.4,
       "games": [
         {
           "appId": 730,
@@ -70,7 +70,7 @@
         {
           "appId": 289070,
           "name": "Sid Meier's Civilization VI",
-          "hours": 26.1,
+          "hours": 26.7,
           "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/289070/9dc914132fec244adcede62fb8e7524a72a7398c.jpg"
         },
         {
