@@ -1,7 +1,7 @@
 {
-  "updatedAt": "2026-07-29T03:38:17.108Z",
-  "lastSuccessfulAt": "2026-07-29T03:38:17.108Z",
-  "lastAttemptAt": "2026-07-29T03:38:17.108Z",
+  "updatedAt": "2026-07-29T09:08:17.926Z",
+  "lastSuccessfulAt": "2026-07-29T09:08:17.926Z",
+  "lastAttemptAt": "2026-07-29T09:08:17.926Z",
   "source": "api",
   "status": "available",
   "psnId": "ankkui",
@@ -110,7 +110,7 @@
       "platform": "PS5",
       "trophyProgress": null,
       "trophyMatched": false,
-      "iconUrl": "https://image.api.playstation.com/sgst/prod/00/PPSA26492_00/app/info/70/fi_413cc8466ac3b4bf1d1786fe3b333b218a6a125407465bced91763cee0ccb23a/icon0.png"
+      "iconUrl": "https://image.api.playstation.com/sgst/prod/00/PPSA26492_00/app/info/72/fi_70c95af8f28be771b04f31d51866fd5ba29ed400bb6d8e378861e347336d6fa5/icon0.png"
     },
     {
       "title": "Fortnite",
