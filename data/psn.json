@@ -1,7 +1,7 @@
 {
-  "updatedAt": "2026-07-30T03:27:51.431Z",
-  "lastSuccessfulAt": "2026-07-30T03:27:51.431Z",
-  "lastAttemptAt": "2026-07-30T03:27:51.431Z",
+  "updatedAt": "2026-07-30T08:49:17.364Z",
+  "lastSuccessfulAt": "2026-07-30T08:49:17.364Z",
+  "lastAttemptAt": "2026-07-30T08:49:17.364Z",
   "source": "api",
   "status": "available",
   "psnId": "ankkui",
@@ -117,7 +117,7 @@
       "platform": "PS5",
       "trophyProgress": null,
       "trophyMatched": false,
-      "iconUrl": "https://image.api.playstation.com/sgst/prod/00/PPSA01923_00/app/info/266/fi_819d05da8fa1866218135b4b40d9935f5b7e700f030be3bd456f395b6cc8ed60/icon0.png"
+      "iconUrl": "https://image.api.playstation.com/sgst/prod/00/PPSA01923_00/app/info/269/fi_afc2305af08ae20b86ccc9589493a6cdc43ef10386f795f94e61bf642e17ba08/icon0.png"
     },
     {
       "title": "World of Warships: Legends",
