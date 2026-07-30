@@ -1,7 +1,7 @@
 {
-  "updatedAt": "2026-07-29T19:42:15.110Z",
-  "lastSuccessfulAt": "2026-07-29T19:42:15.110Z",
-  "lastAttemptAt": "2026-07-29T19:42:15.110Z",
+  "updatedAt": "2026-07-30T03:27:51.431Z",
+  "lastSuccessfulAt": "2026-07-30T03:27:51.431Z",
+  "lastAttemptAt": "2026-07-30T03:27:51.431Z",
   "source": "api",
   "status": "available",
   "psnId": "ankkui",
@@ -68,7 +68,7 @@
       "platform": "PS5",
       "trophyProgress": null,
       "trophyMatched": false,
-      "iconUrl": "https://image.api.playstation.com/sgst/prod/00/PPSA15239_00/app/info/163/fi_1d22c766bb3aa71f678dd0214a2fc8a639b58fc370044da38284301b1002cd12/icon0.png"
+      "iconUrl": "https://image.api.playstation.com/sgst/prod/00/PPSA15239_00/app/info/165/fi_46c090eb7d146964221f09d362a8ef8155fb6f858ffc917537c2f87a50f9516c/icon0.png"
     },
     {
       "title": "Where Winds Meet",
