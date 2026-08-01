@@ -1,12 +1,12 @@
 {
-  "updatedAt": "2026-08-01T13:54:35.215Z",
-  "lastSuccessfulAt": "2026-08-01T13:54:35.215Z",
-  "lastAttemptAt": "2026-08-01T13:54:35.215Z",
+  "updatedAt": "2026-08-01T19:33:03.609Z",
+  "lastSuccessfulAt": "2026-08-01T19:33:03.609Z",
+  "lastAttemptAt": "2026-08-01T19:33:03.609Z",
   "source": "api",
   "status": "available",
   "stats": {
-    "totalHours": 5050.5,
-    "totalGames": 197
+    "totalHours": 5055,
+    "totalGames": 198
   },
   "profiles": [
     {
@@ -16,8 +16,8 @@
       "online": false,
       "currentGame": "",
       "profileUrl": "https://steamcommunity.com/profiles/76561199770575251/",
-      "gameCount": 140,
-      "totalHours": 1638.9,
+      "gameCount": 141,
+      "totalHours": 1643.4,
       "games": [
         {
           "appId": 730,
@@ -64,7 +64,7 @@
         {
           "appId": 2073620,
           "name": "Arena Breakout: Infinite",
-          "hours": 40.9,
+          "hours": 43,
           "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/2073620/3c3cb9ae001821040f4a5c255bc577fb0143dadd.jpg"
         },
         {
@@ -300,6 +300,12 @@
           "name": "ASTRONEER",
           "hours": 2.4,
           "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/361420/18ef632a152a69a8fb4f62c074cd50aa15d3bf33.jpg"
+        },
+        {
+          "appId": 2767030,
+          "name": "Marvel Rivals",
+          "hours": 2.4,
+          "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/2767030/839b4712925b95702ca56e0c4d399adf54f4d617.jpg"
         },
         {
           "appId": 359550,
@@ -865,8 +871,8 @@
       "steamId": "76561198165374024",
       "nickname": "b2",
       "avatarUrl": "https://avatars.steamstatic.com/719bc8ea7c3e382348fd1909400257c0d49497f3_full.jpg",
-      "online": false,
-      "currentGame": "",
+      "online": true,
+      "currentGame": "Apex Legends",
       "profileUrl": "https://steamcommunity.com/profiles/76561198165374024/",
       "gameCount": 75,
       "totalHours": 3411.6,
