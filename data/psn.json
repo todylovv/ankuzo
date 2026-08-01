@@ -1,9 +1,9 @@
 {
   "updatedAt": "2026-08-01T08:33:43.646Z",
   "lastSuccessfulAt": "2026-08-01T08:33:43.646Z",
-  "lastAttemptAt": "2026-08-01T08:33:43.646Z",
-  "source": "api",
-  "status": "available",
+  "lastAttemptAt": "2026-08-01T13:54:35.215Z",
+  "source": "fallback",
+  "status": "unavailable",
   "psnId": "ankkui",
   "trophies": {
     "total": 187,
