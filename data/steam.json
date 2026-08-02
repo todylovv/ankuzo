@@ -1,11 +1,11 @@
 {
-  "updatedAt": "2026-08-02T13:53:37.793Z",
-  "lastSuccessfulAt": "2026-08-02T13:53:37.793Z",
-  "lastAttemptAt": "2026-08-02T13:53:37.793Z",
+  "updatedAt": "2026-08-02T19:33:42.727Z",
+  "lastSuccessfulAt": "2026-08-02T19:33:42.727Z",
+  "lastAttemptAt": "2026-08-02T19:33:42.727Z",
   "source": "api",
   "status": "available",
   "stats": {
-    "totalHours": 5057.6,
+    "totalHours": 5060.2,
     "totalGames": 198
   },
   "profiles": [
@@ -17,7 +17,7 @@
       "currentGame": "",
       "profileUrl": "https://steamcommunity.com/profiles/76561199770575251/",
       "gameCount": 141,
-      "totalHours": 1643.4,
+      "totalHours": 1646,
       "games": [
         {
           "appId": 730,
@@ -64,7 +64,7 @@
         {
           "appId": 2073620,
           "name": "Arena Breakout: Infinite",
-          "hours": 43,
+          "hours": 45.6,
           "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/2073620/3c3cb9ae001821040f4a5c255bc577fb0143dadd.jpg"
         },
         {
@@ -1386,10 +1386,10 @@
       "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/1938090/8eaf32220060344996cbf11f697a4f4be943e5f3.jpg"
     },
     {
-      "appId": 304930,
-      "name": "Unturned",
-      "hours": 44.4,
-      "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/304930/e18009fb628b35953826efe47dc3be556b689f4c.jpg"
+      "appId": 2073620,
+      "name": "Arena Breakout: Infinite",
+      "hours": 45.6,
+      "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/2073620/3c3cb9ae001821040f4a5c255bc577fb0143dadd.jpg"
     }
   ]
 }
