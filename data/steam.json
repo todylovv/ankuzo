@@ -1,7 +1,7 @@
 {
-  "updatedAt": "2026-08-06T09:05:15.116Z",
-  "lastSuccessfulAt": "2026-08-06T09:05:15.116Z",
-  "lastAttemptAt": "2026-08-06T09:05:15.116Z",
+  "updatedAt": "2026-08-06T14:39:36.203Z",
+  "lastSuccessfulAt": "2026-08-06T14:39:36.203Z",
+  "lastAttemptAt": "2026-08-06T14:39:36.203Z",
   "source": "api",
   "status": "available",
   "stats": {
@@ -1109,7 +1109,7 @@
           "appId": 218620,
           "name": "PAYDAY 2",
           "hours": 0.4,
-          "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/218620/a6abc0d0c1e79c0b5b0f5c8ab81ce9076a542414.jpg"
+          "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/218620/d7fc63389c7ddcbdd3d5de432eb2fd21a564ba6d.jpg"
         },
         {
           "appId": 714010,
