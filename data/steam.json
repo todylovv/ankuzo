@@ -1,23 +1,23 @@
 {
-  "updatedAt": "2026-08-07T13:38:13.258Z",
-  "lastSuccessfulAt": "2026-08-07T13:38:13.258Z",
-  "lastAttemptAt": "2026-08-07T13:38:13.258Z",
+  "updatedAt": "2026-08-07T19:15:00.783Z",
+  "lastSuccessfulAt": "2026-08-07T19:15:00.783Z",
+  "lastAttemptAt": "2026-08-07T19:15:00.783Z",
   "source": "api",
   "status": "available",
   "stats": {
-    "totalHours": 5064.5,
-    "totalGames": 203
+    "totalHours": 5066,
+    "totalGames": 205
   },
   "profiles": [
     {
       "steamId": "76561199770575251",
       "nickname": "b1",
       "avatarUrl": "https://avatars.steamstatic.com/6a30a26c019394587a828b964f6156b6a17e36a2_full.jpg",
-      "online": false,
+      "online": true,
       "currentGame": "",
       "profileUrl": "https://steamcommunity.com/profiles/76561199770575251/",
-      "gameCount": 146,
-      "totalHours": 1650.3,
+      "gameCount": 148,
+      "totalHours": 1651.8,
       "games": [
         {
           "appId": 730,
@@ -50,6 +50,12 @@
           "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/221100/16a985dfee9b093d76a0ffc4cf4c77ba20c2eb0d.jpg"
         },
         {
+          "appId": 2073620,
+          "name": "Arena Breakout: Infinite",
+          "hours": 51.4,
+          "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/2073620/3c3cb9ae001821040f4a5c255bc577fb0143dadd.jpg"
+        },
+        {
           "appId": 1938090,
           "name": "Call of Duty®",
           "hours": 51.3,
@@ -60,12 +66,6 @@
           "name": "Apex Legends",
           "hours": 50.1,
           "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/1172470/8986dd626da56db5f3fe09bc1b8871739de8b00d.jpg"
-        },
-        {
-          "appId": 2073620,
-          "name": "Arena Breakout: Infinite",
-          "hours": 49.9,
-          "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/2073620/3c3cb9ae001821040f4a5c255bc577fb0143dadd.jpg"
         },
         {
           "appId": 289070,
@@ -728,6 +728,12 @@
           "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/700580/820be4782639f9c4b64fa3ca7e6c26a95ae4fd1c.jpg"
         },
         {
+          "appId": 738520,
+          "name": "Breathedge",
+          "hours": 0,
+          "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/738520/be75f36a24abb31bfbbf1220e801c61ed477c03a.jpg"
+        },
+        {
           "appId": 753660,
           "name": "AtmaSphere",
           "hours": 0,
@@ -894,6 +900,12 @@
           "name": "REMATCH BETA TEST",
           "hours": 0,
           "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/3432970/70ff37ff1627bc7fe2b24629dda158da59478262.jpg"
+        },
+        {
+          "appId": 3722330,
+          "name": "Shift At Midnight",
+          "hours": 0,
+          "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/3722330/01fd2fcc54b5bfe212e8b7968573192db9782711.jpg"
         }
       ]
     },
@@ -1410,16 +1422,16 @@
       "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/221100/16a985dfee9b093d76a0ffc4cf4c77ba20c2eb0d.jpg"
     },
     {
+      "appId": 2073620,
+      "name": "Arena Breakout: Infinite",
+      "hours": 51.4,
+      "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/2073620/3c3cb9ae001821040f4a5c255bc577fb0143dadd.jpg"
+    },
+    {
       "appId": 1938090,
       "name": "Call of Duty®",
       "hours": 51.3,
       "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/1938090/8eaf32220060344996cbf11f697a4f4be943e5f3.jpg"
-    },
-    {
-      "appId": 2073620,
-      "name": "Arena Breakout: Infinite",
-      "hours": 49.9,
-      "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/2073620/3c3cb9ae001821040f4a5c255bc577fb0143dadd.jpg"
     }
   ]
 }
