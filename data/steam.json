@@ -1,12 +1,12 @@
 {
-  "updatedAt": "2026-08-07T07:40:28.245Z",
-  "lastSuccessfulAt": "2026-08-07T07:40:28.245Z",
-  "lastAttemptAt": "2026-08-07T07:40:28.245Z",
+  "updatedAt": "2026-08-07T13:38:13.258Z",
+  "lastSuccessfulAt": "2026-08-07T13:38:13.258Z",
+  "lastAttemptAt": "2026-08-07T13:38:13.258Z",
   "source": "api",
   "status": "available",
   "stats": {
     "totalHours": 5064.5,
-    "totalGames": 198
+    "totalGames": 203
   },
   "profiles": [
     {
@@ -16,7 +16,7 @@
       "online": false,
       "currentGame": "",
       "profileUrl": "https://steamcommunity.com/profiles/76561199770575251/",
-      "gameCount": 141,
+      "gameCount": 146,
       "totalHours": 1650.3,
       "games": [
         {
@@ -518,6 +518,24 @@
           "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/8870/4ebaf5f9ee74f50152f7ff361debef7553fa0e4e.jpg"
         },
         {
+          "appId": 13620,
+          "name": "Tom Clancy's Ghost Recon: Desert Siege",
+          "hours": 0,
+          "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/13620/657f0f3bd722099e2bf5f43342408ff620522549.jpg"
+        },
+        {
+          "appId": 13630,
+          "name": "Tom Clancy's Ghost Recon: Island Thunder",
+          "hours": 0,
+          "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/13630/657f0f3bd722099e2bf5f43342408ff620522549.jpg"
+        },
+        {
+          "appId": 15300,
+          "name": "Tom Clancy's Ghost Recon",
+          "hours": 0,
+          "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/15300/5686b6ab1a92912a235117310f14c73f12711808.jpg"
+        },
+        {
           "appId": 35420,
           "name": "Killing Floor Mod: Defence Alliance 2",
           "hours": 0,
@@ -552,6 +570,12 @@
           "name": "The Walking Dead",
           "hours": 0,
           "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/207610/87a13ae0a2a76488792924aa8bb0dd8a7760f931.jpg"
+        },
+        {
+          "appId": 212630,
+          "name": "Tom Clancy's Ghost Recon Future Soldier",
+          "hours": 0,
+          "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/212630/9ca5c4b7da9f87d61d910fcac016431e2a598f4b.jpg"
         },
         {
           "appId": 217490,
@@ -636,6 +660,12 @@
           "name": "Slime Rancher",
           "hours": 0,
           "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/433340/814236b2c3a100cf76b00390585f351708e4c1e4.jpg"
+        },
+        {
+          "appId": 460930,
+          "name": "Tom Clancy's Ghost Recon® Wildlands",
+          "hours": 0,
+          "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/460930/ddd459159befc6a8cd6c4cb0e2a13c2fd2f8b065.jpg"
         },
         {
           "appId": 489630,
