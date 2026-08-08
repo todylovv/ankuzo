@@ -1,11 +1,11 @@
 {
-  "updatedAt": "2026-08-08T13:11:37.018Z",
-  "lastSuccessfulAt": "2026-08-08T13:11:37.018Z",
-  "lastAttemptAt": "2026-08-08T13:11:37.018Z",
+  "updatedAt": "2026-08-08T18:57:37.430Z",
+  "lastSuccessfulAt": "2026-08-08T18:57:37.430Z",
+  "lastAttemptAt": "2026-08-08T18:57:37.430Z",
   "source": "api",
   "status": "available",
   "stats": {
-    "totalHours": 5069,
+    "totalHours": 5073.1,
     "totalGames": 205
   },
   "profiles": [
@@ -13,11 +13,11 @@
       "steamId": "76561199770575251",
       "nickname": "b1",
       "avatarUrl": "https://avatars.steamstatic.com/6a30a26c019394587a828b964f6156b6a17e36a2_full.jpg",
-      "online": true,
-      "currentGame": "Shift At Midnight",
+      "online": false,
+      "currentGame": "",
       "profileUrl": "https://steamcommunity.com/profiles/76561199770575251/",
       "gameCount": 148,
-      "totalHours": 1654.8,
+      "totalHours": 1658.9,
       "games": [
         {
           "appId": 730,
@@ -52,7 +52,7 @@
         {
           "appId": 2073620,
           "name": "Arena Breakout: Infinite",
-          "hours": 51.4,
+          "hours": 53.3,
           "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/2073620/3c3cb9ae001821040f4a5c255bc577fb0143dadd.jpg"
         },
         {
@@ -224,6 +224,12 @@
           "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/3326230/0a589003807db78755d6898f13eae077d5cef1ca.jpg"
         },
         {
+          "appId": 3722330,
+          "name": "Shift At Midnight",
+          "hours": 3.5,
+          "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/3722330/01fd2fcc54b5bfe212e8b7968573192db9782711.jpg"
+        },
+        {
           "appId": 3097560,
           "name": "Liar's Bar",
           "hours": 3.4,
@@ -384,12 +390,6 @@
           "name": "Deadlock",
           "hours": 1.3,
           "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/1422450/f6da1420a173324d49bcd470fa3eee781ad0fa5e.jpg"
-        },
-        {
-          "appId": 3722330,
-          "name": "Shift At Midnight",
-          "hours": 1.3,
-          "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/3722330/01fd2fcc54b5bfe212e8b7968573192db9782711.jpg"
         },
         {
           "appId": 236390,
@@ -1424,7 +1424,7 @@
     {
       "appId": 2073620,
       "name": "Arena Breakout: Infinite",
-      "hours": 51.4,
+      "hours": 53.3,
       "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/2073620/3c3cb9ae001821040f4a5c255bc577fb0143dadd.jpg"
     },
     {
