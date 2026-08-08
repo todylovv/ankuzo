@@ -1,11 +1,11 @@
 {
-  "updatedAt": "2026-08-07T19:15:00.783Z",
-  "lastSuccessfulAt": "2026-08-07T19:15:00.783Z",
-  "lastAttemptAt": "2026-08-07T19:15:00.783Z",
+  "updatedAt": "2026-08-08T02:20:52.111Z",
+  "lastSuccessfulAt": "2026-08-08T02:20:52.111Z",
+  "lastAttemptAt": "2026-08-08T02:20:52.111Z",
   "source": "api",
   "status": "available",
   "stats": {
-    "totalHours": 5066,
+    "totalHours": 5067.3,
     "totalGames": 205
   },
   "profiles": [
@@ -13,11 +13,11 @@
       "steamId": "76561199770575251",
       "nickname": "b1",
       "avatarUrl": "https://avatars.steamstatic.com/6a30a26c019394587a828b964f6156b6a17e36a2_full.jpg",
-      "online": true,
+      "online": false,
       "currentGame": "",
       "profileUrl": "https://steamcommunity.com/profiles/76561199770575251/",
       "gameCount": 148,
-      "totalHours": 1651.8,
+      "totalHours": 1653.1,
       "games": [
         {
           "appId": 730,
@@ -384,6 +384,12 @@
           "name": "Deadlock",
           "hours": 1.3,
           "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/1422450/f6da1420a173324d49bcd470fa3eee781ad0fa5e.jpg"
+        },
+        {
+          "appId": 3722330,
+          "name": "Shift At Midnight",
+          "hours": 1.3,
+          "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/3722330/01fd2fcc54b5bfe212e8b7968573192db9782711.jpg"
         },
         {
           "appId": 236390,
@@ -900,12 +906,6 @@
           "name": "REMATCH BETA TEST",
           "hours": 0,
           "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/3432970/70ff37ff1627bc7fe2b24629dda158da59478262.jpg"
-        },
-        {
-          "appId": 3722330,
-          "name": "Shift At Midnight",
-          "hours": 0,
-          "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/3722330/01fd2fcc54b5bfe212e8b7968573192db9782711.jpg"
         }
       ]
     },
