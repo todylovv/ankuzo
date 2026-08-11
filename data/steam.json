@@ -1,11 +1,11 @@
 {
-  "updatedAt": "2026-08-11T13:42:07.540Z",
-  "lastSuccessfulAt": "2026-08-11T13:42:07.540Z",
-  "lastAttemptAt": "2026-08-11T13:42:07.540Z",
+  "updatedAt": "2026-08-11T19:19:39.909Z",
+  "lastSuccessfulAt": "2026-08-11T19:19:39.909Z",
+  "lastAttemptAt": "2026-08-11T19:19:39.909Z",
   "source": "api",
   "status": "available",
   "stats": {
-    "totalHours": 5079.5,
+    "totalHours": 5082.9,
     "totalGames": 205
   },
   "profiles": [
@@ -17,7 +17,7 @@
       "currentGame": "",
       "profileUrl": "https://steamcommunity.com/profiles/76561199770575251/",
       "gameCount": 148,
-      "totalHours": 1665.3,
+      "totalHours": 1668.7,
       "games": [
         {
           "appId": 730,
@@ -44,16 +44,16 @@
           "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/1808500/c284e73b6f3321864805d66f99924a0da9f0b219.jpg"
         },
         {
+          "appId": 2073620,
+          "name": "Arena Breakout: Infinite",
+          "hours": 63.1,
+          "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/2073620/3c3cb9ae001821040f4a5c255bc577fb0143dadd.jpg"
+        },
+        {
           "appId": 221100,
           "name": "DayZ",
           "hours": 60.9,
           "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/221100/16a985dfee9b093d76a0ffc4cf4c77ba20c2eb0d.jpg"
-        },
-        {
-          "appId": 2073620,
-          "name": "Arena Breakout: Infinite",
-          "hours": 59.7,
-          "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/2073620/3c3cb9ae001821040f4a5c255bc577fb0143dadd.jpg"
         },
         {
           "appId": 1938090,
@@ -1416,16 +1416,16 @@
       "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/1808500/c284e73b6f3321864805d66f99924a0da9f0b219.jpg"
     },
     {
+      "appId": 2073620,
+      "name": "Arena Breakout: Infinite",
+      "hours": 63.1,
+      "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/2073620/3c3cb9ae001821040f4a5c255bc577fb0143dadd.jpg"
+    },
+    {
       "appId": 221100,
       "name": "DayZ",
       "hours": 60.9,
       "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/221100/16a985dfee9b093d76a0ffc4cf4c77ba20c2eb0d.jpg"
-    },
-    {
-      "appId": 2073620,
-      "name": "Arena Breakout: Infinite",
-      "hours": 59.7,
-      "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/2073620/3c3cb9ae001821040f4a5c255bc577fb0143dadd.jpg"
     },
     {
       "appId": 1938090,
