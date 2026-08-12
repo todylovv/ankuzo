@@ -1,11 +1,11 @@
 {
-  "updatedAt": "2026-08-12T13:46:07.337Z",
-  "lastSuccessfulAt": "2026-08-12T13:46:07.337Z",
-  "lastAttemptAt": "2026-08-12T13:46:07.337Z",
+  "updatedAt": "2026-08-12T19:19:51.787Z",
+  "lastSuccessfulAt": "2026-08-12T19:19:51.787Z",
+  "lastAttemptAt": "2026-08-12T19:19:51.787Z",
   "source": "api",
   "status": "available",
   "stats": {
-    "totalHours": 5082.9,
+    "totalHours": 5086.1,
     "totalGames": 205
   },
   "profiles": [
@@ -17,7 +17,7 @@
       "currentGame": "",
       "profileUrl": "https://steamcommunity.com/profiles/76561199770575251/",
       "gameCount": 148,
-      "totalHours": 1668.7,
+      "totalHours": 1671.9,
       "games": [
         {
           "appId": 730,
@@ -46,7 +46,7 @@
         {
           "appId": 2073620,
           "name": "Arena Breakout: Infinite",
-          "hours": 63.1,
+          "hours": 66.3,
           "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/2073620/3c3cb9ae001821040f4a5c255bc577fb0143dadd.jpg"
         },
         {
@@ -1418,7 +1418,7 @@
     {
       "appId": 2073620,
       "name": "Arena Breakout: Infinite",
-      "hours": 63.1,
+      "hours": 66.3,
       "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/2073620/3c3cb9ae001821040f4a5c255bc577fb0143dadd.jpg"
     },
     {
