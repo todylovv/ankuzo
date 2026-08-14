@@ -1,12 +1,12 @@
 {
-  "updatedAt": "2026-08-14T02:45:22.292Z",
-  "lastSuccessfulAt": "2026-08-14T02:45:22.292Z",
-  "lastAttemptAt": "2026-08-14T02:45:22.292Z",
+  "updatedAt": "2026-08-14T07:49:37.300Z",
+  "lastSuccessfulAt": "2026-08-14T07:49:37.300Z",
+  "lastAttemptAt": "2026-08-14T07:49:37.300Z",
   "source": "api",
   "status": "available",
   "stats": {
     "totalHours": 5086.1,
-    "totalGames": 205
+    "totalGames": 206
   },
   "profiles": [
     {
@@ -16,7 +16,7 @@
       "online": false,
       "currentGame": "",
       "profileUrl": "https://steamcommunity.com/profiles/76561199770575251/",
-      "gameCount": 148,
+      "gameCount": 149,
       "totalHours": 1671.9,
       "games": [
         {
@@ -582,6 +582,12 @@
           "name": "Tom Clancy's Ghost Recon Future Soldier",
           "hours": 0,
           "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/212630/9ca5c4b7da9f87d61d910fcac016431e2a598f4b.jpg"
+        },
+        {
+          "appId": 214340,
+          "name": "Deponia",
+          "hours": 0,
+          "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/214340/48a94d33cae6065b0bedf7eefd01bd5321c7c729.jpg"
         },
         {
           "appId": 217490,
