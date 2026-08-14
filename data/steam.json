@@ -1,11 +1,11 @@
 {
-  "updatedAt": "2026-08-14T13:42:27.910Z",
-  "lastSuccessfulAt": "2026-08-14T13:42:27.910Z",
-  "lastAttemptAt": "2026-08-14T13:42:27.910Z",
+  "updatedAt": "2026-08-14T19:13:13.274Z",
+  "lastSuccessfulAt": "2026-08-14T19:13:13.274Z",
+  "lastAttemptAt": "2026-08-14T19:13:13.274Z",
   "source": "api",
   "status": "available",
   "stats": {
-    "totalHours": 5086.1,
+    "totalHours": 5090.1,
     "totalGames": 206
   },
   "profiles": [
@@ -13,11 +13,11 @@
       "steamId": "76561199770575251",
       "nickname": "b1",
       "avatarUrl": "https://avatars.steamstatic.com/6a30a26c019394587a828b964f6156b6a17e36a2_full.jpg",
-      "online": false,
-      "currentGame": "",
+      "online": true,
+      "currentGame": "Arena Breakout: Infinite",
       "profileUrl": "https://steamcommunity.com/profiles/76561199770575251/",
       "gameCount": 149,
-      "totalHours": 1671.9,
+      "totalHours": 1675.9,
       "games": [
         {
           "appId": 730,
@@ -38,16 +38,16 @@
           "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/629520/f261c8f5948de73428a1dbed573ec964fcbecb67.jpg"
         },
         {
+          "appId": 2073620,
+          "name": "Arena Breakout: Infinite",
+          "hours": 70.3,
+          "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/2073620/3c3cb9ae001821040f4a5c255bc577fb0143dadd.jpg"
+        },
+        {
           "appId": 1808500,
           "name": "ARC Raiders",
           "hours": 67.7,
           "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/1808500/c284e73b6f3321864805d66f99924a0da9f0b219.jpg"
-        },
-        {
-          "appId": 2073620,
-          "name": "Arena Breakout: Infinite",
-          "hours": 66.3,
-          "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/2073620/3c3cb9ae001821040f4a5c255bc577fb0143dadd.jpg"
         },
         {
           "appId": 221100,
@@ -1416,16 +1416,16 @@
       "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/629520/f261c8f5948de73428a1dbed573ec964fcbecb67.jpg"
     },
     {
+      "appId": 2073620,
+      "name": "Arena Breakout: Infinite",
+      "hours": 70.3,
+      "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/2073620/3c3cb9ae001821040f4a5c255bc577fb0143dadd.jpg"
+    },
+    {
       "appId": 1808500,
       "name": "ARC Raiders",
       "hours": 67.7,
       "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/1808500/c284e73b6f3321864805d66f99924a0da9f0b219.jpg"
-    },
-    {
-      "appId": 2073620,
-      "name": "Arena Breakout: Infinite",
-      "hours": 66.3,
-      "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/2073620/3c3cb9ae001821040f4a5c255bc577fb0143dadd.jpg"
     },
     {
       "appId": 221100,
