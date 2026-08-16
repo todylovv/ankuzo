@@ -1,11 +1,11 @@
 {
-  "updatedAt": "2026-08-16T12:59:55.323Z",
-  "lastSuccessfulAt": "2026-08-16T12:59:55.323Z",
-  "lastAttemptAt": "2026-08-16T12:59:55.323Z",
+  "updatedAt": "2026-08-16T18:46:20.475Z",
+  "lastSuccessfulAt": "2026-08-16T18:46:20.475Z",
+  "lastAttemptAt": "2026-08-16T18:46:20.475Z",
   "source": "api",
   "status": "available",
   "stats": {
-    "totalHours": 5105.4,
+    "totalHours": 5111.2,
     "totalGames": 206
   },
   "profiles": [
@@ -14,10 +14,10 @@
       "nickname": "b1",
       "avatarUrl": "https://avatars.steamstatic.com/6a30a26c019394587a828b964f6156b6a17e36a2_full.jpg",
       "online": true,
-      "currentGame": "Ghost Recon Breakpoint",
+      "currentGame": "Arena Breakout: Infinite",
       "profileUrl": "https://steamcommunity.com/profiles/76561199770575251/",
       "gameCount": 150,
-      "totalHours": 1691.2,
+      "totalHours": 1697,
       "games": [
         {
           "appId": 730,
@@ -40,7 +40,7 @@
         {
           "appId": 2073620,
           "name": "Arena Breakout: Infinite",
-          "hours": 84,
+          "hours": 88.5,
           "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/2073620/3c3cb9ae001821040f4a5c255bc577fb0143dadd.jpg"
         },
         {
@@ -302,6 +302,12 @@
           "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/1174180/5106abd9c1187a97f23295a0ba9470c94804ec6c.jpg"
         },
         {
+          "appId": 2231380,
+          "name": "Ghost Recon Breakpoint",
+          "hours": 2.5,
+          "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/2231380/c3672938f6f5bd6b7825a1a3e434c27971a481a5.jpg"
+        },
+        {
           "appId": 361420,
           "name": "ASTRONEER",
           "hours": 2.4,
@@ -402,12 +408,6 @@
           "name": "REMATCH",
           "hours": 1.2,
           "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/2138720/fe863eabc2365b3a7bce66297d95f843867cc483.jpg"
-        },
-        {
-          "appId": 2231380,
-          "name": "Ghost Recon Breakpoint",
-          "hours": 1.2,
-          "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/2231380/c3672938f6f5bd6b7825a1a3e434c27971a481a5.jpg"
         },
         {
           "appId": 105600,
@@ -1424,7 +1424,7 @@
     {
       "appId": 2073620,
       "name": "Arena Breakout: Infinite",
-      "hours": 84,
+      "hours": 88.5,
       "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/2073620/3c3cb9ae001821040f4a5c255bc577fb0143dadd.jpg"
     },
     {
