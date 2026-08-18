@@ -3,13 +3,21 @@
    ============================================================ */
 
 /* ------------------------------------------------------------
-   ФОН. Чтобы поставить свою гифку или видео:
-   1. положи файл в assets/ (например assets/background.mp4);
-   2. впиши путь в background.src ниже;
-   3. mp4/webm предпочтительнее gif — вес меньше в разы.
-   Пустой src оставляет сгенерированный фон.
+   ФОН.
+
+   preset — что рисует canvas:
+     "rain"      капли по запотевшему стеклу, курсор протирает;
+     "particles" точки со связями, разбегаются от курсора;
+     "none"      выключить, оставить только CSS-слои.
+
+   src — своя гифка или видео под canvas:
+     1. положи файл в assets/ (например assets/background.mp4);
+     2. впиши путь в src;
+     3. mp4/webm предпочтительнее gif — вес меньше в разы.
+   Пустой src оставляет только сгенерированный фон.
    ------------------------------------------------------------ */
 const background = {
+  preset: "rain",
   src: "",
   opacity: 0.5,
 };
@@ -50,20 +58,27 @@ function mountBackground() {
   }
 }
 
-/* ---------- частицы ---------- */
+/* ---------- сцена на canvas ---------- */
 
-function mountParticles() {
-  const canvas = $("bg-canvas");
-  if (!canvas || reduceMotion) return;
+const pointer = { x: -9999, y: -9999 };
 
+window.addEventListener("pointermove", (event) => {
+  pointer.x = event.clientX;
+  pointer.y = event.clientY;
+}, { passive: true });
+
+/**
+ * Держит размер, пиксельную плотность и кадры, а сцена только рисует.
+ * Анимация останавливается на скрытой вкладке.
+ */
+function runScene(canvas, scene) {
   const ctx = canvas.getContext("2d");
   if (!ctx) return;
 
-  const pointer = { x: -9999, y: -9999 };
-  let dots = [];
   let width = 0;
   let height = 0;
   let frame = 0;
+  let previous = 0;
 
   const resize = () => {
     const ratio = Math.min(window.devicePixelRatio || 1, 2);
@@ -72,76 +87,241 @@ function mountParticles() {
     canvas.width = Math.round(width * ratio);
     canvas.height = Math.round(height * ratio);
     ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
-
-    const count = Math.min(Math.round((width * height) / 16000), 110);
-    dots = Array.from({ length: count }, () => ({
-      x: Math.random() * width,
-      y: Math.random() * height,
-      vx: (Math.random() - 0.5) * 0.22,
-      vy: (Math.random() - 0.5) * 0.22,
-      r: Math.random() * 1.5 + 0.5,
-      blue: Math.random() < 0.28,
-    }));
+    scene.resize(width, height);
   };
 
-  const draw = () => {
+  const draw = (now) => {
     frame = requestAnimationFrame(draw);
+    const delta = previous ? Math.min((now - previous) / 16.667, 3) : 1;
+    previous = now;
     ctx.clearRect(0, 0, width, height);
-
-    for (const dot of dots) {
-      dot.x += dot.vx;
-      dot.y += dot.vy;
-      if (dot.x < -20) dot.x = width + 20;
-      if (dot.x > width + 20) dot.x = -20;
-      if (dot.y < -20) dot.y = height + 20;
-      if (dot.y > height + 20) dot.y = -20;
-
-      const dx = dot.x - pointer.x;
-      const dy = dot.y - pointer.y;
-      const distance = Math.hypot(dx, dy);
-      const near = distance < 170;
-      if (near) {
-        dot.x += (dx / distance) * 0.5;
-        dot.y += (dy / distance) * 0.5;
-      }
-
-      const alpha = near ? 0.75 : 0.34;
-      ctx.beginPath();
-      ctx.arc(dot.x, dot.y, dot.r, 0, Math.PI * 2);
-      ctx.fillStyle = dot.blue ? `rgba(111,123,247,${alpha})` : `rgba(194,255,26,${alpha})`;
-      ctx.fill();
-    }
-
-    for (let i = 0; i < dots.length; i += 1) {
-      for (let j = i + 1; j < dots.length; j += 1) {
-        const dx = dots[i].x - dots[j].x;
-        const dy = dots[i].y - dots[j].y;
-        const distance = Math.hypot(dx, dy);
-        if (distance > 128) continue;
-        ctx.beginPath();
-        ctx.moveTo(dots[i].x, dots[i].y);
-        ctx.lineTo(dots[j].x, dots[j].y);
-        ctx.strokeStyle = `rgba(194,255,26,${(1 - distance / 128) * 0.13})`;
-        ctx.lineWidth = 1;
-        ctx.stroke();
-      }
-    }
+    scene.frame(ctx, width, height, delta);
   };
 
-  const stop = () => cancelAnimationFrame(frame);
-  const start = () => { stop(); frame = requestAnimationFrame(draw); };
+  const stop = () => { cancelAnimationFrame(frame); frame = 0; previous = 0; };
+  const start = () => { if (!frame) frame = requestAnimationFrame(draw); };
 
   window.addEventListener("resize", resize, { passive: true });
-  window.addEventListener("pointermove", (event) => {
-    pointer.x = event.clientX;
-    pointer.y = event.clientY;
-  }, { passive: true });
   document.addEventListener("visibilitychange", () => {
     if (document.hidden) stop(); else start();
   });
 
   resize();
   start();
+}
+
+/* ---------- пресет: точки со связями ---------- */
+
+function particlesScene() {
+  let dots = [];
+
+  return {
+    resize(width, height) {
+      const count = Math.min(Math.round((width * height) / 16000), 110);
+      dots = Array.from({ length: count }, () => ({
+        x: Math.random() * width,
+        y: Math.random() * height,
+        vx: (Math.random() - 0.5) * 0.22,
+        vy: (Math.random() - 0.5) * 0.22,
+        r: Math.random() * 1.5 + 0.5,
+        blue: Math.random() < 0.28,
+      }));
+    },
+
+    frame(ctx, width, height, delta) {
+      for (const dot of dots) {
+        dot.x += dot.vx * delta;
+        dot.y += dot.vy * delta;
+        if (dot.x < -20) dot.x = width + 20;
+        if (dot.x > width + 20) dot.x = -20;
+        if (dot.y < -20) dot.y = height + 20;
+        if (dot.y > height + 20) dot.y = -20;
+
+        const dx = dot.x - pointer.x;
+        const dy = dot.y - pointer.y;
+        const distance = Math.hypot(dx, dy);
+        const near = distance < 170;
+        if (near && distance > 0) {
+          dot.x += (dx / distance) * 0.5 * delta;
+          dot.y += (dy / distance) * 0.5 * delta;
+        }
+
+        const alpha = near ? 0.75 : 0.34;
+        ctx.beginPath();
+        ctx.arc(dot.x, dot.y, dot.r, 0, Math.PI * 2);
+        ctx.fillStyle = dot.blue ? `rgba(111,123,247,${alpha})` : `rgba(194,255,26,${alpha})`;
+        ctx.fill();
+      }
+
+      for (let i = 0; i < dots.length; i += 1) {
+        for (let j = i + 1; j < dots.length; j += 1) {
+          const dx = dots[i].x - dots[j].x;
+          const dy = dots[i].y - dots[j].y;
+          const distance = Math.hypot(dx, dy);
+          if (distance > 128) continue;
+          ctx.beginPath();
+          ctx.moveTo(dots[i].x, dots[i].y);
+          ctx.lineTo(dots[j].x, dots[j].y);
+          ctx.strokeStyle = `rgba(194,255,26,${(1 - distance / 128) * 0.13})`;
+          ctx.lineWidth = 1;
+          ctx.stroke();
+        }
+      }
+    },
+  };
+}
+
+/* ---------- пресет: дождь по стеклу ---------- */
+
+const SLIDE_RADIUS = 3.2;
+const WIPE_RADIUS = 62;
+
+function rainScene() {
+  let drops = [];
+  let width = 0;
+  let height = 0;
+  let limit = 0;
+
+  const makeDrop = (x, y, r) => ({
+    x, y, r,
+    vy: 0,
+    sliding: false,
+    dead: false,
+    tint: Math.random() < 0.18,
+  });
+
+  const condensation = () => makeDrop(Math.random() * width, Math.random() * height, Math.random() * 1.7 + 0.5);
+  const runner = () => makeDrop(Math.random() * width, -12, Math.random() * 4.2 + SLIDE_RADIUS);
+
+  const drawDrop = (ctx, drop) => {
+    const { x, y, r } = drop;
+
+    // мелкая взвесь занимает большую часть экрана: градиент на ней
+    // всё равно не читается, а стоит дорого
+    if (r < 1.3) {
+      ctx.beginPath();
+      ctx.arc(x, y, r, 0, Math.PI * 2);
+      ctx.fillStyle = drop.tint ? "rgba(194,255,26,.16)" : "rgba(198,226,255,.17)";
+      ctx.fill();
+      return;
+    }
+
+    const body = ctx.createRadialGradient(x - r * 0.34, y - r * 0.38, r * 0.05, x, y, r);
+    body.addColorStop(0, "rgba(255,255,255,.5)");
+    body.addColorStop(0.3, drop.tint ? "rgba(194,255,26,.15)" : "rgba(186,222,255,.14)");
+    body.addColorStop(0.72, "rgba(120,150,180,.08)");
+    body.addColorStop(1, "rgba(8,12,10,.16)");
+
+    ctx.beginPath();
+    ctx.arc(x, y, r, 0, Math.PI * 2);
+    ctx.fillStyle = body;
+    ctx.fill();
+
+    if (r < 1.6) return;
+
+    // нижняя кромка ловит свет ярче верхней — так капля читается объёмной
+    ctx.beginPath();
+    ctx.arc(x, y, r * 0.94, Math.PI * 0.12, Math.PI * 0.98);
+    ctx.strokeStyle = "rgba(255,255,255,.15)";
+    ctx.lineWidth = Math.min(r * 0.16, 1.2);
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.arc(x - r * 0.33, y - r * 0.36, Math.max(r * 0.16, 0.4), 0, Math.PI * 2);
+    ctx.fillStyle = "rgba(255,255,255,.55)";
+    ctx.fill();
+  };
+
+  return {
+    resize(w, h) {
+      width = w;
+      height = h;
+      limit = Math.min(Math.round((w * h) / 5400), 360);
+      drops = Array.from({ length: Math.round(limit * 0.7) }, condensation);
+    },
+
+    frame(ctx, w, h, delta) {
+      if (drops.length < limit) {
+        drops.push(condensation(), condensation());
+        if (Math.random() < 0.12) drops.push(runner());
+      }
+
+      for (const drop of drops) {
+        if (drop.dead) continue;
+
+        const dx = drop.x - pointer.x;
+        const dy = drop.y - pointer.y;
+        if (dx * dx + dy * dy < WIPE_RADIUS * WIPE_RADIUS) {
+          drop.dead = true;
+          continue;
+        }
+
+        if (!drop.sliding && drop.r >= SLIDE_RADIUS) drop.sliding = true;
+        if (!drop.sliding) continue;
+
+        drop.vy = Math.min(drop.vy + 0.032 * drop.r * delta, drop.r * 0.95);
+        drop.y += drop.vy * delta;
+        drop.x += Math.sin(drop.y * 0.021) * 0.2 * delta;
+
+        // дорожка позади: капля теряет объём и оставляет его на стекле
+        if (drop.r > 2.4 && Math.random() < 0.3) {
+          drop.r *= 0.993;
+          drops.push(makeDrop(
+            drop.x + (Math.random() - 0.5) * drop.r * 0.6,
+            drop.y - drop.r,
+            Math.max(drop.r * 0.17, 0.5)
+          ));
+        }
+
+        // слияние с тем, что попалось по пути
+        for (const other of drops) {
+          if (other === drop || other.dead || other.sliding) continue;
+          const ox = other.x - drop.x;
+          const oy = other.y - drop.y;
+          const reach = drop.r + other.r * 0.6;
+          if (ox * ox + oy * oy > reach * reach) continue;
+          drop.r = Math.sqrt(drop.r * drop.r + other.r * other.r);
+          other.dead = true;
+        }
+
+        if (drop.y - drop.r > h + 20) drop.dead = true;
+      }
+
+      if (drops.some((drop) => drop.dead)) drops = drops.filter((drop) => !drop.dead);
+
+      for (const drop of drops) {
+        if (!drop.sliding || drop.vy < 0.6) {
+          drawDrop(ctx, drop);
+          continue;
+        }
+        // на скорости капля вытягивается вдоль движения
+        ctx.save();
+        ctx.translate(drop.x, drop.y);
+        ctx.scale(1, 1 + Math.min(drop.vy * 0.09, 0.55));
+        ctx.translate(-drop.x, -drop.y);
+        drawDrop(ctx, drop);
+        ctx.restore();
+      }
+    },
+  };
+}
+
+/* ---------- запуск фона ---------- */
+
+const scenes = {
+  rain: rainScene,
+  particles: particlesScene,
+};
+
+function mountBackdrop() {
+  const canvas = $("bg-canvas");
+  if (!canvas || reduceMotion) return;
+
+  const build = scenes[background.preset];
+  if (!build) return;
+
+  if (background.preset === "rain") canvas.classList.add("frosted");
+  runScene(canvas, build());
 }
 
 /* ---------- курсор ---------- */
@@ -447,7 +627,7 @@ async function mountData() {
 /* ---------- запуск ---------- */
 
 mountBackground();
-mountParticles();
+mountBackdrop();
 mountCursor();
 mountEnter();
 mountTilt();

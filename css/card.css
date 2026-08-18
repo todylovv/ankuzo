@@ -92,6 +92,15 @@ body.entered{ overflow:auto; }
 }
 body.has-bg-media .bg-canvas{ opacity:.34; }
 
+/* дождь: сам холст работает как запотевшее стекло,
+   капли рисуются поверх и остаются резкими */
+.bg-canvas.frosted{
+  opacity:1;
+  backdrop-filter:blur(7px) saturate(112%) brightness(.94);
+  -webkit-backdrop-filter:blur(7px) saturate(112%) brightness(.94);
+}
+body.has-bg-media .bg-canvas.frosted{ opacity:1; }
+
 .bg-aurora{
   position:absolute; inset:-25%;
   background:
