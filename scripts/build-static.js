@@ -2,7 +2,7 @@ import { cp, mkdir, rm } from "node:fs/promises";
 
 const outputDirectory = new URL("../dist/", import.meta.url);
 const projectRoot = new URL("../", import.meta.url);
-const staticEntries = ["index.html", "robots.txt", "sitemap.xml", "assets", "css", "data", "fonts", "js"];
+const staticEntries = ["index.html", "stats.html", "robots.txt", "sitemap.xml", "assets", "css", "data", "fonts", "js"];
 const unusedEntries = [
   "assets/discord-avatar-decoration.png",
   "fonts/bebas-neue-latin.woff2",

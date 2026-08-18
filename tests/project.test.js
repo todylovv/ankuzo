@@ -9,7 +9,7 @@ const root = path.resolve(import.meta.dirname, "..");
 const read = (file) => readFile(path.join(root, file), "utf8");
 
 test("browser scripts are valid JavaScript", async () => {
-  for (const file of ["js/boot.js", "js/interface.js", "js/hero-shader.js"]) {
+  for (const file of ["js/boot.js", "js/interface.js", "js/hero-shader.js", "js/card.js"]) {
     const source = await read(file);
     assert.doesNotThrow(() => new vm.Script(source, { filename: file }));
   }
@@ -21,28 +21,55 @@ test("build and update scripts are valid JavaScript", () => {
   }
 });
 
-test("static DOM references exist", async () => {
-  const html = await read("index.html");
-  const scripts = await Promise.all(["js/boot.js", "js/interface.js", "js/hero-shader.js"].map(read));
-  const ids = new Set([...html.matchAll(/\bid="([^"]+)"/g)].map((match) => match[1]));
-  const optional = new Set(["psn-copy-2"]);
-  const referenced = scripts.flatMap((source) =>
-    [...source.matchAll(/getElementById\(["']([^"']+)["']\)/g)].map((match) => match[1])
-  );
-  const missing = [...new Set(referenced)].filter((id) => !ids.has(id) && !optional.has(id));
-  assert.deepEqual(missing, []);
-});
+const pages = [
+  { html: "stats.html", scripts: ["js/boot.js", "js/interface.js", "js/hero-shader.js"] },
+  { html: "index.html", scripts: ["js/card.js"] },
+];
 
-test("release version is synchronized across public assets", async () => {
-  const html = await read("index.html");
-  const pkg = JSON.parse(await read("package.json"));
-  for (const asset of ["css/system.css", "css/editorial.css", "js/boot.js", "js/interface.js", "js/hero-shader.js"]) {
-    assert.match(html, new RegExp(`${asset.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}\\?v=${pkg.version.replace(/\./g, "\\.")}`));
+test("static DOM references exist", async () => {
+  const optional = new Set(["psn-copy-2"]);
+  for (const page of pages) {
+    const html = await read(page.html);
+    const scripts = await Promise.all(page.scripts.map(read));
+    const ids = new Set([...html.matchAll(/\bid="([^"]+)"/g)].map((match) => match[1]));
+    const referenced = scripts.flatMap((source) =>
+      [...source.matchAll(/\$\(["']([^"']+)["']\)|getElementById\(["']([^"']+)["']\)/g)].map(
+        (match) => match[1] ?? match[2]
+      )
+    );
+    const missing = [...new Set(referenced)].filter((id) => !ids.has(id) && !optional.has(id));
+    assert.deepEqual(missing, [], `${page.html}: missing ${missing.join(", ")}`);
   }
 });
 
+test("release version is synchronized across public assets", async () => {
+  const pkg = JSON.parse(await read("package.json"));
+  const version = pkg.version.replace(/\./g, "\\.");
+  const expected = {
+    "stats.html": ["css/system.css", "css/editorial.css", "js/boot.js", "js/interface.js", "js/hero-shader.js"],
+    "index.html": ["css/card.css", "js/card.js"],
+  };
+  for (const [page, assets] of Object.entries(expected)) {
+    const html = await read(page);
+    for (const asset of assets) {
+      assert.match(html, new RegExp(`${asset.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}\\?v=${version}`), `${page}: ${asset}`);
+    }
+  }
+});
+
+test("card page links to the full statistics page and back", async () => {
+  const card = await read("index.html");
+  const stats = await read("stats.html");
+  assert.match(card, /href="stats\.html"/);
+  assert.match(stats, /class="cell back-link" href="\.\/"/);
+  for (const id of ["stat-hours", "stat-games", "stat-trophies", "stat-platinum", "bg-canvas", "enter"]) {
+    assert.match(card, new RegExp(`id="${id}"`), `index.html: #${id} is missing`);
+  }
+  assert.doesNotMatch(card, />5 ?1\d\d</, "index.html must not hardcode Steam hours");
+});
+
 test("headline statistics come from public data instead of hardcoded copy", async () => {
-  const html = await read("index.html");
+  const html = await read("stats.html");
   const script = await read("js/interface.js");
   assert.match(html, /id="bridge-hours"/);
   assert.match(html, /id="counter-hours"/);
@@ -52,7 +79,7 @@ test("headline statistics come from public data instead of hardcoded copy", asyn
 });
 
 test("public copy uses one identity and accessible interaction labels", async () => {
-  const html = await read("index.html");
+  const html = await read("stats.html");
   assert.doesNotMatch(html, /также использую ник/i);
   assert.match(html, /Я — <b>Anku \/ Ankuzo<\/b>/);
   assert.match(html, /id="heroShaderCanvas"[^>]*tabindex="0"[^>]*aria-label=/);
@@ -64,7 +91,7 @@ test("public copy uses one identity and accessible interaction labels", async ()
 });
 
 test("authored game art is local and deployable", async () => {
-  const html = await read("index.html");
+  const html = await read("stats.html");
   const images = [...html.matchAll(/data-game-image="\.\/([^"]+)"/g)].map((match) => match[1]);
   assert.equal(images.length, 5);
   for (const image of images) {
@@ -74,7 +101,7 @@ test("authored game art is local and deployable", async () => {
 });
 
 test("stylesheets have balanced blocks", async () => {
-  for (const file of ["css/system.css", "css/editorial.css"]) {
+  for (const file of ["css/system.css", "css/editorial.css", "css/card.css"]) {
     const css = await read(file);
     assert.equal((css.match(/{/g) || []).length, (css.match(/}/g) || []).length, `${file}: unbalanced braces`);
   }
@@ -102,7 +129,7 @@ test("PlayStation progress values are bounded", async () => {
 });
 
 test("required deploy files exist", async () => {
-  for (const file of ["index.html", "robots.txt", "sitemap.xml", "css/system.css", "css/editorial.css"]) {
+  for (const file of ["index.html", "stats.html", "robots.txt", "sitemap.xml", "css/system.css", "css/editorial.css", "css/card.css", "js/card.js"]) {
     assert.ok((await stat(path.join(root, file))).isFile(), `${file} is missing`);
   }
 });
