@@ -1,4 +1,0 @@
-User-agent: *
-Allow: /
-
-Sitemap: https://todylovv.github.io/ankuzo/sitemap.xml

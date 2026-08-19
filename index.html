@@ -1,126 +1,176 @@
 <!doctype html>
-<html lang="ru">
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Anku / Ankuzo — Steam, PlayStation и Discord в одной карточке.">
-  <meta name="theme-color" content="#050605">
-  <meta property="og:title" content="Anku / Ankuzo">
-  <meta property="og:description" content="Steam, PlayStation и Discord в одной карточке.">
-  <meta property="og:type" content="profile">
-  <meta property="og:locale" content="ru_RU">
-  <meta property="og:url" content="https://todylovv.github.io/ankuzo/">
-  <meta property="og:image" content="https://todylovv.github.io/ankuzo/assets/discord-banner.webp">
-  <meta property="og:image:alt" content="Anku / Ankuzo">
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Anku / Ankuzo">
-  <meta name="twitter:description" content="Steam, PlayStation и Discord в одной карточке.">
-  <meta name="twitter:image" content="https://todylovv.github.io/ankuzo/assets/discord-banner.webp">
-  <title>Anku / Ankuzo</title>
-  <link rel="canonical" href="https://todylovv.github.io/ankuzo/">
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%23050605'/%3E%3Cpath d='M12 50 27 14h10l15 36H41l-3-8H25l-3 8Zm16-17h7l-3-9Z' fill='%23c2ff1a'/%3E%3C/svg%3E">
-  <link rel="preload" href="fonts/manrope-cyrillic.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="preload" href="fonts/jetbrains-mono-cyrillic.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="preload" href="assets/discord-avatar.webp" as="image">
-  <link rel="stylesheet" href="css/card.css?v=7.1.0">
-  <script type="application/ld+json">
-    {"@context":"https://schema.org","@type":"ProfilePage","url":"https://todylovv.github.io/ankuzo/","mainEntity":{"@type":"Person","name":"Anku","alternateName":"Ankuzo","sameAs":["https://steamcommunity.com/profiles/76561199770575251/","https://steamcommunity.com/profiles/76561198165374024/"]}}
-  </script>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+<title>22 — Aleksandr</title>
+<meta name="description" content="22 — personal interactive space: play, make, cache." />
+<style>
+:root{
+  --bg:#060606; --paper:#efede7; --ink:#090909; --muted:#9b9b96; --acid:#d8ff34;
+  --mx:0; --my:0; --scroll:0;
+}
+*{box-sizing:border-box}
+html{background:var(--bg);scroll-behavior:auto;scrollbar-width:none}
+html::-webkit-scrollbar{display:none}
+body{margin:0;background:var(--bg);color:#f4f1ea;font-family:Arial,Helvetica,sans-serif;overflow-x:hidden;cursor:none}
+img{display:block;max-width:100%}
+::selection{background:var(--acid);color:#000}
+.noise{position:fixed;inset:0;z-index:90;pointer-events:none;opacity:.075;mix-blend-mode:soft-light;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 160 160' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.9'/%3E%3C/svg%3E")}
+.vignette{position:fixed;inset:0;z-index:89;pointer-events:none;background:radial-gradient(circle at 50% 48%,transparent 30%,rgba(0,0,0,.2) 72%,rgba(0,0,0,.5) 130%)}
+.cursor,.dot{position:fixed;left:0;top:0;z-index:120;pointer-events:none;mix-blend-mode:difference;transform:translate(-50%,-50%)}
+.cursor{width:38px;height:38px;border:1px solid rgba(255,255,255,.8);border-radius:50%;transition:width .22s,height .22s,border-radius .22s,background .22s}
+.cursor.hot{width:86px;height:26px;border-radius:99px;background:white}
+.dot{width:4px;height:4px;border-radius:50%;background:#fff}
+.hud{position:fixed;inset:0;z-index:80;pointer-events:none;font-size:9px;letter-spacing:.18em;text-transform:uppercase}
+.hud .top,.hud .bottom{position:absolute;left:18px;right:18px;display:flex;justify-content:space-between;align-items:center}
+.hud .top{top:16px}.hud .bottom{bottom:15px;align-items:end}
+.hud .dim{opacity:.45}.live:before{content:"";display:inline-block;width:5px;height:5px;border-radius:50%;background:var(--acid);box-shadow:0 0 14px var(--acid);margin-right:7px}
+.progress{width:100px;height:1px;background:rgba(255,255,255,.18);overflow:hidden;margin-top:7px}.progress i{display:block;width:0;height:100%;background:#fff}
+main{position:relative;z-index:2}
+.scene{position:relative}
+.pin{position:sticky;top:0;height:100vh;overflow:hidden}
+.kicker{font:10px/1.2 ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.18em;text-transform:uppercase}
+
+/* HERO */
+.hero{height:190vh;background:#050505}.hero .pin{display:grid;place-items:center}
+.heroGlow{position:absolute;width:min(75vw,1000px);aspect-ratio:1;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,.12),rgba(255,255,255,.025) 44%,transparent 70%);filter:blur(10px);transform:translate(calc(var(--mx)*20px),calc(var(--my)*20px)) scale(var(--heroGlow,1));opacity:var(--heroGlowO,.8)}
+.hero22{position:relative;width:min(74vw,980px);z-index:3;filter:drop-shadow(0 55px 50px rgba(0,0,0,.65));transform:translate3d(calc(var(--mx)*18px + var(--heroX,0px)),calc(var(--my)*12px + var(--heroY,0px)),0) rotate(var(--heroR,0deg)) scale(var(--heroS,1));opacity:var(--heroO,1);will-change:transform,opacity}
+.heroMeta{position:absolute;left:4vw;top:50%;transform:translateY(-50%);z-index:5}.heroMeta strong{display:block;font-size:10px;font-weight:400;color:var(--acid);margin-bottom:9px}.heroMeta span{display:block;opacity:.56;line-height:1.65}
+.heroSide{position:absolute;right:3.5vw;top:50%;transform:translateY(-50%);writing-mode:vertical-rl;letter-spacing:.24em;font-size:10px;opacity:.55}
+.heroFoot{position:absolute;bottom:7vh;left:50%;transform:translateX(-50%);font-size:9px;letter-spacing:.3em;text-transform:uppercase;opacity:.5;white-space:nowrap}
+
+/* PORTAL */
+.portal{height:110vh;background:#050505;display:grid;place-items:center;overflow:hidden}
+.portalWord{font-size:clamp(150px,28vw,520px);font-weight:900;letter-spacing:-.09em;line-height:.75;transform:scale(var(--portalS,1));opacity:var(--portalO,.9);white-space:nowrap}
+.portalWord:after{content:"";position:absolute;inset:45% 0 auto;height:1px;background:rgba(255,255,255,.16)}
+
+/* STEAM */
+.steam{height:260vh;background:#03070a}.steam .pin{background:#05090d}
+.steamBg{position:absolute;inset:-5%;width:110%;height:110%;object-fit:cover;filter:saturate(.72) contrast(1.08) brightness(.68);transform:translate3d(calc(var(--mx)*-18px),calc(var(--my)*-12px),0) scale(var(--steamScale,1.08));will-change:transform}
+.steamShade{position:absolute;inset:0;background:linear-gradient(90deg,rgba(0,0,0,.7),rgba(0,0,0,.15) 45%,rgba(0,0,0,.36)),linear-gradient(180deg,rgba(0,0,0,.35),transparent 40%,rgba(0,0,0,.55))}
+.steamTitle{position:absolute;left:4vw;top:12vh;font-size:clamp(80px,15vw,250px);font-weight:900;letter-spacing:-.085em;line-height:.75;transform:translateX(var(--steamTitleX,0));opacity:.92}
+.steamCopy{position:absolute;left:4.4vw;bottom:12vh;max-width:360px;font:11px/1.55 ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.12em;text-transform:uppercase}.steamCopy b{color:var(--acid);font-weight:500}
+.statRail{position:absolute;right:3vw;top:12vh;display:flex;flex-direction:column;gap:10px;align-items:flex-end}.stat{padding:10px 12px;border:1px solid rgba(255,255,255,.18);background:rgba(4,8,12,.35);backdrop-filter:blur(8px);font:9px ui-monospace,monospace;letter-spacing:.15em;text-transform:uppercase}.stat strong{font-size:22px;display:block;letter-spacing:-.04em;font-family:Arial,Helvetica,sans-serif}
+
+/* PLATFORM SWITCH */
+.switch{height:130vh;background:#f1efe9;color:#0a0a0a}.switch .pin{display:grid;place-items:center}.glyphs{font-size:clamp(80px,15vw,250px);font-weight:200;letter-spacing:.02em;white-space:nowrap;transform:translateX(var(--switchX,0)) scale(var(--switchS,1));opacity:var(--switchO,1)}.switchSmall{position:absolute;bottom:8vh;left:4vw;font:10px ui-monospace,monospace;letter-spacing:.16em;text-transform:uppercase}
+
+/* PS */
+.ps{height:250vh;background:#efede8;color:#111}.ps .pin{background:#efede8}
+.psBg{position:absolute;inset:-5%;width:110%;height:110%;object-fit:cover;filter:saturate(.55) contrast(1.02) brightness(1.04);transform:translate3d(calc(var(--mx)*15px),calc(var(--my)*10px),0) scale(var(--psScale,1.05));will-change:transform}
+.psWash{position:absolute;inset:0;background:linear-gradient(90deg,rgba(244,241,234,.72),rgba(244,241,234,.08) 50%,rgba(4,7,10,.08)),linear-gradient(180deg,rgba(255,255,255,.12),transparent 50%,rgba(0,0,0,.08))}
+.psTitle{position:absolute;left:4vw;bottom:9vh;font-weight:900;font-size:clamp(100px,18vw,320px);letter-spacing:-.09em;line-height:.72;transform:translateX(var(--psTitleX,0));mix-blend-mode:multiply}.psMeta{position:absolute;right:4vw;top:12vh;text-align:right;font:10px/1.65 ui-monospace,monospace;letter-spacing:.16em;text-transform:uppercase}.psMeta b{display:block;font-family:Arial;font-size:38px;letter-spacing:-.05em}
+
+/* EXPLODED */
+.explode{height:220vh;background:#0a0a0a}.explode .pin{display:grid;place-items:center}
+.explodeAsset{width:min(83vw,1100px);filter:drop-shadow(0 45px 35px rgba(0,0,0,.58));transform:translate3d(calc(var(--mx)*22px),calc(var(--my)*16px),0) rotate(var(--exR,0deg)) scale(var(--exS,1));opacity:var(--exO,1)}
+.exLabel{position:absolute;font:9px ui-monospace,monospace;letter-spacing:.15em;text-transform:uppercase;border:1px solid rgba(255,255,255,.2);border-radius:99px;padding:8px 11px;background:rgba(8,8,8,.4);backdrop-filter:blur(8px)}.e1{left:7vw;top:23vh}.e2{right:8vw;top:31vh}.e3{left:12vw;bottom:18vh}.e4{right:18vw;bottom:12vh}
+.explodeBig{position:absolute;left:-1vw;bottom:-3vh;font-size:clamp(120px,22vw,400px);font-weight:900;letter-spacing:-.09em;line-height:.72;opacity:.12;white-space:nowrap}
+
+/* MAKE */
+.make{height:250vh;background:#efede7;color:#0a0a0a}.make .pin{background:#efede7}.makeBg{position:absolute;inset:-4%;width:108%;height:108%;object-fit:cover;filter:grayscale(.2) contrast(1.03);transform:translate3d(calc(var(--mx)*-14px),calc(var(--my)*-8px),0) scale(var(--makeScale,1.05))}.makeWash{position:absolute;inset:0;background:linear-gradient(90deg,rgba(240,238,232,.06),rgba(240,238,232,.5) 75%)}
+.makeTitle{position:absolute;left:3vw;bottom:7vh;font-size:clamp(120px,25vw,460px);font-weight:900;letter-spacing:-.1em;line-height:.7;mix-blend-mode:multiply;transform:translateX(var(--makeTitleX,0));opacity:.9}.makeAside{position:absolute;right:4vw;top:10vh;width:min(340px,34vw);font:10px/1.6 ui-monospace,monospace;letter-spacing:.13em;text-transform:uppercase;text-align:right}.makeAside strong{font-family:Arial;font-size:52px;letter-spacing:-.05em;display:block}
+
+/* CACHE */
+.cache{height:280vh;background:#050505}.cache .pin{background:#050505}.cacheBg{position:absolute;inset:-8%;width:116%;height:116%;object-fit:cover;filter:saturate(.48) contrast(1.13) brightness(.73);transform:translate3d(calc(var(--mx)*24px + var(--cacheX,0px)),calc(var(--my)*18px + var(--cacheY,0px)),0) scale(var(--cacheScale,1.05));will-change:transform}.cacheShade{position:absolute;inset:0;background:radial-gradient(circle at 50% 45%,transparent 24%,rgba(0,0,0,.28) 70%),linear-gradient(180deg,rgba(0,0,0,.08),rgba(0,0,0,.45))}
+.cacheTitle{position:absolute;left:4vw;top:10vh;font-size:clamp(95px,19vw,340px);font-weight:900;letter-spacing:-.09em;line-height:.72;mix-blend-mode:screen;opacity:.94}.cacheMeta{position:absolute;right:4vw;bottom:8vh;text-align:right;font:10px/1.6 ui-monospace,monospace;text-transform:uppercase;letter-spacing:.15em}.cacheMeta b{color:var(--acid);font-weight:400}
+
+/* OUTRO */
+.outro{height:160vh;background:#050505}.outro .pin{display:grid;place-items:center}.outro22{width:min(70vw,900px);filter:grayscale(1) contrast(1.12) drop-shadow(0 45px 35px rgba(0,0,0,.7));transform:scale(var(--outS,1)) rotate(var(--outR,0deg));opacity:var(--outO,1)}.outroLine{position:absolute;left:4vw;right:4vw;bottom:7vh;display:flex;justify-content:space-between;font:9px ui-monospace,monospace;letter-spacing:.18em;text-transform:uppercase;opacity:.58}
+
+@media(max-width:760px){
+  body{cursor:auto}.cursor,.dot{display:none}.hud{font-size:8px}.hud .top,.hud .bottom{left:12px;right:12px}.hero22{width:108vw}.heroMeta{left:16px;top:18%;transform:none}.heroSide{right:14px}.steamTitle,.psTitle,.makeTitle,.cacheTitle{left:16px}.steamCopy{left:16px;bottom:9vh;max-width:78vw}.statRail{right:14px;top:18vh}.stat:nth-child(n+3){display:none}.psMeta{right:14px}.explodeAsset{width:125vw}.exLabel{font-size:8px}.makeAside{right:14px;width:55vw}.cacheMeta{right:14px;bottom:7vh}.outro22{width:112vw}.outroLine{left:14px;right:14px}.glyphs{font-size:21vw}
+}
+@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}.hero22,.steamBg,.psBg,.explodeAsset,.makeBg,.cacheBg,.outro22{transform:none!important}}
+</style>
 </head>
-<body class="pre-enter">
-  <div class="bg-layer" aria-hidden="true">
-    <video class="bg-media" id="bg-video" muted loop playsinline preload="none"></video>
-    <img class="bg-media" id="bg-image" alt="" decoding="async">
-    <div class="bg-aurora"></div>
-    <div class="bg-grid"></div>
-    <canvas class="bg-canvas" id="bg-canvas"></canvas>
-    <div class="bg-scan"></div>
-    <div class="bg-noise"></div>
-    <div class="bg-vignette"></div>
-  </div>
+<body>
+<div class="noise"></div><div class="vignette"></div>
+<div class="cursor" id="cursor"></div><div class="dot" id="dot"></div>
+<div class="hud">
+  <div class="top"><span class="live">22 / personal space</span><span id="clock">10:29:00</span></div>
+  <div class="bottom"><div><span id="sceneName">ENTRY</span><div class="progress"><i id="bar"></i></div></div><span class="dim">scroll / move</span></div>
+</div>
+<main>
+<section class="scene hero" data-scene="ENTRY"><div class="pin">
+  <div class="heroGlow"></div>
+  <img src="assets/22.webp" alt="22" class="hero22 hotzone" />
+  <div class="heroMeta kicker"><strong>ALEKSANDR / 2026</strong><span>PLAY</span><span>MAKE</span><span>CACHE</span></div>
+  <div class="heroSide">SOMEWHERE ONLINE</div>
+  <div class="heroFoot">not a portfolio / more like a trace</div>
+</div></section>
 
-  <div id="cursor" aria-hidden="true"><i class="cursor-dot"></i><i class="cursor-ring"></i></div>
+<section class="scene portal" data-scene="PLAY"><div class="portalWord">PLAY</div></section>
 
-  <div id="enter" role="button" tabindex="0" aria-label="Нажмите, чтобы войти">
-    <div class="enter-inner">
-      <p class="enter-kicker">ANKU / ANKUZO</p>
-      <p class="enter-title" data-text="нажми, чтобы войти">нажми, чтобы войти</p>
-      <p class="enter-note">Steam · PlayStation · Discord</p>
-    </div>
-  </div>
+<section class="scene steam" data-scene="PC"><div class="pin">
+  <img src="assets/steam-world.webp" alt="PC game library world" class="steamBg" />
+  <div class="steamShade"></div>
+  <div class="steamTitle">LIBRARY</div>
+  <div class="steamCopy"><b>PC / mouse / keyboard</b><br>not one game. a whole library of phases, queues, raids and things installed “for later”.</div>
+  <div class="statRail"><div class="stat hotzone"><strong>PC</strong>primary</div><div class="stat hotzone"><strong>165</strong>hz</div><div class="stat hotzone"><strong>∞</strong>backlog</div></div>
+</div></section>
 
-  <main class="shell">
-    <article class="card" id="card">
-      <span class="corner tl" aria-hidden="true"></span>
-      <span class="corner tr" aria-hidden="true"></span>
-      <span class="corner bl" aria-hidden="true"></span>
-      <span class="corner br" aria-hidden="true"></span>
+<section class="scene switch" data-scene="SWITCH"><div class="pin"><div class="glyphs">△ ○ × □</div><div class="switchSmall">same habit / different controller</div></div></section>
 
-      <div class="card-banner" id="card-banner" aria-hidden="true"></div>
+<section class="scene ps" data-scene="CONSOLE"><div class="pin">
+  <img src="assets/ps-world.webp" alt="Console cinematic world" class="psBg" />
+  <div class="psWash"></div>
+  <div class="psTitle">COUCH<br>MODE</div>
+  <div class="psMeta"><b>PS5</b>stories / trophies / late sessions<br>less aim. more atmosphere.</div>
+</div></section>
 
-      <header class="card-head">
-        <div class="avatar-shell">
-          <img class="avatar" id="avatar" src="assets/discord-avatar.webp" alt="Аватар Anku" width="112" height="112">
-          <img class="avatar-deco" id="avatar-deco" alt="" aria-hidden="true">
-          <span class="presence" id="presence" title="Статус Discord"></span>
-        </div>
-        <h1 class="name" id="display-name" data-text="anku">anku</h1>
-        <p class="handle">@<span id="username">ankuz0</span></p>
-        <div class="badges" id="badges" aria-label="Значки"></div>
-        <p class="bio" id="bio">Чаще всего я здесь. Пиши, если хочешь сыграть вместе или просто пообщаться.</p>
-      </header>
+<section class="scene explode" data-scene="HARDWARE"><div class="pin">
+  <div class="explodeBig">OBJECTS</div>
+  <img src="assets/exploded-tech.webp" alt="Exploded gaming tech" class="explodeAsset hotzone" />
+  <div class="exLabel e1">mouse / shell / sensor</div><div class="exLabel e2">audio / driver</div><div class="exLabel e3">switch / keycap</div><div class="exLabel e4">controller / trigger</div>
+</div></section>
 
-      <section class="stats" aria-label="Статистика">
-        <div class="stat"><strong id="stat-hours">—</strong><span>часов в Steam</span></div>
-        <div class="stat"><strong id="stat-games">—</strong><span>игр в библиотеке</span></div>
-        <div class="stat"><strong id="stat-trophies">—</strong><span>трофеев PS</span></div>
-        <div class="stat"><strong id="stat-platinum">—</strong><span>платины</span></div>
-      </section>
+<section class="scene make" data-scene="MAKE"><div class="pin">
+  <img src="assets/make-world.webp" alt="Creative development world" class="makeBg" />
+  <div class="makeWash"></div>
+  <div class="makeTitle">MAKE</div>
+  <div class="makeAside"><strong>608ca37</strong>somewhere between a random idea and another unfinished repo.<br><br>code / ai / products / experiments</div>
+</div></section>
 
-      <section class="now" id="now" aria-label="Сейчас играю">
-        <span class="now-dot" aria-hidden="true"></span>
-        <span class="now-label">СЕЙЧАС</span>
-        <span class="now-value" id="now-value">Arena Breakout: Infinite</span>
-      </section>
+<section class="scene cache" data-scene="CACHE"><div class="pin">
+  <img src="assets/cache-world.webp" alt="Personal internet archive" class="cacheBg" />
+  <div class="cacheShade"></div>
+  <div class="cacheTitle">CACHE</div>
+  <div class="cacheMeta"><b>02:47</b><br>streams / videos / screenshots / tabs<br>things kept longer than intended</div>
+</div></section>
 
-      <section class="links" aria-label="Профили и связь">
-        <a class="link steam" id="link-steam-1" href="https://steamcommunity.com/profiles/76561199770575251/" target="_blank" rel="noopener noreferrer">
-          <span class="link-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path fill="currentColor" d="M12 2a10 10 0 0 0-9.96 9.16l5.36 2.21a2.82 2.82 0 0 1 1.6-.5h.14l2.38-3.45v-.05a3.77 3.77 0 1 1 3.77 3.77h-.09l-3.4 2.43v.12a2.83 2.83 0 0 1-5.6.55L2.36 14.7A10 10 0 1 0 12 2Zm-3.5 13.66-1.23-.5a2.12 2.12 0 1 0 1.1 2.77 2.12 2.12 0 0 0-1.15-2.79Zm6.79-2.24a2.51 2.51 0 1 0-2.5-2.51 2.51 2.51 0 0 0 2.5 2.51Zm0-4.4a1.89 1.89 0 1 1-1.88 1.89 1.89 1.89 0 0 1 1.88-1.89Z"/></svg></span>
-          <span class="link-body"><span class="link-k">Steam · основной</span><span class="link-v" id="steam-1-line">b1 — открыть профиль</span></span>
-          <span class="link-arr" aria-hidden="true">↗</span>
-        </a>
-        <a class="link steam" id="link-steam-2" href="https://steamcommunity.com/profiles/76561198165374024/" target="_blank" rel="noopener noreferrer">
-          <span class="link-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path fill="currentColor" d="M12 2a10 10 0 0 0-9.96 9.16l5.36 2.21a2.82 2.82 0 0 1 1.6-.5h.14l2.38-3.45v-.05a3.77 3.77 0 1 1 3.77 3.77h-.09l-3.4 2.43v.12a2.83 2.83 0 0 1-5.6.55L2.36 14.7A10 10 0 1 0 12 2Zm-3.5 13.66-1.23-.5a2.12 2.12 0 1 0 1.1 2.77 2.12 2.12 0 0 0-1.15-2.79Zm6.79-2.24a2.51 2.51 0 1 0-2.5-2.51 2.51 2.51 0 0 0 2.5 2.51Zm0-4.4a1.89 1.89 0 1 1-1.88 1.89 1.89 1.89 0 0 1 1.88-1.89Z"/></svg></span>
-          <span class="link-body"><span class="link-k">Steam · второй</span><span class="link-v" id="steam-2-line">b2 — открыть профиль</span></span>
-          <span class="link-arr" aria-hidden="true">↗</span>
-        </a>
-        <button class="link psn" type="button" data-copy="ankkui" data-copy-label="PSN ID скопирован">
-          <span class="link-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path fill="currentColor" d="M9.6 3.4v16.9l3.6 1.15V7.3c0-.63.28-1.05.74-.91.6.17.72.76.72 1.39v5.05c2.25 1.09 4.02-.01 4.02-2.87 0-2.94-1.03-4.24-4.07-5.28A31.6 31.6 0 0 0 9.6 3.4ZM14.5 17.1l5.79-2.07c.66-.24.76-.57.23-.74a4.3 4.3 0 0 0-2.36.1l-3.66 1.29v-2.06l.21-.07s1.06-.37 2.55-.54a8.9 8.9 0 0 1 4.4.55c1.66.52 1.84 1.3 1.42 1.83-.42.54-1.46.93-1.46.93l-7.12 2.56Zm-9.4.24c-1.7-.48-1.99-1.49-1.21-2.07a6.6 6.6 0 0 1 1.75-.84l4.56-1.62v1.85l-3.28 1.18c-.58.2-.67.5-.2.66.46.17 1.3.13 1.88-.08l1.6-.58v1.66l-.32.05a10.6 10.6 0 0 1-4.78-.21Z"/></svg></span>
-          <span class="link-body"><span class="link-k">PlayStation</span><span class="link-v" id="psn-line">ankkui — скопировать ID</span></span>
-          <span class="link-arr" aria-hidden="true">⧉</span>
-        </button>
-        <button class="link discord" type="button" data-copy="ankuz0" data-copy-label="Discord скопирован">
-          <span class="link-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path fill="currentColor" d="M19.3 5.34A16.2 16.2 0 0 0 15.3 4.1l-.2.37a12 12 0 0 0-1.9-.14c-.65 0-1.28.05-1.9.14l-.2-.37a16.2 16.2 0 0 0-4 1.24C2.6 9.15 1.9 12.85 2.25 16.5a16.3 16.3 0 0 0 4.94 2.5l.99-1.63a10.6 10.6 0 0 1-1.6-.77l.4-.3a11.6 11.6 0 0 0 9.9 0l.4.3c-.5.3-1.04.55-1.6.77l1 1.63a16.3 16.3 0 0 0 4.93-2.5c.42-4.23-.7-7.9-2.3-11.16ZM8.9 14.34c-.96 0-1.76-.88-1.76-1.96s.77-1.97 1.76-1.97 1.78.89 1.76 1.97c0 1.08-.78 1.96-1.76 1.96Zm6.48 0c-.97 0-1.76-.88-1.76-1.96s.77-1.97 1.76-1.97 1.78.89 1.76 1.97c0 1.08-.77 1.96-1.76 1.96Z"/></svg></span>
-          <span class="link-body"><span class="link-k">Discord</span><span class="link-v" id="discord-line">ankuz0 — скопировать</span></span>
-          <span class="link-arr" aria-hidden="true">⧉</span>
-        </button>
-      </section>
-
-      <a class="cta" href="stats.html">
-        <span>полная статистика</span>
-        <span class="cta-sub" id="cta-sub">топ игр, часы, трофеи и библиотека PS</span>
-        <span class="cta-arr" aria-hidden="true">→</span>
-      </a>
-
-      <footer class="card-foot">
-        <span><i class="dot" id="data-dot"></i><span id="data-status">данные проверяются</span></span>
-        <span id="clock">--:--:-- UTC</span>
-      </footer>
-    </article>
-  </main>
-
-  <div id="toast" role="status" aria-live="polite"></div>
-
-  <script src="js/card.js?v=7.1.0"></script>
+<section class="scene outro" data-scene="22"><div class="pin">
+  <img src="assets/22.webp" alt="22" class="outro22" />
+  <div class="outroLine"><span>same person / too many tabs</span><span>22 — 2026</span></div>
+</div></section>
+</main>
+<script>
+(()=>{
+const root=document.documentElement, clamp=(v,a=0,b=1)=>Math.max(a,Math.min(b,v)), lerp=(a,b,t)=>a+(b-a)*t;
+const cursor=document.getElementById('cursor'),dot=document.getElementById('dot'),bar=document.getElementById('bar'),sceneName=document.getElementById('sceneName'),clock=document.getElementById('clock');
+let tx=innerWidth/2,ty=innerHeight/2,cx=tx,cy=ty;
+addEventListener('pointermove',e=>{tx=e.clientX;ty=e.clientY;root.style.setProperty('--mx',((tx/innerWidth)-.5).toFixed(4));root.style.setProperty('--my',((ty/innerHeight)-.5).toFixed(4))});
+document.querySelectorAll('.hotzone,.stat').forEach(el=>{el.addEventListener('mouseenter',()=>cursor.classList.add('hot'));el.addEventListener('mouseleave',()=>cursor.classList.remove('hot'))});
+function cursorLoop(){cx=lerp(cx,tx,.16);cy=lerp(cy,ty,.16);cursor.style.left=cx+'px';cursor.style.top=cy+'px';dot.style.left=tx+'px';dot.style.top=ty+'px';requestAnimationFrame(cursorLoop)}cursorLoop();
+setInterval(()=>clock.textContent=new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit',second:'2-digit'}),250);
+const scenes=[...document.querySelectorAll('[data-scene]')];
+function local(el){const r=el.getBoundingClientRect(),travel=Math.max(1,r.height-innerHeight);return clamp(-r.top/travel)}
+function update(){
+ const max=Math.max(1,document.documentElement.scrollHeight-innerHeight),g=scrollY/max;bar.style.width=(g*100)+'%';root.style.setProperty('--scroll',g.toFixed(4));
+ let active=scenes[0];for(const s of scenes){const r=s.getBoundingClientRect();if(r.top<innerHeight*.52&&r.bottom>innerHeight*.48)active=s}sceneName.textContent=active.dataset.scene;
+ const hp=local(document.querySelector('.hero'));root.style.setProperty('--heroS',(1+hp*1.5).toFixed(3));root.style.setProperty('--heroR',(-hp*5)+'deg');root.style.setProperty('--heroX',(-hp*9)+'vw');root.style.setProperty('--heroY',(-hp*8)+'vh');root.style.setProperty('--heroO',(1-clamp((hp-.63)/.28)).toFixed(3));root.style.setProperty('--heroGlow',(1+hp*.75).toFixed(2));root.style.setProperty('--heroGlowO',(1-hp*.65).toFixed(2));
+ const portal=document.querySelector('.portal');const pr=portal.getBoundingClientRect(),pp=clamp((innerHeight-pr.top)/(innerHeight+pr.height));root.style.setProperty('--portalS',(0.78+pp*.58).toFixed(2));root.style.setProperty('--portalO',(0.25+Math.sin(pp*Math.PI)*.75).toFixed(2));
+ const sp=local(document.querySelector('.steam'));root.style.setProperty('--steamScale',(1.12+sp*.13).toFixed(3));root.style.setProperty('--steamTitleX',(-sp*20)+'vw');
+ const sw=local(document.querySelector('.switch'));root.style.setProperty('--switchX',((.5-sw)*60)+'vw');root.style.setProperty('--switchS',(0.75+sw*.5).toFixed(2));root.style.setProperty('--switchO',(0.35+Math.sin(sw*Math.PI)*.65).toFixed(2));
+ const ps=local(document.querySelector('.ps'));root.style.setProperty('--psScale',(1.05+ps*.16).toFixed(3));root.style.setProperty('--psTitleX',(-ps*10)+'vw');
+ const ep=local(document.querySelector('.explode'));root.style.setProperty('--exR',(-7+ep*15)+'deg');root.style.setProperty('--exS',(0.78+ep*.42).toFixed(3));root.style.setProperty('--exO',(0.45+Math.sin(ep*Math.PI)*.55).toFixed(2));
+ const mp=local(document.querySelector('.make'));root.style.setProperty('--makeScale',(1.05+mp*.12).toFixed(3));root.style.setProperty('--makeTitleX',(-mp*20)+'vw');
+ const cp=local(document.querySelector('.cache'));root.style.setProperty('--cacheScale',(1.05+cp*.18).toFixed(3));root.style.setProperty('--cacheX',((cp-.5)*-40)+'px');root.style.setProperty('--cacheY',((cp-.5)*25)+'px');
+ const op=local(document.querySelector('.outro'));root.style.setProperty('--outS',(0.72+op*.5).toFixed(3));root.style.setProperty('--outR',((op-.5)*5)+'deg');root.style.setProperty('--outO',(0.5+Math.sin(op*Math.PI)*.5).toFixed(2));
+ requestAnimationFrame(update)
+}requestAnimationFrame(update);
+})();
+</script>
 </body>
 </html>

@@ -1,79 +1,30 @@
-# ANKUZO
+# ankuzo — personal interactive site
 
-Статический персональный игровой профиль со статистикой Steam, PlayStation и Discord.
+Personal gaming / tech / internet identity site built as a cinematic single-page experience.
 
-Сайт состоит из двух страниц:
+## Structure
 
-- `index.html` — карточка профиля в духе bio-link страниц: экран входа, стеклянная карточка, живой фон, ссылки на два Steam-профиля, PSN и Discord, счётчики часов и трофеев;
-- `stats.html` — полная редакционная страница с главой про игры, топ-10 Steam и библиотекой PlayStation. Открывается кнопкой «полная статистика», обратно — ссылкой «← карточка».
+- `index.html` — the complete interactive site
+- `assets/22.webp` — hero identity object
+- `assets/steam-world.webp` — PC / Steam-inspired gaming world
+- `assets/ps-world.webp` — console / PlayStation-inspired world
+- `assets/exploded-tech.webp` — gaming hardware exploded view
+- `assets/make-world.webp` — development / making scene
+- `assets/cache-world.webp` — personal internet archive scene
+- `AGENTS.md` — design and implementation guidance for Codex
 
-## Фон карточки
+## Run locally
 
-Фон рисуется в canvas — внешних файлов не требуется. Пресет выбирается в начале `js/card.js`:
-
-```js
-const background = { preset: "rain", src: "", opacity: 0.5 };
-```
-
-- `rain` — капли по запотевшему стеклу. Мелкая взвесь оседает, крупные капли скатываются, собирают по пути мелочь и оставляют дорожку; курсор протирает стекло. Сам холст размывает то, что под ним, поэтому работает и поверх своей гифки;
-- `particles` — точки со связями, разбегаются от курсора;
-- `none` — только CSS-слои (аврора, сетка, шум, виньетка).
-
-При `prefers-reduced-motion` canvas отключается целиком.
-
-Чтобы поставить свою гифку или видео:
-
-1. положи файл в `assets/` (например `assets/background.mp4`);
-2. в начале `js/card.js` укажи путь и прозрачность:
-
-```js
-const background = {
-  src: "assets/background.mp4",
-  opacity: 0.5,
-};
-```
-
-Поддерживаются `.mp4`, `.webm`, `.ogv` (через `<video>`) и любые картинки, включая `.gif` (через `<img>`). Формат определяется по расширению. Для одного и того же ролика mp4/webm весит в разы меньше гифки — на мобильном трафике это заметно. Пустой `src` оставляет сгенерированный фон.
-
-## Запуск
-
-Требуется Node.js 22 (версия, используемая в GitHub Actions).
+No build step is required.
 
 ```bash
-npm test
-npm run serve
+python -m http.server 8080
 ```
 
-`npm test` проверяет JavaScript, публичные JSON и собирает каталог `dist/`.
+Then open `http://localhost:8080`.
 
-## Обновление данных
+You can also open `index.html` directly, but a local HTTP server is recommended while editing.
 
-```bash
-npm run update-data
-```
+## Direction
 
-Поддерживаемые переменные окружения:
-
-- `STEAM_KEY` — Steam Web API;
-- `PSN_NPSSO` и `PSN_ONLINE_ID` — PlayStation;
-- `DISCORD_USER_ID` и `DISCORD_BIO` — Discord;
-- `FACEIT_KEY` и `FACEIT_NICKNAME` — FACEIT;
-- `TRN_KEY`, `TRN_PLATFORM`, `TRN_USERNAME` — Tracker Network.
-
-Секреты не должны попадать в `data/`, историю Git или клиентский JavaScript. Если API недоступен, сохраняются предыдущие публичные данные со статусом `fallback/unavailable`; дата последнего успешного обновления не подменяется датой неудачной попытки.
-
-## Структура
-
-- `index.html` — карточка профиля;
-- `stats.html` — семантика и контент страницы статистики;
-- `css/card.css` — карточка: фон, экран входа, курсор, ссылки;
-- `css/system.css` — базовая визуальная система, hero, игровая лента и адаптив;
-- `css/editorial.css` — редакционные главы Steam, PlayStation, Discord и профиль;
-- `js/card.js` — логика карточки;
-- `js/` — интерфейс и WebGL страницы статистики;
-- `data/` — безопасные публичные данные;
-- `scripts/update-data.js` — серверное обновление API;
-- `scripts/build-static.js` — сборка `dist/`;
-- `tests/` — проверки проекта.
-
-GitHub Pages собирается из `dist/`. Публичные данные обновляются четыре раза в сутки; изменения только времени попытки не создают новый коммит.
+The site is intentionally not a conventional portfolio. It should feel like one continuous authored experience moving through identity → PC gaming → console gaming → hardware → things being made → internet archive → identity again.
