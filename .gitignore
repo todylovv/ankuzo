@@ -38,3 +38,16 @@ yarn-error.log*
 /.wrangler/
 /outputs/
 /work/
+
+# logs
+*.log
+
+# typescript incremental build info
+*.tsbuildinfo
+
+# QA / design review renders (regenerable)
+/*.png
+/qa/
+
+# deploy snapshot worktrees
+/.deploy-snapshot-*/
