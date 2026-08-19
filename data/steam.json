@@ -1,11 +1,11 @@
 {
-  "updatedAt": "2026-08-18T18:55:36.814Z",
-  "lastSuccessfulAt": "2026-08-18T18:55:36.814Z",
-  "lastAttemptAt": "2026-08-18T18:55:36.814Z",
+  "updatedAt": "2026-08-19T01:52:47.764Z",
+  "lastSuccessfulAt": "2026-08-19T01:52:47.764Z",
+  "lastAttemptAt": "2026-08-19T01:52:47.764Z",
   "source": "api",
   "status": "available",
   "stats": {
-    "totalHours": 5112.9,
+    "totalHours": 5114.5,
     "totalGames": 206
   },
   "profiles": [
@@ -13,11 +13,11 @@
       "steamId": "76561199770575251",
       "nickname": "b1",
       "avatarUrl": "https://avatars.steamstatic.com/6a30a26c019394587a828b964f6156b6a17e36a2_full.jpg",
-      "online": true,
-      "currentGame": "Arena Breakout: Infinite",
+      "online": false,
+      "currentGame": "",
       "profileUrl": "https://steamcommunity.com/profiles/76561199770575251/",
       "gameCount": 150,
-      "totalHours": 1698.7,
+      "totalHours": 1700.3,
       "games": [
         {
           "appId": 730,
@@ -32,16 +32,16 @@
           "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/1172620/f95f362708fc326511c5d86566c447ee625bf776.jpg"
         },
         {
+          "appId": 2073620,
+          "name": "Arena Breakout: Infinite",
+          "hours": 91.8,
+          "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/2073620/3c3cb9ae001821040f4a5c255bc577fb0143dadd.jpg"
+        },
+        {
           "appId": 629520,
           "name": "Soundpad",
           "hours": 91.5,
           "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/629520/f261c8f5948de73428a1dbed573ec964fcbecb67.jpg"
-        },
-        {
-          "appId": 2073620,
-          "name": "Arena Breakout: Infinite",
-          "hours": 90.2,
-          "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/2073620/3c3cb9ae001821040f4a5c255bc577fb0143dadd.jpg"
         },
         {
           "appId": 1808500,
@@ -1416,16 +1416,16 @@
       "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/739630/125673b382059f666ec81477173380a76e1df0be.jpg"
     },
     {
+      "appId": 2073620,
+      "name": "Arena Breakout: Infinite",
+      "hours": 91.8,
+      "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/2073620/3c3cb9ae001821040f4a5c255bc577fb0143dadd.jpg"
+    },
+    {
       "appId": 629520,
       "name": "Soundpad",
       "hours": 91.5,
       "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/629520/f261c8f5948de73428a1dbed573ec964fcbecb67.jpg"
-    },
-    {
-      "appId": 2073620,
-      "name": "Arena Breakout: Infinite",
-      "hours": 90.2,
-      "iconUrl": "https://media.steampowered.com/steamcommunity/public/images/apps/2073620/3c3cb9ae001821040f4a5c255bc577fb0143dadd.jpg"
     },
     {
       "appId": 1808500,
