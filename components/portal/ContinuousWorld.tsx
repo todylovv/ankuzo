@@ -3,9 +3,10 @@
 
 import { useTexture } from "@react-three/drei";
 import { useFrame, useThree } from "@react-three/fiber";
-import { useEffect, useMemo, useRef } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import type { MutableRefObject } from "react";
-import { Group, Mesh, MeshBasicMaterial, MeshPhysicalMaterial, SRGBColorSpace, Texture } from "three";
+import { Group, Mesh, MeshBasicMaterial, MeshPhysicalMaterial, SRGBColorSpace, Texture, TextureLoader } from "three";
+import type { GameIdentity } from "../../lib/experience-data";
 import { useGothicTwoGeometry } from "./GothicTwo";
 import { createChromeResponseTexture, DARK_PALETTE, LIGHT_PALETTE, mixColor, mixNumber } from "./theme";
 
@@ -108,17 +109,78 @@ function cropTexture(source: Texture, index: number) {
   return texture;
 }
 
+function coverTexture(texture: Texture, targetAspect = 0.72) {
+  const image = texture.image as { width?: number; height?: number } | undefined;
+  const width = image?.width ?? 1;
+  const height = image?.height ?? 1;
+  const imageAspect = width / Math.max(1, height);
+  texture.colorSpace = SRGBColorSpace;
+  texture.repeat.set(1, 1);
+  texture.offset.set(0, 0);
+  if (imageAspect > targetAspect) {
+    texture.repeat.x = targetAspect / imageAspect;
+    texture.offset.x = (1 - texture.repeat.x) * 0.5;
+  } else {
+    texture.repeat.y = imageAspect / targetAspect;
+    texture.offset.y = (1 - texture.repeat.y) * 0.5;
+  }
+  texture.needsUpdate = true;
+  return texture;
+}
+
+function useRemoteMedia(urls: Array<string | undefined>) {
+  const [loaded, setLoaded] = useState<Array<Texture | null>>(() => urls.map(() => null));
+
+  useEffect(() => {
+    let active = true;
+    const owned: Texture[] = [];
+    const loader = new TextureLoader();
+    setLoaded(urls.map(() => null));
+    urls.forEach((url, index) => {
+      if (!url) return;
+      loader.load(url, (texture) => {
+        if (!active) {
+          texture.dispose();
+          return;
+        }
+        const prepared = coverTexture(texture);
+        owned.push(prepared);
+        setLoaded((current) => {
+          const next = [...current];
+          next[index] = prepared;
+          return next;
+        });
+      }, undefined, () => undefined);
+    });
+    return () => {
+      active = false;
+      owned.forEach((texture) => texture.dispose());
+    };
+  }, [urls]);
+
+  return loaded;
+}
+
 export function ContinuousWorld({
   progress,
   themeProgress,
+  games,
 }: {
   progress: MutableRefObject<number>;
   themeProgress: MutableRefObject<number>;
+  games: GameIdentity[];
 }) {
   const source = useTexture("/assets/library-atlas.webp");
   const textures = useMemo(() => [0, 1, 3, 5].map((index) => cropTexture(source, index)), [source]);
   const media = useRef<Array<Mesh | null>>([]);
   const materials = useRef<Array<MeshBasicMaterial | null>>([]);
+  const remoteUrls = useMemo(() => {
+    const steam = games.filter((game) => game.platform === "steam").slice(0, 2);
+    const playstation = games.filter((game) => game.platform === "playstation").slice(0, 2);
+    return [steam[0], playstation[0], steam[1], playstation[1]]
+      .map((game) => game?.artwork ?? game?.icon);
+  }, [games]);
+  const remoteMedia = useRemoteMedia(remoteUrls);
   const finalGroup = useRef<Group>(null);
   const chromeResponse = useMemo(() => createChromeResponseTexture(), []);
   const finalMaterial = useMemo(() => new MeshPhysicalMaterial({
@@ -136,6 +198,13 @@ export function ContinuousWorld({
 
   useEffect(() => () => textures.forEach((texture) => texture.dispose()), [textures]);
   useEffect(() => () => chromeResponse.dispose(), [chromeResponse]);
+  useEffect(() => {
+    materials.current.forEach((material, index) => {
+      if (!material) return;
+      material.map = remoteMedia[index] ?? textures[index];
+      material.needsUpdate = true;
+    });
+  }, [remoteMedia, textures]);
 
   useFrame(() => {
     const value = progress.current;

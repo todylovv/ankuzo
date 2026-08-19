@@ -17,10 +17,13 @@ import {
   Vector3,
 } from "three";
 import { ContinuousWorld } from "./ContinuousWorld";
+import { ExperienceSignals } from "./ExperienceSignals";
 import { PortalTwentyTwo } from "./FracturedTwo";
 import { GothicEnvironment } from "./GothicEnvironment";
 import { DARK_PALETTE, LIGHT_PALETTE, mixColor, mixNumber } from "./theme";
 import type { ThemeName } from "./theme";
+import { useExperienceData } from "../data/useExperienceData";
+import type { ExperienceSource, GameIdentity } from "../../lib/experience-data";
 
 const PORTAL_END = 0.22;
 
@@ -152,13 +155,15 @@ function ThemeSceneDriver({
   );
 }
 
-function ProgressDriver({ target, rendered, portal, immediate }: {
+function ProgressDriver({ target, rendered, portal, immediate, onDataStage }: {
   target: MutableRefObject<number>;
   rendered: MutableRefObject<number>;
   portal: MutableRefObject<number>;
   immediate: boolean;
+  onDataStage: (stage: number) => void;
 }) {
   const lastChapter = useRef("");
+  const lastDataStage = useRef(0);
   useFrame((_, delta) => {
     if (immediate) rendered.current = target.current;
     else {
@@ -174,6 +179,11 @@ function ProgressDriver({ target, rendered, portal, immediate }: {
     }
     document.documentElement.style.setProperty("--experience-progress", rendered.current.toFixed(4));
     document.documentElement.style.setProperty("--portal-progress", portal.current.toFixed(4));
+    const dataStage = rendered.current >= 0.58 ? 2 : rendered.current >= 0.18 ? 1 : 0;
+    if (dataStage > lastDataStage.current) {
+      lastDataStage.current = dataStage;
+      onDataStage(dataStage);
+    }
   });
   return null;
 }
@@ -242,14 +252,16 @@ function CameraRig({ portal, master, pointer }: {
   return null;
 }
 
-function ExperienceScene({ target, rendered, portal, pointer, themeTarget, themeProgress, immediate }: {
+function ExperienceScene({ target, rendered, portal, pointer, themeTarget, themeProgress, games, immediate, onDataStage }: {
   target: MutableRefObject<number>;
   rendered: MutableRefObject<number>;
   portal: MutableRefObject<number>;
   pointer: MutableRefObject<{ x: number; y: number }>;
   themeTarget: MutableRefObject<number>;
   themeProgress: MutableRefObject<number>;
+  games: GameIdentity[];
   immediate: boolean;
+  onDataStage: (stage: number) => void;
 }) {
   return (
     <>
@@ -263,10 +275,10 @@ function ExperienceScene({ target, rendered, portal, pointer, themeTarget, theme
         <Lightformer form="rect" intensity={1.55} color={LIGHT_PALETTE.reflectionFloor} position={[0, -4.8, -3]} rotation={[Math.PI / 2, 0, 0]} scale={[5.4, 0.75, 1]} />
       </Environment>
       <GothicEnvironment themeProgress={themeProgress} pointer={pointer} />
-      <ContinuousWorld progress={rendered} themeProgress={themeProgress} />
+      <ContinuousWorld progress={rendered} themeProgress={themeProgress} games={games} />
       <PortalTwentyTwo progress={portal} masterProgress={rendered} themeProgress={themeProgress} />
       <CameraRig portal={portal} master={rendered} pointer={pointer} />
-      <ProgressDriver target={target} rendered={rendered} portal={portal} immediate={immediate} />
+      <ProgressDriver target={target} rendered={rendered} portal={portal} immediate={immediate} onDataStage={onDataStage} />
     </>
   );
 }
@@ -284,6 +296,13 @@ export function PortalExperience() {
   const reduced = useRef(false);
   const [reducedMotion, setReducedMotion] = useState(false);
   const [theme, setTheme] = useState<ThemeName>(initialTheme);
+  const [dataStage, setDataStage] = useState(0);
+  const enabledSources = useMemo<ExperienceSource[]>(() => {
+    if (dataStage >= 2) return ["steam", "playstation", "discord"];
+    if (dataStage >= 1) return ["steam", "playstation"];
+    return [];
+  }, [dataStage]);
+  const { data: experienceData } = useExperienceData({ enabledSources });
   const searchParams = typeof window === "undefined" ? null : new URLSearchParams(window.location.search);
   const queryScene = searchParams?.get("scene") ?? null;
   const queryFrame = searchParams?.get("frame") ?? null;
@@ -310,6 +329,9 @@ export function PortalExperience() {
     themeTarget.current = next === "dark" ? 1 : 0;
     document.documentElement.dataset.theme = next;
     if (persist) window.localStorage.setItem("ankuzo-theme", next);
+  }, []);
+  const activateDataStage = useCallback((stage: number) => {
+    setDataStage((current) => Math.max(current, stage));
   }, []);
 
   const navigateReview = (scene: string, frame: string, device = reviewDevice) => {
@@ -405,6 +427,7 @@ export function PortalExperience() {
           gl={{ antialias: true, alpha: false, toneMapping: ACESFilmicToneMapping, toneMappingExposure: 1.02 }}>
           <ExperienceScene target={targetProgress} rendered={renderedProgress} portal={portalProgress}
             pointer={pointer} themeTarget={themeTarget} themeProgress={themeProgress}
+            games={experienceData.games} onDataStage={activateDataStage}
             immediate={Boolean(reviewState) || reducedMotion} />
         </Canvas>
 
@@ -431,8 +454,7 @@ export function PortalExperience() {
           <div className="platform-labels"><span>PC / STEAM</span><span>PLAYSTATION</span></div>
         </div>
         <div className="chapter-copy chapter-copy--online">
-          <p>SESSION / ACTIVE</p><h2>ONLINE</h2>
-          <div className="online-status"><span>01:47</span><span>AUDIO −32 DB</span><span>LATENCY / LIVE</span></div>
+          <p>PERSONAL NETWORK / SIGNAL</p><h2>ONLINE</h2>
         </div>
         <div className="chapter-copy chapter-copy--build">
           <p>BUILD / CURRENT</p><h2>BUILD</h2>
@@ -453,6 +475,7 @@ export function PortalExperience() {
         </nav>
 
         <div className="experience-meter" aria-hidden="true"><i><b /></i><span>SCENE PROGRESS</span></div>
+        <ExperienceSignals data={experienceData} />
 
         {reviewMode && (
           <nav className="review-nav" aria-label="Experience review states">
