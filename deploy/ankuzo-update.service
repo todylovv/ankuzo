@@ -1,0 +1,12 @@
+[Unit]
+Description=Refresh ANKUZO public profile snapshots
+Documentation=https://github.com/todylovv/ankuzo
+After=docker.service
+Requires=docker.service
+
+[Service]
+Type=oneshot
+ExecStart=/opt/ankuzo/deploy/update-data.sh
+# Nothing here should ever hold the boot up or retry in a tight loop: stale
+# data is a cosmetic problem, and the next timer tick is minutes away.
+TimeoutStartSec=600

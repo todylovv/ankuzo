@@ -18,6 +18,11 @@ services:
       NODE_ENV: production
       PORT: "3000"
       TZ: ${TZ:-UTC}
+    volumes:
+      # The profile snapshots live on the host, not in the image, so the updater
+      # timer can refresh them without a rebuild and without a redeploy. Read
+      # only here: the site serves this data, it never writes it.
+      - ${ANKUZO_DATA:-/opt/ankuzo-data}:/app/public/data:ro
     networks: [edge]
     logging:
       driver: json-file

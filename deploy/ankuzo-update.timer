@@ -1,0 +1,14 @@
+[Unit]
+Description=Refresh ANKUZO snapshots every few hours
+
+[Timer]
+# Every six hours, plus once shortly after boot so a restarted server does not
+# serve day-old data until the next scheduled tick.
+OnBootSec=5min
+OnUnitActiveSec=6h
+# Spread the load away from the exact hour; the APIs are shared services.
+RandomizedDelaySec=20min
+Persistent=true
+
+[Install]
+WantedBy=timers.target
