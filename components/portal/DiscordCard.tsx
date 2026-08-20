@@ -20,6 +20,49 @@ import type { DiscordSignal } from "../../lib/experience-data";
 
 const MAX_TILT = 13;
 
+/**
+ * Discord hands its badges over as a mix of opaque flag keys (HOUSE_BRAVERY)
+ * and display strings ("Discord Nameplate"). They used to be cut to their first
+ * two characters, which made the row read "HO NI DI" — shorter, but no longer
+ * language, and a viewer cannot recover the word from it.
+ *
+ * A short whole word costs a few pixels more and is actually readable, so the
+ * map trades the abbreviation for the word. Anything unlisted is humanised from
+ * the key instead of being dropped: a badge Discord adds next year should
+ * degrade into something legible rather than into noise or into nothing.
+ */
+const BADGE_LABELS: Record<string, string> = {
+  ACTIVE_DEVELOPER: "Developer",
+  BUG_HUNTER: "Bug Hunter",
+  BUG_HUNTER_LEVEL_1: "Bug Hunter",
+  BUG_HUNTER_LEVEL_2: "Bug Hunter",
+  DISCORD_NAMEPLATE: "Nameplate",
+  EARLY_SUPPORTER: "Early Supporter",
+  EARLY_VERIFIED_BOT_DEVELOPER: "Developer",
+  HOUSE_BALANCE: "Balance",
+  HOUSE_BRAVERY: "Bravery",
+  HOUSE_BRILLIANCE: "Brilliance",
+  HYPESQUAD: "HypeSquad",
+  NAMEPLATE: "Nameplate",
+  NITRO: "Nitro",
+  PARTNER: "Partner",
+  PREMIUM: "Nitro",
+  QUEST_COMPLETED: "Quest",
+  SERVER_BOOSTER: "Booster",
+  STAFF: "Staff",
+  VERIFIED_DEVELOPER: "Developer",
+};
+
+function badgeLabel(badge: string) {
+  // Both shapes normalise to the same key, so "Discord Nameplate" and
+  // DISCORD_NAMEPLATE resolve to one entry rather than to two spellings.
+  const key = badge.trim().toUpperCase().replace(/[\s-]+/g, "_");
+  const known = BADGE_LABELS[key];
+  if (known) return known;
+  return badge.trim().replace(/_+/g, " ").toLowerCase()
+    .replace(/(^|\s)\S/g, (match) => match.toUpperCase());
+}
+
 export function DiscordCard({
   discord,
   activity,
@@ -83,16 +126,6 @@ export function DiscordCard({
           ) : null}
         </div>
 
-        {discord.badges.length > 0 ? (
-          <div className="dc-badges">
-            {discord.badges.map((badge) => (
-              <span key={badge} title={badge.replace(/_/g, " ")}>
-                {badge.replace(/_/g, " ").slice(0, 2)}
-              </span>
-            ))}
-          </div>
-        ) : null}
-
         <div className="dc-avatar-wrap">
           {discord.avatar ? (
             /* eslint-disable-next-line @next/next/no-img-element */
@@ -108,6 +141,18 @@ export function DiscordCard({
         <div className="dc-body">
           <p className="dc-name">{name}</p>
           {discord.username ? <p className="dc-handle">{discord.username}</p> : null}
+
+          {/* Words need room to wrap, which the floating pill Discord uses for
+              icon badges does not have — at readable size it would have run
+              into the avatar. In the body the row is in normal flow and can
+              take a second line without colliding with anything. */}
+          {discord.badges.length > 0 ? (
+            <ul className="dc-badges">
+              {discord.badges.map((badge) => (
+                <li key={badge} title={badge.replace(/_/g, " ")}>{badgeLabel(badge)}</li>
+              ))}
+            </ul>
+          ) : null}
 
           {activity ? (
             <>

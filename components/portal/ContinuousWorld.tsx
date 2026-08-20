@@ -38,22 +38,33 @@ function ease(value: number) {
 }
 
 /**
- * Where the artefact sits at each hand-off. Five anchors rather than a formula,
+ * Where the artefact sits at each hand-off. Anchors rather than a formula,
  * because this is a piece of choreography and choreography is authored: the
  * object has to be on the opposite side from whichever rail the type is using.
+ *
+ * The anchors are sized against the actual frame, not judged by eye. After the
+ * flight the camera sits at z ≈ -8.7 with a 35° vertical fov, so a plane at
+ * z = -15.7 measures 4.4 units tall and, on a 3:2 laptop, only 6.6 wide — and
+ * the pair of glyphs is 6.7 x 7.2 units before scaling. The previous anchors
+ * were authored for a wider frame than the site ever gets, which is why every
+ * middle chapter clipped the artefact at roughly the halfway line: an amount
+ * that reads as an accident rather than as a crop. Each x below keeps the whole
+ * silhouette inside the narrowest desktop frame with margin to spare.
  */
 const ARTEFACT_PATH = [
-  { p: 0.19, x: 2.6, y: 0.15, z: -16.2, ry: -0.42 },
-  { p: 0.34, x: 1.95, y: 0.1, z: -15.1, ry: -0.3 },
-  { p: 0.45, x: 1.8, y: 0.05, z: -15, ry: -0.24 },
+  { p: 0.19, x: 2, y: 0.15, z: -16.8, ry: -0.42 },
+  { p: 0.34, x: 1.62, y: 0.1, z: -15.9, ry: -0.3 },
+  { p: 0.45, x: 1.55, y: 0.05, z: -15.7, ry: -0.24 },
   // PLAYSTATION mirrors: type moves right, so the artefact crosses to the left.
-  { p: 0.58, x: -2.05, y: 0.02, z: -15.2, ry: 0.28 },
-  { p: 0.66, x: -1.9, y: 0, z: -15.4, ry: 0.34 },
+  { p: 0.58, x: -1.62, y: 0.02, z: -15.9, ry: 0.28 },
+  { p: 0.66, x: -1.56, y: 0, z: -16.1, ry: 0.34 },
   // PRESENCE: back to the right and further away — the quiet chapter.
-  { p: 0.78, x: 1.75, y: -0.25, z: -17.4, ry: -0.3 },
-  { p: 0.86, x: 1.6, y: -0.3, z: -17.8, ry: -0.26 },
-  // The ending brings it home, centred and closer than anywhere else.
-  { p: 1, x: 0, y: 0, z: -13.4, ry: 0 },
+  { p: 0.78, x: 1.55, y: -0.22, z: -17.6, ry: -0.3 },
+  { p: 0.86, x: 1.48, y: -0.26, z: -17.9, ry: -0.26 },
+  // The ending brings it home and closer, but not centred: ANKUZO holds the
+  // left rail there, so the artefact stops clear of the left third of the frame
+  // instead of landing on top of the wordmark.
+  { p: 1, x: 0.55, y: 0, z: -15.6, ry: 0 },
 ] as const;
 
 export function ContinuousWorld({
@@ -62,14 +73,36 @@ export function ContinuousWorld({
   progress: MutableRefObject<number>;
 }) {
   const group = useRef<Group>(null);
+  // Chrome cannot be one material here. The flat faces and the extruded walls
+  // look into opposite halves of the room, so a single set of numbers can only
+  // ever be right for one of them.
+  //
+  // The faces point straight down the barrel of the camera, so they mirror the
+  // large panel standing behind it — and an environment map is sampled by
+  // direction alone, which means a flat face gets the *same* sample at every
+  // pixel. At envMapIntensity 2.35 that constant sample landed above the
+  // shoulder of the ACES curve, where a 50% change in incoming light moves the
+  // output by two or three percent: the face was not just bright, it was
+  // incapable of shading. That is the flat white silhouette, and no texture is
+  // needed to fix it — the environment simply has to sit low enough that the
+  // direct lights still have somewhere to go. Roughness then does the modelling
+  // work: at 0.115 the key light's lobe is narrow enough to clip into a single
+  // blown spot, and widening it turns that spot into a sweep across the face.
+  // A broad, weak clearcoat adds a second lobe offset from the first, so the
+  // sweep has a soft edge rather than a hard boundary.
   const faceMaterial = useMemo(() => new MeshPhysicalMaterial({
     color: SCENE.chrome,
-    metalness: 0.98, roughness: 0.115, envMapIntensity: 2.35,
-    clearcoat: 0.08, clearcoatRoughness: 0.09, transparent: true, opacity: 0,
+    metalness: 0.96, roughness: 0.26, envMapIntensity: 0.78,
+    clearcoat: 0.34, clearcoatRoughness: 0.4, transparent: true, opacity: 0,
   }), []);
+  // The walls face sideways into a room that is nearly empty, so the same
+  // damping would sink them into the background and take the glyph's edge with
+  // them. They get the opposite treatment — more environment, not less, spread
+  // wide enough to read as a rim rather than as a glint. The gap between this
+  // and the faces above is what gives the extrusion its depth.
   const sideMaterial = useMemo(() => new MeshPhysicalMaterial({
-    color: SCENE.chromeSide, metalness: 0.96, roughness: 0.19, envMapIntensity: 1.85,
-    clearcoat: 0.04, clearcoatRoughness: 0.16, transparent: true, opacity: 0,
+    color: SCENE.chromeSide, metalness: 0.92, roughness: 0.34, envMapIntensity: 1.45,
+    clearcoat: 0.12, clearcoatRoughness: 0.3, transparent: true, opacity: 0,
   }), []);
   const geometry = useGothicTwoGeometry();
   const { size } = useThree();
@@ -84,12 +117,10 @@ export function ContinuousWorld({
   useFrame(() => {
     const value = progress.current;
 
-    faceMaterial.color.set(SCENE.chrome);
-    faceMaterial.roughness = 0.115;
-    faceMaterial.envMapIntensity = 2.35;
-    sideMaterial.color.set(SCENE.chromeSide);
-    sideMaterial.roughness = 0.19;
-    sideMaterial.envMapIntensity = 1.85;
+    // Only opacity changes per frame. The colour and the shading numbers used
+    // to be rewritten here every tick, left over from the two-theme blend; with
+    // one theme that is not just wasted work, it is a second copy of the same
+    // constants waiting to disagree with the ones above.
 
     // The artefact appears once the portal has been crossed and never leaves.
     const arrival = ease(span(value, STEAM_START - 0.03, STEAM_START + 0.05));
@@ -101,9 +132,10 @@ export function ContinuousWorld({
 
     // The artefact crosses the frame instead of sitting on one side. It stays
     // opposite the type: right while STEAM holds the left rail, left once
-    // PLAYSTATION mirrors to the right, right again for PRESENCE, and centred
-    // for the ending. The swap is the reason the chapters read as a sequence
-    // rather than as three versions of one screen.
+    // PLAYSTATION mirrors to the right, right again for PRESENCE, and just off
+    // centre for the ending, where ANKUZO takes the left rail back. The swap is
+    // the reason the chapters read as a sequence rather than as three versions
+    // of one screen.
     const path = ARTEFACT_PATH;
     let index = 1;
     while (index < path.length - 1 && value > path[index].p) index += 1;
@@ -111,18 +143,28 @@ export function ContinuousWorld({
     const to = path[index];
     const t = ease(span(value, from.p, to.p));
 
-    const sideways = portrait ? 0.62 : 1;
+    // A portrait frame is less than half as wide in world units as a landscape
+    // one, so the authored lateral swing has to shrink hard and the whole path
+    // has to stand further back — distance is the only way to buy width without
+    // rewriting the choreography for a second aspect ratio.
+    const sideways = portrait ? 0.36 : 1;
+    const setback = portrait ? 1.7 : 0;
     group.current.position.set(
       (from.x + (to.x - from.x) * t) * sideways,
       from.y + (to.y - from.y) * t,
-      from.z + (to.z - from.z) * t,
+      from.z + (to.z - from.z) * t - setback,
     );
     // Always angled back toward the reader's side of the frame.
     group.current.rotation.y = from.ry + (to.ry - from.ry) * t;
     group.current.rotation.x = 0.03 * Math.sin((value - STEAM_START) * 2.2);
 
-    // Largest at the ending, where it is the only thing left in the frame.
-    const scale = (portrait ? 0.34 : 0.38) + 0.14 * ease(span(value, FINAL_START, 1));
+    // Largest at the ending, but sized off the frame rather than off ambition.
+    // The pair measures 6.7 x 7.2 units at scale 1; the ending's plane is 4.4
+    // tall, so 0.41 fills about two thirds of the height and still clears the
+    // top and bottom edges. The old 0.52 at z = -13.4 was 3.7 units tall in a
+    // 3.0-unit frame — the artefact was not large, it was simply outside.
+    const scale = (portrait ? 0.3 : 0.36)
+      + (portrait ? 0.12 : 0.05) * ease(span(value, FINAL_START, 1));
     group.current.scale.setScalar(scale);
   });
 
@@ -130,8 +172,15 @@ export function ContinuousWorld({
 
   return (
     <group ref={group} visible={false}>
-      <mesh geometry={geometry} material={[faceMaterial, sideMaterial]} position={[-offset, 0, 0]} />
-      <mesh geometry={geometry} material={[faceMaterial, sideMaterial]} position={[offset, 0, 0]} />
+      {/* The two digits are toed in a few degrees rather than left coplanar.
+          Coplanar faces sample the environment in exactly the same direction
+          and therefore come out at exactly the same value, which is what made
+          the pair read as one flat cut-out; a slight opposing yaw gives each
+          glyph its own tone and the pair reads as two objects in a room. */}
+      <mesh geometry={geometry} material={[faceMaterial, sideMaterial]}
+        position={[-offset, 0, 0]} rotation={[0.018, 0.075, -0.02]} />
+      <mesh geometry={geometry} material={[faceMaterial, sideMaterial]}
+        position={[offset, 0, 0]} rotation={[-0.018, -0.075, 0.02]} />
     </group>
   );
 }

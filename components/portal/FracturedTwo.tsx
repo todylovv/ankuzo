@@ -160,31 +160,40 @@ export function PortalTwentyTwo({
   const offset = portrait ? 1.68 : 2.2;
   const scale = portrait ? 0.72 : 0.84;
 
+  // Same glyph, same room, so the same shading argument as ContinuousWorld: the
+  // faces mirror one large constant panel and had to come down out of the flat
+  // top of the tone curve, while the walls look into an empty room and had to
+  // come up. Keeping the two components in step matters more than usual here —
+  // the portal glyph and the artefact are the same object seen twice, and any
+  // divergence reads as the metal changing on the way through.
   const pristineMaterial = useMemo(() => new MeshPhysicalMaterial({
     color: SCENE.chrome,
-    metalness: 0.98,
-    roughness: 0.115,
-    envMapIntensity: 2.35,
-    clearcoat: 0.08,
-    clearcoatRoughness: 0.09,
+    metalness: 0.96,
+    roughness: 0.26,
+    envMapIntensity: 0.78,
+    clearcoat: 0.34,
+    clearcoatRoughness: 0.4,
     transparent: true,
   }), []);
   const pristineSideMaterial = useMemo(() => new MeshPhysicalMaterial({
     color: SCENE.chromeSide,
-    metalness: 0.96,
-    roughness: 0.19,
-    envMapIntensity: 1.85,
-    clearcoat: 0.04,
-    clearcoatRoughness: 0.16,
+    metalness: 0.92,
+    roughness: 0.34,
+    envMapIntensity: 1.45,
+    clearcoat: 0.12,
+    clearcoatRoughness: 0.3,
     transparent: true,
   }), []);
+  // Fragments tumble, so their faces sweep through the whole environment rather
+  // than staring at the one panel. They sit between the two settings above:
+  // enough environment to flash as they turn, enough roughness not to strobe.
   const fragmentMaterial = useMemo(() => new MeshPhysicalMaterial({
     color: SCENE.chromeSecondary,
-    metalness: 0.97,
-    roughness: 0.14,
-    envMapIntensity: 2.15,
-    clearcoat: 0.06,
-    clearcoatRoughness: 0.12,
+    metalness: 0.94,
+    roughness: 0.3,
+    envMapIntensity: 1.05,
+    clearcoat: 0.22,
+    clearcoatRoughness: 0.38,
     transparent: true,
   }), []);
   const rawMaterial = useMemo(() => new MeshStandardMaterial({
@@ -227,19 +236,10 @@ export function PortalTwentyTwo({
 
   useFrame(() => {
     const value = progress.current;
-    pristineMaterial.color.set(SCENE.chrome);
-    pristineMaterial.roughness = 0.115;
-    pristineMaterial.envMapIntensity = 2.35;
-    pristineSideMaterial.color.set(SCENE.chromeSide);
-    pristineSideMaterial.roughness = 0.19;
-    pristineSideMaterial.envMapIntensity = 1.85;
-    fragmentMaterial.color.set(SCENE.chromeSecondary);
-    fragmentMaterial.roughness = 0.14;
-    fragmentMaterial.envMapIntensity = 2.15;
-    rawMaterial.color.set(SCENE.raw);
-    darkCrackMaterial.color.set(SCENE.fracture);
-    lightCrackMaterial.color.set(SCENE.crackLight);
-    lightCrackMaterial.emissive.set(SCENE.crackLight);
+    // Only opacity and placement change per frame. Colours and shading numbers
+    // used to be rewritten every tick, left over from the two-theme blend; with
+    // one theme that is a second copy of the constants declared above, and the
+    // copy is the one that would silently win.
     const portalPresence = 1 - smoothstep(0.225, 0.285, masterProgress.current);
     const pristineOpacity = (1 - smoothstep(0.54, 0.615, value)) * portalPresence;
     const fragmentOpacity = smoothstep(0.535, 0.595, value) * portalPresence;

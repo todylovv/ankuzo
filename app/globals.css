@@ -132,10 +132,18 @@ html[data-chapter="portal"] .experience-stage::after{opacity:0}
   font:11px/1.7 Jet,monospace!important;letter-spacing:.14em}
 
 /* The number is the subject of the frame — the artefact only accompanies it. */
-.chapter-figure{display:flex;align-items:baseline;gap:.22em;margin:0;
+.chapter-figure{display:flex;align-items:baseline;gap:0;margin:0;
   font:500 var(--t-4)/.86 Unbounded,Manrope,Arial,sans-serif!important;letter-spacing:-.04em}
-.figure-unit{font:11px/1 Jet,monospace;letter-spacing:.2em;color:var(--text-secondary);
-  align-self:center;text-transform:uppercase}
+/* The unit belongs TO the number, not beside it. `gap` resolves against the
+   flex container's font — 154px here — so .22em opened a ~34px hole and HOURS
+   read as a stray tag someone parked next to the figure. The offset moves onto
+   the unit itself, where an em is its own 12px, and the unit drops onto the
+   figure's baseline so the two sit on one line like "5021 h" does in print.
+   Cold accent, because a unit of measure is machine-read data — the warm
+   counter-accent is reserved for the author and never colours a number. */
+.figure-unit{align-self:baseline;margin-left:.5em;
+  font:12px/1 Jet,monospace;letter-spacing:.16em;color:var(--accent);
+  text-transform:uppercase}
 .chapter-figure--word{font-size:var(--t-3)!important;align-items:center;gap:.34em}
 
 /* Counting is the arrival: the number climbs while the chapter settles, so the
@@ -160,6 +168,42 @@ html[data-chapter="playstation"] .chapter-copy--playstation .figure-count{--figu
 .data-bar{display:block;height:2px;background:var(--line)}
 .data-bar i{display:block;height:100%;background:var(--accent);transform-origin:left;
   transform:scaleX(0);transition:transform .9s cubic-bezier(.16,.84,.3,1)}
+
+/* Steam's ranked list, given a voice per rank.
+   The note above it already claims that a third of five thousand hours sits in
+   a single game; the list is the only place that says WHICH, and every row was
+   set in the same 11px grey, so the claim and its evidence had equal weight and
+   the eye had nothing to land on after the number. Row one is now read as a
+   second headline — name at reading size in the display face, hours in the cold
+   accent, a thicker bar with a little bloom — and the tail steps down to faint,
+   where it reads as the context under the fact rather than as four rivals to
+   it. The accent is spent only on the machine-measured values, per the palette
+   rule above; the warm ember stays out of the data entirely.
+   Scoped to the Steam chapter so the PlayStation mirror keeps its own rules. */
+.chapter-copy--steam .data-list{gap:13px;margin-top:6px}
+/* No gap override here: the phone layout re-columns .data-list li, and a
+   higher-specificity gap would leak past that media query. */
+.chapter-copy--steam .data-list li:first-child{color:var(--text-primary)}
+.chapter-copy--steam .data-list li:first-child .data-name{
+  font:600 17px/1.2 Manrope,Arial,sans-serif;letter-spacing:-.012em;
+  color:var(--text-primary);text-transform:none}
+/* `font` shorthand resets font-variant-numeric, so tabular figures are
+   restated — the column below still has to line up under this row. */
+.chapter-copy--steam .data-list li:first-child .data-value{
+  font:500 21px/1 Unbounded,Manrope,Arial,sans-serif;letter-spacing:-.03em;
+  font-variant-numeric:tabular-nums;color:var(--accent)}
+.chapter-copy--steam .data-list li:first-child .data-bar{height:3px;
+  background:color-mix(in srgb,var(--accent) 15%,transparent)}
+.chapter-copy--steam .data-list li:first-child .data-bar i{
+  box-shadow:0 0 14px color-mix(in srgb,var(--accent) 55%,transparent)}
+.chapter-copy--steam .data-list li+li .data-name{color:var(--text-faint)}
+.chapter-copy--steam .data-list li+li .data-value{color:var(--text-secondary)}
+.chapter-copy--steam .data-list li+li .data-bar i{
+  background:color-mix(in srgb,var(--accent) 32%,transparent)}
+/* The note states the share; the list proves it. Once the list carries the
+   evidence the note can step back, and stepping it back is what stops "197
+   GAMES" from competing with the figure directly above it. */
+.chapter-copy--steam .chapter-note{color:var(--text-faint)}
 
 /* Four medals rather than four thin bars. A tier is a category, not a
    quantity on a scale — bars invited a comparison between bronze and platinum
@@ -191,12 +235,25 @@ html[data-chapter="playstation"] .chapter-copy--playstation .figure-count{--figu
   transform:rotateX(var(--tilt-x,0deg)) rotateY(var(--tilt-y,0deg));
   transition:transform .45s cubic-bezier(.16,.84,.3,1);text-transform:none!important}
 .dc-card:hover{transition:transform .09s linear}
-.dc-banner{height:64px;background:var(--dc-accent,#5865F2);overflow:hidden}
-.dc-banner img{width:100%;height:100%;object-fit:cover;display:block}
-.dc-badges{position:absolute;z-index:3;top:72px;right:12px;display:flex;gap:3px;
-  padding:3px 5px;border-radius:8px;background:#111214}
-.dc-badges span{display:grid;place-items:center;width:18px;height:18px;border-radius:4px;
-  background:#2b2d31;color:#dbdee1;font:600 8px/1 Manrope,Arial,sans-serif;letter-spacing:.02em}
+/* The real banner is a light pink-and-white abstraction. Shown raw it is the
+   brightest thing in a cold, near-black frame — a pale bar that pulls the eye
+   off the number and off the glyph behind it. The quotation still needs the
+   banner to BE the banner, so it is dimmed rather than replaced, and a scrim
+   walks it down into #232428, the card's own surface: at the bottom edge the
+   image and the card are literally the same colour, so the banner ends without
+   a seam instead of stopping in a hard bright line. */
+.dc-banner{position:relative;height:64px;background:var(--dc-accent,#5865F2);overflow:hidden}
+.dc-banner img{width:100%;height:100%;object-fit:cover;display:block;
+  filter:saturate(.78) brightness(.62)}
+.dc-banner::after{content:"";position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(180deg,rgba(10,14,20,.34) 0%,
+    rgba(35,36,40,.72) 58%,#232428 100%)}
+/* Chips, not two-letter stubs. 11px is the site's floor for service type and
+   these are the smallest thing on the card that still has to be read. */
+.dc-badges{display:flex;flex-wrap:wrap;gap:5px;margin:11px 0 0!important;padding:0;list-style:none}
+.dc-badges li{padding:4px 8px;border-radius:6px;background:#2b2d31;color:#dbdee1;
+  font:600 11px/1 Manrope,Arial,sans-serif!important;letter-spacing:.01em;
+  text-transform:none!important;white-space:nowrap}
 .dc-avatar-wrap{position:absolute;z-index:2;top:18px;left:16px;width:80px;height:80px}
 .dc-avatar{width:80px;height:80px;border-radius:50%;object-fit:cover;
   border:6px solid #232428;background:#232428;display:block}
@@ -228,17 +285,26 @@ html[data-chapter="playstation"] .chapter-copy--playstation .figure-count{--figu
     rgba(255,255,255,.09) calc(var(--sheen,.5) * 100%),transparent 68%)}
 
 /* Two Steam accounts side by side: one person, two logins, holding different
-   halves of the same five thousand hours. */
-.account-row{display:flex;flex-wrap:wrap;gap:34px;margin:0;padding:0;list-style:none}
-.account-row li{display:flex;align-items:center;gap:12px}
-.account-avatar{width:42px;height:42px;border-radius:4px;object-fit:cover;
+   halves of the same five thousand hours.
+   They sit in the gap between a 154px number and the ranked list, which is the
+   worst place in the composition to be quiet — at 10px they read as a caption
+   that belonged to neither. The row now holds its own register: a larger
+   thumbnail, the nickname at reading size in the text face, and the state line
+   at the 11px floor instead of below it. */
+.account-row{display:flex;flex-wrap:wrap;gap:38px;margin:0;padding:0;list-style:none}
+.account-row li{display:flex;align-items:center;gap:13px}
+.account-avatar{width:48px;height:48px;border-radius:4px;object-fit:cover;
   border:1px solid var(--line-strong)}
-.account-identity{display:grid;gap:2px}
-.account-identity strong{font:500 16px/1.2 Manrope,Arial,sans-serif;letter-spacing:-.01em;
+.account-identity{display:grid;gap:3px}
+.account-identity strong{font:600 18px/1.15 Manrope,Arial,sans-serif;letter-spacing:-.015em;
   color:var(--text-primary);text-transform:none}
-.account-identity span{display:flex;align-items:center;gap:6px;font:10px/1 Jet,monospace;
+.account-identity span{display:flex;align-items:center;gap:7px;font:11px/1 Jet,monospace;
   letter-spacing:.12em;color:var(--text-secondary);text-transform:uppercase}
-.account-identity small{font:10px/1 Jet,monospace;letter-spacing:.12em;color:var(--text-faint)}
+/* A login that is live right now is machine state, which is exactly what the
+   cold accent is for — so the whole line lights, not just the dot. An offline
+   account keeps the neutral grey and the contrast between them is the point. */
+.account-identity span:has(.presence-dot--online){color:var(--accent)}
+.account-identity small{font:11px/1 Jet,monospace;letter-spacing:.12em;color:var(--text-faint)}
 .account-identity .presence-dot{width:6px;height:6px}
 
 /* Zero platinum stays in the row, greyed. An empty slot is a fact about the
@@ -372,6 +438,12 @@ html[data-chapter="final"] [data-target-chapter="final"] i{background:var(--acce
   .tier-grid{width:100%;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
   .data-bar{grid-column:1 / -1;order:2}
   .data-name{white-space:normal}
+
+  /* The rank-one row keeps its promotion on a phone, one step smaller: the
+     point is that it outranks the tail, not that it fills the screen. */
+  .chapter-copy--steam .data-list{gap:11px}
+  .chapter-copy--steam .data-list li:first-child .data-name{font-size:15px}
+  .chapter-copy--steam .data-list li:first-child .data-value{font-size:18px}
 
   .account-row{gap:16px}
   .account-avatar{width:34px;height:34px}
