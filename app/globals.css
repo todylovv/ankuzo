@@ -228,6 +228,38 @@ html[data-chapter="playstation"] .chapter-copy--playstation,
 html[data-chapter="presence"] .chapter-copy--presence{transform:translateY(-50%)}
 html[data-chapter="final"] .chapter-copy--final{transform:translateY(-50%)}
 
+/* The chapter's own word, oversized and cropped by the frame. Outlined rather
+   than filled: a solid slab that size would become the subject, and every
+   chapter already has one. Sitting behind the content it gives the composition
+   a second scale, which is what the frame was missing — everything used to
+   live in one column at one size on the left. */
+.chapter-ghost{position:absolute;z-index:1;right:calc(var(--gutter) * -0.55);top:50%;
+  transform:translateY(-50%) translateX(28px);pointer-events:none;user-select:none;
+  font:700 clamp(7rem,19vw,17rem)/.78 Unbounded,Manrope,Arial,sans-serif;
+  letter-spacing:-.05em;white-space:nowrap;color:transparent;
+  -webkit-text-stroke:1px var(--line-strong);
+  opacity:0;transition:opacity .8s ease,transform 1.1s cubic-bezier(.16,.84,.3,1)}
+.chapter-ghost::after{content:attr(data-word)}
+html[data-chapter="steam"] .chapter-ghost,
+html[data-chapter="playstation"] .chapter-ghost,
+html[data-chapter="presence"] .chapter-ghost,
+html[data-chapter="final"] .chapter-ghost{opacity:.5;transform:translateY(-50%) translateX(0)}
+/* PLAYSTATION mirrors the layout, so its word crosses to the other edge too. */
+html[data-chapter="playstation"] .chapter-ghost{right:auto;left:calc(var(--gutter) * -0.55);
+  transform:translateY(-50%) translateX(0)}
+
+/* Rows arrive one after another rather than all at once: a list that appears
+   whole reads as a screenshot, a list that assembles reads as a reveal. */
+.data-list li{opacity:0;transform:translateY(9px);
+  transition:opacity .5s ease,transform .6s cubic-bezier(.16,.84,.3,1)}
+.chapter-copy[data-active="true"] .data-list li{opacity:1;transform:none}
+.data-list li:nth-child(1){transition-delay:.06s}
+.data-list li:nth-child(2){transition-delay:.13s}
+.data-list li:nth-child(3){transition-delay:.2s}
+.data-list li:nth-child(4){transition-delay:.27s}
+.data-list li:nth-child(5){transition-delay:.34s}
+.chapter-copy[data-active="true"] .data-bar i{transition-delay:inherit}
+
 .chapter-nav{position:absolute;z-index:8;right:var(--gutter);top:50%;display:grid;gap:14px;transform:translateY(-50%);justify-items:end}
 .chapter-nav button{display:grid;grid-template-columns:auto 14px;align-items:center;gap:8px;padding:3px 0;border:0;background:transparent;color:var(--text-faint);text-align:right;cursor:pointer;font:11px/1 Jet,monospace;letter-spacing:.12em;text-transform:uppercase;transition:color .25s}
 .chapter-nav i{display:block;width:7px;height:1px;background:currentColor;transition:width .25s}
@@ -267,21 +299,83 @@ html[data-chapter="final"] [data-target-chapter="final"] i{background:var(--acce
 .review-mobile .experience-stage{height:min(844px,100svh)}
 
 @media(max-width:800px){
+  /* The phone gets a different composition, not a squeezed one.
+     Vertically the frame splits: the artefact keeps the upper half, the type
+     owns the lower. Horizontally there is only one rail — mirroring the layout
+     buys no room on a 390px screen and only makes the text jump sides. */
   .experience-header{grid-template-columns:1fr auto}
   .header-tools{gap:11px}
+
   .chapter-copy{max-width:none;width:calc(100% - var(--gutter) * 2)}
-  .chapter-copy--portal{bottom:96px}
-  .chapter-figure{font-size:19vw!important}
-  .chapter-figure--word{font-size:13vw!important}
-  .chapter-note{max-width:none}
-  .data-list{width:100%}
-  .data-list li{grid-template-columns:1fr 3rem auto;gap:10px}
-  .chapter-copy--final h2{font-size:22vw}
-  .chapter-nav{top:auto;bottom:52px;display:flex;gap:14px;transform:none}
-  .chapter-nav button{display:flex;gap:4px}
+  .chapter-copy--portal{bottom:calc(var(--gutter) + env(safe-area-inset-bottom,0px) + 58px)}
+
+  .chapter-copy--steam,.chapter-copy--playstation,.chapter-copy--presence{
+    top:auto;bottom:calc(var(--gutter) + env(safe-area-inset-bottom,0px) + 58px);
+    transform:none;gap:13px;justify-items:start;text-align:left
+  }
+  /* Cancel the desktop mirror completely, including its right-to-left rows. */
+  .chapter-copy--playstation{left:var(--gutter);right:auto;justify-items:start;text-align:left}
+  .chapter-copy--playstation .data-list li{direction:ltr}
+  .chapter-copy--playstation .data-value{text-align:right}
+  .chapter-copy--playstation .chapter-eyebrow{flex-direction:row}
+  html[data-chapter="steam"] .chapter-copy--steam,
+  html[data-chapter="playstation"] .chapter-copy--playstation,
+  html[data-chapter="presence"] .chapter-copy--presence,
+  html[data-chapter="final"] .chapter-copy--final{transform:none}
+
+  .chapter-figure{font-size:23vw!important}
+  .chapter-figure--word{font-size:15vw!important}
+  .chapter-copy--final h2{font-size:26vw}
+  .chapter-note{max-width:none;font-size:10px!important;letter-spacing:.11em}
+
+  /* The ghost word stays, cropped harder: at this width it reads as a texture
+     behind the type rather than as a second headline competing with it. */
+  .chapter-ghost{right:auto;left:calc(var(--gutter) * -0.7);top:32%;
+    font-size:38vw;-webkit-text-stroke-width:1px}
+  html[data-chapter="playstation"] .chapter-ghost{left:calc(var(--gutter) * -0.7)}
+  html[data-chapter="steam"] .chapter-ghost,
+  html[data-chapter="playstation"] .chapter-ghost,
+  html[data-chapter="presence"] .chapter-ghost,
+  html[data-chapter="final"] .chapter-ghost{opacity:.34;transform:translateY(-50%)}
+
+  /* Three columns do not fit in 390px, so the bar moves under its row and
+     spans the full width — the proportion is still readable, and the name no
+     longer has to be truncated to make space for it. */
+  .data-list{width:100%;gap:11px}
+  .data-list li{grid-template-columns:1fr auto;gap:4px 12px}
+  .data-list--tiers li{grid-template-columns:auto 1fr auto}
+  .data-bar{grid-column:1 / -1;order:2}
+  .data-list--tiers .data-bar{grid-column:1 / -1}
+  .data-name{white-space:normal}
+
+  .account-row{gap:16px}
+  .account-avatar{width:34px;height:34px}
+  .account-identity strong{font-size:14px}
+
+  .discord-card{width:100%}
+  .discord-body{padding:46px 14px 14px}
+  .discord-avatar,.discord-avatar-wrap{width:56px;height:56px}
+  .discord-bio{font-size:12px}
+
+  /* Thumb reach, and clear of the iPhone home indicator. */
+  .chapter-nav{top:auto;bottom:calc(env(safe-area-inset-bottom,0px) + 18px);
+    right:auto;left:var(--gutter);display:flex;gap:16px;transform:none;justify-items:stretch}
+  .chapter-nav button{display:flex;gap:4px;min-height:34px;align-items:center}
   .chapter-nav button b{display:none}
-  .chapter-nav i{width:6px}
-  .review-nav{bottom:88px}
+  .chapter-nav i{width:16px;height:2px}
+  .chapter-nav button:hover i,.chapter-nav button:focus-visible i{width:22px}
+  .experience-meter{bottom:calc(env(safe-area-inset-bottom,0px) + 26px)}
+  .review-nav{bottom:calc(env(safe-area-inset-bottom,0px) + 74px)}
+}
+
+/* Short landscape phones have no room for a bottom-anchored stack at all. */
+@media(max-height:520px) and (orientation:landscape){
+  .chapter-copy--steam,.chapter-copy--playstation,.chapter-copy--presence{
+    bottom:auto;top:var(--gutter);gap:9px
+  }
+  .chapter-figure{font-size:11vh!important}
+  .data-list li:nth-child(n+4){display:none}
+  .chapter-ghost{font-size:22vh}
 }
 
 @media(prefers-reduced-motion:reduce){

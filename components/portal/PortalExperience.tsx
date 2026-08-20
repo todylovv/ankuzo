@@ -11,6 +11,7 @@ import {
   PerspectiveCamera,
   Vector3,
 } from "three";
+import { Atmosphere } from "./Atmosphere";
 import { ContinuousWorld } from "./ContinuousWorld";
 import { DataField } from "./DataField";
 import { PortalTwentyTwo } from "./FracturedTwo";
@@ -34,6 +35,14 @@ const REVIEW_STATES = [
   { scene: "presence", frame: "hold", progress: 0.75 },
   { scene: "final", frame: "22", progress: 1 },
 ] as const;
+
+/** The oversized word standing behind each chapter. */
+const GHOST_WORDS: Record<string, string> = {
+  steam: "STEAM",
+  playstation: "PLAYSTATION",
+  presence: "DISCORD",
+  final: "22",
+};
 
 /** Controls that own the space bar / arrow keys themselves. */
 const INTERACTIVE_SELECTOR = "button, a, input, select, textarea, [contenteditable]";
@@ -179,17 +188,19 @@ function CameraRig({ portal, master }: {
   return null;
 }
 
-function ExperienceScene({ target, rendered, portal, immediate, archiveCount, onChapterChange }: {
+function ExperienceScene({ target, rendered, portal, immediate, archiveCount, reducedMotion, onChapterChange }: {
   target: MutableRefObject<number>;
   rendered: MutableRefObject<number>;
   portal: MutableRefObject<number>;
   immediate: boolean;
   /** One background point per record, so the depth is the size of the archive. */
   archiveCount: number;
+  reducedMotion: boolean;
   onChapterChange: (chapter: string) => void;
 }) {
   return (
     <>
+      <Atmosphere progress={rendered} reducedMotion={reducedMotion} />
       <SceneLighting />
       {/* What the mirror is given to show. The order matters more than the
           numbers: a broad sky and a broad floor first, so the faces of the
@@ -453,7 +464,14 @@ export function PortalExperience() {
    */
   const chapterState = (id: string) => {
     const hidden = activeChapter !== id;
-    return { inert: hidden, "aria-hidden": hidden || undefined };
+    // `data-active` is what the staggered row reveal keys off: CSS cannot see
+    // React state, and driving it from the same place as `inert` keeps the
+    // animation and the accessibility tree from ever disagreeing.
+    return {
+      inert: hidden,
+      "aria-hidden": hidden || undefined,
+      "data-active": hidden ? undefined : "true",
+    };
   };
 
   return (
@@ -465,7 +483,7 @@ export function PortalExperience() {
           camera={{ position: [0, 0, 13.5], fov: 35, near: 0.035, far: 70 }}
           gl={{ antialias: true, alpha: false, toneMapping: ACESFilmicToneMapping, toneMappingExposure: 1.02 }}>
           <ExperienceScene target={targetProgress} rendered={renderedProgress} portal={portalProgress}
-            archiveCount={figures.archiveCount} onChapterChange={setActiveChapter}
+            archiveCount={figures.archiveCount} reducedMotion={reducedMotion} onChapterChange={setActiveChapter}
             immediate={Boolean(reviewState) || reducedMotion} />
         </Canvas>
 
@@ -475,6 +493,13 @@ export function PortalExperience() {
           <div className="header-tools">
           </div>
         </header>
+
+        {/* The platform's name at a scale nothing else on the site uses, cropped
+            by the frame. It fills the half of the screen the artefact leaves
+            empty with something that still means what the chapter means, and
+            the jump from 11px labels to this is most of what makes the frame
+            feel composed rather than stacked. */}
+        <div className="chapter-ghost" aria-hidden="true" data-word={GHOST_WORDS[activeChapter] ?? ""} />
 
         <div className="chapter-copy chapter-copy--portal" {...chapterState("portal")}>
           {/* The entrance is the scene itself: no overlay type competes with it.
