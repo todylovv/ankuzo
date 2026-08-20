@@ -81,7 +81,19 @@ button{font:inherit}
    drawing a card: it has no edge, no border and fades out well before the text
    block ends, so it reads as atmosphere rather than chrome. */
 .chapter-copy{position:absolute;z-index:5;pointer-events:none;opacity:0;visibility:hidden;transition:opacity .45s ease,visibility 0s linear .45s,transform .7s cubic-bezier(.2,.7,.2,1);font-family:Jet,monospace}
-.chapter-copy::before{content:"";position:absolute;z-index:-1;inset:-34px -44px;background:radial-gradient(115% 115% at 50% 50%,var(--overlay) 0%,var(--overlay) 32%,transparent 76%);pointer-events:none}
+/* No scrim box behind the copy. A rectangle of overlay, however soft its
+   gradient, still has rectangular bounds, and at this block width the edge
+   became visible as a panel sitting on the scene. The contrast is bought back
+   from the frame instead: one wide gradient anchored to the rail, with no
+   edge of its own anywhere near the text. */
+.experience-stage::after{content:"";position:absolute;z-index:4;inset:0;pointer-events:none;
+  background:linear-gradient(100deg,var(--overlay) 0%,
+    color-mix(in srgb,var(--overlay) 62%,transparent) 26%,transparent 58%)}
+html[data-chapter="playstation"] .experience-stage::after{
+  background:linear-gradient(260deg,var(--overlay) 0%,
+    color-mix(in srgb,var(--overlay) 62%,transparent) 26%,transparent 58%)}
+html[data-chapter="portal"] .experience-stage::after{opacity:0}
+.experience-stage::after{transition:opacity .6s ease,background .8s ease}
 .chapter-copy p,.chapter-copy>span,.chapter-copy div{margin:0;color:var(--text-secondary);font:11px/1.45 Jet,monospace;letter-spacing:.16em;text-transform:uppercase}
 .chapter-copy h1,.chapter-copy h2{margin:0;font-family:Unbounded,Manrope,Arial,sans-serif;letter-spacing:-.045em}
 /* Every chapter hangs off the same left rail. A consistent spine is what makes
@@ -228,26 +240,6 @@ html[data-chapter="playstation"] .chapter-copy--playstation,
 html[data-chapter="presence"] .chapter-copy--presence{transform:translateY(-50%)}
 html[data-chapter="final"] .chapter-copy--final{transform:translateY(-50%)}
 
-/* The chapter's own word, oversized and cropped by the frame. Outlined rather
-   than filled: a solid slab that size would become the subject, and every
-   chapter already has one. Sitting behind the content it gives the composition
-   a second scale, which is what the frame was missing — everything used to
-   live in one column at one size on the left. */
-.chapter-ghost{position:absolute;z-index:1;right:calc(var(--gutter) * -0.55);top:50%;
-  transform:translateY(-50%) translateX(28px);pointer-events:none;user-select:none;
-  font:700 clamp(7rem,19vw,17rem)/.78 Unbounded,Manrope,Arial,sans-serif;
-  letter-spacing:-.05em;white-space:nowrap;color:transparent;
-  -webkit-text-stroke:1px var(--line-strong);
-  opacity:0;transition:opacity .8s ease,transform 1.1s cubic-bezier(.16,.84,.3,1)}
-.chapter-ghost::after{content:attr(data-word)}
-html[data-chapter="steam"] .chapter-ghost,
-html[data-chapter="playstation"] .chapter-ghost,
-html[data-chapter="presence"] .chapter-ghost,
-html[data-chapter="final"] .chapter-ghost{opacity:.5;transform:translateY(-50%) translateX(0)}
-/* PLAYSTATION mirrors the layout, so its word crosses to the other edge too. */
-html[data-chapter="playstation"] .chapter-ghost{right:auto;left:calc(var(--gutter) * -0.55);
-  transform:translateY(-50%) translateX(0)}
-
 /* Rows arrive one after another rather than all at once: a list that appears
    whole reads as a screenshot, a list that assembles reads as a reveal. */
 .data-list li{opacity:0;transform:translateY(9px);
@@ -328,16 +320,6 @@ html[data-chapter="final"] [data-target-chapter="final"] i{background:var(--acce
   .chapter-copy--final h2{font-size:26vw}
   .chapter-note{max-width:none;font-size:10px!important;letter-spacing:.11em}
 
-  /* The ghost word stays, cropped harder: at this width it reads as a texture
-     behind the type rather than as a second headline competing with it. */
-  .chapter-ghost{right:auto;left:calc(var(--gutter) * -0.7);top:32%;
-    font-size:38vw;-webkit-text-stroke-width:1px}
-  html[data-chapter="playstation"] .chapter-ghost{left:calc(var(--gutter) * -0.7)}
-  html[data-chapter="steam"] .chapter-ghost,
-  html[data-chapter="playstation"] .chapter-ghost,
-  html[data-chapter="presence"] .chapter-ghost,
-  html[data-chapter="final"] .chapter-ghost{opacity:.34;transform:translateY(-50%)}
-
   /* Three columns do not fit in 390px, so the bar moves under its row and
      spans the full width — the proportion is still readable, and the name no
      longer has to be truncated to make space for it. */
@@ -357,6 +339,13 @@ html[data-chapter="final"] [data-target-chapter="final"] i{background:var(--acce
   .discord-avatar,.discord-avatar-wrap{width:56px;height:56px}
   .discord-bio{font-size:12px}
 
+  /* The copy sits at the bottom on a phone, so the contrast comes from below
+     rather than from the side. */
+  .experience-stage::after,
+  html[data-chapter="playstation"] .experience-stage::after{
+    background:linear-gradient(0deg,var(--overlay) 0%,
+      color-mix(in srgb,var(--overlay) 58%,transparent) 30%,transparent 62%)}
+
   /* Thumb reach, and clear of the iPhone home indicator. */
   .chapter-nav{top:auto;bottom:calc(env(safe-area-inset-bottom,0px) + 18px);
     right:auto;left:var(--gutter);display:flex;gap:16px;transform:none;justify-items:stretch}
@@ -375,7 +364,6 @@ html[data-chapter="final"] [data-target-chapter="final"] i{background:var(--acce
   }
   .chapter-figure{font-size:11vh!important}
   .data-list li:nth-child(n+4){display:none}
-  .chapter-ghost{font-size:22vh}
 }
 
 @media(prefers-reduced-motion:reduce){

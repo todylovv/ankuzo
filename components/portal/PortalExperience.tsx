@@ -35,14 +35,6 @@ const REVIEW_STATES = [
   { scene: "final", frame: "22", progress: 1 },
 ] as const;
 
-/** The oversized word standing behind each chapter. */
-const GHOST_WORDS: Record<string, string> = {
-  steam: "STEAM",
-  playstation: "PLAYSTATION",
-  presence: "DISCORD",
-  final: "22",
-};
-
 /** Controls that own the space bar / arrow keys themselves. */
 const INTERACTIVE_SELECTOR = "button, a, input, select, textarea, [contenteditable]";
 const REDUCED_MOTION_QUERY = "(prefers-reduced-motion: reduce)";
@@ -493,13 +485,6 @@ export function PortalExperience() {
           <div className="header-tools">
           </div>
         </header>
-
-        {/* The platform's name at a scale nothing else on the site uses, cropped
-            by the frame. It fills the half of the screen the artefact leaves
-            empty with something that still means what the chapter means, and
-            the jump from 11px labels to this is most of what makes the frame
-            feel composed rather than stacked. */}
-        <div className="chapter-ghost" aria-hidden="true" data-word={GHOST_WORDS[activeChapter] ?? ""} />
 
         <div className="chapter-copy chapter-copy--portal" {...chapterState("portal")}>
           {/* The entrance is the scene itself: no overlay type competes with it.
