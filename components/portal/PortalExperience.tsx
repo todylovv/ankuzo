@@ -13,9 +13,8 @@ import {
 } from "three";
 import { Atmosphere } from "./Atmosphere";
 import { ContinuousWorld } from "./ContinuousWorld";
-import { DataField } from "./DataField";
+import { RibbonField } from "./RibbonField";
 import { PortalTwentyTwo } from "./FracturedTwo";
-import { GothicEnvironment } from "./GothicEnvironment";
 import { CHAPTERS, PORTAL_END, chapterFor, clamp, remapPortalTravel, smoothstep } from "./progress";
 import { SCENE } from "./theme";
 import { useExperienceData } from "../data/useExperienceData";
@@ -188,19 +187,20 @@ function CameraRig({ portal, master }: {
   return null;
 }
 
-function ExperienceScene({ target, rendered, portal, immediate, archiveCount, reducedMotion, onChapterChange }: {
+function ExperienceScene({ target, rendered, portal, immediate, archiveDensity, reducedMotion, onChapterChange }: {
   target: MutableRefObject<number>;
   rendered: MutableRefObject<number>;
   portal: MutableRefObject<number>;
   immediate: boolean;
   /** One background point per record, so the depth is the size of the archive. */
-  archiveCount: number;
+  /** Scales the ribbon density — the archive's size, gently applied. */
+  archiveDensity: number;
   reducedMotion: boolean;
   onChapterChange: (chapter: string) => void;
 }) {
   return (
     <>
-      <Atmosphere progress={rendered} reducedMotion={reducedMotion} />
+      <Atmosphere reducedMotion={reducedMotion} />
       <SceneLighting />
       {/* What the mirror is given to show. The order matters more than the
           numbers: a broad sky and a broad floor first, so the faces of the
@@ -230,8 +230,7 @@ function ExperienceScene({ target, rendered, portal, immediate, archiveCount, re
         <Lightformer form="rect" intensity={1.9} color={SCENE.reflectionWarm}
           position={[5.6, -1.6, 2.4]} rotation={[0, -0.92, 0]} scale={[1.1, 4.6, 1]} />
       </Environment>
-      <DataField progress={rendered} count={archiveCount} />
-      <GothicEnvironment />
+      <RibbonField progress={rendered} density={archiveDensity} reducedMotion={reducedMotion} />
       <ContinuousWorld progress={rendered} />
       <PortalTwentyTwo progress={portal} masterProgress={rendered} />
       <CameraRig portal={portal} master={rendered} />
@@ -297,7 +296,8 @@ export function PortalExperience() {
       + experienceData.playstation.games.length;
 
     return {
-      archiveCount,
+      // 416 records maps to roughly one; a bigger library thickens the room.
+      archiveDensity: Math.min(1.5, Math.max(0.6, archiveCount / 420)),
       steamProfiles: steam.profiles.slice(0, 2).map((profile) => ({
         id: profile.id,
         nickname: profile.nickname,
@@ -483,7 +483,7 @@ export function PortalExperience() {
           camera={{ position: [0, 0, 13.5], fov: 35, near: 0.035, far: 70 }}
           gl={{ antialias: true, alpha: false, toneMapping: ACESFilmicToneMapping, toneMappingExposure: 1.02 }}>
           <ExperienceScene target={targetProgress} rendered={renderedProgress} portal={portalProgress}
-            archiveCount={figures.archiveCount} reducedMotion={reducedMotion} onChapterChange={setActiveChapter}
+            archiveDensity={figures.archiveDensity} reducedMotion={reducedMotion} onChapterChange={setActiveChapter}
             immediate={Boolean(reviewState) || reducedMotion} />
         </Canvas>
 
