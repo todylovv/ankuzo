@@ -30,6 +30,9 @@ IMAGE=ankuzo-updater:latest
 STAGING=$(mktemp -d "${DATA%/}.staging.XXXXXX")
 trap 'rm -rf "$STAGING"' EXIT
 cp "$DATA"/*.json "$STAGING"/ 2>/dev/null || true
+# The updater image drops to the unprivileged `node` user (uid 1000), so the
+# staging directory has to belong to it or every write fails with EACCES.
+chown -R 1000:1000 "$STAGING"
 
 docker run --rm \
   ${ENV_FILE:+$([ -f "$ENV_FILE" ] && echo "--env-file $ENV_FILE")} \
