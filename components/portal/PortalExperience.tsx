@@ -12,6 +12,7 @@ import {
   Vector3,
 } from "three";
 import { ContinuousWorld } from "./ContinuousWorld";
+import { DataField } from "./DataField";
 import { PortalTwentyTwo } from "./FracturedTwo";
 import { GothicEnvironment } from "./GothicEnvironment";
 import { CHAPTERS, PORTAL_END, chapterFor, clamp, remapPortalTravel, smoothstep } from "./progress";
@@ -178,11 +179,13 @@ function CameraRig({ portal, master }: {
   return null;
 }
 
-function ExperienceScene({ target, rendered, portal, immediate, onChapterChange }: {
+function ExperienceScene({ target, rendered, portal, immediate, archiveCount, onChapterChange }: {
   target: MutableRefObject<number>;
   rendered: MutableRefObject<number>;
   portal: MutableRefObject<number>;
   immediate: boolean;
+  /** One background point per record, so the depth is the size of the archive. */
+  archiveCount: number;
   onChapterChange: (chapter: string) => void;
 }) {
   return (
@@ -216,6 +219,7 @@ function ExperienceScene({ target, rendered, portal, immediate, onChapterChange 
         <Lightformer form="rect" intensity={1.9} color={SCENE.reflectionWarm}
           position={[5.6, -1.6, 2.4]} rotation={[0, -0.92, 0]} scale={[1.1, 4.6, 1]} />
       </Environment>
+      <DataField progress={rendered} count={archiveCount} />
       <GothicEnvironment />
       <ContinuousWorld progress={rendered} />
       <PortalTwentyTwo progress={portal} masterProgress={rendered} />
@@ -278,7 +282,11 @@ export function PortalExperience() {
     ];
     const tierPeak = Math.max(1, ...tiers.map((tier) => tier.value));
 
+    const archiveCount = (steam.totalGames ?? steam.games.length)
+      + experienceData.playstation.games.length;
+
     return {
+      archiveCount,
       steamProfiles: steam.profiles.slice(0, 2).map((profile) => ({
         id: profile.id,
         nickname: profile.nickname,
@@ -457,7 +465,7 @@ export function PortalExperience() {
           camera={{ position: [0, 0, 13.5], fov: 35, near: 0.035, far: 70 }}
           gl={{ antialias: true, alpha: false, toneMapping: ACESFilmicToneMapping, toneMappingExposure: 1.02 }}>
           <ExperienceScene target={targetProgress} rendered={renderedProgress} portal={portalProgress}
-            onChapterChange={setActiveChapter}
+            archiveCount={figures.archiveCount} onChapterChange={setActiveChapter}
             immediate={Boolean(reviewState) || reducedMotion} />
         </Canvas>
 
