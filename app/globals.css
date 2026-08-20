@@ -12,70 +12,48 @@
 @font-face{font-family:Unbounded;src:url('/fonts/unbounded-latin.woff2') format('woff2');font-display:swap;font-weight:200 900;unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+2000-206F,U+2074,U+20AC,U+2122,U+2212}
 @font-face{font-family:Unbounded;src:url('/fonts/unbounded-cyrillic.woff2') format('woff2');font-display:swap;font-weight:200 900;unicode-range:U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116}
 
-/* One palette, two grounds.
+/* One palette, one ground.
+   Designed as a lit room rather than as a set of swatches, because the
+   artefact is a mirror and a mirror only ever shows its surroundings. Two
+   themes forced a compromise environment, which is precisely why the glyph
+   used to read as a black cut-out; with a single ground the light can be
+   tuned for it. See components/portal/theme.ts — the two must move together.
 
-   Steam, PlayStation, Discord and TeamSpeak all sit within a narrow blue
-   sector around 215deg, so rather than four brand colours fighting each other
-   there is a single cold ramp meaning "network, machine, live state" and a
-   single warm counter-accent meaning "the person behind it". They are never
-   both at full strength in one frame; one is always damped.
+   The ground is not pure black on purpose: on #000 the fog, the floor and the
+   object's shadow side collapse into one value and the glyph loses volume.
 
-   Every text/ground pair below is measured, not eyeballed. Small text needs
-   4.5:1 and focus indicators need 3:1 (WCAG AA) — the weakest pair here is
-   --text-faint at 4.9:1 on either ground. */
+   Contrast against #0A0E14, measured rather than eyeballed — small text needs
+   4.5:1, focus rings 3:1. The weakest pair here is --text-faint at 5.0:1. */
 :root{
-  color-scheme:light;
-  --bg-primary:#EDEBE4;--bg-depth:#E3E0D7;--surface:#F7F6F1;--surface-secondary:#DCD8CE;--architecture:#C6C1B6;
-  /* 14.7:1 / 5.7:1 / 4.9:1 on --bg-primary */
-  --text-primary:#14171C;--text-secondary:#565C64;--text-faint:#5F666D;
-  --chrome-base:#97A1AC;--chrome-mid:#B8C0C8;--chrome-highlight:#E4E9EF;--chrome-shadow:#4A525C;
-  /* cold signal — 5.7:1, safe as a 2px focus ring */
-  --accent:#2B4FCC;--accent-soft:#5B7FE0;--accent-contrast:#F7F6F1;
-  /* warm counter-accent: authored voice only, never data */
-  --ember:#C4502A;
-  --line:rgba(20,23,28,.18);--line-strong:rgba(20,23,28,.4);--overlay:rgba(237,235,228,.82);--shadow-deep:#14171C;
-  --experience-progress:0;--portal-progress:0;--theme-progress:0;
+  color-scheme:dark;
+  --bg-primary:#0A0E14;--bg-depth:#080B10;--surface:#141922;--surface-secondary:#1C2230;--architecture:#232A36;
+  /* 16.1:1 / 7.4:1 / 5.0:1 */
+  --text-primary:#EDEBE6;--text-secondary:#99A1AD;--text-faint:#78818E;
+  --chrome-base:#98A3B0;--chrome-mid:#B6C0CC;--chrome-highlight:#F2F5F8;--chrome-shadow:#3B4450;
+  /* Cold signal — machine, network, live state. 6.1:1. */
+  --accent:#5B8CFF;--accent-soft:#A8C4FF;--accent-contrast:#06080C;
+  /* The single warm counter-accent — the author, never the data. 7.5:1. */
+  --ember:#FF7A45;
+  --line:rgba(237,235,230,.16);--line-strong:rgba(237,235,230,.36);
+  --overlay:rgba(10,14,20,.84);--shadow-deep:#06080C;
+  --experience-progress:0;--portal-progress:0;
 
-  /* One outer margin for the whole site. Every chapter and every piece of
-     chrome measures from this, so the six hand-picked insets that used to sit
-     at 28/72/90/140/74/64px collapse into a single line the eye can trust. */
+  /* One outer margin for the whole site — every chapter and every piece of
+     chrome measures from this. */
   --gutter:clamp(24px,4.5vw,72px);
 
-  /* Modular type scale, ratio ~1.26 from an 11px mono base. Sizes stop being
-     invented per chapter: a heading is a step, and the step carries meaning.
-     Step 4 is spent exactly twice — the entrance and the exit. */
-  --t-1:11px;   /* coordinates, states, timestamps */
-  --t-0:14px;   /* captions, data values */
-  --t-1up:18px; /* the one substantive line per chapter */
+  /* Modular scale, ratio ~1.26 from an 11px mono base. A heading is a step,
+     and the step carries meaning. Step 4 is spent exactly twice. */
+  --t-1:11px;
+  --t-0:14px;
+  --t-1up:18px;
   --t-2:28px;
   --t-3:clamp(2.75rem,7vw,6rem);
   --t-4:clamp(4rem,12vw,10.5rem);
 }
-:root[data-theme="dark"]{
-  color-scheme:dark;
-  --bg-primary:#0B0E13;--bg-depth:#08090C;--surface:#141920;--surface-secondary:#1C222A;--architecture:#252B34;
-  /* 16.3:1 / 7.3:1 / 5.0:1 on --bg-primary */
-  --text-primary:#EDEAE3;--text-secondary:#9AA0A8;--text-faint:#7A828B;
-  --chrome-base:#97A1AC;--chrome-mid:#B8C0C8;--chrome-highlight:#E4E9EF;--chrome-shadow:#4A525C;
-  /* cold signal — 6.1:1 */
-  --accent:#5B8CFF;--accent-soft:#A8C4FF;--accent-contrast:#08090C;
-  --ember:#FF7A45;
-  --line:rgba(237,234,227,.18);--line-strong:rgba(237,234,227,.38);--overlay:rgba(11,14,19,.82);--shadow-deep:#05070A;
-}
-@media(prefers-color-scheme:dark){
-  :root:not([data-theme]){
-    color-scheme:dark;
-    --bg-primary:#0B0E13;--bg-depth:#08090C;--surface:#141920;--surface-secondary:#1C222A;--architecture:#252B34;
-    --text-primary:#EDEAE3;--text-secondary:#9AA0A8;--text-faint:#7A828B;
-    --chrome-base:#97A1AC;--chrome-mid:#B8C0C8;--chrome-highlight:#E4E9EF;--chrome-shadow:#4A525C;
-    --accent:#5B8CFF;--accent-soft:#A8C4FF;--accent-contrast:#08090C;
-    --ember:#FF7A45;
-    --line:rgba(237,234,227,.18);--line-strong:rgba(237,234,227,.38);--overlay:rgba(11,14,19,.82);--shadow-deep:#05070A;
-  }
-}
 *{box-sizing:border-box}
-html{background:var(--bg-primary);transition:background-color .65s ease}
-body{margin:0;overflow-x:hidden;background:var(--bg-primary);color:var(--text-primary);font-family:Manrope,Arial,sans-serif;transition:background-color .65s ease,color .65s ease}
+html{background:var(--bg-primary)}
+body{margin:0;overflow-x:hidden;background:var(--bg-primary);color:var(--text-primary);font-family:Manrope,Arial,sans-serif}
 html[data-experience-locked="true"],html[data-experience-locked="true"] body{height:100%;overflow:hidden;overscroll-behavior:none}
 button,a{color:inherit}
 button{font:inherit}
@@ -87,7 +65,7 @@ button{font:inherit}
 
 .skip-link{position:fixed;z-index:50;top:12px;left:50%;padding:8px 12px;background:var(--surface);color:var(--text-primary);font:11px/1 Jet,monospace;letter-spacing:.12em;text-decoration:none;transform:translate(-50%,-180%);transition:transform .2s}
 .skip-link:focus{transform:translate(-50%,0)}
-.experience-shell,.experience-stage{position:relative;width:100%;height:100svh;background:var(--bg-primary);transition:background-color .65s ease}
+.experience-shell,.experience-stage{position:relative;width:100%;height:100svh;background:var(--bg-primary)}
 .experience-stage{overflow:hidden;isolation:isolate;touch-action:none}
 .experience-canvas{position:absolute!important;inset:0;width:100%!important;height:100%!important}
 
@@ -96,11 +74,6 @@ button{font:inherit}
 .experience-header p{margin:0}
 .experience-header .wordmark{justify-self:start;padding:0;border:0;background:transparent;pointer-events:auto;cursor:pointer;font:700 14px/1 Manrope,Arial,sans-serif;letter-spacing:-.025em}
 .header-tools{display:flex;justify-self:end;align-items:center;gap:17px;pointer-events:auto}
-.theme-switch{display:flex;align-items:center;gap:7px;padding:5px 0;border:0;background:transparent;color:var(--text-secondary);cursor:pointer;font:11px/1 Jet,monospace;letter-spacing:.12em;text-transform:uppercase}
-.theme-switch i{position:relative;display:block;width:19px;height:8px;border:1px solid var(--line-strong);border-radius:99px;transition:border-color .65s ease}
-.theme-switch i::after{position:absolute;content:"";top:1px;left:1px;width:4px;height:4px;border-radius:50%;background:var(--accent);transform:translateX(calc(var(--theme-progress) * 11px));transition:background-color .65s ease}
-.theme-switch:hover{color:var(--text-primary)}
-.theme-switch:focus-visible,.wordmark:focus-visible{outline:2px solid var(--accent);outline-offset:5px}
 
 /* Chapter copy sits directly on the 3D scene, where the background is a moving
    chrome surface — measured as low as 1.64:1 against the body colour when the
@@ -312,7 +285,7 @@ html[data-chapter="final"] [data-target-chapter="final"] i{background:var(--acce
 }
 
 @media(prefers-reduced-motion:reduce){
-  html,body,.experience-shell,.experience-stage,.chapter-copy,.chapter-nav button,.chapter-nav i,.chapter-nav b,.theme-switch i{transition:none}
+  html,body,.experience-shell,.experience-stage,.chapter-copy,.chapter-nav button,.chapter-nav i,.chapter-nav b,.data-bar i,.figure-count{transition:none}
   .experience-meter{display:none}
 }
 

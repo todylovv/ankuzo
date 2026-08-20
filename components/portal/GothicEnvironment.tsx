@@ -1,14 +1,12 @@
 "use client";
-/* eslint-disable react/no-unknown-property, react-hooks/immutability -- R3F scene objects are updated per frame. */
+/* eslint-disable react/no-unknown-property -- R3F maps Three.js props onto JSX. */
 
-import { useFrame, useThree } from "@react-three/fiber";
+import { useThree } from "@react-three/fiber";
 import { useEffect, useMemo, useRef } from "react";
-import type { MutableRefObject } from "react";
 import {
   BoxGeometry,
   BufferGeometry,
   CatmullRomCurve3,
-  Color,
   ExtrudeGeometry,
   Group,
   MeshStandardMaterial,
@@ -17,7 +15,7 @@ import {
   TubeGeometry,
   Vector3,
 } from "three";
-import { DARK_PALETTE, LIGHT_PALETTE, mixColor } from "./theme";
+import { SCENE } from "./theme";
 
 function createPointedRib(width: number, height: number, depth: number, radius: number) {
   const points = [
@@ -113,11 +111,7 @@ function getColumnGeometries() {
 
 // The architecture holds still. It used to ease toward the cursor, which made
 // the whole set sway underneath a camera that was already moving.
-export function GothicEnvironment({
-  themeProgress,
-}: {
-  themeProgress: MutableRefObject<number>;
-}) {
+export function GothicEnvironment() {
   const group = useRef<Group>(null);
   const { size } = useThree();
   const portrait = size.width / size.height < 0.78;
@@ -125,7 +119,7 @@ export function GothicEnvironment({
   const slabs = getSlabs();
   const columns = getColumnGeometries();
   const ribMaterials = useMemo(() => ribs.map(({ opacity }) => new MeshStandardMaterial({
-    color: LIGHT_PALETTE.architecture,
+    color: SCENE.architecture,
     metalness: 0.18,
     roughness: 0.72,
     transparent: true,
@@ -133,7 +127,7 @@ export function GothicEnvironment({
     depthWrite: false,
   })), [ribs]);
   const slabMaterials = useMemo(() => slabs.map(({ opacity }) => new MeshStandardMaterial({
-    color: LIGHT_PALETTE.surface,
+    color: SCENE.surface,
     metalness: 0.08,
     roughness: 0.82,
     transparent: true,
@@ -141,34 +135,19 @@ export function GothicEnvironment({
     depthWrite: false,
   })), [slabs]);
   const stoneMaterial = useMemo(() => new MeshStandardMaterial({
-    color: LIGHT_PALETTE.architecture,
+    color: SCENE.architecture,
     metalness: 0.05,
     roughness: 0.88,
     transparent: true,
     opacity: 0.22,
     depthWrite: false,
   }), []);
-  const working = useMemo(() => new Color(), []);
 
   // Materials are passed as props, so R3F will not dispose them for us.
   useEffect(() => () => ribMaterials.forEach((material) => material.dispose()), [ribMaterials]);
   useEffect(() => () => slabMaterials.forEach((material) => material.dispose()), [slabMaterials]);
   useEffect(() => () => stoneMaterial.dispose(), [stoneMaterial]);
 
-  useFrame(() => {
-    const t = themeProgress.current;
-    ribMaterials.forEach((material, index) => {
-      mixColor(material.color, LIGHT_PALETTE.architecture, DARK_PALETTE.architecture, t);
-      material.opacity = ribs[index].opacity + t * 0.045;
-    });
-    slabMaterials.forEach((material, index) => {
-      mixColor(material.color, LIGHT_PALETTE.surface, DARK_PALETTE.surface, t);
-      material.opacity = slabs[index].opacity + t * 0.075;
-    });
-    mixColor(working, LIGHT_PALETTE.surface, DARK_PALETTE.surface, t);
-    stoneMaterial.color.copy(working);
-    stoneMaterial.opacity = 0.18 + t * 0.1;
-  });
 
   const sideX = portrait ? 4.7 : 7.2;
   return (

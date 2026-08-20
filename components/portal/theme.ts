@@ -1,122 +1,67 @@
-import { Color, DataTexture, LinearFilter, RGBAFormat, SRGBColorSpace } from "three";
+import { DataTexture, LinearFilter, RGBAFormat, SRGBColorSpace } from "three";
 
-export type ThemeName = "light" | "dark";
+/**
+ * One palette, designed as a lighting environment rather than as a set of
+ * tokens.
+ *
+ * The artefact is a mirror — metalness 0.98, roughness 0.115 — so it has no
+ * colour of its own and shows whatever surrounds it. That makes the light the
+ * primary design decision and the swatches secondary. It is also why the site
+ * carries a single theme now: a mirror cannot be lit well for two grounds at
+ * once, and the compromise environment was exactly why the glyph used to read
+ * as a black silhouette instead of as polished metal.
+ *
+ * The ground is deliberately not pure black. On #000 the fog, the floor and
+ * the object's own shadow side all collapse into the same nothing, and the
+ * glyph loses its volume.
+ */
+export const SCENE = {
+  /** Deepest value — fog and the far end of the room. */
+  void: "#06080C",
+  /** The ground everything sits on. */
+  background: "#0A0E14",
+  depth: "#080B10",
+  surface: "#141922",
+  architecture: "#232A36",
 
-export type ScenePalette = {
-  background: string;
-  depth: string;
-  surface: string;
-  architecture: string;
-  chrome: string;
-  chromeSide: string;
-  chromeSecondary: string;
-  chromeHighlight: string;
-  chromeShadow: string;
-  raw: string;
-  fracture: string;
-  crackLight: string;
-  ambient: string;
-  key: string;
-  fill: string;
-  rear: string;
-  reflectionTop: string;
-  reflectionSide: string;
-  reflectionEdge: string;
-  reflectionShadow: string;
-  reflectionFloor: string;
-  ambientIntensity: number;
-  keyIntensity: number;
-  fillIntensity: number;
-  rearIntensity: number;
-  exposure: number;
-};
+  /** What the mirror is made to show. */
+  chrome: "#B6C0CC",
+  chromeSide: "#68727F",
+  chromeSecondary: "#98A3B0",
+  chromeHighlight: "#F2F5F8",
+  chromeShadow: "#3B4450",
+  raw: "#1B2029",
+  fracture: "#06080C",
+  crackLight: "#E6ECF3",
 
-export const SCENE_PALETTES: Record<ThemeName, ScenePalette> = {
-  // Mirrors the CSS custom properties in app/globals.css. When one side moves
-  // the other has to follow, or the HTML overlays stop belonging to the scene
-  // behind them.
-  light: {
-    background: "#EDEBE4",
-    depth: "#E3E0D7",
-    surface: "#F7F6F1",
-    architecture: "#C6C1B6",
-    chrome: "#97A1AC",
-    chromeSide: "#4A525C",
-    chromeSecondary: "#7C8691",
-    chromeHighlight: "#E4E9EF",
-    chromeShadow: "#4A525C",
-    raw: "#6B737C",
-    fracture: "#14171C",
-    crackLight: "#F7F6F1",
-    ambient: "#DCD8CE",
-    key: "#FFFDF8",
-    fill: "#B8C0C8",
-    rear: "#F2F0EA",
-    reflectionTop: "#FFFDF8",
-    reflectionSide: "#C3CBD3",
-    reflectionEdge: "#F2F0EA",
-    reflectionShadow: "#5C646D",
-    reflectionFloor: "#DCD8CE",
-    ambientIntensity: 0.72,
-    keyIntensity: 3.65,
-    fillIntensity: 1.6,
-    rearIntensity: 2.75,
-    exposure: 1.08,
-  },
-  dark: {
-    background: "#0B0E13",
-    depth: "#08090C",
-    surface: "#141920",
-    architecture: "#252B34",
-    chrome: "#B8C0C8",
-    chromeSide: "#6B737C",
-    chromeSecondary: "#97A1AC",
-    chromeHighlight: "#E4E9EF",
-    chromeShadow: "#4A525C",
-    raw: "#1C222A",
-    fracture: "#05070A",
-    crackLight: "#E4E9EF",
-    ambient: "#97A1AC",
-    key: "#EDF1F4",
-    fill: "#8892A0",
-    rear: "#D5DBE0",
-    reflectionTop: "#F2F4F6",
-    reflectionSide: "#A2ACB6",
-    reflectionEdge: "#E4E9EF",
-    reflectionShadow: "#4A525C",
-    reflectionFloor: "#9BA4AC",
-    ambientIntensity: 0.36,
-    keyIntensity: 3.9,
-    fillIntensity: 1.45,
-    rearIntensity: 2.9,
-    exposure: 1.04,
-  },
-};
+  /* Lights. The key is cool and wide, the fill is dimmer and warmer so the
+     shadow side never goes fully blue, and the rear rim separates the glyph
+     from the fog behind it. */
+  ambient: "#7E8896",
+  key: "#EEF3F8",
+  fill: "#7E8A99",
+  rear: "#C9D4E0",
 
-export const LIGHT_PALETTE = SCENE_PALETTES.light;
-export const DARK_PALETTE = SCENE_PALETTES.dark;
+  /* The reflection set. Broad soft planes give the glyph a gradient across its
+     faces; the two narrow strips are the specular edges that draw its
+     silhouette. Narrow strips alone — the previous arrangement — leave black
+     between them, which is what a mirror faithfully reproduces. */
+  reflectionSky: "#DCE6F2",
+  reflectionFloor: "#2A323E",
+  reflectionEdge: "#FFFFFF",
+  reflectionSide: "#93A1B2",
+  reflectionWarm: "#FFB489",
 
-const COLOR_CACHE = new Map<string, Color>();
+  ambientIntensity: 0.42,
+  keyIntensity: 3.7,
+  fillIntensity: 1.35,
+  rearIntensity: 2.6,
+  exposure: 1.06,
+} as const;
 
-function cachedColor(value: string) {
-  const existing = COLOR_CACHE.get(value);
-  if (existing) return existing;
-  const color = new Color(value);
-  COLOR_CACHE.set(value, color);
-  return color;
-}
+export type ScenePalette = typeof SCENE;
 
-export function mixColor(target: Color, light: string, dark: string, progress: number) {
-  target.lerpColors(cachedColor(light), cachedColor(dark), progress);
-  return target;
-}
-
-export function mixNumber(light: number, dark: number, progress: number) {
-  return light + (dark - light) * progress;
-}
-
-function createChromeResponseTexture() {
-  // 128px is plenty: the response is a smooth sweep with no high-frequency detail.
+export function createChromeResponseTexture() {
   const width = 128;
   const height = 128;
   const data = new Uint8Array(width * height * 4);
@@ -155,13 +100,9 @@ function createChromeResponseTexture() {
   return texture;
 }
 
-let chromeResponseTexture: DataTexture | null = null;
+let chromeResponse: DataTexture | null = null;
 
-/**
- * Immutable, shared by every chrome material for the lifetime of the module —
- * building it costs ~460k Math.exp on the main thread, so it is never disposed.
- */
+/** Lazy singleton: the gradient is identical everywhere it is used. */
 export function getChromeResponseTexture() {
-  chromeResponseTexture ??= createChromeResponseTexture();
-  return chromeResponseTexture;
+  return (chromeResponse ??= createChromeResponseTexture());
 }

@@ -7,21 +7,15 @@ import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore
 import type { CSSProperties, MutableRefObject } from "react";
 import {
   ACESFilmicToneMapping,
-  AmbientLight,
   CatmullRomCurve3,
-  Color,
-  DirectionalLight,
-  Fog,
   PerspectiveCamera,
-  PointLight,
   Vector3,
 } from "three";
 import { ContinuousWorld } from "./ContinuousWorld";
 import { PortalTwentyTwo } from "./FracturedTwo";
 import { GothicEnvironment } from "./GothicEnvironment";
 import { CHAPTERS, PORTAL_END, chapterFor, clamp, remapPortalTravel, smoothstep } from "./progress";
-import { DARK_PALETTE, LIGHT_PALETTE, mixColor, mixNumber } from "./theme";
-import type { ThemeName } from "./theme";
+import { SCENE } from "./theme";
 import { useExperienceData } from "../data/useExperienceData";
 import { useLivePresence } from "../data/useLivePresence";
 import type { ExperienceSource } from "../../lib/experience-data";
@@ -44,22 +38,8 @@ const REVIEW_STATES = [
 const INTERACTIVE_SELECTOR = "button, a, input, select, textarea, [contenteditable]";
 const REDUCED_MOTION_QUERY = "(prefers-reduced-motion: reduce)";
 
-function themeFromDocument(): ThemeName {
-  if (typeof document === "undefined") return "light";
-  return document.documentElement.dataset.theme === "dark" ? "dark" : "light";
-}
 
-/** The head bootstrap and the switch both write `data-theme`; watch that. */
-function subscribeDocumentTheme(onStoreChange: () => void) {
-  const observer = new MutationObserver(onStoreChange);
-  observer.observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
-  return () => observer.disconnect();
-}
 
-/** Server (and first hydration pass) render the neutral theme, never a guess. */
-function getServerThemeSnapshot(): ThemeName {
-  return "light";
-}
 
 function subscribeReducedMotion(onStoreChange: () => void) {
   const query = window.matchMedia(REDUCED_MOTION_QUERY);
@@ -75,67 +55,27 @@ function getServerReducedMotionSnapshot(): boolean {
   return false;
 }
 
-function ThemeSceneDriver({
-  target,
-  progress,
-  immediate,
-}: {
-  target: MutableRefObject<number>;
-  progress: MutableRefObject<number>;
-  immediate: boolean;
-}) {
-  const ambient = useRef<AmbientLight>(null);
-  const key = useRef<DirectionalLight>(null);
-  const fill = useRef<DirectionalLight>(null);
-  const rear = useRef<PointLight>(null);
-  const working = useMemo(() => new Color(), []);
-  const { scene, gl } = useThree();
-
-  useFrame((_, delta) => {
-    if (immediate) progress.current = target.current;
-    else {
-      progress.current += (target.current - progress.current) * (1 - Math.exp(-delta * 7.2));
-      if (Math.abs(target.current - progress.current) < 0.001) progress.current = target.current;
-    }
-    const t = progress.current;
-    if (scene.background instanceof Color) {
-      mixColor(scene.background, LIGHT_PALETTE.background, DARK_PALETTE.background, t);
-    }
-    if (scene.fog instanceof Fog) {
-      mixColor(scene.fog.color, LIGHT_PALETTE.depth, DARK_PALETTE.depth, t);
-      scene.fog.near = mixNumber(15.5, 17, t);
-      scene.fog.far = mixNumber(38, 34, t);
-    }
-    if (ambient.current) {
-      mixColor(ambient.current.color, LIGHT_PALETTE.ambient, DARK_PALETTE.ambient, t);
-      ambient.current.intensity = mixNumber(LIGHT_PALETTE.ambientIntensity, DARK_PALETTE.ambientIntensity, t);
-    }
-    if (key.current) {
-      mixColor(key.current.color, LIGHT_PALETTE.key, DARK_PALETTE.key, t);
-      key.current.intensity = mixNumber(LIGHT_PALETTE.keyIntensity, DARK_PALETTE.keyIntensity, t);
-    }
-    if (fill.current) {
-      mixColor(fill.current.color, LIGHT_PALETTE.fill, DARK_PALETTE.fill, t);
-      fill.current.intensity = mixNumber(LIGHT_PALETTE.fillIntensity, DARK_PALETTE.fillIntensity, t);
-    }
-    if (rear.current) {
-      mixColor(rear.current.color, LIGHT_PALETTE.rear, DARK_PALETTE.rear, t);
-      rear.current.intensity = mixNumber(LIGHT_PALETTE.rearIntensity, DARK_PALETTE.rearIntensity, t);
-    }
-    mixColor(working, LIGHT_PALETTE.background, DARK_PALETTE.background, t);
-    gl.setClearColor(working, 1);
-    gl.toneMappingExposure = mixNumber(LIGHT_PALETTE.exposure, DARK_PALETTE.exposure, t);
-    document.documentElement.style.setProperty("--theme-progress", t.toFixed(3));
-  });
+/**
+ * The scene's fixed lighting. With one theme there is nothing to interpolate,
+ * so this simply declares the room: colours are set once at mount instead of
+ * being mixed on every frame, which also takes four per-frame colour blends
+ * and a CSSOM write out of the render loop.
+ */
+function SceneLighting() {
+  const { gl } = useThree();
+  useEffect(() => {
+    gl.setClearColor(SCENE.background, 1);
+    gl.toneMappingExposure = SCENE.exposure;
+  }, [gl]);
 
   return (
     <>
-      <color attach="background" args={[LIGHT_PALETTE.background]} />
-      <fog attach="fog" args={[LIGHT_PALETTE.depth, 15.5, 38]} />
-      <ambientLight ref={ambient} intensity={LIGHT_PALETTE.ambientIntensity} color={LIGHT_PALETTE.ambient} />
-      <directionalLight ref={key} position={[-6, 9, 9]} intensity={LIGHT_PALETTE.keyIntensity} color={LIGHT_PALETTE.key} />
-      <directionalLight ref={fill} position={[7, 0.5, 4]} intensity={LIGHT_PALETTE.fillIntensity} color={LIGHT_PALETTE.fill} />
-      <pointLight ref={rear} position={[0, 0, -5]} intensity={LIGHT_PALETTE.rearIntensity} color={LIGHT_PALETTE.rear} distance={13} decay={1.8} />
+      <color attach="background" args={[SCENE.background]} />
+      <fog attach="fog" args={[SCENE.depth, 16, 36]} />
+      <ambientLight intensity={SCENE.ambientIntensity} color={SCENE.ambient} />
+      <directionalLight position={[-6, 9, 9]} intensity={SCENE.keyIntensity} color={SCENE.key} />
+      <directionalLight position={[7, 0.5, 4]} intensity={SCENE.fillIntensity} color={SCENE.fill} />
+      <pointLight position={[0, 0, -5]} intensity={SCENE.rearIntensity} color={SCENE.rear} distance={13} decay={1.8} />
     </>
   );
 }
@@ -238,29 +178,47 @@ function CameraRig({ portal, master }: {
   return null;
 }
 
-function ExperienceScene({ target, rendered, portal, themeTarget, themeProgress, immediate, onChapterChange }: {
+function ExperienceScene({ target, rendered, portal, immediate, onChapterChange }: {
   target: MutableRefObject<number>;
   rendered: MutableRefObject<number>;
   portal: MutableRefObject<number>;
-  themeTarget: MutableRefObject<number>;
-  themeProgress: MutableRefObject<number>;
   immediate: boolean;
   onChapterChange: (chapter: string) => void;
 }) {
   return (
     <>
-      <ThemeSceneDriver target={themeTarget} progress={themeProgress} immediate={immediate} />
+      <SceneLighting />
+      {/* What the mirror is given to show. The order matters more than the
+          numbers: a broad sky and a broad floor first, so the faces of the
+          glyph carry a gradient and read as volume, and only then the two
+          narrow strips that draw its silhouette. The previous set was six
+          narrow strips over nothing, and a mirror reproduces nothing
+          faithfully — which is exactly why the artefact looked like a black
+          cut-out rather than polished metal. */}
       <Environment resolution={256}>
-        <Lightformer form="rect" intensity={4.8} color={LIGHT_PALETTE.reflectionTop} position={[-4.8, 5.4, 5.6]} rotation={[0.15, 0.3, 0.1]} scale={[6.4, 1.35, 1]} />
-        <Lightformer form="rect" intensity={3.6} color={LIGHT_PALETTE.reflectionSide} position={[5.8, 0.4, 2.7]} rotation={[0, -0.88, -0.08]} scale={[1.2, 7.4, 1]} />
-        <Lightformer form="rect" intensity={11.5} color={LIGHT_PALETTE.reflectionEdge} position={[-2.35, 0.15, 5.2]} rotation={[0, 0.5, 0.07]} scale={[0.16, 8.2, 1]} />
-        <Lightformer form="rect" intensity={8.4} color={LIGHT_PALETTE.reflectionTop} position={[2.65, 0.5, 5.1]} rotation={[0, -0.46, -0.08]} scale={[0.24, 6.7, 1]} />
-        <Lightformer form="rect" intensity={2.2} color={LIGHT_PALETTE.reflectionShadow} position={[-6.4, -0.2, 0.4]} rotation={[0, 0.78, 0]} scale={[1.3, 5.8, 1]} />
-        <Lightformer form="rect" intensity={1.55} color={LIGHT_PALETTE.reflectionFloor} position={[0, -4.8, -3]} rotation={[Math.PI / 2, 0, 0]} scale={[5.4, 0.75, 1]} />
+        {/* Sky: wide, soft, slightly forward, so the top faces catch a sweep. */}
+        <Lightformer form="rect" intensity={3.1} color={SCENE.reflectionSky}
+          position={[-1.2, 6.2, 4.2]} rotation={[0.42, 0.16, 0]} scale={[14, 5.2, 1]} />
+        {/* Floor: dim and cool. Without it the underside falls to the ground
+            colour and the glyph loses its lower edge entirely. */}
+        <Lightformer form="rect" intensity={1.15} color={SCENE.reflectionFloor}
+          position={[0, -5.6, -1.5]} rotation={[Math.PI / 2, 0, 0]} scale={[13, 8, 1]} />
+        {/* Fill from the left, broad, keeps the shadow side from going flat. */}
+        <Lightformer form="rect" intensity={1.5} color={SCENE.reflectionSide}
+          position={[-6.6, 0.4, 1.8]} rotation={[0, 1.05, 0]} scale={[7, 6.4, 1]} />
+        {/* The two specular edges — the signature highlight down the glyph. */}
+        <Lightformer form="rect" intensity={13} color={SCENE.reflectionEdge}
+          position={[-2.5, 0.2, 5.4]} rotation={[0, 0.48, 0.06]} scale={[0.2, 8.6, 1]} />
+        <Lightformer form="rect" intensity={9} color={SCENE.reflectionEdge}
+          position={[2.8, 0.4, 5.2]} rotation={[0, -0.44, -0.07]} scale={[0.28, 7, 1]} />
+        {/* One warm sliver, low and dim: keeps the metal from reading as a
+            uniformly cold blue, which is where chrome starts to look plastic. */}
+        <Lightformer form="rect" intensity={1.9} color={SCENE.reflectionWarm}
+          position={[5.6, -1.6, 2.4]} rotation={[0, -0.92, 0]} scale={[1.1, 4.6, 1]} />
       </Environment>
-      <GothicEnvironment themeProgress={themeProgress} />
-      <ContinuousWorld progress={rendered} themeProgress={themeProgress} />
-      <PortalTwentyTwo progress={portal} masterProgress={rendered} themeProgress={themeProgress} />
+      <GothicEnvironment />
+      <ContinuousWorld progress={rendered} />
+      <PortalTwentyTwo progress={portal} masterProgress={rendered} />
       <CameraRig portal={portal} master={rendered} />
       <ProgressDriver target={target} rendered={rendered} portal={portal} immediate={immediate}
         onChapterChange={onChapterChange} />
@@ -273,23 +231,17 @@ export function PortalExperience() {
   const targetProgress = useRef(0);
   const renderedProgress = useRef(0);
   const portalProgress = useRef(0);
-  // Scene-side mirror of the theme, kept in refs so the render loop can read it
-  // without re-rendering the tree.
-  const themeTarget = useRef(0);
-  const themeProgress = useRef(0);
-  const themeSynced = useRef(false);
   const touchY = useRef<number | null>(null);
   const reduced = useRef(false);
-  // Both of these live outside React (a media query and an attribute the head
-  // bootstrap writes before hydration), so they are read through
+  // The motion preference lives outside React, so it is read through
   // useSyncExternalStore: the first client render matches the server snapshot,
-  // and later changes arrive through a real subscription.
+  // and later changes arrive through a real subscription rather than a
+  // one-time read at mount.
   const reducedMotion = useSyncExternalStore(
     subscribeReducedMotion,
     getReducedMotionSnapshot,
     getServerReducedMotionSnapshot,
   );
-  const theme = useSyncExternalStore(subscribeDocumentTheme, themeFromDocument, getServerThemeSnapshot);
   const [activeChapter, setActiveChapter] = useState<string>(() => chapterFor(0));
   // Every source, immediately. These snapshots ARE the content of the middle of
   // the site, so staging them behind scroll progress made the copy hostage to
@@ -387,21 +339,10 @@ export function PortalExperience() {
 
   // `data-theme` on <html> is the source of truth; writing it notifies the
   // subscription above, which re-renders the switch with the new label.
-  const applyTheme = useCallback((next: ThemeName, persist = true) => {
-    themeTarget.current = next === "dark" ? 1 : 0;
-    document.documentElement.dataset.theme = next;
-    if (persist) window.localStorage.setItem("ankuzo-theme", next);
-  }, []);
 
   // Mirror the theme the head bootstrap picked into the scene driver. On the
   // very first pass the progress jumps instead of easing, so a dark reload does
   // not flash through the light palette.
-  useEffect(() => {
-    themeTarget.current = theme === "dark" ? 1 : 0;
-    if (themeSynced.current) return;
-    themeSynced.current = true;
-    themeProgress.current = themeTarget.current;
-  }, [theme]);
 
   // prefers-reduced-motion is a live preference, so every consumer (scroll
   // speed, camera parallax, architecture drift) reads the current value.
@@ -516,7 +457,6 @@ export function PortalExperience() {
           camera={{ position: [0, 0, 13.5], fov: 35, near: 0.035, far: 70 }}
           gl={{ antialias: true, alpha: false, toneMapping: ACESFilmicToneMapping, toneMappingExposure: 1.02 }}>
           <ExperienceScene target={targetProgress} rendered={renderedProgress} portal={portalProgress}
-            themeTarget={themeTarget} themeProgress={themeProgress}
             onChapterChange={setActiveChapter}
             immediate={Boolean(reviewState) || reducedMotion} />
         </Canvas>
@@ -525,10 +465,6 @@ export function PortalExperience() {
           <button type="button" className="wordmark" onClick={() => setProgress(0)}>ANKUZO</button>
           <p id="experience-title" className="sr-only">CONTINUOUS SESSION / 22</p>
           <div className="header-tools">
-            <button type="button" className="theme-switch" onClick={() => applyTheme(theme === "light" ? "dark" : "light")}
-              aria-label={`Switch to ${theme === "light" ? "dark" : "light"} theme`} aria-pressed={theme === "dark"}>
-              <i aria-hidden="true" /><span className="sr-only">THEME / {theme.toUpperCase()}</span>
-            </button>
           </div>
         </header>
 
@@ -681,10 +617,6 @@ export function PortalExperience() {
               </button>
             ))}</div>
             <div>
-              <button type="button" className={theme === "light" ? "active" : ""}
-                onClick={() => applyTheme("light")}>light</button>
-              <button type="button" className={theme === "dark" ? "active" : ""}
-                onClick={() => applyTheme("dark")}>dark</button>
               <button type="button" className={reviewDevice === "desktop" ? "active" : ""}
                 onClick={() => navigateReview(queryScene ?? "portal", queryFrame ?? "pristine", "desktop")}>desktop</button>
               <button type="button" className={reviewDevice === "mobile" ? "active" : ""}

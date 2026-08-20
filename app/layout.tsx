@@ -51,14 +51,17 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const themeBootstrap = `(function(){try{var q=new URLSearchParams(location.search).get('theme');var s=localStorage.getItem('ankuzo-theme');var t=(q==='light'||q==='dark')?q:((s==='light'||s==='dark')?s:(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'));document.documentElement.dataset.theme=t;}catch(e){document.documentElement.dataset.theme='light';}})();`;
   // The document language stays `ru`: the server-rendered prose (intro, error
   // note), the meta description and og:locale are all Russian. The 3D shell,
   // whose visible copy is entirely English, declares lang="en" on its own root
   // in components/portal/PortalExperience.tsx.
+  //
+  // There is no theme bootstrap any more. The site commits to one ground, so
+  // nothing has to be decided before paint and there is no flash to prevent —
+  // which also removes the only inline script on the page, and with it the
+  // reason a future CSP would have needed `unsafe-inline` or a hash.
   return (
-    <html lang="ru" suppressHydrationWarning>
-      <head><script dangerouslySetInnerHTML={{ __html: themeBootstrap }} /></head>
+    <html lang="ru">
       <body>{children}</body>
     </html>
   );

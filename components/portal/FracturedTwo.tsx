@@ -14,7 +14,7 @@ import {
   Vector3,
 } from "three";
 import { GOTHIC_TWO_CONTOUR, makeGothicTwoShape, useGothicTwoGeometry } from "./GothicTwo";
-import { DARK_PALETTE, getChromeResponseTexture, LIGHT_PALETTE, mixColor, mixNumber } from "./theme";
+import { SCENE, getChromeResponseTexture } from "./theme";
 
 type Point = [number, number];
 type Bounds = [number, number, number, number];
@@ -148,11 +148,9 @@ function CrackLayer({
 export function PortalTwentyTwo({
   progress,
   masterProgress,
-  themeProgress,
 }: {
   progress: MutableRefObject<number>;
   masterProgress: MutableRefObject<number>;
-  themeProgress: MutableRefObject<number>;
 }) {
   const pristineGeometry = useGothicTwoGeometry();
   const fragments = useFragmentGeometries();
@@ -164,7 +162,7 @@ export function PortalTwentyTwo({
   const chromeResponse = getChromeResponseTexture();
 
   const pristineMaterial = useMemo(() => new MeshPhysicalMaterial({
-    color: LIGHT_PALETTE.chrome,
+    color: SCENE.chrome,
     map: chromeResponse,
     roughnessMap: chromeResponse,
     metalness: 0.98,
@@ -175,7 +173,7 @@ export function PortalTwentyTwo({
     transparent: true,
   }), [chromeResponse]);
   const pristineSideMaterial = useMemo(() => new MeshPhysicalMaterial({
-    color: LIGHT_PALETTE.chromeSide,
+    color: SCENE.chromeSide,
     metalness: 0.96,
     roughness: 0.19,
     envMapIntensity: 1.85,
@@ -184,7 +182,7 @@ export function PortalTwentyTwo({
     transparent: true,
   }), []);
   const fragmentMaterial = useMemo(() => new MeshPhysicalMaterial({
-    color: LIGHT_PALETTE.chromeSecondary,
+    color: SCENE.chromeSecondary,
     map: chromeResponse,
     roughnessMap: chromeResponse,
     metalness: 0.97,
@@ -195,21 +193,21 @@ export function PortalTwentyTwo({
     transparent: true,
   }), [chromeResponse]);
   const rawMaterial = useMemo(() => new MeshStandardMaterial({
-    color: LIGHT_PALETTE.raw,
+    color: SCENE.raw,
     metalness: 0.38,
     roughness: 0.88,
     transparent: true,
   }), []);
   const darkCrackMaterial = useMemo(() => new MeshStandardMaterial({
-    color: LIGHT_PALETTE.fracture,
+    color: SCENE.fracture,
     metalness: 0.1,
     roughness: 1,
     transparent: true,
     depthWrite: false,
   }), []);
   const lightCrackMaterial = useMemo(() => new MeshStandardMaterial({
-    color: LIGHT_PALETTE.crackLight,
-    emissive: LIGHT_PALETTE.crackLight,
+    color: SCENE.crackLight,
+    emissive: SCENE.crackLight,
     emissiveIntensity: 1.4,
     transparent: true,
     depthWrite: false,
@@ -234,20 +232,19 @@ export function PortalTwentyTwo({
 
   useFrame(() => {
     const value = progress.current;
-    const theme = themeProgress.current;
-    mixColor(pristineMaterial.color, LIGHT_PALETTE.chrome, DARK_PALETTE.chrome, theme);
-    pristineMaterial.roughness = mixNumber(0.115, 0.105, theme);
-    pristineMaterial.envMapIntensity = mixNumber(2.35, 2.55, theme);
-    mixColor(pristineSideMaterial.color, LIGHT_PALETTE.chromeSide, DARK_PALETTE.chromeSide, theme);
-    pristineSideMaterial.roughness = mixNumber(0.19, 0.16, theme);
-    pristineSideMaterial.envMapIntensity = mixNumber(1.85, 2.05, theme);
-    mixColor(fragmentMaterial.color, LIGHT_PALETTE.chromeSecondary, DARK_PALETTE.chromeSecondary, theme);
-    fragmentMaterial.roughness = mixNumber(0.14, 0.125, theme);
-    fragmentMaterial.envMapIntensity = mixNumber(2.15, 2.35, theme);
-    mixColor(rawMaterial.color, LIGHT_PALETTE.raw, DARK_PALETTE.raw, theme);
-    mixColor(darkCrackMaterial.color, LIGHT_PALETTE.fracture, DARK_PALETTE.fracture, theme);
-    mixColor(lightCrackMaterial.color, LIGHT_PALETTE.crackLight, DARK_PALETTE.crackLight, theme);
-    mixColor(lightCrackMaterial.emissive, LIGHT_PALETTE.crackLight, DARK_PALETTE.crackLight, theme);
+    pristineMaterial.color.set(SCENE.chrome);
+    pristineMaterial.roughness = 0.115;
+    pristineMaterial.envMapIntensity = 2.35;
+    pristineSideMaterial.color.set(SCENE.chromeSide);
+    pristineSideMaterial.roughness = 0.19;
+    pristineSideMaterial.envMapIntensity = 1.85;
+    fragmentMaterial.color.set(SCENE.chromeSecondary);
+    fragmentMaterial.roughness = 0.14;
+    fragmentMaterial.envMapIntensity = 2.15;
+    rawMaterial.color.set(SCENE.raw);
+    darkCrackMaterial.color.set(SCENE.fracture);
+    lightCrackMaterial.color.set(SCENE.crackLight);
+    lightCrackMaterial.emissive.set(SCENE.crackLight);
     const portalPresence = 1 - smoothstep(0.225, 0.285, masterProgress.current);
     const pristineOpacity = (1 - smoothstep(0.54, 0.615, value)) * portalPresence;
     const fragmentOpacity = smoothstep(0.535, 0.595, value) * portalPresence;

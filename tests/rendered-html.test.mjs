@@ -118,18 +118,18 @@ test("renders a semantic document outline", async () => {
   assert.equal(listItems.length, 5, "one list item per chapter");
 });
 
-test("boots the theme before paint", async () => {
+// The site commits to a single ground, so there is nothing to decide before
+// paint. That is worth pinning: a theme bootstrap would reintroduce both a
+// flash to prevent and an inline script for a CSP to make an exception for.
+test("commits to one ground with nothing to negotiate before paint", async () => {
   const markup = await html();
-
-  // The anti-flash bootstrap must run inside <head>, before <body> paints.
   const head = markup.slice(0, markup.indexOf("<body"));
-  assert.match(head, /document\.documentElement\.dataset\.theme/, "theme is applied in <head>");
-  assert.match(head, /prefers-color-scheme: dark/, "system preference is the last resort");
-  assert.match(head, /ankuzo-theme/, "the stored preference key is read on boot");
-  assert.match(head, /<link rel="stylesheet"[^>]*\.css"/, "styles are linked, not inlined per element");
 
-  // Server output stays theme-neutral: no data-theme is baked in, so the
-  // bootstrap decides and hydration cannot mismatch. The toggle itself lives
-  // in the lazily loaded scene and is deliberately absent here.
-  assert.doesNotMatch(markup, /<html[^>]*data-theme=/);
+  assert.match(head, /<link rel="stylesheet"[^>]*\.css"/, "styles are linked, not inlined per element");
+  assert.doesNotMatch(markup, /<html[^>]*data-theme=/, "no theme is negotiated on the document");
+  assert.doesNotMatch(markup, /ankuzo-theme/, "no stored theme preference is read");
+  assert.doesNotMatch(markup, /prefers-color-scheme/, "the ground does not follow the system");
+  // vinext inlines its own navigation runtime here, so this checks that no
+  // theme script came back rather than that the head is script-free.
+  assert.doesNotMatch(head, /documentElement\.dataset\.theme/, "nothing decides a theme before paint");
 });

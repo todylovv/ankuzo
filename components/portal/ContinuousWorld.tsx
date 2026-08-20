@@ -6,7 +6,7 @@ import { useEffect, useMemo, useRef } from "react";
 import type { MutableRefObject } from "react";
 import { Group, MeshPhysicalMaterial } from "three";
 import { useGothicTwoGeometry } from "./GothicTwo";
-import { DARK_PALETTE, getChromeResponseTexture, LIGHT_PALETTE, mixColor, mixNumber } from "./theme";
+import { SCENE, getChromeResponseTexture } from "./theme";
 
 /**
  * Everything after the portal is carried by the artefact and by type — there is
@@ -58,20 +58,18 @@ const ARTEFACT_PATH = [
 
 export function ContinuousWorld({
   progress,
-  themeProgress,
 }: {
   progress: MutableRefObject<number>;
-  themeProgress: MutableRefObject<number>;
 }) {
   const group = useRef<Group>(null);
   const chromeResponse = getChromeResponseTexture();
   const faceMaterial = useMemo(() => new MeshPhysicalMaterial({
-    color: LIGHT_PALETTE.chrome, map: chromeResponse, roughnessMap: chromeResponse,
+    color: SCENE.chrome, map: chromeResponse, roughnessMap: chromeResponse,
     metalness: 0.98, roughness: 0.115, envMapIntensity: 2.35,
     clearcoat: 0.08, clearcoatRoughness: 0.09, transparent: true, opacity: 0,
   }), [chromeResponse]);
   const sideMaterial = useMemo(() => new MeshPhysicalMaterial({
-    color: LIGHT_PALETTE.chromeSide, metalness: 0.96, roughness: 0.19, envMapIntensity: 1.85,
+    color: SCENE.chromeSide, metalness: 0.96, roughness: 0.19, envMapIntensity: 1.85,
     clearcoat: 0.04, clearcoatRoughness: 0.16, transparent: true, opacity: 0,
   }), []);
   const geometry = useGothicTwoGeometry();
@@ -86,14 +84,13 @@ export function ContinuousWorld({
 
   useFrame(() => {
     const value = progress.current;
-    const theme = themeProgress.current;
 
-    mixColor(faceMaterial.color, LIGHT_PALETTE.chrome, DARK_PALETTE.chrome, theme);
-    faceMaterial.roughness = mixNumber(0.115, 0.105, theme);
-    faceMaterial.envMapIntensity = mixNumber(2.35, 2.55, theme);
-    mixColor(sideMaterial.color, LIGHT_PALETTE.chromeSide, DARK_PALETTE.chromeSide, theme);
-    sideMaterial.roughness = mixNumber(0.19, 0.16, theme);
-    sideMaterial.envMapIntensity = mixNumber(1.85, 2.05, theme);
+    faceMaterial.color.set(SCENE.chrome);
+    faceMaterial.roughness = 0.115;
+    faceMaterial.envMapIntensity = 2.35;
+    sideMaterial.color.set(SCENE.chromeSide);
+    sideMaterial.roughness = 0.19;
+    sideMaterial.envMapIntensity = 1.85;
 
     // The artefact appears once the portal has been crossed and never leaves.
     const arrival = ease(span(value, STEAM_START - 0.03, STEAM_START + 0.05));
