@@ -1,100 +1,115 @@
-# vinext-starter
+# ANKUZO — Session 22
 
-A clean full-stack starter running on
-[vinext](https://github.com/cloudflare/vinext), with optional Cloudflare D1 and
-Drizzle support.
+Персональный сайт-опыт: непрерывная сцена, в которой камера пролетает между
+двумя объёмными «22», а дальше разворачиваются главы про Steam, PlayStation,
+Discord, TeamSpeak и то, что делается руками.
 
-## Prerequisites
+Живёт на <https://ankuzo.online>.
 
-- Node.js `>=22.13.0`
-
-## Quick Start
+## Как запустить
 
 ```bash
 npm install
 npm run dev
-npm run build
 ```
 
-This starter does not use `wrangler.jsonc`.
+Нужен Node 22.13 или новее.
 
-## Included Shape
+| Команда | Что делает |
+| --- | --- |
+| `npm run dev` | Дев-сервер с HMR |
+| `npm run build` | Продакшен-сборка, в том числе самодостаточный `dist/standalone/` |
+| `npm start` | Поднимает собранное |
+| `npm test` | Сборка плюс весь набор тестов |
+| `npm run lint` | ESLint |
+| `npm run typecheck` | `tsc --noEmit` |
+| `npm run update-data` | Обновляет снапшоты профилей в `public/data/` |
 
-- edit site code under `app/`
-- `.openai/hosting.json` declares optional Sites D1 and R2 bindings
-- `vite.config.ts` simulates declared bindings for local development
-- `db/schema.ts` starts intentionally empty
-- `examples/d1/` contains an optional D1 example surface
-- `drizzle.config.ts` supports local migration generation when needed
+## Из чего собрано
 
-## Workspace Auth Headers
+Фреймворк — [vinext](https://github.com/cloudflare/vinext) `1.0.0-beta.2`, это
+Vite с поддержкой React Server Components. Пакет `next` физически не установлен:
+импорты вроде `next/headers` разрешаются через шимы vinext. Версия зафиксирована
+точно и не должна переводиться на диапазон — между бетами возможны ломающие
+изменения.
 
-Signed-in visitors receive both `oai-authenticated-user-id` and `oai-authenticated-user-email`. Private Sites require every visitor to sign in; public Sites may also have anonymous visitors, for whom neither header is present.
+Сцена — React 19, `three` 0.185, `@react-three/fiber` и `drei`. Оформление —
+Tailwind 4 и собственные CSS-переменные в `app/globals.css`. TypeScript в
+строгом режиме.
 
-The user ID is stable for the same user on the same Site and different across Sites. Email and name are intended for display or contact purposes.
+Тяжёлый 3D-слой загружается лениво, за `React.lazy` и `Suspense`, а до его
+появления отдаётся статический интро-экран — он же обеспечивает осмысленный
+контент для поисковиков и скринридеров.
 
-SIWC-authenticated workspace sites may also receive
-`oai-authenticated-user-full-name` when the user's SIWC profile has a non-empty
-`name` claim. The full-name value is percent-encoded UTF-8 and is accompanied by
-`oai-authenticated-user-full-name-encoding: percent-encoded-utf-8`.
+## Данные
 
-Treat the full name as optional and fall back to email when it is absent:
+`public/data/steam.json`, `psn.json` и `discord.json` — снапшоты публичных
+профилей. Их обновляет `scripts/update-data.js` по расписанию через GitHub
+Actions; для запуска нужны ключи Steam и PSN в секретах репозитория.
 
-```tsx
-import { headers } from "next/headers";
+Читаются они через `lib/experience-data.ts`, который намеренно никому не
+доверяет: проверяет типы каждого поля, пропускает только `http`/`https`-ссылки,
+и при неудачном обновлении сохраняет предыдущий снапшот вместо того, чтобы
+уронить интерфейс. Если снапшот старше 72 часов, сайт честно показывает
+недоступность, а не выдаёт устаревшие цифры за актуальные.
 
-export default async function Home() {
-  const requestHeaders = await headers();
-  const userId = requestHeaders.get("oai-authenticated-user-id");
-  const email = requestHeaders.get("oai-authenticated-user-email");
-  const encodedFullName = requestHeaders.get("oai-authenticated-user-full-name");
-  const fullName =
-    encodedFullName &&
-    requestHeaders.get("oai-authenticated-user-full-name-encoding") ===
-      "percent-encoded-utf-8"
-      ? decodeURIComponent(encodedFullName)
-      : null;
+## Режим приёмки
 
-  const displayName = fullName ?? email;
-  // ...
-}
+Состояния сцены открываются напрямую, без прокрутки до нужного места:
+
+```
+?review=1&scene=portal&frame=stress
 ```
 
-## Optional Dispatch-Owned ChatGPT Sign-In
+Данные тоже можно зафиксировать — это нужно, чтобы проверять редкие состояния,
+не дожидаясь их в реальности:
 
-Import the ready-to-use helpers from `app/chatgpt-auth.ts` when the site needs
-optional or required ChatGPT sign-in:
+```
+?review=1&steam=current&psn=available&health=stale&images=failure
+```
 
-- Use `getChatGPTUser()` for optional signed-in UI.
-- Use `requireChatGPTUser(returnTo)` for server-rendered pages that should send
-  anonymous visitors through Sign in with ChatGPT.
-- Use `chatGPTSignInPath(returnTo)` and `chatGPTSignOutPath(returnTo)` for
-  browser links or actions.
-- Pass a same-origin relative `returnTo` path for the destination after sign-in
-  or sign-out. The helper validates and safely encodes it.
-- Mark protected pages with `export const dynamic = "force-dynamic"` because
-  they depend on per-request identity headers.
+Список допустимых значений — в `lib/experience-fixtures.ts`. Фикстуры не могут
+подменить продакшен-URL, на это есть отдельный тест.
 
-Dispatch owns `/signin-with-chatgpt`, `/signout-with-chatgpt`, `/callback`, the
-OAuth cookies, and identity header injection. Do not implement app routes for
-those reserved paths. Routes that do not import and call the helper remain
-anonymous-compatible.
+## Тесты
 
-SIWC establishes identity only; it does not prove workspace membership. Use the
-Sites hosting platform's access policy controls for workspace-wide restrictions,
-or enforce explicit server-side membership or allowlist checks.
+```bash
+node --test "tests/*.test.mjs"
+```
 
-Use SIWC for account pages, user-specific dashboards, saved records, and write
-actions tied to the current ChatGPT user. Leave public content anonymous.
+Обратите внимание на кавычки: голая директория здесь не разворачивается, и без
+шаблона часть файлов молча пропускается.
 
-## Useful Commands
+`tests/experience-data.test.mjs` проверяет нормализацию данных, отклонение
+небезопасных протоколов в ссылках и отсутствие креденшелов в публичных
+снапшотах. `tests/progress.test.mjs` покрывает математику прокрутки.
+`tests/rendered-html.test.mjs` работает с реально отрендеренным HTML — он
+требует свежей сборки, поэтому `npm test` сначала собирает проект.
 
-- `npm run dev`: start local development
-- `npm run build`: verify the vinext build output
-- `npm test`: build the starter and verify its rendered loading skeleton
-- `npm run db:generate`: generate Drizzle migrations after schema changes
+## Деплой
 
-## Learn More
+Собственный VPS: контейнер в общей Docker-сети `edge`, перед ним Caddy, который
+терминирует TLS и проксирует по имени контейнера. Подробности и порядок
+действий — в [`deploy/README.md`](deploy/README.md).
 
-- [vinext Documentation](https://github.com/cloudflare/vinext)
-- [Drizzle D1 Guide](https://orm.drizzle.team/docs/get-started/d1-new)
+## Наследие стартера
+
+Проект вырос из шаблона vinext, и часть шаблона осталась лежать неиспользованной.
+Чтобы никто не искал в ней смысла:
+
+- `db/`, `drizzle/`, `drizzle.config.ts` — обвязка Cloudflare D1. `db/schema.ts`
+  пустой, миграций нет, биндинг `DB` в `.openai/hosting.json` не объявлен.
+- `examples/d1/` — пример из шаблона, никуда не подключён.
+- `app/chatgpt-auth.ts` — авторизация через ChatGPT Sign-In, нигде не
+  импортируется.
+- `worker/` — точка входа для Cloudflare Workers. Сайт разворачивается не так,
+  но файл нужен `vite.config.ts` при локальной разработке.
+
+Всё это можно удалить, если станет мешать. Пока оставлено, потому что не мешает
+и не тянет вес в бандл.
+
+## Документы
+
+- [`ART_DIRECTION.md`](ART_DIRECTION.md) — палитра, шрифты, логика глав
+- [`design-qa.md`](design-qa.md) — состояние визуальной приёмки
+- [`docs/data-audit.md`](docs/data-audit.md) — разбор источников данных

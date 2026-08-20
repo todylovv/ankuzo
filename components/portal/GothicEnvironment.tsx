@@ -114,9 +114,12 @@ function getColumnGeometries() {
 export function GothicEnvironment({
   themeProgress,
   pointer,
+  reducedMotion = false,
 }: {
   themeProgress: MutableRefObject<number>;
   pointer: MutableRefObject<{ x: number; y: number }>;
+  /** When set, the architecture stops drifting with the cursor. */
+  reducedMotion?: boolean;
 }) {
   const group = useRef<Group>(null);
   const { size } = useThree();
@@ -169,8 +172,12 @@ export function GothicEnvironment({
     stoneMaterial.color.copy(working);
     stoneMaterial.opacity = 0.18 + t * 0.1;
     if (group.current) {
-      group.current.position.x += (pointer.current.x * 0.045 - group.current.position.x) * 0.025;
-      group.current.position.y += (pointer.current.y * 0.025 - group.current.position.y) * 0.025;
+      // Reduced motion parks the architecture at rest instead of tracking the
+      // pointer; it still eases there so a mid-session preference flip is calm.
+      const targetX = reducedMotion ? 0 : pointer.current.x * 0.045;
+      const targetY = reducedMotion ? 0 : pointer.current.y * 0.025;
+      group.current.position.x += (targetX - group.current.position.x) * 0.025;
+      group.current.position.y += (targetY - group.current.position.y) * 0.025;
     }
   });
 

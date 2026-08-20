@@ -3,7 +3,7 @@
 
 import { Environment, Lightformer } from "@react-three/drei";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
 import type { MutableRefObject } from "react";
 import {
   ACESFilmicToneMapping,
@@ -41,9 +41,39 @@ const REVIEW_STATES = [
   { scene: "final", frame: "22", progress: 1 },
 ] as const;
 
+/** Controls that own the space bar / arrow keys themselves. */
+const INTERACTIVE_SELECTOR = "button, a, input, select, textarea, [contenteditable]";
+const REDUCED_MOTION_QUERY = "(prefers-reduced-motion: reduce)";
+
 function themeFromDocument(): ThemeName {
   if (typeof document === "undefined") return "light";
   return document.documentElement.dataset.theme === "dark" ? "dark" : "light";
+}
+
+/** The head bootstrap and the switch both write `data-theme`; watch that. */
+function subscribeDocumentTheme(onStoreChange: () => void) {
+  const observer = new MutationObserver(onStoreChange);
+  observer.observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+  return () => observer.disconnect();
+}
+
+/** Server (and first hydration pass) render the neutral theme, never a guess. */
+function getServerThemeSnapshot(): ThemeName {
+  return "light";
+}
+
+function subscribeReducedMotion(onStoreChange: () => void) {
+  const query = window.matchMedia(REDUCED_MOTION_QUERY);
+  query.addEventListener("change", onStoreChange);
+  return () => query.removeEventListener("change", onStoreChange);
+}
+
+function getReducedMotionSnapshot(): boolean {
+  return window.matchMedia(REDUCED_MOTION_QUERY).matches;
+}
+
+function getServerReducedMotionSnapshot(): boolean {
+  return false;
 }
 
 function ThemeSceneDriver({
@@ -111,12 +141,13 @@ function ThemeSceneDriver({
   );
 }
 
-function ProgressDriver({ target, rendered, portal, immediate, onDataStage }: {
+function ProgressDriver({ target, rendered, portal, immediate, onDataStage, onChapterChange }: {
   target: MutableRefObject<number>;
   rendered: MutableRefObject<number>;
   portal: MutableRefObject<number>;
   immediate: boolean;
   onDataStage: (stage: number) => void;
+  onChapterChange: (chapter: string) => void;
 }) {
   const lastChapter = useRef("");
   const lastDataStage = useRef(0);
@@ -132,6 +163,9 @@ function ProgressDriver({ target, rendered, portal, immediate, onDataStage }: {
     if (activeChapter !== lastChapter.current) {
       document.documentElement.dataset.chapter = activeChapter;
       lastChapter.current = activeChapter;
+      // Keep the React tree in step with data-chapter so the inactive chapter
+      // blocks can be marked inert in the same beat the CSS reacts to.
+      onChapterChange(activeChapter);
     }
     document.documentElement.style.setProperty("--experience-progress", rendered.current.toFixed(4));
     document.documentElement.style.setProperty("--portal-progress", portal.current.toFixed(4));
@@ -144,10 +178,11 @@ function ProgressDriver({ target, rendered, portal, immediate, onDataStage }: {
   return null;
 }
 
-function CameraRig({ portal, master, pointer }: {
+function CameraRig({ portal, master, pointer, reducedMotion }: {
   portal: MutableRefObject<number>;
   master: MutableRefObject<number>;
   pointer: MutableRefObject<{ x: number; y: number }>;
+  reducedMotion: boolean;
 }) {
   const { camera, size } = useThree();
   const portrait = size.width / size.height < 0.78;
@@ -176,7 +211,9 @@ function CameraRig({ portal, master, pointer }: {
       const travel = Math.min(0.999, remapPortalTravel(portal.current));
       portalCurve.getPointAt(travel, current);
       portalCurve.getPointAt(Math.min(0.999, travel + 0.032), look);
-      const pointerFade = 1 - smoothstep(0.04, 0.1, masterValue);
+      // Pointer parallax is the most vestibular-hostile motion here, so
+      // prefers-reduced-motion removes the cursor's contribution entirely.
+      const pointerFade = reducedMotion ? 0 : 1 - smoothstep(0.04, 0.1, masterValue);
       current.x += pointer.current.x * 0.075 * pointerFade;
       current.y += pointer.current.y * 0.05 * pointerFade;
       look.x += pointer.current.x * 0.035 * pointerFade;
@@ -208,7 +245,7 @@ function CameraRig({ portal, master, pointer }: {
   return null;
 }
 
-function ExperienceScene({ target, rendered, portal, pointer, themeTarget, themeProgress, games, immediate, onDataStage }: {
+function ExperienceScene({ target, rendered, portal, pointer, themeTarget, themeProgress, games, immediate, reducedMotion, onDataStage, onChapterChange }: {
   target: MutableRefObject<number>;
   rendered: MutableRefObject<number>;
   portal: MutableRefObject<number>;
@@ -217,7 +254,9 @@ function ExperienceScene({ target, rendered, portal, pointer, themeTarget, theme
   themeProgress: MutableRefObject<number>;
   games: GameIdentity[];
   immediate: boolean;
+  reducedMotion: boolean;
   onDataStage: (stage: number) => void;
+  onChapterChange: (chapter: string) => void;
 }) {
   return (
     <>
@@ -230,11 +269,12 @@ function ExperienceScene({ target, rendered, portal, pointer, themeTarget, theme
         <Lightformer form="rect" intensity={2.2} color={LIGHT_PALETTE.reflectionShadow} position={[-6.4, -0.2, 0.4]} rotation={[0, 0.78, 0]} scale={[1.3, 5.8, 1]} />
         <Lightformer form="rect" intensity={1.55} color={LIGHT_PALETTE.reflectionFloor} position={[0, -4.8, -3]} rotation={[Math.PI / 2, 0, 0]} scale={[5.4, 0.75, 1]} />
       </Environment>
-      <GothicEnvironment themeProgress={themeProgress} pointer={pointer} />
+      <GothicEnvironment themeProgress={themeProgress} pointer={pointer} reducedMotion={reducedMotion} />
       <ContinuousWorld progress={rendered} themeProgress={themeProgress} games={games} />
       <PortalTwentyTwo progress={portal} masterProgress={rendered} themeProgress={themeProgress} />
-      <CameraRig portal={portal} master={rendered} pointer={pointer} />
-      <ProgressDriver target={target} rendered={rendered} portal={portal} immediate={immediate} onDataStage={onDataStage} />
+      <CameraRig portal={portal} master={rendered} pointer={pointer} reducedMotion={reducedMotion} />
+      <ProgressDriver target={target} rendered={rendered} portal={portal} immediate={immediate}
+        onDataStage={onDataStage} onChapterChange={onChapterChange} />
     </>
   );
 }
@@ -244,14 +284,25 @@ export function PortalExperience() {
   const targetProgress = useRef(0);
   const renderedProgress = useRef(0);
   const portalProgress = useRef(0);
-  const initialTheme = themeFromDocument();
-  const themeTarget = useRef(initialTheme === "dark" ? 1 : 0);
-  const themeProgress = useRef(initialTheme === "dark" ? 1 : 0);
+  // Scene-side mirror of the theme, kept in refs so the render loop can read it
+  // without re-rendering the tree.
+  const themeTarget = useRef(0);
+  const themeProgress = useRef(0);
+  const themeSynced = useRef(false);
   const pointer = useRef({ x: 0, y: 0 });
   const touchY = useRef<number | null>(null);
   const reduced = useRef(false);
-  const [reducedMotion, setReducedMotion] = useState(false);
-  const [theme, setTheme] = useState<ThemeName>(initialTheme);
+  // Both of these live outside React (a media query and an attribute the head
+  // bootstrap writes before hydration), so they are read through
+  // useSyncExternalStore: the first client render matches the server snapshot,
+  // and later changes arrive through a real subscription.
+  const reducedMotion = useSyncExternalStore(
+    subscribeReducedMotion,
+    getReducedMotionSnapshot,
+    getServerReducedMotionSnapshot,
+  );
+  const theme = useSyncExternalStore(subscribeDocumentTheme, themeFromDocument, getServerThemeSnapshot);
+  const [activeChapter, setActiveChapter] = useState<string>(() => chapterFor(0));
   const [dataStage, setDataStage] = useState(0);
   const enabledSources = useMemo<ExperienceSource[]>(() => {
     if (dataStage >= 2) return ["steam", "playstation", "discord"];
@@ -264,6 +315,12 @@ export function PortalExperience() {
   const queryFrame = searchParams?.get("frame") ?? null;
   const reviewMode = searchParams?.get("review") === "1";
   const reviewDevice = searchParams?.get("device") === "mobile" ? "mobile" : "desktop";
+  // The twelve-button review strip is authoring chrome. It stays automatic in
+  // development, and in a production build it needs an extra, explicit
+  // `?reviewNav=1` opt-in so a shared `?review=1` capture link (which still
+  // pins a deterministic scene state) never paints debug UI over the scene.
+  const reviewNavVisible = reviewMode
+    && (process.env.NODE_ENV !== "production" || searchParams?.get("reviewNav") === "1");
   const reviewState = reviewMode && queryScene && queryFrame
     ? REVIEW_STATES.find((state) => state.scene === queryScene && state.frame === queryFrame)
     : undefined;
@@ -280,8 +337,9 @@ export function PortalExperience() {
     }
   }, []);
 
+  // `data-theme` on <html> is the source of truth; writing it notifies the
+  // subscription above, which re-renders the switch with the new label.
   const applyTheme = useCallback((next: ThemeName, persist = true) => {
-    setTheme(next);
     themeTarget.current = next === "dark" ? 1 : 0;
     document.documentElement.dataset.theme = next;
     if (persist) window.localStorage.setItem("ankuzo-theme", next);
@@ -289,6 +347,25 @@ export function PortalExperience() {
   const activateDataStage = useCallback((stage: number) => {
     setDataStage((current) => Math.max(current, stage));
   }, []);
+
+  // Mirror the theme the head bootstrap picked into the scene driver. On the
+  // very first pass the progress jumps instead of easing, so a dark reload does
+  // not flash through the light palette.
+  useEffect(() => {
+    themeTarget.current = theme === "dark" ? 1 : 0;
+    if (themeSynced.current) return;
+    themeSynced.current = true;
+    themeProgress.current = themeTarget.current;
+  }, [theme]);
+
+  // prefers-reduced-motion is a live preference, so every consumer (scroll
+  // speed, camera parallax, architecture drift) reads the current value.
+  useEffect(() => {
+    reduced.current = reducedMotion;
+    if (reducedMotion) document.documentElement.dataset.experienceReduced = "true";
+    else delete document.documentElement.dataset.experienceReduced;
+    return () => { delete document.documentElement.dataset.experienceReduced; };
+  }, [reducedMotion]);
 
   const navigateReview = (scene: string, frame: string, device = reviewDevice) => {
     const params = new URLSearchParams(window.location.search);
@@ -311,9 +388,6 @@ export function PortalExperience() {
       };
     }
 
-    reduced.current = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    setReducedMotion(reduced.current);
-    if (reduced.current) document.documentElement.dataset.experienceReduced = "true";
     setProgress(0, true);
 
     const wheelPixels = (event: WheelEvent) => {
@@ -322,13 +396,20 @@ export function PortalExperience() {
       return event.deltaY;
     };
     const onWheel = (event: WheelEvent) => {
+      // Ctrl+wheel is the browser's zoom gesture (trackpad pinch included).
+      // Swallowing it would trap users at 100% — WCAG 1.4.4.
+      if (event.ctrlKey) return;
       event.preventDefault();
       const delta = wheelPixels(event);
       const speed = reduced.current ? 0.0005 : 0.000145;
       setProgress(targetProgress.current + delta * speed, reduced.current);
     };
-    const onTouchStart = (event: TouchEvent) => { touchY.current = event.touches[0]?.clientY ?? null; };
+    const onTouchStart = (event: TouchEvent) => {
+      // A second finger means pinch-zoom, not a scrub.
+      touchY.current = event.touches.length > 1 ? null : event.touches[0]?.clientY ?? null;
+    };
     const onTouchMove = (event: TouchEvent) => {
+      if (event.touches.length > 1) { touchY.current = null; return; }
       const nextY = event.touches[0]?.clientY;
       if (touchY.current === null || nextY === undefined) return;
       event.preventDefault();
@@ -342,6 +423,10 @@ export function PortalExperience() {
       pointer.current.y = -(event.clientY / window.innerHeight * 2 - 1);
     };
     const onKeyDown = (event: KeyboardEvent) => {
+      // Never steal keys from a focused control: the space bar has to keep
+      // activating the theme switch and the six chapter buttons.
+      const target = event.target;
+      if (target instanceof Element && target.closest(INTERACTIVE_SELECTOR)) return;
       const direction = ["ArrowDown", "ArrowRight", "PageDown", " "].includes(event.key)
         ? 1 : ["ArrowUp", "ArrowLeft", "PageUp"].includes(event.key) ? -1 : 0;
       if (direction === 0 && event.key !== "Home" && event.key !== "End") return;
@@ -364,7 +449,6 @@ export function PortalExperience() {
       window.removeEventListener("pointermove", onPointerMove);
       window.removeEventListener("keydown", onKeyDown);
       delete document.documentElement.dataset.experienceLocked;
-      delete document.documentElement.dataset.experienceReduced;
       delete document.documentElement.dataset.chapter;
     };
   }, [reviewState, setProgress]);
@@ -374,8 +458,19 @@ export function PortalExperience() {
     setProgress(0.24, true);
   };
 
+  /**
+   * Only the chapter the camera is actually in stays in the accessibility tree.
+   * The others are visually faded out, so leaving them exposed made a screen
+   * reader announce all six chapters back to back.
+   */
+  const chapterState = (id: string) => {
+    const hidden = activeChapter !== id;
+    return { inert: hidden, "aria-hidden": hidden || undefined };
+  };
+
   return (
-    <main className={`experience-shell ${reviewDevice === "mobile" ? "review-mobile" : ""}`}>
+    // The shell's visible copy is English; the document itself stays lang="ru".
+    <main lang="en" className={`experience-shell ${reviewDevice === "mobile" ? "review-mobile" : ""}`}>
       <a className="skip-link" href="#library" onClick={skipPortal}>Skip the portal</a>
       <section className="experience-stage" ref={stage} aria-labelledby="experience-title">
         <Canvas className="experience-canvas" dpr={[1, 1.35]}
@@ -383,8 +478,8 @@ export function PortalExperience() {
           gl={{ antialias: true, alpha: false, toneMapping: ACESFilmicToneMapping, toneMappingExposure: 1.02 }}>
           <ExperienceScene target={targetProgress} rendered={renderedProgress} portal={portalProgress}
             pointer={pointer} themeTarget={themeTarget} themeProgress={themeProgress}
-            games={experienceData.games} onDataStage={activateDataStage}
-            immediate={Boolean(reviewState) || reducedMotion} />
+            games={experienceData.games} onDataStage={activateDataStage} onChapterChange={setActiveChapter}
+            reducedMotion={reducedMotion} immediate={Boolean(reviewState) || reducedMotion} />
         </Canvas>
 
         <header className="experience-header">
@@ -393,30 +488,30 @@ export function PortalExperience() {
           <div className="header-tools">
             <button type="button" className="theme-switch" onClick={() => applyTheme(theme === "light" ? "dark" : "light")}
               aria-label={`Switch to ${theme === "light" ? "dark" : "light"} theme`} aria-pressed={theme === "dark"}>
-              <i aria-hidden="true" /><span suppressHydrationWarning>THEME / {theme.toUpperCase()}</span>
+              <i aria-hidden="true" /><span>THEME / {theme.toUpperCase()}</span>
             </button>
             <p className="experience-counter">00—05</p>
           </div>
         </header>
 
-        <div className="chapter-copy chapter-copy--portal">
+        <div className="chapter-copy chapter-copy--portal" {...chapterState("portal")}>
           <p>SILVER / SESSION 22</p><h1>22</h1><span>SCROLL TO ENTER</span>
         </div>
-        <div className="chapter-copy chapter-copy--library" id="library">
+        <div className="chapter-copy chapter-copy--library" id="library" {...chapterState("library")}>
           <p>ANKUZO LIBRARY / 001</p><h2>LIBRARY</h2><span>PC · CURRENT · ARCHIVE</span>
         </div>
-        <div className="chapter-copy chapter-copy--platforms">
+        <div className="chapter-copy chapter-copy--platforms" {...chapterState("platforms")}>
           <p>TWO ECOSYSTEMS / ONE IDENTITY</p><h2>PLATFORMS</h2>
           <div className="platform-labels"><span>PC / STEAM</span><span>PLAYSTATION</span></div>
         </div>
-        <div className="chapter-copy chapter-copy--online">
+        <div className="chapter-copy chapter-copy--online" {...chapterState("online")}>
           <p>PERSONAL NETWORK / SIGNAL</p><h2>ONLINE</h2>
         </div>
-        <div className="chapter-copy chapter-copy--build">
+        <div className="chapter-copy chapter-copy--build" {...chapterState("build")}>
           <p>BUILD / CURRENT</p><h2>BUILD</h2>
           <div className="build-traces"><span>components/portal/</span><span>ContinuousWorld.tsx</span><span>BUILD / PASSING</span></div>
         </div>
-        <div className="chapter-copy chapter-copy--final">
+        <div className="chapter-copy chapter-copy--final" {...chapterState("final")}>
           <p>22 / END</p><h2>ANKUZO</h2><span>IDENTITY RECONSTRUCTED</span>
         </div>
 
@@ -433,7 +528,7 @@ export function PortalExperience() {
         <div className="experience-meter" aria-hidden="true"><i><b /></i><span>SCENE PROGRESS</span></div>
         <ExperienceSignals data={experienceData} />
 
-        {reviewMode && (
+        {reviewNavVisible && (
           <nav className="review-nav" aria-label="Experience review states">
             <div>{REVIEW_STATES.map((state) => (
               <button type="button" className={queryScene === state.scene && queryFrame === state.frame ? "active" : ""}

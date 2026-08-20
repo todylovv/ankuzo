@@ -1,33 +1,102 @@
 # ANKUZO — SESSION 22
 
-## Thesis
+## Замысел
 
-The site is a nocturnal archive of a person assembled from play, code, and online presence. It behaves like a physical exhibition after closing time: black rooms, polished objects, sparse labels, and one continuous camera move. “22” is the artifact that changes material as the visitor moves through the archive.
+Сайт — ночной архив человека, собранный из игры, кода и присутствия в сети.
+Ведёт себя как выставка после закрытия: тёмные залы, полированные объекты,
+скупые подписи и одно непрерывное движение камеры. «22» — артефакт, который
+меняет материал по мере того, как посетитель идёт вглубь.
 
-## Visual system
+## Палитра
 
-- **Typography:** Manrope as the quiet grotesk; Unbounded for wide sculptural display moments; JetBrains Mono only for coordinates, states, and timestamps.
-- **Palette:** OLED black `#050505`, graphite `#151515`, dirty white `#eeeae1`, silver `#aaa9a4`; one cold signal accent `#b8ff3e`, used only for live state.
-- **Materials:** polished chrome, smoked acrylic, matte black plastic, brushed aluminium, optical glass, restrained film grain.
-- **Composition:** objects interrupt type; type is cropped by the viewport; large empty black fields act as pauses. No cards, app chrome, fake terminal, or dashboard grids.
-- **Motion:** slow mass and delayed response. Objects drift by inertia, text is revealed through masks, and the page alternates between pinning and release. Reduced-motion keeps every scene legible without choreography.
+Одна система, два фона. Её логика важнее конкретных значений.
 
-## Journey
+Фирменные цвета Steam, PlayStation, Discord и TeamSpeak по отдельности дают
+салат из логотипов. Но при сведении оказывается, что все четыре лежат в узком
+синем секторе около 215°. Поэтому вместо четырёх брендов — **один холодный
+ряд**, означающий «сеть, машина, живое состояние», и **один тёплый акцент**,
+противоположный ему по кругу, означающий «человек, который за этим стоит».
 
-1. **Entry / Black Session:** ANKUZO appears as a horizon-scale word while the 22 artifact sits off-axis and reacts to the pointer.
-2. **Signals:** brief identity fragments orbit a typographic statement instead of an autobiography.
-3. **Library:** six authored game sleeves travel as a perspective film strip, carrying only state, platform, and hours.
-4. **Two Worlds:** PC and PlayStation are two physical light fields that merge around a translucent controller/device composition.
-5. **After Hours:** chat, waveform, timestamps, and blurred frames become a late-night broadcast atmosphere.
-6. **Build Trace:** code is treated as printed matter—commit strips and file fragments moving through a scanner light.
-7. **22 / Material Study:** the symbol enlarges, rotates, and changes from glass to chrome to black.
-8. **Exit:** the artifact recedes; four profile links remain as the last illuminated objects.
+| Роль | Тёмная | Светлая |
+| --- | --- | --- |
+| Фон | `#0B0E13` | `#EDEBE4` |
+| Глубина | `#08090C` | `#E3E0D7` |
+| Поверхность | `#141920` | `#F7F6F1` |
+| Архитектура | `#252B34` | `#C6C1B6` |
+| Текст | `#EDEAE3` | `#14171C` |
+| Текст вторичный | `#9AA0A8` | `#565C64` |
+| Текст приглушённый | `#7A828B` | `#5F666D` |
+| Холодный сигнал | `#5B8CFF` | `#2B4FCC` |
+| Тёплый акцент | `#FF7A45` | `#C4502A` |
 
-## Asset plan
+**Правило кадра:** холодный и тёплый никогда не встречаются в полную силу в
+одном экране — один всегда приглушён. Это и удерживает палитру собранной на
+длинном пролёте.
 
-- `hero-22.webp`: premium chrome/glass 22 sculpture used only in Entry and the final echo.
-- `gaming-totem.webp`: neutral controller/handheld parts fused into one authored object for Two Worlds.
-- `library-atlas.webp`: six coherent fictional sleeves used as cropped panels in the Library.
-- `og.png`: a dedicated share image derived from the finished Entry scene.
-- Grain and reflection masks are procedural CSS/canvas because they need to animate and stay resolution-independent.
+**Правило значения:** синий — только машинное и живое (часы в Steam, трофеи,
+присутствие в Discord, прогресс, отметки времени). Тёплый — только авторское
+(заголовки о себе, финал). Тёплым никогда не окрашиваются данные.
 
+Фон намеренно не чистый чёрный: на `#000000` трёхмерная сцена теряет глубину,
+потому что тени сливаются с пустотой.
+
+Каждая пара «текст на фоне» измерена, а не подобрана на глаз. Мелкий текст
+держит минимум 4.5:1, индикатор фокуса — минимум 3:1 при толщине 2px. Самая
+слабая пара — приглушённый текст, 4.9:1 на любом из двух фонов.
+
+## Шрифты
+
+- **Unbounded** — широкий дисплейный голос, только для названий глав.
+- **Manrope** — спокойный гротеск для всего остального текста.
+- **JetBrains Mono** — координаты, состояния, отметки времени.
+
+Все три лежат в `public/fonts/` с раздельными сабсетами латиницы и кириллицы:
+кириллический вес подгружается только тогда, когда действительно встречается
+кириллический символ — обычно это название игры, пришедшее из Steam или PSN.
+
+Служебные подписи набираются не мельче 11px. Более мелкий кегль читается как
+попытка выглядеть технологично и не выдерживает требований к доступности.
+
+## Типографика поверх сцены
+
+Текст лежит прямо на движущейся трёхмерной поверхности, где контраст
+проваливается до 1.64:1, когда под подписью проходит полированная «22».
+Под текстовыми блоками стоит мягкая радиальная подложка: без края, без рамки,
+затухающая раньше, чем кончается блок. Она читается как атмосфера, а не как
+карточка — карточек, оконного хрома и дашбордных сеток на сайте нет.
+
+## Движение
+
+Медленная масса и запаздывающий отклик. Объекты дрейфуют по инерции, текст
+раскрывается масками, страница чередует удержание и отпускание.
+
+Режим уменьшенной анимации должен оставлять каждую сцену читаемой без
+хореографии — и отключать в том числе параллакс камеры за указателем, а не
+только скорость переходов.
+
+## Главы
+
+Шесть, ровно как в коде (`components/portal/progress.ts`):
+
+1. **Портал** — камера идёт между двумя объёмными «22».
+2. **Библиотека** — игры на PC, только состояние, платформа и часы.
+3. **Платформы** — PC и PlayStation как два световых поля.
+4. **Онлайн** — присутствие в сети как поздняя ночная трансляция.
+5. **Сборка** — код как печатный материал, фрагменты файлов под лучом сканера.
+6. **22 / Конец** — артефакт удаляется.
+
+## Что ещё не сделано
+
+Честный список, чтобы документ не обещал несуществующего:
+
+- **Пролёт между двумя «22»** пока имеет мёртвый кадр на пороге: около 85%
+  экрана занимает пустота. Задумывалось как пауза, читается как «ничего не
+  происходит». Нужен переход, который делает паузу событием.
+- **Материал артефакта** — плоский серый, без отражений среды и тонального
+  отображения. Заявленная смена «стекло → хром → чёрный» не реализована.
+- **Постобработка** отсутствует полностью: ни зерна, ни глубины резкости, ни
+  хроматической аберрации.
+- `hero-22.webp` и `gaming-totem.webp` лежат в `public/assets/`, но нигде не
+  используются — 274 КБ мёртвого веса. Оставлены как задача: под них есть места
+  в замысле, но если решение будет строиться на частицах, их следует удалить.
+- **Ссылки на профили** в финальной главе не реализованы.

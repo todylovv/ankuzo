@@ -1,33 +1,61 @@
 @import "tailwindcss";
 
-@font-face{font-family:Manrope;src:url('/fonts/manrope-latin.woff2') format('woff2');font-display:swap;font-weight:200 800}
-@font-face{font-family:Jet;src:url('/fonts/jetbrains-mono-latin.woff2') format('woff2');font-display:swap}
+/* Three roles, three faces: Unbounded is the wide display voice, Manrope the
+   quiet grotesk underneath it, Jet carries coordinates and states.
+   Cyrillic is split into its own unicode-range so the subset is only fetched
+   when a Cyrillic glyph is actually needed — game titles coming back from
+   Steam and PSN are the usual reason. */
+@font-face{font-family:Manrope;src:url('/fonts/manrope-latin.woff2') format('woff2');font-display:swap;font-weight:200 800;unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+2000-206F,U+2074,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215}
+@font-face{font-family:Manrope;src:url('/fonts/manrope-cyrillic.woff2') format('woff2');font-display:swap;font-weight:200 800;unicode-range:U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116}
+@font-face{font-family:Jet;src:url('/fonts/jetbrains-mono-latin.woff2') format('woff2');font-display:swap;unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+2000-206F,U+2074,U+20AC,U+2122,U+2212}
+@font-face{font-family:Jet;src:url('/fonts/jetbrains-mono-cyrillic.woff2') format('woff2');font-display:swap;unicode-range:U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116}
+@font-face{font-family:Unbounded;src:url('/fonts/unbounded-latin.woff2') format('woff2');font-display:swap;font-weight:200 900;unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+2000-206F,U+2074,U+20AC,U+2122,U+2212}
+@font-face{font-family:Unbounded;src:url('/fonts/unbounded-cyrillic.woff2') format('woff2');font-display:swap;font-weight:200 900;unicode-range:U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116}
 
+/* One palette, two grounds.
+
+   Steam, PlayStation, Discord and TeamSpeak all sit within a narrow blue
+   sector around 215deg, so rather than four brand colours fighting each other
+   there is a single cold ramp meaning "network, machine, live state" and a
+   single warm counter-accent meaning "the person behind it". They are never
+   both at full strength in one frame; one is always damped.
+
+   Every text/ground pair below is measured, not eyeballed. Small text needs
+   4.5:1 and focus indicators need 3:1 (WCAG AA) — the weakest pair here is
+   --text-faint at 4.9:1 on either ground. */
 :root{
   color-scheme:light;
-  --bg-primary:#E7E3DA;--bg-depth:#D5D0C6;--surface:#F1EEE7;--surface-secondary:#C9C3B9;--architecture:#AAA49B;
-  --text-primary:#202328;--text-secondary:#676B70;--text-faint:#8B8D8F;
-  --chrome-base:#8F969D;--chrome-mid:#B0B6BC;--chrome-highlight:#DCE0E3;--chrome-shadow:#5F666D;
-  --accent:#793747;--accent-soft:#A66A77;--accent-contrast:#F7F2ED;
-  --line:rgba(32,35,40,.2);--line-strong:rgba(32,35,40,.42);--overlay:rgba(241,238,231,.9);--shadow-deep:#15171A;
+  --bg-primary:#EDEBE4;--bg-depth:#E3E0D7;--surface:#F7F6F1;--surface-secondary:#DCD8CE;--architecture:#C6C1B6;
+  /* 14.7:1 / 5.7:1 / 4.9:1 on --bg-primary */
+  --text-primary:#14171C;--text-secondary:#565C64;--text-faint:#5F666D;
+  --chrome-base:#97A1AC;--chrome-mid:#B8C0C8;--chrome-highlight:#E4E9EF;--chrome-shadow:#4A525C;
+  /* cold signal — 5.7:1, safe as a 2px focus ring */
+  --accent:#2B4FCC;--accent-soft:#5B7FE0;--accent-contrast:#F7F6F1;
+  /* warm counter-accent: authored voice only, never data */
+  --ember:#C4502A;
+  --line:rgba(20,23,28,.18);--line-strong:rgba(20,23,28,.4);--overlay:rgba(237,235,228,.82);--shadow-deep:#14171C;
   --experience-progress:0;--portal-progress:0;--theme-progress:0;
 }
 :root[data-theme="dark"]{
   color-scheme:dark;
-  --bg-primary:#282B31;--bg-depth:#1E2227;--surface:#31353C;--surface-secondary:#3C4149;--architecture:#4A5059;
-  --text-primary:#EEEAE4;--text-secondary:#AAADB1;--text-faint:#7D8288;
-  --chrome-base:#989FA6;--chrome-mid:#B6BCC1;--chrome-highlight:#E0E4E7;--chrome-shadow:#626A72;
-  --accent:#B14E63;--accent-soft:#C37887;--accent-contrast:#FAF5F1;
-  --line:rgba(238,234,228,.2);--line-strong:rgba(238,234,228,.4);--overlay:rgba(40,43,49,.9);--shadow-deep:#111318;
+  --bg-primary:#0B0E13;--bg-depth:#08090C;--surface:#141920;--surface-secondary:#1C222A;--architecture:#252B34;
+  /* 16.3:1 / 7.3:1 / 5.0:1 on --bg-primary */
+  --text-primary:#EDEAE3;--text-secondary:#9AA0A8;--text-faint:#7A828B;
+  --chrome-base:#97A1AC;--chrome-mid:#B8C0C8;--chrome-highlight:#E4E9EF;--chrome-shadow:#4A525C;
+  /* cold signal — 6.1:1 */
+  --accent:#5B8CFF;--accent-soft:#A8C4FF;--accent-contrast:#08090C;
+  --ember:#FF7A45;
+  --line:rgba(237,234,227,.18);--line-strong:rgba(237,234,227,.38);--overlay:rgba(11,14,19,.82);--shadow-deep:#05070A;
 }
 @media(prefers-color-scheme:dark){
   :root:not([data-theme]){
     color-scheme:dark;
-    --bg-primary:#282B31;--bg-depth:#1E2227;--surface:#31353C;--surface-secondary:#3C4149;--architecture:#4A5059;
-    --text-primary:#EEEAE4;--text-secondary:#AAADB1;--text-faint:#7D8288;
-    --chrome-base:#989FA6;--chrome-mid:#B6BCC1;--chrome-highlight:#E0E4E7;--chrome-shadow:#626A72;
-    --accent:#B14E63;--accent-soft:#C37887;--accent-contrast:#FAF5F1;
-    --line:rgba(238,234,228,.2);--line-strong:rgba(238,234,228,.4);--overlay:rgba(40,43,49,.9);--shadow-deep:#111318;
+    --bg-primary:#0B0E13;--bg-depth:#08090C;--surface:#141920;--surface-secondary:#1C222A;--architecture:#252B34;
+    --text-primary:#EDEAE3;--text-secondary:#9AA0A8;--text-faint:#7A828B;
+    --chrome-base:#97A1AC;--chrome-mid:#B8C0C8;--chrome-highlight:#E4E9EF;--chrome-shadow:#4A525C;
+    --accent:#5B8CFF;--accent-soft:#A8C4FF;--accent-contrast:#08090C;
+    --ember:#FF7A45;
+    --line:rgba(237,234,227,.18);--line-strong:rgba(237,234,227,.38);--overlay:rgba(11,14,19,.82);--shadow-deep:#05070A;
   }
 }
 *{box-sizing:border-box}
@@ -44,43 +72,52 @@ button{font:inherit}
 .experience-stage{overflow:hidden;isolation:isolate;touch-action:none}
 .experience-canvas{position:absolute!important;inset:0;width:100%!important;height:100%!important}
 
-.experience-header{position:absolute;z-index:6;inset:22px 28px auto;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;pointer-events:none;font:8px/1 Jet,monospace;letter-spacing:.18em;color:var(--text-secondary)}
+.experience-header{position:absolute;z-index:6;inset:22px 28px auto;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;pointer-events:none;font:11px/1 Jet,monospace;letter-spacing:.18em;color:var(--text-secondary)}
 .experience-header p{margin:0}
 .experience-header .wordmark{justify-self:start;padding:0;border:0;background:transparent;pointer-events:auto;cursor:pointer;font:700 14px/1 Manrope,Arial,sans-serif;letter-spacing:-.025em}
 .experience-counter{justify-self:end;color:var(--text-faint)}
 .header-tools{display:flex;justify-self:end;align-items:center;gap:17px;pointer-events:auto}
-.theme-switch{display:flex;align-items:center;gap:7px;padding:5px 0;border:0;background:transparent;color:var(--text-secondary);cursor:pointer;font:7px/1 Jet,monospace;letter-spacing:.12em;text-transform:uppercase}
+.theme-switch{display:flex;align-items:center;gap:7px;padding:5px 0;border:0;background:transparent;color:var(--text-secondary);cursor:pointer;font:11px/1 Jet,monospace;letter-spacing:.12em;text-transform:uppercase}
 .theme-switch i{position:relative;display:block;width:19px;height:8px;border:1px solid var(--line-strong);border-radius:99px;transition:border-color .65s ease}
 .theme-switch i::after{position:absolute;content:"";top:1px;left:1px;width:4px;height:4px;border-radius:50%;background:var(--accent);transform:translateX(calc(var(--theme-progress) * 11px));transition:background-color .65s ease}
 .theme-switch:hover{color:var(--text-primary)}
-.theme-switch:focus-visible,.wordmark:focus-visible{outline:1px solid var(--accent);outline-offset:5px}
+.theme-switch:focus-visible,.wordmark:focus-visible{outline:2px solid var(--accent);outline-offset:5px}
 
-.chapter-copy{position:absolute;z-index:5;pointer-events:none;opacity:0;transition:opacity .45s ease,transform .7s cubic-bezier(.2,.7,.2,1);font-family:Jet,monospace}
-.chapter-copy p,.chapter-copy>span,.chapter-copy div{margin:0;color:var(--text-secondary);font:8px/1.35 Jet,monospace;letter-spacing:.18em;text-transform:uppercase}
-.chapter-copy h1,.chapter-copy h2{margin:0;font-family:Manrope,Arial,sans-serif;letter-spacing:-.07em}
+/* Chapter copy sits directly on the 3D scene, where the background is a moving
+   chrome surface — measured as low as 1.64:1 against the body colour when the
+   glyph passes underneath. A soft radial scrim buys back the contrast without
+   drawing a card: it has no edge, no border and fades out well before the text
+   block ends, so it reads as atmosphere rather than chrome. */
+.chapter-copy{position:absolute;z-index:5;pointer-events:none;opacity:0;visibility:hidden;transition:opacity .45s ease,visibility 0s linear .45s,transform .7s cubic-bezier(.2,.7,.2,1);font-family:Jet,monospace}
+.chapter-copy::before{content:"";position:absolute;z-index:-1;inset:-34px -44px;background:radial-gradient(115% 115% at 50% 50%,var(--overlay) 0%,var(--overlay) 32%,transparent 76%);pointer-events:none}
+.chapter-copy p,.chapter-copy>span,.chapter-copy div{margin:0;color:var(--text-secondary);font:11px/1.45 Jet,monospace;letter-spacing:.16em;text-transform:uppercase}
+.chapter-copy h1,.chapter-copy h2{margin:0;font-family:Unbounded,Manrope,Arial,sans-serif;letter-spacing:-.045em}
 .chapter-copy--portal{left:28px;bottom:27px;transform:translateY(10px)}
-.chapter-copy--portal h1{display:none}
+/* The portal keeps its heading out of the composition, but it is still the
+   document's only h1 in this chapter — hide it from sight, not from the
+   accessibility tree. */
+.chapter-copy--portal h1{position:absolute;width:1px;height:1px;margin:-1px;padding:0;border:0;clip-path:inset(50%);overflow:hidden;white-space:nowrap}
 .chapter-copy--portal span{display:block;margin-top:8px;color:var(--text-faint)}
 .chapter-copy--library{left:7vw;bottom:8vh;transform:translateX(-18px)}
-.chapter-copy--library h2{margin:6px 0 12px;font:620 clamp(3.2rem,7vw,7rem)/.82 Manrope,Arial,sans-serif}
+.chapter-copy--library h2{margin:6px 0 12px;font:500 clamp(2.6rem,5.4vw,5.4rem)/.9 Unbounded,Manrope,Arial,sans-serif}
 .chapter-copy--platforms{inset:auto 7vw 8vh;text-align:center;transform:translateY(14px)}
-.chapter-copy--platforms h2{margin:8px 0 22px;font:620 clamp(3.1rem,6vw,6.5rem)/.85 Manrope,Arial,sans-serif}
+.chapter-copy--platforms h2{margin:8px 0 22px;font:500 clamp(2.5rem,4.7vw,5rem)/.92 Unbounded,Manrope,Arial,sans-serif}
 .platform-labels{display:flex;justify-content:space-between!important;color:var(--text-primary)!important}
 .chapter-copy--online{left:50%;top:50%;width:min(88vw,1000px);text-align:center;transform:translate(-50%,-45%)}
-.chapter-copy--online h2{margin:9px 0 20px;font:620 clamp(4.2rem,10vw,10rem)/.78 Manrope,Arial,sans-serif}
+.chapter-copy--online h2{margin:9px 0 20px;font:500 clamp(3.2rem,7.6vw,7.6rem)/.88 Unbounded,Manrope,Arial,sans-serif}
 .online-status{display:flex;justify-content:center;gap:36px}
 .chapter-copy--build{left:7vw;top:17vh;transform:translateX(-16px)}
-.chapter-copy--build h2{margin:7px 0 26px;font:620 clamp(4rem,9vw,9rem)/.8 Manrope,Arial,sans-serif}
+.chapter-copy--build h2{margin:7px 0 26px;font:500 clamp(3rem,6.9vw,6.9rem)/.9 Unbounded,Manrope,Arial,sans-serif}
 .build-traces{display:grid;gap:8px;padding-left:4px;border-left:1px solid var(--line-strong)}
 .chapter-copy--final{left:50%;top:50%;width:90vw;text-align:center;transform:translate(-50%,-42%)}
-.chapter-copy--final h2{margin:8px 0 15px;font:650 clamp(4.6rem,12vw,12rem)/.76 Manrope,Arial,sans-serif}
+.chapter-copy--final h2{margin:8px 0 15px;font:600 clamp(3.4rem,9vw,9rem)/.86 Unbounded,Manrope,Arial,sans-serif}
 
 html[data-chapter="portal"] .chapter-copy--portal,
 html[data-chapter="library"] .chapter-copy--library,
 html[data-chapter="platforms"] .chapter-copy--platforms,
 html[data-chapter="online"] .chapter-copy--online,
 html[data-chapter="build"] .chapter-copy--build,
-html[data-chapter="final"] .chapter-copy--final{opacity:1}
+html[data-chapter="final"] .chapter-copy--final{opacity:1;visibility:visible;transition-delay:0s}
 html[data-chapter="portal"] .chapter-copy--portal{transform:translateY(0)}
 html[data-chapter="library"] .chapter-copy--library{transform:translateX(0)}
 html[data-chapter="platforms"] .chapter-copy--platforms{transform:translateY(0)}
@@ -89,10 +126,10 @@ html[data-chapter="build"] .chapter-copy--build{transform:translateX(0)}
 html[data-chapter="final"] .chapter-copy--final{transform:translate(-50%,-50%)}
 
 .chapter-nav{position:absolute;z-index:8;right:25px;top:50%;display:grid;gap:11px;transform:translateY(-50%)}
-.chapter-nav button{display:grid;grid-template-columns:14px 22px 1fr;align-items:center;gap:6px;min-width:108px;padding:2px 0;border:0;background:transparent;color:var(--text-faint);text-align:left;cursor:pointer;font:7px/1 Jet,monospace;letter-spacing:.12em;text-transform:uppercase;transition:color .25s}
+.chapter-nav button{display:grid;grid-template-columns:14px 26px 1fr;align-items:center;gap:6px;min-width:124px;padding:3px 0;border:0;background:transparent;color:var(--text-faint);text-align:left;cursor:pointer;font:11px/1 Jet,monospace;letter-spacing:.12em;text-transform:uppercase;transition:color .25s}
 .chapter-nav i{display:block;width:7px;height:1px;background:currentColor;transition:width .25s}
 .chapter-nav b{font-weight:400;opacity:0;transform:translateX(4px);transition:opacity .25s,transform .25s}
-.chapter-nav button:hover,.chapter-nav button:focus-visible{color:var(--text-primary);outline:1px solid var(--accent);outline-offset:4px}
+.chapter-nav button:hover,.chapter-nav button:focus-visible{color:var(--text-primary);outline:2px solid var(--accent);outline-offset:4px}
 .chapter-nav button:hover i,.chapter-nav button:focus-visible i{width:13px}
 .chapter-nav button:hover b,.chapter-nav button:focus-visible b{opacity:1;transform:none}
 html[data-chapter="portal"] [data-target-chapter="portal"],
@@ -114,34 +151,36 @@ html[data-chapter="online"] [data-target-chapter="online"] i,
 html[data-chapter="build"] [data-target-chapter="build"] i,
 html[data-chapter="final"] [data-target-chapter="final"] i{background:var(--accent)}
 
-.experience-meter{position:absolute;z-index:6;left:50%;bottom:22px;display:flex;align-items:center;gap:11px;transform:translateX(-50%);color:var(--text-faint);font:7px/1 Jet,monospace;letter-spacing:.12em}
+.experience-meter{position:absolute;z-index:6;left:50%;bottom:22px;display:flex;align-items:center;gap:11px;transform:translateX(-50%);color:var(--text-faint);font:11px/1 Jet,monospace;letter-spacing:.12em}
 .experience-meter i{display:block;width:104px;height:1px;background:var(--line);overflow:hidden}
 .experience-meter b{display:block;width:100%;height:100%;background:var(--accent);transform:scaleX(var(--experience-progress));transform-origin:left}
 
-.review-nav{position:absolute;z-index:20;left:50%;bottom:50px;display:flex;max-width:calc(100vw - 40px);gap:14px;padding:7px 9px;border:1px solid var(--line);background:var(--overlay);transform:translateX(-50%);overflow-x:auto;font:7px/1 Jet,monospace;letter-spacing:.05em}
+.review-nav{position:absolute;z-index:20;left:50%;bottom:50px;display:flex;max-width:calc(100vw - 40px);gap:14px;padding:7px 9px;border:1px solid var(--line);background:var(--overlay);transform:translateX(-50%);overflow-x:auto;font:11px/1 Jet,monospace;letter-spacing:.05em}
 .review-nav div{display:flex;gap:3px;flex:none}
 .review-nav button{padding:5px 7px;border:0;background:transparent;color:var(--text-secondary);white-space:nowrap;cursor:pointer;font:inherit;text-transform:uppercase}
 .review-nav button:hover,.review-nav button.active{background:var(--accent);color:var(--accent-contrast)}
 
 .experience-signals{position:absolute;z-index:7;inset:0;pointer-events:none;font-family:Jet,monospace;text-transform:uppercase}
-.experience-signal{position:absolute;opacity:0;color:var(--text-primary);transition:opacity .45s ease,transform .7s cubic-bezier(.2,.7,.2,1)}
-.experience-signal span,.experience-signal small{display:block;color:var(--text-secondary);font:7px/1.35 Jet,monospace;letter-spacing:.16em}
-.experience-signal strong{display:block;margin:7px 0 5px;max-width:min(38vw,560px);font:560 clamp(1rem,1.7vw,1.8rem)/1.05 Manrope,Arial,sans-serif;letter-spacing:-.035em;text-transform:none}
+.experience-signal{position:absolute;opacity:0;visibility:hidden;color:var(--text-primary);transition:opacity .45s ease,visibility 0s linear .45s,transform .7s cubic-bezier(.2,.7,.2,1)}
+/* Same reasoning as .chapter-copy::before — these sit on the moving scene too. */
+.experience-signal::before{content:"";position:absolute;z-index:-1;inset:-26px -34px;background:radial-gradient(115% 115% at 50% 50%,var(--overlay) 0%,var(--overlay) 30%,transparent 74%);pointer-events:none}
+.experience-signal span,.experience-signal small{display:block;color:var(--text-secondary);font:11px/1.45 Jet,monospace;letter-spacing:.14em}
+.experience-signal strong{display:block;margin:9px 0 5px;max-width:min(38vw,560px);font:500 clamp(1rem,1.6vw,1.7rem)/1.15 Manrope,Arial,sans-serif;letter-spacing:-.02em;text-transform:none}
 .experience-signal--library{right:7vw;top:21vh;text-align:right;transform:translateX(16px)}
 .experience-signal--library strong{margin-left:auto}
 .experience-signal--platforms{left:7vw;right:7vw;top:22vh;display:grid;grid-template-columns:1fr auto 1fr;align-items:start;gap:5vw;transform:translateY(-12px)}
 .experience-signal--platforms>div:last-child{text-align:right}
 .experience-signal--platforms>div:last-child strong{margin-left:auto}
-.experience-signal--platforms p{align-self:center;margin:7px 0 0;color:var(--text-faint);font:7px/1.35 Jet,monospace;letter-spacing:.14em;white-space:nowrap}
+.experience-signal--platforms p{align-self:center;margin:7px 0 0;color:var(--text-faint);font:11px/1.45 Jet,monospace;letter-spacing:.12em;white-space:nowrap}
 .experience-signal--online{left:50%;top:64%;display:flex;align-items:flex-start;gap:11px;transform:translate(-50%,10px);text-align:left}
 .experience-signal--online strong{min-width:170px}
 .presence-signal{display:block!important;width:6px;height:6px;margin-top:2px;border:1px solid var(--text-secondary);border-radius:50%;background:transparent}
 .presence-signal--online{border-color:var(--accent);background:var(--accent)}
 .presence-signal--idle{border-color:var(--accent-soft);background:linear-gradient(90deg,var(--accent-soft) 50%,transparent 50%)}
 .presence-signal--dnd{border-color:var(--accent);box-shadow:inset 0 0 0 1px var(--bg-primary)}
-html[data-chapter="library"] .experience-signal--library{opacity:1;transform:translateX(0)}
-html[data-chapter="platforms"] .experience-signal--platforms{opacity:1;transform:translateY(0)}
-html[data-chapter="online"] .experience-signal--online{opacity:1;transform:translate(-50%,0)}
+html[data-chapter="library"] .experience-signal--library{opacity:1;visibility:visible;transition-delay:0s;transform:translateX(0)}
+html[data-chapter="platforms"] .experience-signal--platforms{opacity:1;visibility:visible;transition-delay:0s;transform:translateY(0)}
+html[data-chapter="online"] .experience-signal--online{opacity:1;visibility:visible;transition-delay:0s;transform:translate(-50%,0)}
 
 .review-mobile{width:min(390px,100vw);height:min(844px,100svh);margin:0 auto;overflow:hidden}
 .review-mobile .experience-stage{height:min(844px,100svh)}
@@ -151,19 +190,21 @@ html[data-chapter="online"] .experience-signal--online{opacity:1;transform:trans
   .experience-header>p:first-of-type{display:none}
   .header-tools{gap:11px}
   .theme-switch span{font-size:0}
-  .theme-switch span::after{content:"THEME";font-size:7px}
+  .theme-switch span::after{content:"THEME";font-size:11px}
   .chapter-copy--portal{left:15px;bottom:82px}
   .chapter-copy--library{left:15px;bottom:15vh}
-  .chapter-copy--library h2{font-size:16vw}
+  /* Unbounded runs considerably wider than Manrope at the same size, so the
+     viewport-relative display sizes come down to keep the same optical width. */
+  .chapter-copy--library h2{font-size:12vw}
   .chapter-copy--platforms{inset:auto 15px 14vh}
-  .chapter-copy--platforms h2{font-size:13vw}
-  .platform-labels{font-size:7px!important}
+  .chapter-copy--platforms h2{font-size:10vw}
+  .platform-labels{font-size:11px!important}
   .chapter-copy--online{width:94vw}
-  .chapter-copy--online h2{font-size:19vw}
+  .chapter-copy--online h2{font-size:14vw}
   .online-status{gap:12px;flex-wrap:wrap}
   .chapter-copy--build{left:15px;top:14vh}
-  .chapter-copy--build h2{font-size:20vw}
-  .chapter-copy--final h2{font-size:21vw}
+  .chapter-copy--build h2{font-size:15vw}
+  .chapter-copy--final h2{font-size:16vw}
   .chapter-nav{right:15px;top:auto;bottom:45px;display:flex;gap:12px;transform:none}
   .chapter-nav button{display:flex;min-width:auto;gap:4px}
   .chapter-nav button b{display:none}
