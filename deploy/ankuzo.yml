@@ -22,7 +22,11 @@ services:
       # The profile snapshots live on the host, not in the image, so the updater
       # timer can refresh them without a rebuild and without a redeploy. Read
       # only here: the site serves this data, it never writes it.
-      - ${ANKUZO_DATA:-/opt/ankuzo-data}:/app/public/data:ro
+      #
+      # The target is dist/client, not public/: the build copies static assets
+      # into the client output and the production server serves them from
+      # there, so mounting over public/ changes nothing a visitor can see.
+      - ${ANKUZO_DATA:-/opt/ankuzo-data}:/app/dist/client/data:ro
     networks: [edge]
     logging:
       driver: json-file
