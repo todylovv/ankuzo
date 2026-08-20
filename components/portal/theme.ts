@@ -1,5 +1,3 @@
-import { DataTexture, LinearFilter, RGBAFormat, SRGBColorSpace } from "three";
-
 /**
  * One palette, designed as a lighting environment rather than as a set of
  * tokens.
@@ -61,48 +59,9 @@ export const SCENE = {
 
 export type ScenePalette = typeof SCENE;
 
-export function createChromeResponseTexture() {
-  const width = 128;
-  const height = 128;
-  const data = new Uint8Array(width * height * 4);
-  const gaussian = (value: number, center: number, spread: number) => {
-    const distance = (value - center) / spread;
-    return Math.exp(-distance * distance);
-  };
-
-  for (let y = 0; y < height; y += 1) {
-    for (let x = 0; x < width; x += 1) {
-      const u = x / (width - 1);
-      const v = y / (height - 1);
-      const sweep = Math.min(1, Math.max(0, u + (v - 0.5) * 0.12));
-      let value = 0.82;
-      value -= gaussian(sweep, 0.12, 0.1) * 0.3;
-      value += gaussian(sweep, 0.285, 0.022) * 0.18;
-      value -= gaussian(sweep, 0.49, 0.13) * 0.22;
-      value += gaussian(sweep, 0.69, 0.032) * 0.2;
-      value -= gaussian(sweep, 0.88, 0.085) * 0.24;
-      value += gaussian(sweep, 0.965, 0.018) * 0.12;
-      value *= 0.94 + Math.sin(v * Math.PI) * 0.06;
-      const channel = Math.round(Math.min(1, Math.max(0.44, value)) * 255);
-      const offset = (y * width + x) * 4;
-      data[offset] = channel;
-      data[offset + 1] = channel;
-      data[offset + 2] = channel;
-      data[offset + 3] = 255;
-    }
-  }
-
-  const texture = new DataTexture(data, width, height, RGBAFormat);
-  texture.colorSpace = SRGBColorSpace;
-  texture.minFilter = LinearFilter;
-  texture.magFilter = LinearFilter;
-  texture.needsUpdate = true;
-  return texture;
-}
-
-let chromeResponse: DataTexture | null = null;
-
-/** Lazy singleton: the gradient is identical everywhere it is used. */
-export function getChromeResponseTexture() {
-  return (chromeResponse ??= createChromeResponseTexture());
-}
+/* The procedural "chrome response" gradient used to be multiplied into the
+   artefact as both a colour map and a roughness map. It was invisible while
+   the scene was flat-lit, but once the environment started doing real work it
+   showed up as vertical corrugation running across the glyph — ribbing on
+   what is supposed to be a polished surface. A mirror does not need a texture
+   telling it how to look; it needs something worth reflecting. */

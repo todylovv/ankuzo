@@ -6,7 +6,7 @@ import { useEffect, useMemo, useRef } from "react";
 import type { MutableRefObject } from "react";
 import { Group, MeshPhysicalMaterial } from "three";
 import { useGothicTwoGeometry } from "./GothicTwo";
-import { SCENE, getChromeResponseTexture } from "./theme";
+import { SCENE } from "./theme";
 
 /**
  * Everything after the portal is carried by the artefact and by type — there is
@@ -62,12 +62,11 @@ export function ContinuousWorld({
   progress: MutableRefObject<number>;
 }) {
   const group = useRef<Group>(null);
-  const chromeResponse = getChromeResponseTexture();
   const faceMaterial = useMemo(() => new MeshPhysicalMaterial({
-    color: SCENE.chrome, map: chromeResponse, roughnessMap: chromeResponse,
+    color: SCENE.chrome,
     metalness: 0.98, roughness: 0.115, envMapIntensity: 2.35,
     clearcoat: 0.08, clearcoatRoughness: 0.09, transparent: true, opacity: 0,
-  }), [chromeResponse]);
+  }), []);
   const sideMaterial = useMemo(() => new MeshPhysicalMaterial({
     color: SCENE.chromeSide, metalness: 0.96, roughness: 0.19, envMapIntensity: 1.85,
     clearcoat: 0.04, clearcoatRoughness: 0.16, transparent: true, opacity: 0,

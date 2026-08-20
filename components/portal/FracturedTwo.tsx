@@ -14,7 +14,7 @@ import {
   Vector3,
 } from "three";
 import { GOTHIC_TWO_CONTOUR, makeGothicTwoShape, useGothicTwoGeometry } from "./GothicTwo";
-import { SCENE, getChromeResponseTexture } from "./theme";
+import { SCENE } from "./theme";
 
 type Point = [number, number];
 type Bounds = [number, number, number, number];
@@ -159,19 +159,16 @@ export function PortalTwentyTwo({
   const portrait = size.width / size.height < 0.78;
   const offset = portrait ? 1.68 : 2.2;
   const scale = portrait ? 0.72 : 0.84;
-  const chromeResponse = getChromeResponseTexture();
 
   const pristineMaterial = useMemo(() => new MeshPhysicalMaterial({
     color: SCENE.chrome,
-    map: chromeResponse,
-    roughnessMap: chromeResponse,
     metalness: 0.98,
     roughness: 0.115,
     envMapIntensity: 2.35,
     clearcoat: 0.08,
     clearcoatRoughness: 0.09,
     transparent: true,
-  }), [chromeResponse]);
+  }), []);
   const pristineSideMaterial = useMemo(() => new MeshPhysicalMaterial({
     color: SCENE.chromeSide,
     metalness: 0.96,
@@ -183,15 +180,13 @@ export function PortalTwentyTwo({
   }), []);
   const fragmentMaterial = useMemo(() => new MeshPhysicalMaterial({
     color: SCENE.chromeSecondary,
-    map: chromeResponse,
-    roughnessMap: chromeResponse,
     metalness: 0.97,
     roughness: 0.14,
     envMapIntensity: 2.15,
     clearcoat: 0.06,
     clearcoatRoughness: 0.12,
     transparent: true,
-  }), [chromeResponse]);
+  }), []);
   const rawMaterial = useMemo(() => new MeshStandardMaterial({
     color: SCENE.raw,
     metalness: 0.38,
