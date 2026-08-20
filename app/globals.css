@@ -331,16 +331,23 @@ html[data-chapter="playstation"] .chapter-copy--playstation .figure-count{--figu
   /* Pulled toward the ground so the artwork sits in the palette instead of
      shouting over it. The featured card is allowed more of its own colour —
      it earned the frame's attention. */
-  filter:saturate(.5) brightness(.52) contrast(1.05);
+  filter:saturate(.42) brightness(.46) contrast(1.06);
   transition:filter .45s ease}
 .game-card:hover .game-card-art img{filter:saturate(.85) brightness(.78) contrast(1.02)}
 .game-card[data-featured="true"] .game-card-art img{filter:saturate(.7) brightness(.66)}
 
 /* The rank is the point: this is a list of what took the hours, and the
    pictures are evidence rather than subject. */
-.game-card-rank{position:absolute;left:7px;top:5px;
-  font:500 15px/1 Unbounded,Manrope,Arial,sans-serif;letter-spacing:-.03em;
-  color:var(--text-primary);mix-blend-mode:difference}
+/* The rank sits on its own dark plate rather than blending into the artwork.
+   Difference blending disappeared entirely over a light cover — 01 and 02 were
+   simply gone — and a number that vanishes on some covers and not others is
+   worse than one that never blends at all. */
+.game-card-rank{position:absolute;left:0;top:0;padding:4px 7px 5px 6px;
+  font:500 14px/1 Unbounded,Manrope,Arial,sans-serif;letter-spacing:-.03em;
+  color:var(--text-primary);background:linear-gradient(135deg,
+    color-mix(in srgb,var(--bg-primary) 92%,transparent) 0%,
+    color-mix(in srgb,var(--bg-primary) 55%,transparent) 70%,transparent 100%);
+  border-bottom-right-radius:3px}
 .game-card-sheen{position:absolute;inset:0;pointer-events:none;
   background:linear-gradient(112deg,transparent 34%,
     rgba(255,255,255,.13) calc(var(--sheen,.5) * 100%),transparent 66%)}
