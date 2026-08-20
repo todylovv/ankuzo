@@ -33,15 +33,17 @@ export function GameCard({
   share: number;
   featured?: boolean;
 }) {
-  const tilt = useTilt<HTMLLIElement>(featured ? 11 : 8);
+  // Destructured rather than kept as an object: the hooks lint rule reads
+  // `tilt.ref` in JSX as a ref access during render.
+  const { ref, onPointerMove, onPointerLeave } = useTilt<HTMLLIElement>(featured ? 11 : 8);
 
   return (
     <li
-      ref={tilt.ref}
+      ref={ref}
       className="game-card"
       data-featured={featured ? "true" : undefined}
-      onPointerMove={tilt.onPointerMove}
-      onPointerLeave={tilt.onPointerLeave}
+      onPointerMove={onPointerMove}
+      onPointerLeave={onPointerLeave}
     >
       <div className="game-card-art">
         {artwork ? (

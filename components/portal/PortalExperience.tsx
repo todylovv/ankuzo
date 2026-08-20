@@ -15,6 +15,7 @@ import { Atmosphere } from "./Atmosphere";
 import { ContinuousWorld } from "./ContinuousWorld";
 import { PostFx } from "./PostFx";
 import { DiscordCard } from "./DiscordCard";
+import { GameCard } from "./GameCard";
 import { RibbonField } from "./RibbonField";
 import { PortalTwentyTwo } from "./FracturedTwo";
 import { CHAPTERS, PORTAL_END, chapterFor, clamp, remapPortalTravel, smoothstep } from "./progress";
@@ -292,6 +293,7 @@ export function PortalExperience() {
       id: game.id,
       title: game.title,
       hours: Math.round(game.hours ?? 0),
+      artwork: game.artwork ?? game.icon,
     })).filter((game) => game.hours > 0);
     const topHours = topGames[0]?.hours ?? 0;
     const totalHours = Math.round(steam.totalHours ?? 0);
@@ -538,15 +540,10 @@ export function PortalExperience() {
               </li>
             ))}
           </ul>
-          <ol className="data-list">
-            {figures.topGames.map((game) => (
-              <li key={game.id}>
-                <span className="data-name">{game.title}</span>
-                <span className="data-bar" aria-hidden="true">
-                  <i style={{ transform: `scaleX(${game.hours / figures.topPeak})` }} />
-                </span>
-                <span className="data-value">{game.hours.toLocaleString("en-US")}</span>
-              </li>
+          <ol className="game-row">
+            {figures.topGames.map((game, index) => (
+              <GameCard key={game.id} rank={index + 1} title={game.title} hours={game.hours}
+                artwork={game.artwork} share={game.hours / figures.topPeak} featured={index === 0} />
             ))}
           </ol>
         </div>
