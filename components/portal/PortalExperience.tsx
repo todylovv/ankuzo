@@ -140,16 +140,14 @@ function ThemeSceneDriver({
   );
 }
 
-function ProgressDriver({ target, rendered, portal, immediate, onDataStage, onChapterChange }: {
+function ProgressDriver({ target, rendered, portal, immediate, onChapterChange }: {
   target: MutableRefObject<number>;
   rendered: MutableRefObject<number>;
   portal: MutableRefObject<number>;
   immediate: boolean;
-  onDataStage: (stage: number) => void;
   onChapterChange: (chapter: string) => void;
 }) {
   const lastChapter = useRef("");
-  const lastDataStage = useRef(0);
   useFrame((_, delta) => {
     if (immediate) rendered.current = target.current;
     else {
@@ -168,13 +166,6 @@ function ProgressDriver({ target, rendered, portal, immediate, onDataStage, onCh
     }
     document.documentElement.style.setProperty("--experience-progress", rendered.current.toFixed(4));
     document.documentElement.style.setProperty("--portal-progress", portal.current.toFixed(4));
-    // Fetch well before the first data chapter arrives, or its number would
-    // count up from a placeholder zero while the request is still in flight.
-    const dataStage = rendered.current >= 0.4 ? 2 : rendered.current >= 0.06 ? 1 : 0;
-    if (dataStage > lastDataStage.current) {
-      lastDataStage.current = dataStage;
-      onDataStage(dataStage);
-    }
   });
   return null;
 }
@@ -247,14 +238,13 @@ function CameraRig({ portal, master }: {
   return null;
 }
 
-function ExperienceScene({ target, rendered, portal, themeTarget, themeProgress, immediate, onDataStage, onChapterChange }: {
+function ExperienceScene({ target, rendered, portal, themeTarget, themeProgress, immediate, onChapterChange }: {
   target: MutableRefObject<number>;
   rendered: MutableRefObject<number>;
   portal: MutableRefObject<number>;
   themeTarget: MutableRefObject<number>;
   themeProgress: MutableRefObject<number>;
   immediate: boolean;
-  onDataStage: (stage: number) => void;
   onChapterChange: (chapter: string) => void;
 }) {
   return (
@@ -273,7 +263,7 @@ function ExperienceScene({ target, rendered, portal, themeTarget, themeProgress,
       <PortalTwentyTwo progress={portal} masterProgress={rendered} themeProgress={themeProgress} />
       <CameraRig portal={portal} master={rendered} />
       <ProgressDriver target={target} rendered={rendered} portal={portal} immediate={immediate}
-        onDataStage={onDataStage} onChapterChange={onChapterChange} />
+        onChapterChange={onChapterChange} />
     </>
   );
 }
@@ -301,12 +291,12 @@ export function PortalExperience() {
   );
   const theme = useSyncExternalStore(subscribeDocumentTheme, themeFromDocument, getServerThemeSnapshot);
   const [activeChapter, setActiveChapter] = useState<string>(() => chapterFor(0));
-  const [dataStage, setDataStage] = useState(0);
-  const enabledSources = useMemo<ExperienceSource[]>(() => {
-    if (dataStage >= 2) return ["steam", "playstation", "discord"];
-    if (dataStage >= 1) return ["steam", "playstation"];
-    return [];
-  }, [dataStage]);
+  // Every source, immediately. These snapshots ARE the content of the middle of
+  // the site, so staging them behind scroll progress made the copy hostage to
+  // the render loop: if the frame loop stalls for any reason the chapters show
+  // zeros, which reads as broken rather than as loading. ~126KB of JSON is a
+  // cheap price for content that is always there when its chapter arrives.
+  const enabledSources = useMemo<ExperienceSource[]>(() => ["steam", "playstation", "discord"], []);
   const { data: experienceData } = useExperienceData({ enabledSources });
 
   const livePresence = useLivePresence(experienceData.discord.id);
@@ -392,9 +382,6 @@ export function PortalExperience() {
     themeTarget.current = next === "dark" ? 1 : 0;
     document.documentElement.dataset.theme = next;
     if (persist) window.localStorage.setItem("ankuzo-theme", next);
-  }, []);
-  const activateDataStage = useCallback((stage: number) => {
-    setDataStage((current) => Math.max(current, stage));
   }, []);
 
   // Mirror the theme the head bootstrap picked into the scene driver. On the
@@ -521,7 +508,7 @@ export function PortalExperience() {
           gl={{ antialias: true, alpha: false, toneMapping: ACESFilmicToneMapping, toneMappingExposure: 1.02 }}>
           <ExperienceScene target={targetProgress} rendered={renderedProgress} portal={portalProgress}
             themeTarget={themeTarget} themeProgress={themeProgress}
-            onDataStage={activateDataStage} onChapterChange={setActiveChapter}
+            onChapterChange={setActiveChapter}
             immediate={Boolean(reviewState) || reducedMotion} />
         </Canvas>
 

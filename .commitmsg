@@ -1,0 +1,12 @@
+fix: load the profile data at mount instead of staging it behind scroll
+
+The snapshots ARE the content of the middle of the site, but they were only
+requested once scroll progress crossed a threshold — which made the copy
+hostage to the render loop. Any stall in the frame loop and the chapters sit
+at zero, which reads as broken rather than as loading, and the count-up then
+animates from a placeholder that was never real.
+
+All three sources now load when the experience mounts. ~126KB of JSON is a
+cheap price for content that is guaranteed to be there when its chapter
+arrives, and it removes an entire class of timing bug along with the staging
+plumbing that carried it.
