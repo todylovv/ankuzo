@@ -13,6 +13,7 @@ import {
 } from "three";
 import { Atmosphere } from "./Atmosphere";
 import { ContinuousWorld } from "./ContinuousWorld";
+import { DiscordCard } from "./DiscordCard";
 import { RibbonField } from "./RibbonField";
 import { PortalTwentyTwo } from "./FracturedTwo";
 import { CHAPTERS, PORTAL_END, chapterFor, clamp, remapPortalTravel, smoothstep } from "./progress";
@@ -202,6 +203,14 @@ function ExperienceScene({ target, rendered, portal, immediate, archiveDensity, 
           faithfully — which is exactly why the artefact looked like a black
           cut-out rather than polished metal. */}
       <Environment resolution={256}>
+        {/* The panel behind the camera. This is the one that was missing, and
+            without it the artefact could only ever be black: a mirror shows
+            what is behind the viewer, and every other light here stands in
+            front of it or beside it. Front faces were reflecting an empty
+            room. It is the same reason chrome is photographed inside a light
+            tent rather than under a lamp. */}
+        <Lightformer form="rect" intensity={2.4} color={SCENE.reflectionSky}
+          position={[0, 1.2, 9.5]} rotation={[0, Math.PI, 0]} scale={[18, 11, 1]} />
         {/* Sky: wide, soft, slightly forward, so the top faces catch a sweep. */}
         <Lightformer form="rect" intensity={3.1} color={SCENE.reflectionSky}
           position={[-1.2, 6.2, 4.2]} rotation={[0.42, 0.16, 0]} scale={[14, 5.2, 1]} />
@@ -569,46 +578,14 @@ export function PortalExperience() {
             <span className={`presence-dot presence-dot--${figures.presence}`} aria-hidden="true" />
             {figures.presence.toUpperCase()}
           </h2>
-          <article className="discord-card" style={{
-            "--discord-accent": figures.discord.accentColor ?? "var(--accent)",
-          } as CSSProperties}>
-            {figures.discord.banner ? (
-              /* eslint-disable-next-line @next/next/no-img-element */
-              <img className="discord-banner" src={figures.discord.banner} alt="" loading="lazy" />
-            ) : null}
-            <div className="discord-body">
-              <div className="discord-head">
-                {figures.discord.avatar ? (
-                  <span className="discord-avatar-wrap">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img className="discord-avatar" src={figures.discord.avatar} alt="" width={64} height={64} loading="lazy" />
-                    {figures.discord.decoration ? (
-                      /* eslint-disable-next-line @next/next/no-img-element */
-                      <img className="discord-decoration" src={figures.discord.decoration} alt="" aria-hidden="true" loading="lazy" />
-                    ) : null}
-                  </span>
-                ) : null}
-                <div className="account-identity">
-                  <strong>{figures.discord.displayName ?? figures.discord.username ?? "ANKUZO"}</strong>
-                  {figures.discord.username ? <span>@{figures.discord.username}</span> : null}
-                </div>
-              </div>
-              {figures.activity ? (
-                <p className="discord-activity">
-                  {figures.activity}{figures.activityDetail ? ` · ${figures.activityDetail}` : ""}
-                </p>
-              ) : null}
-              {figures.discord.bio ? <p className="discord-bio">{figures.discord.bio}</p> : null}
-              {figures.discord.badges.length > 0 ? (
-                <ul className="badge-row">
-                  {figures.discord.badges.map((badge) => (
-                    <li key={badge}>{badge.replace(/_/g, " ")}</li>
-                  ))}
-                </ul>
-              ) : null}
-            </div>
-          </article>
-          <p className="chapter-note">TEAMSPEAK · SAME MACHINE AS THIS PAGE</p>
+          <DiscordCard discord={figures.discord} activity={figures.activity}
+            activityDetail={figures.activityDetail} />
+          <p className="chapter-note">
+            <a className="ts-invite" href="https://tmspk.gg/RiaD9HgO" target="_blank" rel="noreferrer noopener">
+              TEAMSPEAK — JOIN
+            </a>
+            <span> · SAME MACHINE AS THIS PAGE</span>
+          </p>
         </div>
         <div className="chapter-copy chapter-copy--final" {...chapterState("final")}>
           <h2>ANKUZO</h2><span>IDENTITY RECONSTRUCTED</span>

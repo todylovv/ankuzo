@@ -71,9 +71,9 @@ function buildRibbons(density: number) {
     for (let knot = 0; knot < 6; knot += 1) {
       const progress = knot / 5;
       controls.push(new Vector3(
-        (progress - 0.5) * 46 * sweep + (random() - 0.5) * 10,
+        (progress - 0.5) * 40 * sweep + (random() - 0.5) * 9,
         (random() - 0.5) * 13 + Math.sin(progress * Math.PI * 1.4 + ribbon) * 4,
-        -16 - random() * 26 - progress * 6,
+        -9 - random() * 19 - progress * 5,
       ));
     }
     const curve = new CatmullRomCurve3(controls, false, "centripetal", 0.4);
@@ -189,9 +189,9 @@ export function RibbonField({
       uniforms: {
         uTime: { value: 0 },
         uScale: { value: 1 },
-        uSize: { value: 1.55 },
+        uSize: { value: 2.4 },
         uOpacity: { value: 0 },
-        uColor: { value: new Color(SCENE.chrome) },
+        uColor: { value: new Color(SCENE.chromeHighlight) },
       },
     });
     return { geometry: geo, material: mat };
@@ -212,7 +212,7 @@ export function RibbonField({
     const entry = Math.min(1, Math.max(0, (value - 0.02) / 0.16));
     const quiet = Math.min(1, Math.max(0, (value - 0.62) / 0.12))
       * (1 - Math.min(1, Math.max(0, (value - 0.86) / 0.08)));
-    material.uniforms.uOpacity.value = 0.12 + entry * 0.5 + quiet * 0.3;
+    material.uniforms.uOpacity.value = 0.55 + entry * 0.35 + quiet * 0.25;
     material.uniforms.uScale.value = reducedMotion ? 0.35 : 1;
 
     const node = points.current;

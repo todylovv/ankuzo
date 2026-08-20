@@ -174,28 +174,63 @@ html[data-chapter="playstation"] .chapter-copy--playstation .figure-count{--figu
 [data-tier="platinum"] .trophy-icon{fill:var(--chrome-highlight)}
 .data-list--tiers li{grid-template-columns:auto 1fr 4.5rem auto}
 
-/* Discord card: the profile as Discord itself presents it — banner, avatar
-   decoration, accent — because that IS the thing being shown. The accent is
-   allowed here even though the site keeps one cold ramp: Discord's blurple
-   already sits inside that ramp, which is the whole thesis of the palette. */
-.discord-card{position:relative;width:min(38ch,42vw);border:1px solid var(--line);
-  border-radius:6px;overflow:hidden;background:var(--surface);isolation:isolate}
-.discord-card::before{content:"";position:absolute;inset:0;z-index:1;
-  background:linear-gradient(180deg,color-mix(in srgb,var(--bg-primary) 45%,transparent) 0%,
-    var(--surface) 62%)}
-.discord-banner{position:absolute;inset:0 0 auto;z-index:0;width:100%;height:88px;
-  object-fit:cover;filter:saturate(.85)}
-.discord-body{position:relative;z-index:2;display:grid;gap:11px;padding:52px 16px 16px}
-.discord-head{display:flex;align-items:center;gap:13px}
-.discord-avatar-wrap{position:relative;display:block;width:64px;height:64px;flex:none}
-.discord-avatar{width:64px;height:64px;border-radius:50%;object-fit:cover;
-  border:3px solid var(--surface);display:block}
-.discord-decoration{position:absolute;inset:-9px;width:calc(100% + 18px);height:calc(100% + 18px);
+/* The Discord profile, quoted rather than reinterpreted.
+   These are Discord's own surfaces and proportions, not the site palette: a
+   card that is nearly Discord reads as a mistake, one that matches reads as
+   the thing itself. A quotation is allowed to keep its own voice.
+   The stage owns the perspective so the card can tilt inside it. */
+.dc-stage{perspective:1100px;perspective-origin:50% 50%;pointer-events:auto}
+.dc-card{position:relative;width:min(340px,80vw);border-radius:12px;overflow:hidden;
+  background:#232428;box-shadow:0 10px 34px rgba(0,0,0,.55);
+  transform-style:preserve-3d;will-change:transform;
+  transform:rotateX(var(--tilt-x,0deg)) rotateY(var(--tilt-y,0deg));
+  transition:transform .45s cubic-bezier(.16,.84,.3,1);text-transform:none!important}
+.dc-card:hover{transition:transform .09s linear}
+
+.dc-banner{height:60px;background:var(--dc-accent,#5865F2);overflow:hidden}
+.dc-banner img{width:100%;height:100%;object-fit:cover;display:block}
+
+.dc-badges{position:absolute;z-index:3;top:68px;right:12px;display:flex;gap:3px;
+  padding:3px 5px;border-radius:8px;background:#111214}
+.dc-badges span{display:grid;place-items:center;width:18px;height:18px;border-radius:4px;
+  background:#2b2d31;color:#dbdee1;font:600 8px/1 Manrope,Arial,sans-serif;letter-spacing:.02em}
+
+.dc-avatar-wrap{position:absolute;z-index:2;top:16px;left:16px;width:80px;height:80px}
+.dc-avatar{width:80px;height:80px;border-radius:50%;object-fit:cover;
+  border:6px solid #232428;background:#232428;display:block}
+.dc-decoration{position:absolute;inset:-8px;width:calc(100% + 16px);height:calc(100% + 16px);
   pointer-events:none}
-.discord-activity{margin:0;padding-left:9px;border-left:2px solid var(--discord-accent);
-  font:11px/1.5 Jet,monospace;letter-spacing:.1em;color:var(--text-primary)}
-.discord-bio{margin:0;font:13px/1.55 Manrope,Arial,sans-serif;color:var(--text-secondary);
-  letter-spacing:0;text-transform:none}
+.dc-status{position:absolute;right:2px;bottom:2px;width:20px;height:20px;border-radius:50%;
+  border:5px solid #232428;background:#80848e;display:block}
+.dc-status--online{background:#23a55a}
+.dc-status--idle{background:#f0b232}
+.dc-status--dnd{background:#f23f43}
+
+.dc-body{padding:44px 16px 16px}
+.dc-name{margin:0!important;color:#f2f3f5!important;
+  font:600 20px/1.25 Manrope,Arial,sans-serif!important;letter-spacing:-.01em!important;
+  text-transform:none!important}
+.dc-handle{margin:1px 0 0!important;color:#b5bac1!important;
+  font:400 14px/1.3 Manrope,Arial,sans-serif!important;letter-spacing:0!important;
+  text-transform:none!important}
+.dc-rule{height:1px;margin:13px 0;border:0;background:#3f4147}
+.dc-section{margin:0!important;color:#b5bac1!important;
+  font:700 12px/1.2 Manrope,Arial,sans-serif!important;letter-spacing:.02em!important;
+  text-transform:uppercase!important}
+.dc-text{margin:6px 0 0!important;color:#dbdee1!important;
+  font:400 13px/1.45 Manrope,Arial,sans-serif!important;letter-spacing:0!important;
+  text-transform:none!important;white-space:pre-wrap}
+
+/* A moving highlight sells the tilt: without it the card rotates but stays
+   flat, and the eye reads the transform as a glitch rather than as a surface. */
+.dc-sheen{position:absolute;inset:0;pointer-events:none;border-radius:12px;
+  background:linear-gradient(105deg,transparent 35%,
+    rgba(255,255,255,.09) calc(var(--sheen,.5) * 100%),transparent 68%)}
+
+@media(prefers-reduced-motion:reduce){
+  .dc-card{transform:none!important;transition:none}
+  .dc-sheen{display:none}
+}
 
 /* Two Steam accounts, side by side: one person, two logins, different halves
    of the same five thousand hours. */
@@ -210,6 +245,14 @@ html[data-chapter="playstation"] .chapter-copy--playstation .figure-count{--figu
   letter-spacing:.12em;color:var(--text-secondary);text-transform:uppercase}
 .account-identity small{font:10px/1 Jet,monospace;letter-spacing:.12em;color:var(--text-faint)}
 .account-identity .presence-dot{width:6px;height:6px}
+
+/* The one outbound link in the experience, so it has to look clickable while
+   the chapter around it is deliberately inert. */
+.ts-invite{pointer-events:auto;color:var(--accent);text-decoration:none;
+  border-bottom:1px solid color-mix(in srgb,var(--accent) 45%,transparent);
+  transition:color .2s,border-color .2s}
+.ts-invite:hover{color:var(--accent-soft);border-color:var(--accent-soft)}
+.ts-invite:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
 
 .badge-row{display:flex;flex-wrap:wrap;gap:7px;margin:2px 0 0;padding:0;list-style:none}
 .badge-row li{padding:4px 8px;border:1px solid var(--line);border-radius:2px;
