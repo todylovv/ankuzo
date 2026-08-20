@@ -195,41 +195,51 @@ function ExperienceScene({ target, rendered, portal, immediate, archiveDensity, 
     <>
       <Atmosphere reducedMotion={reducedMotion} />
       <SceneLighting />
-      {/* What the mirror is given to show. The order matters more than the
-          numbers: a broad sky and a broad floor first, so the faces of the
-          glyph carry a gradient and read as volume, and only then the two
-          narrow strips that draw its silhouette. The previous set was six
-          narrow strips over nothing, and a mirror reproduces nothing
-          faithfully — which is exactly why the artefact looked like a black
-          cut-out rather than polished metal. */}
+      {/* What the mirror is given to show.
+
+          A flat face has a constant normal, so it samples the environment in a
+          near-constant direction and can only be as interesting as whatever
+          sits there. One huge uniform panel behind the camera — the previous
+          arrangement — meant the glyph faithfully reflected a blank white wall,
+          which is exactly what "the 22 is just white" describes. No material
+          setting can rescue that; the room has to have something in it.
+
+          So this is built like a photographer's light tent with slats: bright
+          strips separated by dark gaps, at the angular scale the glyph actually
+          subtends. As the reflected vector sweeps across a face it now crosses
+          light, gap, light — and that sweep IS the gradient. */}
       <Environment resolution={256}>
-        {/* The panel behind the camera. This is the one that was missing, and
-            without it the artefact could only ever be black: a mirror shows
-            what is behind the viewer, and every other light here stands in
-            front of it or beside it. Front faces were reflecting an empty
-            room. It is the same reason chrome is photographed inside a light
-            tent rather than under a lamp. */}
-        <Lightformer form="rect" intensity={2.4} color={SCENE.reflectionSky}
-          position={[0, 1.2, 9.5]} rotation={[0, Math.PI, 0]} scale={[18, 11, 1]} />
-        {/* Sky: wide, soft, slightly forward, so the top faces catch a sweep. */}
-        <Lightformer form="rect" intensity={3.1} color={SCENE.reflectionSky}
-          position={[-1.2, 6.2, 4.2]} rotation={[0.42, 0.16, 0]} scale={[14, 5.2, 1]} />
-        {/* Floor: dim and cool. Without it the underside falls to the ground
-            colour and the glyph loses its lower edge entirely. */}
-        <Lightformer form="rect" intensity={1.15} color={SCENE.reflectionFloor}
-          position={[0, -5.6, -1.5]} rotation={[Math.PI / 2, 0, 0]} scale={[13, 8, 1]} />
-        {/* Fill from the left, broad, keeps the shadow side from going flat. */}
-        <Lightformer form="rect" intensity={1.5} color={SCENE.reflectionSide}
-          position={[-6.6, 0.4, 1.8]} rotation={[0, 1.05, 0]} scale={[7, 6.4, 1]} />
-        {/* The two specular edges — the signature highlight down the glyph. */}
-        <Lightformer form="rect" intensity={13} color={SCENE.reflectionEdge}
-          position={[-2.5, 0.2, 5.4]} rotation={[0, 0.48, 0.06]} scale={[0.2, 8.6, 1]} />
+        {/* Four slats behind the camera, unevenly spaced and unevenly bright.
+            Even spacing would read as a pattern; uneven reads as a place. */}
+        <Lightformer form="rect" intensity={3.4} color={SCENE.reflectionSky}
+          position={[-5.6, 2.4, 9]} rotation={[0, Math.PI, 0]} scale={[2.6, 12, 1]} />
+        <Lightformer form="rect" intensity={2.1} color={SCENE.reflectionSide}
+          position={[-1.4, 1.2, 9.4]} rotation={[0, Math.PI, 0]} scale={[1.5, 11, 1]} />
+        <Lightformer form="rect" intensity={4.2} color={SCENE.reflectionEdge}
+          position={[2.9, 2, 9.1]} rotation={[0, Math.PI, 0]} scale={[3.4, 12.5, 1]} />
+        <Lightformer form="rect" intensity={1.4} color={SCENE.reflectionSide}
+          position={[6.8, 0.6, 9.6]} rotation={[0, Math.PI, 0]} scale={[1.8, 10, 1]} />
+
+        {/* Sky and floor keep the top and bottom of the glyph from matching. */}
+        <Lightformer form="rect" intensity={2.3} color={SCENE.reflectionSky}
+          position={[-1.2, 7.4, 3.4]} rotation={[0.5, 0.14, 0]} scale={[15, 4.2, 1]} />
+        <Lightformer form="rect" intensity={0.85} color={SCENE.reflectionFloor}
+          position={[0, -6.2, -1]} rotation={[Math.PI / 2, 0, 0]} scale={[14, 9, 1]} />
+
+        {/* The two specular edges that draw the silhouette. */}
         <Lightformer form="rect" intensity={9} color={SCENE.reflectionEdge}
-          position={[2.8, 0.4, 5.2]} rotation={[0, -0.44, -0.07]} scale={[0.28, 7, 1]} />
-        {/* One warm sliver, low and dim: keeps the metal from reading as a
-            uniformly cold blue, which is where chrome starts to look plastic. */}
-        <Lightformer form="rect" intensity={1.9} color={SCENE.reflectionWarm}
-          position={[5.6, -1.6, 2.4]} rotation={[0, -0.92, 0]} scale={[1.1, 4.6, 1]} />
+          position={[-3.1, 0.2, 5.6]} rotation={[0, 0.5, 0.06]} scale={[0.22, 9, 1]} />
+        <Lightformer form="rect" intensity={6} color={SCENE.reflectionEdge}
+          position={[3.4, 0.4, 5.4]} rotation={[0, -0.46, -0.07]} scale={[0.3, 7.4, 1]} />
+
+        {/* One warm sliver, low and dim: uniformly cold chrome starts to read
+            as plastic, and a single warm bounce is what stops it. */}
+        <Lightformer form="rect" intensity={1.6} color={SCENE.reflectionWarm}
+          position={[6.2, -2.2, 2.6]} rotation={[0, -0.95, 0]} scale={[1.2, 5, 1]} />
+
+        {/* Rim from behind the artefact, separating it from the dust. */}
+        <Lightformer form="rect" intensity={2.8} color={SCENE.reflectionSky}
+          position={[0, 1.5, -22]} rotation={[0, 0, 0]} scale={[9, 7, 1]} />
       </Environment>
       <RibbonField progress={rendered} density={archiveDensity} reducedMotion={reducedMotion} />
       <ContinuousWorld progress={rendered} />

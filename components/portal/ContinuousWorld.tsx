@@ -92,8 +92,18 @@ export function ContinuousWorld({
   // sweep has a soft edge rather than a hard boundary.
   const faceMaterial = useMemo(() => new MeshPhysicalMaterial({
     color: SCENE.chrome,
-    metalness: 0.96, roughness: 0.26, envMapIntensity: 0.78,
-    clearcoat: 0.34, clearcoatRoughness: 0.4, transparent: true, opacity: 0,
+    metalness: 0.96, roughness: 0.22, envMapIntensity: 1.55,
+    clearcoat: 0.3, clearcoatRoughness: 0.36,
+    // Brushed rather than mirror-smooth. Anisotropy stretches every reflection
+    // along one axis, so the slats behind the camera arrive as long vertical
+    // draws down the face instead of as a single flat wash — it is the same
+    // trick that makes a real brushed-steel panel read as metal in a photo.
+    anisotropy: 0.42, anisotropyRotation: Math.PI / 2,
+    // A trace of thin-film. Chrome that is purely neutral looks computed; a
+    // faint cold shift at grazing angles is what real plating does, and it
+    // lands inside the palette's own blue rather than fighting it.
+    iridescence: 0.2, iridescenceIOR: 1.5, iridescenceThicknessRange: [140, 420] as [number, number],
+    transparent: true, opacity: 0,
   }), []);
   // The walls face sideways into a room that is nearly empty, so the same
   // damping would sink them into the background and take the glyph's edge with
@@ -101,8 +111,10 @@ export function ContinuousWorld({
   // wide enough to read as a rim rather than as a glint. The gap between this
   // and the faces above is what gives the extrusion its depth.
   const sideMaterial = useMemo(() => new MeshPhysicalMaterial({
-    color: SCENE.chromeSide, metalness: 0.92, roughness: 0.34, envMapIntensity: 1.45,
-    clearcoat: 0.12, clearcoatRoughness: 0.3, transparent: true, opacity: 0,
+    color: SCENE.chromeSide, metalness: 0.92, roughness: 0.32, envMapIntensity: 2.1,
+    clearcoat: 0.12, clearcoatRoughness: 0.3,
+    anisotropy: 0.3, anisotropyRotation: 0,
+    transparent: true, opacity: 0,
   }), []);
   const geometry = useGothicTwoGeometry();
   const { size } = useThree();

@@ -169,19 +169,31 @@ export function PortalTwentyTwo({
   const pristineMaterial = useMemo(() => new MeshPhysicalMaterial({
     color: SCENE.chrome,
     metalness: 0.96,
-    roughness: 0.26,
-    envMapIntensity: 0.78,
-    clearcoat: 0.34,
-    clearcoatRoughness: 0.4,
+    roughness: 0.22,
+    envMapIntensity: 1.55,
+    clearcoat: 0.3,
+    clearcoatRoughness: 0.36,
+    // Brushed rather than mirror-smooth: anisotropy stretches each reflection
+    // along one axis, so the slats behind the camera arrive as long vertical
+    // draws down the face instead of as one flat wash.
+    anisotropy: 0.42,
+    anisotropyRotation: Math.PI / 2,
+    // A trace of thin-film. Purely neutral chrome looks computed; a faint cold
+    // shift at grazing angles is what real plating does.
+    iridescence: 0.2,
+    iridescenceIOR: 1.5,
+    iridescenceThicknessRange: [140, 420] as [number, number],
     transparent: true,
   }), []);
   const pristineSideMaterial = useMemo(() => new MeshPhysicalMaterial({
     color: SCENE.chromeSide,
     metalness: 0.92,
-    roughness: 0.34,
-    envMapIntensity: 1.45,
+    roughness: 0.32,
+    envMapIntensity: 2.1,
     clearcoat: 0.12,
     clearcoatRoughness: 0.3,
+    anisotropy: 0.3,
+    anisotropyRotation: 0,
     transparent: true,
   }), []);
   // Fragments tumble, so their faces sweep through the whole environment rather
@@ -190,8 +202,10 @@ export function PortalTwentyTwo({
   const fragmentMaterial = useMemo(() => new MeshPhysicalMaterial({
     color: SCENE.chromeSecondary,
     metalness: 0.94,
-    roughness: 0.3,
-    envMapIntensity: 1.05,
+    roughness: 0.28,
+    envMapIntensity: 1.75,
+    anisotropy: 0.34,
+    anisotropyRotation: Math.PI / 2,
     clearcoat: 0.22,
     clearcoatRoughness: 0.38,
     transparent: true,
