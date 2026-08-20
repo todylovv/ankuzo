@@ -113,38 +113,69 @@ button{font:inherit}
 .chapter-copy h1,.chapter-copy h2{margin:0;font-family:Unbounded,Manrope,Arial,sans-serif;letter-spacing:-.045em}
 /* Every chapter hangs off the same left rail. A consistent spine is what makes
    the composition read as designed rather than placed: the type owns the left
-   third, the artefact owns the rest, and they never compete for the centre.
-   Only the vertical anchor changes from chapter to chapter. */
-.chapter-copy{left:var(--gutter);max-width:min(46ch,52vw)}
+   third, the artefact owns the rest, and they never compete for the centre. */
+.chapter-copy{left:var(--gutter);max-width:min(42ch,44vw)}
 .chapter-copy h1,.chapter-copy h2{font-weight:500;font-size:var(--t-3);line-height:.9}
 
-/* The entrance carries the largest type on the site — it used to occupy 0.7%
-   of the viewport in a corner, which told a first-time visitor nothing. */
 .chapter-copy--portal{bottom:var(--gutter);transform:translateY(10px)}
 
-.chapter-copy--library{bottom:var(--gutter);transform:translateX(-18px)}
-.chapter-copy--platforms{bottom:var(--gutter);transform:translateY(14px)}
-.chapter-copy--online{top:50%;transform:translateY(-45%)}
-.chapter-copy--build{top:var(--gutter);transform:translateX(-16px)}
+/* The three data chapters share one anchor and one internal rhythm, so moving
+   between them feels like turning a page rather than entering a new site. */
+.chapter-copy--steam,.chapter-copy--playstation,.chapter-copy--presence{
+  top:50%;transform:translateY(-46%);display:grid;gap:16px;justify-items:start
+}
+.chapter-eyebrow{color:var(--text-secondary)}
+.chapter-note{max-width:34ch;color:var(--text-secondary);
+  font:11px/1.7 Jet,monospace!important;letter-spacing:.14em}
+
+/* The number is the subject of the frame — the artefact only accompanies it. */
+.chapter-figure{display:flex;align-items:baseline;gap:.22em;margin:0;
+  font:500 var(--t-4)/.86 Unbounded,Manrope,Arial,sans-serif!important;letter-spacing:-.04em}
+.figure-unit{font:11px/1 Jet,monospace;letter-spacing:.2em;color:var(--text-secondary);
+  align-self:center;text-transform:uppercase}
+.chapter-figure--word{font-size:var(--t-3)!important;align-items:center;gap:.34em}
+
+/* Counting is the arrival: the number climbs while the chapter settles, so the
+   time it takes to land is itself the measure of how large it is. An animatable
+   custom property does it without a single React render per frame. */
+@property --figure-now{syntax:"<integer>";initial-value:0;inherits:false}
+.figure-count{--figure-now:0;counter-reset:figure var(--figure-now);
+  font-variant-numeric:tabular-nums;transition:--figure-now 1.5s cubic-bezier(.16,.84,.3,1)}
+.figure-count::after{content:counter(figure)}
+html[data-chapter="steam"] .chapter-copy--steam .figure-count,
+html[data-chapter="playstation"] .chapter-copy--playstation .figure-count{--figure-now:var(--figure-target)}
+
+/* Trophy split: proportion carried by width, only gold gets the warm accent. */
+.trophy-bar{display:flex;width:min(26ch,30vw);height:2px;gap:2px}
+.trophy-bar i{display:block;height:100%;background:var(--text-faint)}
+.trophy-bar--silver{background:var(--text-secondary)!important}
+.trophy-bar--gold{background:var(--ember)!important}
+
+.presence-dot{display:block;width:.34em;height:.34em;border-radius:50%;
+  background:var(--text-faint);flex:none}
+.presence-dot--online{background:var(--accent);
+  box-shadow:0 0 0 .18em color-mix(in srgb,var(--accent) 28%,transparent);
+  animation:presence-pulse 2.6s ease-in-out infinite}
+.presence-dot--idle,.presence-dot--dnd{background:var(--accent-soft)}
+@keyframes presence-pulse{0%,100%{opacity:1}50%{opacity:.45}}
+
 .chapter-copy--final{top:50%;transform:translateY(-42%)}
 /* Step 4 is spent twice and only twice: arrival and departure. */
 .chapter-copy--final h2{font-size:var(--t-4);line-height:.86}
+.chapter-copy--final span{display:block;margin-top:16px;color:var(--text-secondary);
+  font:11px/1 Jet,monospace;letter-spacing:.2em}
 
 html[data-chapter="portal"] .chapter-copy--portal,
-html[data-chapter="library"] .chapter-copy--library,
-html[data-chapter="platforms"] .chapter-copy--platforms,
-html[data-chapter="online"] .chapter-copy--online,
-html[data-chapter="build"] .chapter-copy--build,
+html[data-chapter="steam"] .chapter-copy--steam,
+html[data-chapter="playstation"] .chapter-copy--playstation,
+html[data-chapter="presence"] .chapter-copy--presence,
 html[data-chapter="final"] .chapter-copy--final{opacity:1;visibility:visible;transition-delay:0s}
 html[data-chapter="portal"] .chapter-copy--portal{transform:translateY(0)}
-html[data-chapter="library"] .chapter-copy--library{transform:translateX(0)}
-html[data-chapter="platforms"] .chapter-copy--platforms{transform:translateY(0)}
-html[data-chapter="online"] .chapter-copy--online{transform:translateY(-50%)}
-html[data-chapter="build"] .chapter-copy--build{transform:translateX(0)}
+html[data-chapter="steam"] .chapter-copy--steam,
+html[data-chapter="playstation"] .chapter-copy--playstation,
+html[data-chapter="presence"] .chapter-copy--presence{transform:translateY(-50%)}
 html[data-chapter="final"] .chapter-copy--final{transform:translateY(-50%)}
 
-/* Ticks only. The chapter names are still announced and still appear on hover
-   or focus, but they no longer sit on the composition as permanent 11px text. */
 .chapter-nav{position:absolute;z-index:8;right:var(--gutter);top:50%;display:grid;gap:14px;transform:translateY(-50%);justify-items:end}
 .chapter-nav button{display:grid;grid-template-columns:auto 14px;align-items:center;gap:8px;padding:3px 0;border:0;background:transparent;color:var(--text-faint);text-align:right;cursor:pointer;font:11px/1 Jet,monospace;letter-spacing:.12em;text-transform:uppercase;transition:color .25s}
 .chapter-nav i{display:block;width:7px;height:1px;background:currentColor;transition:width .25s}
@@ -180,53 +211,24 @@ html[data-chapter="final"] [data-target-chapter="final"] i{background:var(--acce
 .review-nav button{padding:5px 7px;border:0;background:transparent;color:var(--text-secondary);white-space:nowrap;cursor:pointer;font:inherit;text-transform:uppercase}
 .review-nav button:hover,.review-nav button.active{background:var(--accent);color:var(--accent-contrast)}
 
-.experience-signals{position:absolute;z-index:7;inset:0;pointer-events:none;font-family:Jet,monospace;text-transform:uppercase}
-.experience-signal{position:absolute;opacity:0;visibility:hidden;color:var(--text-primary);transition:opacity .45s ease,visibility 0s linear .45s,transform .7s cubic-bezier(.2,.7,.2,1)}
-/* Same reasoning as .chapter-copy::before — these sit on the moving scene too. */
-.experience-signal::before{content:"";position:absolute;z-index:-1;inset:-26px -34px;background:radial-gradient(115% 115% at 50% 50%,var(--overlay) 0%,var(--overlay) 30%,transparent 74%);pointer-events:none}
-.experience-signal span,.experience-signal small{display:block;color:var(--text-secondary);font:11px/1.45 Jet,monospace;letter-spacing:.14em}
-.experience-signal strong{display:block;margin:9px 0 5px;max-width:min(38vw,560px);font:500 clamp(1rem,1.6vw,1.7rem)/1.15 Manrope,Arial,sans-serif;letter-spacing:-.02em;text-transform:none}
-.experience-signal--library{right:7vw;top:21vh;text-align:right;transform:translateX(16px)}
-.experience-signal--library strong{margin-left:auto}
-.experience-signal--platforms{left:7vw;right:7vw;top:22vh;display:grid;grid-template-columns:1fr auto 1fr;align-items:start;gap:5vw;transform:translateY(-12px)}
-.experience-signal--platforms>div:last-child{text-align:right}
-.experience-signal--platforms>div:last-child strong{margin-left:auto}
-.experience-signal--platforms p{align-self:center;margin:7px 0 0;color:var(--text-faint);font:11px/1.45 Jet,monospace;letter-spacing:.12em;white-space:nowrap}
-.experience-signal--online{left:50%;top:64%;display:flex;align-items:flex-start;gap:11px;transform:translate(-50%,10px);text-align:left}
-.experience-signal--online strong{min-width:170px}
-.presence-signal{display:block!important;width:6px;height:6px;margin-top:2px;border:1px solid var(--text-secondary);border-radius:50%;background:transparent}
-.presence-signal--online{border-color:var(--accent);background:var(--accent)}
-.presence-signal--idle{border-color:var(--accent-soft);background:linear-gradient(90deg,var(--accent-soft) 50%,transparent 50%)}
-.presence-signal--dnd{border-color:var(--accent);box-shadow:inset 0 0 0 1px var(--bg-primary)}
-html[data-chapter="library"] .experience-signal--library{opacity:1;visibility:visible;transition-delay:0s;transform:translateX(0)}
-html[data-chapter="platforms"] .experience-signal--platforms{opacity:1;visibility:visible;transition-delay:0s;transform:translateY(0)}
-html[data-chapter="online"] .experience-signal--online{opacity:1;visibility:visible;transition-delay:0s;transform:translate(-50%,0)}
-
 .review-mobile{width:min(390px,100vw);height:min(844px,100svh);margin:0 auto;overflow:hidden}
 .review-mobile .experience-stage{height:min(844px,100svh)}
 
 @media(max-width:800px){
-  /* --gutter already narrows to 24px here, so the mobile block only fixes what
-     genuinely differs: the chapter rail moves out of the way and the type
-     scale leans harder on viewport width. */
   .experience-header{grid-template-columns:1fr auto}
   .header-tools{gap:11px}
   .chapter-copy{max-width:none;width:calc(100% - var(--gutter) * 2)}
   .chapter-copy--portal{bottom:96px}
-  .chapter-copy--library{bottom:15vh}
-  .chapter-copy--platforms{bottom:14vh}
-  .chapter-copy--build{top:14vh}
-  .chapter-copy--final h2{font-size:24vw}
+  .chapter-figure{font-size:19vw!important}
+  .chapter-figure--word{font-size:13vw!important}
+  .chapter-note{max-width:none}
+  .trophy-bar{width:min(26ch,68vw)}
+  .chapter-copy--final h2{font-size:22vw}
   .chapter-nav{top:auto;bottom:52px;display:flex;gap:14px;transform:none}
   .chapter-nav button{display:flex;gap:4px}
   .chapter-nav button b{display:none}
   .chapter-nav i{width:6px}
   .review-nav{bottom:88px}
-  .experience-signal strong{max-width:72vw;font-size:15px}
-  .experience-signal--library{right:var(--gutter);top:17vh}
-  .experience-signal--platforms{left:var(--gutter);right:var(--gutter);top:16vh;grid-template-columns:1fr 1fr;gap:18px}
-  .experience-signal--platforms p{display:none}
-  .experience-signal--online{top:65%;width:max-content;max-width:86vw}
 }
 
 @media(prefers-reduced-motion:reduce){

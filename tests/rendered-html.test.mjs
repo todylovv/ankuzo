@@ -57,7 +57,7 @@ test("server-renders a meaningful page before the 3D layer arrives", async () =>
 
   // The whole journey is announced up front, so the table of contents survives
   // even when WebGL never starts.
-  for (const chapter of ["PORTAL", "LIBRARY", "PLATFORMS", "ONLINE", "BUILD", "22 / END"]) {
+  for (const chapter of ["PORTAL", "STEAM", "PLAYSTATION", "PRESENCE", "22 / END"]) {
     assert.ok(markup.includes(chapter), `chapter index must list ${chapter}`);
   }
 
@@ -115,7 +115,7 @@ test("renders a semantic document outline", async () => {
 
   // The chapter index is a list, so assistive tech announces its length.
   const listItems = markup.match(/<li\b/g) ?? [];
-  assert.equal(listItems.length, 6, "one list item per chapter");
+  assert.equal(listItems.length, 5, "one list item per chapter");
 });
 
 test("boots the theme before paint", async () => {

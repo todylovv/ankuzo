@@ -4,7 +4,7 @@
 import { Environment, Lightformer } from "@react-three/drei";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
-import type { MutableRefObject } from "react";
+import type { CSSProperties, MutableRefObject } from "react";
 import {
   ACESFilmicToneMapping,
   AmbientLight,
@@ -17,14 +17,13 @@ import {
   Vector3,
 } from "three";
 import { ContinuousWorld } from "./ContinuousWorld";
-import { ExperienceSignals } from "./ExperienceSignals";
 import { PortalTwentyTwo } from "./FracturedTwo";
 import { GothicEnvironment } from "./GothicEnvironment";
 import { CHAPTERS, PORTAL_END, chapterFor, clamp, remapPortalTravel, smoothstep } from "./progress";
 import { DARK_PALETTE, LIGHT_PALETTE, mixColor, mixNumber } from "./theme";
 import type { ThemeName } from "./theme";
 import { useExperienceData } from "../data/useExperienceData";
-import type { ExperienceSource, GameIdentity } from "../../lib/experience-data";
+import type { ExperienceSource } from "../../lib/experience-data";
 
 const REVIEW_STATES = [
   { scene: "portal", frame: "pristine", progress: 0 },
@@ -32,12 +31,11 @@ const REVIEW_STATES = [
   { scene: "portal", frame: "cracks", progress: 0.105 },
   { scene: "portal", frame: "fracture", progress: 0.132 },
   { scene: "portal", frame: "breakthrough", progress: 0.18 },
-  { scene: "library", frame: "arrival", progress: 0.235 },
-  { scene: "library", frame: "active", progress: 0.35 },
-  { scene: "platforms", frame: "split", progress: 0.49 },
-  { scene: "platforms", frame: "merge", progress: 0.575 },
-  { scene: "online", frame: "active", progress: 0.67 },
-  { scene: "build", frame: "active", progress: 0.83 },
+  { scene: "steam", frame: "arrival", progress: 0.26 },
+  { scene: "steam", frame: "hold", progress: 0.36 },
+  { scene: "playstation", frame: "arrival", progress: 0.49 },
+  { scene: "playstation", frame: "hold", progress: 0.58 },
+  { scene: "presence", frame: "hold", progress: 0.75 },
   { scene: "final", frame: "22", progress: 1 },
 ] as const;
 
@@ -191,18 +189,24 @@ function CameraRig({ portal, master }: {
   const current = useMemo(() => new Vector3(), []);
   const look = useMemo(() => new Vector3(), []);
   const portalCurve = useMemo(() => new CatmullRomCurve3(
+    // Monotonic on every axis. The previous knots reversed direction three
+    // times on X alone (0.12 → 0.07 → 0.14 → 0.04 → 0 → -0.04 → 0.08), and
+    // because the look target is sampled from this same curve slightly ahead,
+    // the weave was doubled: the shot swayed instead of travelling. The last
+    // knot also has to land exactly where the post-portal rig starts, or the
+    // camera jumps at the hand-off.
     portrait
       ? [
-          new Vector3(0.04, 0.12, 14.2), new Vector3(-0.03, 0.1, 10.8),
-          new Vector3(0.07, 0.05, 6.4), new Vector3(0.03, 0.01, 2.6),
-          new Vector3(0, -0.02, -0.55), new Vector3(-0.03, -0.04, -4.3),
-          new Vector3(0.06, -0.02, -8.6),
+          new Vector3(0.06, 0.1, 14.2), new Vector3(0.05, 0.076, 10.8),
+          new Vector3(0.04, 0.052, 6.4), new Vector3(0.028, 0.032, 2.6),
+          new Vector3(0.017, 0.017, -0.55), new Vector3(0.008, 0.006, -4.3),
+          new Vector3(0, 0, -8.6),
         ]
       : [
-          new Vector3(0.12, 0.12, 13.5), new Vector3(0.07, 0.1, 9.7),
-          new Vector3(0.14, 0.05, 5.6), new Vector3(0.04, 0.01, 2.2),
-          new Vector3(0, -0.01, -0.55), new Vector3(-0.04, -0.03, -4.2),
-          new Vector3(0.08, -0.01, -8.7),
+          new Vector3(0.1, 0.1, 13.5), new Vector3(0.085, 0.076, 9.7),
+          new Vector3(0.065, 0.052, 5.6), new Vector3(0.045, 0.032, 2.2),
+          new Vector3(0.028, 0.017, -0.55), new Vector3(0.012, 0.006, -4.2),
+          new Vector3(0, 0, -8.7),
         ],
     false, "centripetal", 0.25,
   ), [portrait]);
@@ -240,13 +244,12 @@ function CameraRig({ portal, master }: {
   return null;
 }
 
-function ExperienceScene({ target, rendered, portal, themeTarget, themeProgress, games, immediate, onDataStage, onChapterChange }: {
+function ExperienceScene({ target, rendered, portal, themeTarget, themeProgress, immediate, onDataStage, onChapterChange }: {
   target: MutableRefObject<number>;
   rendered: MutableRefObject<number>;
   portal: MutableRefObject<number>;
   themeTarget: MutableRefObject<number>;
   themeProgress: MutableRefObject<number>;
-  games: GameIdentity[];
   immediate: boolean;
   onDataStage: (stage: number) => void;
   onChapterChange: (chapter: string) => void;
@@ -263,7 +266,7 @@ function ExperienceScene({ target, rendered, portal, themeTarget, themeProgress,
         <Lightformer form="rect" intensity={1.55} color={LIGHT_PALETTE.reflectionFloor} position={[0, -4.8, -3]} rotation={[Math.PI / 2, 0, 0]} scale={[5.4, 0.75, 1]} />
       </Environment>
       <GothicEnvironment themeProgress={themeProgress} />
-      <ContinuousWorld progress={rendered} themeProgress={themeProgress} games={games} />
+      <ContinuousWorld progress={rendered} themeProgress={themeProgress} />
       <PortalTwentyTwo progress={portal} masterProgress={rendered} themeProgress={themeProgress} />
       <CameraRig portal={portal} master={rendered} />
       <ProgressDriver target={target} rendered={rendered} portal={portal} immediate={immediate}
@@ -302,6 +305,51 @@ export function PortalExperience() {
     return [];
   }, [dataStage]);
   const { data: experienceData } = useExperienceData({ enabledSources });
+
+  // The middle of the site is carried by these three numbers. Each falls back
+  // to the authored snapshot rather than to zero: a chapter that says "0 hours"
+  // would be a lie, while a slightly stale number is merely old.
+  const figures = useMemo(() => {
+    const steam = experienceData.steam;
+    const trophies = experienceData.playstation.trophies;
+    const discord = experienceData.discord;
+    const topGame = steam.featured[0];
+    const totalHours = Math.round(steam.totalHours ?? 0);
+    const topHours = Math.round(topGame?.hours ?? 0);
+    const shareOfLife = totalHours > 0 && topHours > 0
+      ? Math.round((topHours / totalHours) * 100)
+      : 0;
+
+    const steamNote = topGame && shareOfLife > 0
+      ? `${steam.totalGames ?? steam.games.length} GAMES · ${topGame.title.toUpperCase()} TOOK ${shareOfLife}% OF IT`
+      : `${steam.totalGames ?? steam.games.length} GAMES`;
+
+    const platinum = trophies.platinum ?? 0;
+    const playstationNote = [
+      trophies.level ? `LEVEL ${trophies.level}` : null,
+      `${experienceData.playstation.games.length} TITLES`,
+      platinum > 0 ? `${platinum} PLATINUM` : "NO PLATINUM YET",
+    ].filter(Boolean).join(" · ");
+
+    const presenceNote = [
+      discord.displayName ?? discord.username,
+      "TEAMSPEAK ON THE SAME MACHINE AS THIS PAGE",
+    ].filter(Boolean).join(" · ").toUpperCase();
+
+    return {
+      steamHours: totalHours,
+      steamNote,
+      trophies: trophies.total ?? 0,
+      trophySplit: [
+        { id: "bronze", value: trophies.bronze ?? 0 },
+        { id: "silver", value: trophies.silver ?? 0 },
+        { id: "gold", value: trophies.gold ?? 0 },
+      ].filter((part) => part.value > 0),
+      playstationNote,
+      presence: discord.presence,
+      presenceNote,
+    };
+  }, [experienceData]);
   const searchParams = typeof window === "undefined" ? null : new URLSearchParams(window.location.search);
   const queryScene = searchParams?.get("scene") ?? null;
   const queryFrame = searchParams?.get("frame") ?? null;
@@ -464,7 +512,7 @@ export function PortalExperience() {
           gl={{ antialias: true, alpha: false, toneMapping: ACESFilmicToneMapping, toneMappingExposure: 1.02 }}>
           <ExperienceScene target={targetProgress} rendered={renderedProgress} portal={portalProgress}
             themeTarget={themeTarget} themeProgress={themeProgress}
-            games={experienceData.games} onDataStage={activateDataStage} onChapterChange={setActiveChapter}
+            onDataStage={activateDataStage} onChapterChange={setActiveChapter}
             immediate={Boolean(reviewState) || reducedMotion} />
         </Canvas>
 
@@ -484,20 +532,39 @@ export function PortalExperience() {
               The heading stays for the document outline and screen readers. */}
           <h1 className="sr-only">22</h1>
         </div>
-        <div className="chapter-copy chapter-copy--library" id="library" {...chapterState("library")}>
-          <h2>LIBRARY</h2>
+        <div className="chapter-copy chapter-copy--steam" id="steam" {...chapterState("steam")}>
+          <p className="chapter-eyebrow">STEAM / PC</p>
+          <h2 className="chapter-figure">
+            <span className="figure-count" style={{ "--figure-target": figures.steamHours } as CSSProperties}
+              aria-label={`${figures.steamHours} hours`} />
+            <span className="figure-unit">HOURS</span>
+          </h2>
+          <p className="chapter-note">{figures.steamNote}</p>
         </div>
-        <div className="chapter-copy chapter-copy--platforms" {...chapterState("platforms")}>
-          <h2>PLATFORMS</h2>
+        <div className="chapter-copy chapter-copy--playstation" {...chapterState("playstation")}>
+          <p className="chapter-eyebrow">PLAYSTATION</p>
+          <h2 className="chapter-figure">
+            <span className="figure-count" style={{ "--figure-target": figures.trophies } as CSSProperties}
+              aria-label={`${figures.trophies} trophies`} />
+            <span className="figure-unit">TROPHIES</span>
+          </h2>
+          <p className="chapter-note">{figures.playstationNote}</p>
+          <div className="trophy-bar" aria-hidden="true">
+            {figures.trophySplit.map((part) => (
+              <i key={part.id} className={`trophy-bar--${part.id}`} style={{ flexGrow: part.value } as CSSProperties} />
+            ))}
+          </div>
         </div>
-        <div className="chapter-copy chapter-copy--online" {...chapterState("online")}>
-          <h2>ONLINE</h2>
-        </div>
-        <div className="chapter-copy chapter-copy--build" {...chapterState("build")}>
-          <h2>BUILD</h2>
+        <div className="chapter-copy chapter-copy--presence" {...chapterState("presence")}>
+          <p className="chapter-eyebrow">DISCORD / TEAMSPEAK</p>
+          <h2 className="chapter-figure chapter-figure--word">
+            <span className={`presence-dot presence-dot--${figures.presence}`} aria-hidden="true" />
+            {figures.presence.toUpperCase()}
+          </h2>
+          <p className="chapter-note">{figures.presenceNote}</p>
         </div>
         <div className="chapter-copy chapter-copy--final" {...chapterState("final")}>
-          <p>22 / END</p><h2>ANKUZO</h2><span>IDENTITY RECONSTRUCTED</span>
+          <h2>ANKUZO</h2><span>IDENTITY RECONSTRUCTED</span>
         </div>
 
         <nav className="chapter-nav" aria-label="Experience chapters">
@@ -511,7 +578,6 @@ export function PortalExperience() {
         </nav>
 
         <div className="experience-meter" aria-hidden="true"><i><b /></i></div>
-        <ExperienceSignals data={experienceData} />
 
         {reviewNavVisible && (
           <nav className="review-nav" aria-label="Experience review states">

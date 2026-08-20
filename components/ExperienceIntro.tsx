@@ -1,10 +1,9 @@
 const CHAPTER_INDEX = [
   { index: "00", label: "PORTAL" },
-  { index: "01", label: "LIBRARY" },
-  { index: "02", label: "PLATFORMS" },
-  { index: "03", label: "ONLINE" },
-  { index: "04", label: "BUILD" },
-  { index: "05", label: "22 / END" },
+  { index: "01", label: "STEAM" },
+  { index: "02", label: "PLAYSTATION" },
+  { index: "03", label: "PRESENCE" },
+  { index: "04", label: "22 / END" },
 ] as const;
 
 const DEFAULT_CAPTION = "АРХИВ ОТКРЫВАЕТСЯ";
@@ -29,7 +28,7 @@ export function ExperienceIntro({ caption = DEFAULT_CAPTION, note }: ExperienceI
         <h1 className="experience-intro-title">ANKUZO</h1>
         <p className="experience-intro-lede">
           Игры, технологии и поздний интернет, собранные в одну непрерывную digital-сцену.
-          Библиотека, две платформы, ночная сеть и след сборки — один проезд камеры без остановок.
+          Пять тысяч часов на PC, сто восемьдесят семь трофеев на PlayStation и присутствие в сети — один проезд камеры без остановок.
         </p>
         <ul className="experience-intro-index">
           {CHAPTER_INDEX.map((chapter) => (

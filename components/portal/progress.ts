@@ -9,14 +9,20 @@
 /** Master progress at which the portal chapter hands over to the world. */
 export const PORTAL_END = 0.22;
 
-/** Authored chapter list — also drives the chapter navigation UI. */
+/**
+ * Authored chapter list — also drives the chapter navigation UI.
+ *
+ * The middle is three chapters, one per account, and each is carried by a
+ * number rather than by artwork. Borrowed cover art was the previous approach
+ * and it could not be made to work: those images are drawn in other people's
+ * palettes and break the site's colour discipline the moment they enter frame.
+ */
 export const CHAPTERS = [
   { id: "portal", label: "22", index: "00", progress: 0 },
-  { id: "library", label: "LIBRARY", index: "01", progress: 0.24 },
-  { id: "platforms", label: "PLATFORMS", index: "02", progress: 0.46 },
-  { id: "online", label: "ONLINE", index: "03", progress: 0.63 },
-  { id: "build", label: "BUILD", index: "04", progress: 0.79 },
-  { id: "final", label: "22 / END", index: "05", progress: 1 },
+  { id: "steam", label: "STEAM", index: "01", progress: 0.32 },
+  { id: "playstation", label: "PLAYSTATION", index: "02", progress: 0.55 },
+  { id: "presence", label: "PRESENCE", index: "03", progress: 0.75 },
+  { id: "final", label: "22 / END", index: "04", progress: 1 },
 ] as const;
 
 export type ChapterId = (typeof CHAPTERS)[number]["id"];
@@ -31,10 +37,9 @@ export type ChapterId = (typeof CHAPTERS)[number]["id"];
  */
 export const CHAPTER_BOUNDS = [
   { id: "portal", end: 0.225 },
-  { id: "library", end: 0.45 },
-  { id: "platforms", end: 0.6 },
-  { id: "online", end: 0.76 },
-  { id: "build", end: 0.91 },
+  { id: "steam", end: 0.45 },
+  { id: "playstation", end: 0.66 },
+  { id: "presence", end: 0.86 },
 ] as const;
 
 /** Last chapter, entered once every bound above has been passed. */
