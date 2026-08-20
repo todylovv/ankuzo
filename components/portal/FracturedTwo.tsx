@@ -170,7 +170,7 @@ export function PortalTwentyTwo({
     color: SCENE.chrome,
     metalness: 0.96,
     roughness: 0.22,
-    envMapIntensity: 1.55,
+    envMapIntensity: 1.15,
     clearcoat: 0.3,
     clearcoatRoughness: 0.36,
     // Brushed rather than mirror-smooth: anisotropy stretches each reflection

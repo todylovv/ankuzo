@@ -92,7 +92,7 @@ export function ContinuousWorld({
   // sweep has a soft edge rather than a hard boundary.
   const faceMaterial = useMemo(() => new MeshPhysicalMaterial({
     color: SCENE.chrome,
-    metalness: 0.96, roughness: 0.22, envMapIntensity: 1.55,
+    metalness: 0.96, roughness: 0.22, envMapIntensity: 1.15,
     clearcoat: 0.3, clearcoatRoughness: 0.36,
     // Brushed rather than mirror-smooth. Anisotropy stretches every reflection
     // along one axis, so the slats behind the camera arrive as long vertical

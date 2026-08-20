@@ -33,12 +33,13 @@ export function PostFx({ reducedMotion = false }: { reducedMotion?: boolean }) {
       enableNormalPass={false}
     >
       <Bloom
-        // Threshold sits just under the brightest the metal reaches, so only
-        // true highlights bloom. Lower and the whole glyph glows, which is the
-        // usual way this effect goes wrong.
-        luminanceThreshold={0.62}
-        luminanceSmoothing={0.28}
-        intensity={1.15}
+        // The threshold has to sit ABOVE the metal's general brightness, not
+        // just under its peak. Set too low the whole face qualifies as a
+        // highlight and the glyph turns into a lamp — which is exactly what
+        // happened at 0.62. Only the specular streaks should pass.
+        luminanceThreshold={0.86}
+        luminanceSmoothing={0.14}
+        intensity={0.5}
         kernelSize={KernelSize.LARGE}
         mipmapBlur
       />
