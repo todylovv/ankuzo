@@ -1,10 +1,23 @@
 # ANKUZO — production image.
 #
-# `next.config.ts` sets `output: "standalone"`, so `vinext build` emits a
-# self-contained tree under dist/standalone: server.js plus its own
-# node_modules, dist and public. Nothing has to be installed at runtime, which
-# keeps the final layer small and means the runtime stage never sees the build
-# toolchain or the dev dependencies.
+# `next.config.ts` sets `output: "standalone"`, so `vinext build` emits a tree
+# under dist/standalone with server.js and a partial node_modules.
+#
+# "Partial" is the important word: that tree carries vinext but not react, so
+# it only runs when something further up the directory chain can supply the
+# rest. Locally that happens by accident — the project's own node_modules sits
+# two levels above dist/standalone. Reproducing it on purpose is what the two
+# COPY lines in the runtime stage do: the standalone tree keeps its own
+# node_modules at /app, and the production dependencies go to /node_modules,
+# where Node looks next. Merging the two directories instead would risk the
+# installed vinext shadowing the built one.
+
+FROM node:22-alpine AS deps
+WORKDIR /src
+COPY package.json package-lock.json ./
+# Runtime dependencies only. The build toolchain never reaches the final image.
+RUN npm ci --omit=dev --ignore-scripts
+
 
 FROM node:22-alpine AS builder
 WORKDIR /src
@@ -25,9 +38,12 @@ ENV NODE_ENV=production \
     PORT=3000 \
     HOSTNAME=0.0.0.0
 
-# The standalone tree is already rooted correctly — server.js resolves ./dist
-# and ./public relative to itself, so it becomes the whole working directory.
+# The standalone tree is rooted at the working directory — server.js resolves
+# ./dist and ./public relative to itself.
 COPY --from=builder --chown=node:node /src/dist/standalone ./
+
+# Resolution fallback, one level up. See the note at the top of this file.
+COPY --from=deps --chown=node:node /src/node_modules /node_modules
 
 # Never run the site as root; the node image ships an unprivileged `node` user.
 USER node
