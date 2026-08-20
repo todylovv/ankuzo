@@ -49,7 +49,7 @@
   --t-1up:18px;
   --t-2:28px;
   --t-3:clamp(2.75rem,7vw,6rem);
-  --t-4:clamp(4rem,12vw,10.5rem);
+  --t-4:clamp(4rem,13.5vw,12rem);
 }
 *{box-sizing:border-box}
 html{background:var(--bg-primary)}
@@ -99,7 +99,7 @@ html[data-chapter="portal"] .experience-stage::after{opacity:0}
 /* Every chapter hangs off the same left rail. A consistent spine is what makes
    the composition read as designed rather than placed: the type owns the left
    third, the artefact owns the rest, and they never compete for the centre. */
-.chapter-copy{left:var(--gutter);max-width:min(42ch,44vw)}
+.chapter-copy{left:var(--gutter);max-width:min(680px,52vw)}
 .chapter-copy h1,.chapter-copy h2{font-weight:500;font-size:var(--t-3);line-height:.9}
 
 .chapter-copy--portal{bottom:var(--gutter);transform:translateY(10px)}
@@ -107,8 +107,12 @@ html[data-chapter="portal"] .experience-stage::after{opacity:0}
 /* The three data chapters share one anchor and one internal rhythm, so moving
    between them feels like turning a page rather than entering a new site. */
 .chapter-copy--steam,.chapter-copy--playstation,.chapter-copy--presence{
-  top:50%;transform:translateY(-46%);display:grid;gap:15px;justify-items:start;
-  max-width:min(46ch,46vw)
+  top:50%;transform:translateY(-46%);display:grid;gap:19px;justify-items:start;
+  /* Widths are absolute on purpose. These were written as `ch`, which resolves
+     against the element's OWN font — JetBrains Mono at 11px here — so a column
+     meant to be ~640px came out at 441 and every chapter sat in a third of the
+     frame. `ch` is only safe where the text it measures is the text you meant. */
+  max-width:min(680px,52vw)
 }
 /* The middle chapter mirrors: type crosses to the right rail and the artefact
    flies to the left. Alternating sides is what turns three stacked screens
@@ -118,13 +122,13 @@ html[data-chapter="portal"] .experience-stage::after{opacity:0}
 /* The mirrored chapter reorders its row cells explicitly. It used to flip
    them with direction:rtl, which reversed the reading order too and left rows
    saying "0 —— PLATINUM": the number arrived before the thing it counted. */
-.chapter-copy--playstation .data-list li{grid-template-columns:auto 4.5rem 1fr}
+.chapter-copy--playstation .data-list li{grid-template-columns:auto 9rem 1fr}
 .chapter-copy--playstation .data-value{order:1;text-align:left}
 .chapter-copy--playstation .data-bar{order:2}
 .chapter-copy--playstation .data-name{order:3;text-align:right}
 .chapter-copy--playstation .chapter-eyebrow{flex-direction:row-reverse}
 .chapter-eyebrow{color:var(--text-secondary)}
-.chapter-note{max-width:34ch;color:var(--text-secondary);
+.chapter-note{max-width:min(560px,46vw);color:var(--text-secondary);
   font:11px/1.7 Jet,monospace!important;letter-spacing:.14em}
 
 /* The number is the subject of the frame — the artefact only accompanies it. */
@@ -148,8 +152,8 @@ html[data-chapter="playstation"] .chapter-copy--playstation .figure-count{--figu
    the numbers on a shared right edge and tabular figures so they line up as a
    column the eye can compare down. This is the "fullness" the chapters were
    missing: three lines of copy state a fact, a ranked list shows it. */
-.data-list{display:grid;gap:9px;margin:4px 0 0;padding:0;list-style:none;width:min(38ch,40vw)}
-.data-list li{display:grid;grid-template-columns:1fr 4.5rem auto;align-items:center;gap:12px;
+.data-list{display:grid;gap:11px;margin:4px 0 0;padding:0;list-style:none;width:min(640px,50vw)}
+.data-list li{display:grid;grid-template-columns:1fr 9rem auto;align-items:center;gap:18px;
   font:11px/1.4 Jet,monospace;letter-spacing:.1em;color:var(--text-secondary);text-transform:uppercase}
 .data-name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .data-value{color:var(--text-primary);font-variant-numeric:tabular-nums;text-align:right}
@@ -162,7 +166,7 @@ html[data-chapter="playstation"] .chapter-copy--playstation .figure-count{--figu
    that means nothing, while the count belongs next to its own cup. Each keeps
    its real metal, because the metal IS the information. */
 .tier-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;
-  margin:2px 0 0;padding:0;list-style:none;width:min(38ch,40vw)}
+  margin:2px 0 0;padding:0;list-style:none;width:min(640px,50vw)}
 .tier-grid li{display:grid;justify-items:center;gap:5px;padding:13px 6px 11px;
   border:1px solid var(--line);border-radius:4px;background:var(--surface);
   transition:border-color .4s ease,opacity .4s ease}
@@ -176,6 +180,67 @@ html[data-chapter="playstation"] .chapter-copy--playstation .figure-count{--figu
 [data-tier="gold"] .tier-cup{fill:var(--ember)}
 [data-tier="platinum"] .tier-cup{fill:var(--chrome-highlight)}
 [data-tier="gold"]{border-color:color-mix(in srgb,var(--ember) 34%,transparent)}
+/* The Discord profile, quoted rather than reinterpreted.
+   These are Discord's own surfaces and proportions, not the site palette: a
+   card that is nearly Discord reads as a mistake, one that matches reads as
+   the thing itself. A quotation is allowed to keep its own voice. */
+.dc-stage{perspective:1100px;perspective-origin:50% 50%;pointer-events:auto}
+.dc-card{position:relative;width:min(390px,42vw);border-radius:12px;overflow:hidden;
+  background:#232428;box-shadow:0 10px 34px rgba(0,0,0,.55);
+  transform-style:preserve-3d;will-change:transform;
+  transform:rotateX(var(--tilt-x,0deg)) rotateY(var(--tilt-y,0deg));
+  transition:transform .45s cubic-bezier(.16,.84,.3,1);text-transform:none!important}
+.dc-card:hover{transition:transform .09s linear}
+.dc-banner{height:64px;background:var(--dc-accent,#5865F2);overflow:hidden}
+.dc-banner img{width:100%;height:100%;object-fit:cover;display:block}
+.dc-badges{position:absolute;z-index:3;top:72px;right:12px;display:flex;gap:3px;
+  padding:3px 5px;border-radius:8px;background:#111214}
+.dc-badges span{display:grid;place-items:center;width:18px;height:18px;border-radius:4px;
+  background:#2b2d31;color:#dbdee1;font:600 8px/1 Manrope,Arial,sans-serif;letter-spacing:.02em}
+.dc-avatar-wrap{position:absolute;z-index:2;top:18px;left:16px;width:80px;height:80px}
+.dc-avatar{width:80px;height:80px;border-radius:50%;object-fit:cover;
+  border:6px solid #232428;background:#232428;display:block}
+.dc-decoration{position:absolute;inset:-8px;width:calc(100% + 16px);height:calc(100% + 16px);
+  pointer-events:none}
+.dc-status{position:absolute;right:2px;bottom:2px;width:20px;height:20px;border-radius:50%;
+  border:5px solid #232428;background:#80848e;display:block}
+.dc-status--online{background:#23a55a}
+.dc-status--idle{background:#f0b232}
+.dc-status--dnd{background:#f23f43}
+.dc-body{padding:46px 16px 16px}
+.dc-name{margin:0!important;color:#f2f3f5!important;
+  font:600 20px/1.25 Manrope,Arial,sans-serif!important;letter-spacing:-.01em!important;
+  text-transform:none!important}
+.dc-handle{margin:1px 0 0!important;color:#b5bac1!important;
+  font:400 14px/1.3 Manrope,Arial,sans-serif!important;letter-spacing:0!important;
+  text-transform:none!important}
+.dc-rule{height:1px;margin:13px 0;border:0;background:#3f4147}
+.dc-section{margin:0!important;color:#b5bac1!important;
+  font:700 12px/1.2 Manrope,Arial,sans-serif!important;letter-spacing:.02em!important;
+  text-transform:uppercase!important}
+.dc-text{margin:6px 0 0!important;color:#dbdee1!important;
+  font:400 13px/1.45 Manrope,Arial,sans-serif!important;letter-spacing:0!important;
+  text-transform:none!important;white-space:pre-wrap}
+/* A moving highlight sells the tilt: without it the card rotates but stays
+   flat, and the eye reads the transform as a glitch rather than as a surface. */
+.dc-sheen{position:absolute;inset:0;pointer-events:none;border-radius:12px;
+  background:linear-gradient(105deg,transparent 35%,
+    rgba(255,255,255,.09) calc(var(--sheen,.5) * 100%),transparent 68%)}
+
+/* Two Steam accounts side by side: one person, two logins, holding different
+   halves of the same five thousand hours. */
+.account-row{display:flex;flex-wrap:wrap;gap:34px;margin:0;padding:0;list-style:none}
+.account-row li{display:flex;align-items:center;gap:12px}
+.account-avatar{width:42px;height:42px;border-radius:4px;object-fit:cover;
+  border:1px solid var(--line-strong)}
+.account-identity{display:grid;gap:2px}
+.account-identity strong{font:500 16px/1.2 Manrope,Arial,sans-serif;letter-spacing:-.01em;
+  color:var(--text-primary);text-transform:none}
+.account-identity span{display:flex;align-items:center;gap:6px;font:10px/1 Jet,monospace;
+  letter-spacing:.12em;color:var(--text-secondary);text-transform:uppercase}
+.account-identity small{font:10px/1 Jet,monospace;letter-spacing:.12em;color:var(--text-faint)}
+.account-identity .presence-dot{width:6px;height:6px}
+
 /* Zero platinum stays in the row, greyed. An empty slot is a fact about the
    collection; hiding it would be flattering it. */
 .tier-grid [data-empty="true"]{opacity:.42}
@@ -345,6 +410,8 @@ html[data-chapter="final"] [data-target-chapter="final"] i{background:var(--acce
 }
 
 @media(prefers-reduced-motion:reduce){
+  .dc-card{transform:none!important;transition:none}
+  .dc-sheen{display:none}
   html,body,.experience-shell,.experience-stage,.chapter-copy,.chapter-nav button,.chapter-nav i,.chapter-nav b,.data-bar i,.figure-count{transition:none}
   .experience-meter{display:none}
 }
