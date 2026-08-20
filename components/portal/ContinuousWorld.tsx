@@ -20,9 +20,9 @@ import { DARK_PALETTE, getChromeResponseTexture, LIGHT_PALETTE, mixColor, mixNum
  * reads as someone else's poster.
  */
 
-const STEAM: readonly [number, number] = [0.225, 0.45];
-const PLAYSTATION: readonly [number, number] = [0.45, 0.66];
-const PRESENCE: readonly [number, number] = [0.66, 0.86];
+/** Where the artefact fades in, and where the ending begins. The chapter
+ *  boundaries themselves now live in ARTEFACT_PATH, one anchor each. */
+const STEAM_START = 0.225;
 const FINAL_START = 0.86;
 
 function clamp01(value: number) {
@@ -36,6 +36,25 @@ function span(value: number, from: number, to: number) {
 function ease(value: number) {
   return value * value * (3 - 2 * value);
 }
+
+/**
+ * Where the artefact sits at each hand-off. Five anchors rather than a formula,
+ * because this is a piece of choreography and choreography is authored: the
+ * object has to be on the opposite side from whichever rail the type is using.
+ */
+const ARTEFACT_PATH = [
+  { p: 0.19, x: 2.6, y: 0.15, z: -16.2, ry: -0.42 },
+  { p: 0.34, x: 1.95, y: 0.1, z: -15.1, ry: -0.3 },
+  { p: 0.45, x: 1.8, y: 0.05, z: -15, ry: -0.24 },
+  // PLAYSTATION mirrors: type moves right, so the artefact crosses to the left.
+  { p: 0.58, x: -2.05, y: 0.02, z: -15.2, ry: 0.28 },
+  { p: 0.66, x: -1.9, y: 0, z: -15.4, ry: 0.34 },
+  // PRESENCE: back to the right and further away — the quiet chapter.
+  { p: 0.78, x: 1.75, y: -0.25, z: -17.4, ry: -0.3 },
+  { p: 0.86, x: 1.6, y: -0.3, z: -17.8, ry: -0.26 },
+  // The ending brings it home, centred and closer than anywhere else.
+  { p: 1, x: 0, y: 0, z: -13.4, ry: 0 },
+] as const;
 
 export function ContinuousWorld({
   progress,
@@ -77,31 +96,37 @@ export function ContinuousWorld({
     sideMaterial.envMapIntensity = mixNumber(1.85, 2.05, theme);
 
     // The artefact appears once the portal has been crossed and never leaves.
-    const arrival = ease(span(value, STEAM[0] - 0.03, STEAM[0] + 0.05));
+    const arrival = ease(span(value, STEAM_START - 0.03, STEAM_START + 0.05));
     faceMaterial.opacity = arrival;
     sideMaterial.opacity = arrival;
 
     if (!group.current) return;
     group.current.visible = arrival > 0.005;
 
-    // One continuous move across the three data chapters: the artefact drifts
-    // right and recedes as the numbers get quieter, then returns to centre for
-    // the ending. Type owns the left rail throughout, so it never crosses it.
-    const steam = ease(span(value, STEAM[0], STEAM[1]));
-    const playstation = ease(span(value, PLAYSTATION[0], PLAYSTATION[1]));
-    const presence = ease(span(value, PRESENCE[0], PRESENCE[1]));
-    const ending = ease(span(value, FINAL_START, 1));
+    // The artefact crosses the frame instead of sitting on one side. It stays
+    // opposite the type: right while STEAM holds the left rail, left once
+    // PLAYSTATION mirrors to the right, right again for PRESENCE, and centred
+    // for the ending. The swap is the reason the chapters read as a sequence
+    // rather than as three versions of one screen.
+    const path = ARTEFACT_PATH;
+    let index = 1;
+    while (index < path.length - 1 && value > path[index].p) index += 1;
+    const from = path[index - 1];
+    const to = path[index];
+    const t = ease(span(value, from.p, to.p));
 
-    const sideways = portrait ? 0.55 : 1;
+    const sideways = portrait ? 0.62 : 1;
     group.current.position.set(
-      (1.55 + 0.35 * steam + 0.2 * playstation - 0.25 * presence) * sideways * (1 - ending),
-      (0.1 - 0.35 * presence) * (1 - ending),
-      -14.6 - 0.9 * steam - 0.6 * playstation - 1.9 * presence + 2.4 * ending,
+      (from.x + (to.x - from.x) * t) * sideways,
+      from.y + (to.y - from.y) * t,
+      from.z + (to.z - from.z) * t,
     );
-    group.current.rotation.y = -0.34 + 0.2 * steam + 0.16 * playstation + 0.1 * presence - 0.22 * ending;
-    group.current.rotation.x = 0.04 * playstation - 0.03 * presence;
+    // Always angled back toward the reader's side of the frame.
+    group.current.rotation.y = from.ry + (to.ry - from.ry) * t;
+    group.current.rotation.x = 0.03 * Math.sin((value - STEAM_START) * 2.2);
 
-    const scale = (portrait ? 0.34 : 0.38) + 0.16 * ending;
+    // Largest at the ending, where it is the only thing left in the frame.
+    const scale = (portrait ? 0.34 : 0.38) + 0.14 * ease(span(value, FINAL_START, 1));
     group.current.scale.setScalar(scale);
   });
 

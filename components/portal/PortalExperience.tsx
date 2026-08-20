@@ -327,6 +327,15 @@ export function PortalExperience() {
     const tierPeak = Math.max(1, ...tiers.map((tier) => tier.value));
 
     return {
+      steamProfiles: steam.profiles.slice(0, 2).map((profile) => ({
+        id: profile.id,
+        nickname: profile.nickname,
+        avatar: profile.avatar,
+        online: profile.online,
+        currentGame: profile.currentGame,
+        hours: Math.round(profile.totalHours ?? 0),
+        games: profile.gameCount ?? 0,
+      })),
       steamHours: totalHours,
       steamGames: steam.totalGames ?? steam.games.length,
       steamNote: share > 0
@@ -536,6 +545,24 @@ export function PortalExperience() {
             <span className="figure-unit">HOURS</span>
           </h2>
           <p className="chapter-note">{figures.steamNote}</p>
+          <ul className="account-row">
+            {figures.steamProfiles.map((profile) => (
+              <li key={profile.id}>
+                {profile.avatar ? (
+                  /* eslint-disable-next-line @next/next/no-img-element */
+                  <img className="account-avatar" src={profile.avatar} alt="" width={40} height={40} loading="lazy" />
+                ) : null}
+                <div className="account-identity">
+                  <strong>{profile.nickname}</strong>
+                  <span>
+                    <i className={`presence-dot presence-dot--${profile.online ? "online" : "offline"}`} aria-hidden="true" />
+                    {profile.currentGame ? profile.currentGame : profile.online ? "ONLINE" : "OFFLINE"}
+                  </span>
+                  <small>{profile.games} GAMES · {profile.hours.toLocaleString("en-US")} H</small>
+                </div>
+              </li>
+            ))}
+          </ul>
           <ol className="data-list">
             {figures.topGames.map((game) => (
               <li key={game.id}>
@@ -549,7 +576,15 @@ export function PortalExperience() {
           </ol>
         </div>
         <div className="chapter-copy chapter-copy--playstation" {...chapterState("playstation")}>
-          <p className="chapter-eyebrow">PLAYSTATION</p>
+          <p className="chapter-eyebrow">
+            PLAYSTATION
+            <svg className="ps-shapes" viewBox="0 0 74 12" aria-hidden="true">
+              <path d="M5 2 8.6 9H1.4z" />
+              <circle cx="24" cy="6" r="3.6" />
+              <path d="M40.3 3.1 43 5.8l2.7-2.7 1.4 1.4L44.4 7.2l2.7 2.7-1.4 1.4L43 8.6l-2.7 2.7-1.4-1.4 2.7-2.7-2.7-2.7z" />
+              <path d="M62.4 2.4h9.2v9.2h-9.2z" />
+            </svg>
+          </p>
           <h2 className="chapter-figure">
             <span className="figure-count" style={{ "--figure-target": figures.trophies } as CSSProperties}
               aria-label={`${figures.trophies} trophies`} />
@@ -559,6 +594,12 @@ export function PortalExperience() {
           <ol className="data-list data-list--tiers">
             {figures.tiers.map((tier) => (
               <li key={tier.id} data-tier={tier.id} data-empty={tier.value === 0 ? "true" : undefined}>
+                <svg className="trophy-icon" viewBox="0 0 16 16" aria-hidden="true">
+                  <path d="M4.4 1.6h7.2v3.1a3.6 3.6 0 0 1-7.2 0z" />
+                  <path d="M7.2 8.3h1.6v3.1H7.2z" />
+                  <path d="M4.9 11.6h6.2v1.7H4.9z" />
+                  <path d="M12.4 2.6h2.2v1.6a2.2 2.2 0 0 1-2.2 2.2zM3.6 2.6H1.4v1.6a2.2 2.2 0 0 0 2.2 2.2z" />
+                </svg>
                 <span className="data-name">{tier.label}</span>
                 <span className="data-bar" aria-hidden="true">
                   <i style={{ transform: `scaleX(${tier.value / figures.tierPeak})` }} />
@@ -574,31 +615,45 @@ export function PortalExperience() {
             <span className={`presence-dot presence-dot--${figures.presence}`} aria-hidden="true" />
             {figures.presence.toUpperCase()}
           </h2>
-          <div className="profile-card">
-            {figures.discord.avatar ? (
-              /* A 52px avatar inside a lazily mounted chapter is never the LCP
-                 element, and the `next` package is not actually installed here
-                 (vinext ships shims), so next/image would add risk for no gain. */
-              // eslint-disable-next-line @next/next/no-img-element
-              <img className="profile-avatar" src={figures.discord.avatar} alt="" width={52} height={52} loading="lazy" />
+          <article className="discord-card" style={{
+            "--discord-accent": figures.discord.accentColor ?? "var(--accent)",
+          } as CSSProperties}>
+            {figures.discord.banner ? (
+              /* eslint-disable-next-line @next/next/no-img-element */
+              <img className="discord-banner" src={figures.discord.banner} alt="" loading="lazy" />
             ) : null}
-            <div className="profile-identity">
-              <strong>{figures.discord.displayName ?? figures.discord.username ?? "ANKUZO"}</strong>
-              {figures.discord.username ? <span>@{figures.discord.username}</span> : null}
+            <div className="discord-body">
+              <div className="discord-head">
+                {figures.discord.avatar ? (
+                  <span className="discord-avatar-wrap">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img className="discord-avatar" src={figures.discord.avatar} alt="" width={64} height={64} loading="lazy" />
+                    {figures.discord.decoration ? (
+                      /* eslint-disable-next-line @next/next/no-img-element */
+                      <img className="discord-decoration" src={figures.discord.decoration} alt="" aria-hidden="true" loading="lazy" />
+                    ) : null}
+                  </span>
+                ) : null}
+                <div className="account-identity">
+                  <strong>{figures.discord.displayName ?? figures.discord.username ?? "ANKUZO"}</strong>
+                  {figures.discord.username ? <span>@{figures.discord.username}</span> : null}
+                </div>
+              </div>
+              {figures.activity ? (
+                <p className="discord-activity">
+                  {figures.activity}{figures.activityDetail ? ` · ${figures.activityDetail}` : ""}
+                </p>
+              ) : null}
+              {figures.discord.bio ? <p className="discord-bio">{figures.discord.bio}</p> : null}
+              {figures.discord.badges.length > 0 ? (
+                <ul className="badge-row">
+                  {figures.discord.badges.map((badge) => (
+                    <li key={badge}>{badge.replace(/_/g, " ")}</li>
+                  ))}
+                </ul>
+              ) : null}
             </div>
-          </div>
-          {figures.activity ? (
-            <p className="chapter-note chapter-note--activity">
-              {figures.activity}{figures.activityDetail ? ` · ${figures.activityDetail}` : ""}
-            </p>
-          ) : null}
-          {figures.discord.badges.length > 0 ? (
-            <ul className="badge-row">
-              {figures.discord.badges.map((badge) => (
-                <li key={badge}>{badge.replace(/_/g, " ")}</li>
-              ))}
-            </ul>
-          ) : null}
+          </article>
           <p className="chapter-note">TEAMSPEAK · SAME MACHINE AS THIS PAGE</p>
         </div>
         <div className="chapter-copy chapter-copy--final" {...chapterState("final")}>

@@ -125,6 +125,15 @@ button{font:inherit}
   top:50%;transform:translateY(-46%);display:grid;gap:15px;justify-items:start;
   max-width:min(46ch,46vw)
 }
+/* The middle chapter mirrors: type crosses to the right rail and the artefact
+   flies to the left. Alternating sides is what turns three stacked screens
+   into a sequence — and it is the only way the object can move left at all
+   without landing underneath the type. */
+.chapter-copy--playstation{left:auto;right:var(--gutter);justify-items:end;text-align:right}
+.chapter-copy--playstation .data-list li{direction:rtl}
+.chapter-copy--playstation .data-name,.chapter-copy--playstation .data-value{direction:ltr}
+.chapter-copy--playstation .data-value{text-align:left}
+.chapter-copy--playstation .chapter-eyebrow{flex-direction:row-reverse}
 .chapter-eyebrow{color:var(--text-secondary)}
 .chapter-note{max-width:34ch;color:var(--text-secondary);
   font:11px/1.7 Jet,monospace!important;letter-spacing:.14em}
@@ -169,15 +178,53 @@ html[data-chapter="playstation"] .chapter-copy--playstation .figure-count{--figu
 [data-empty="true"]{opacity:.45}
 [data-empty="true"] .data-value{color:var(--text-faint)}
 
-/* Discord identity — the one borrowed image left on the site, and it is his. */
-.profile-card{display:flex;align-items:center;gap:14px;margin-top:2px}
-.profile-avatar{width:52px;height:52px;border-radius:50%;object-fit:cover;
+/* PlayStation's own alphabet. Four marks say "console" faster than any label,
+   and they are the platform's signature rather than borrowed key art. */
+.chapter-eyebrow{display:flex;align-items:center;gap:12px}
+.ps-shapes{height:11px;width:auto;fill:currentColor;opacity:.55}
+
+.trophy-icon{width:13px;height:13px;fill:var(--text-faint);flex:none}
+[data-tier="silver"] .trophy-icon{fill:var(--chrome-mid)}
+[data-tier="gold"] .trophy-icon{fill:var(--ember)}
+[data-tier="platinum"] .trophy-icon{fill:var(--chrome-highlight)}
+.data-list--tiers li{grid-template-columns:auto 1fr 4.5rem auto}
+
+/* Discord card: the profile as Discord itself presents it — banner, avatar
+   decoration, accent — because that IS the thing being shown. The accent is
+   allowed here even though the site keeps one cold ramp: Discord's blurple
+   already sits inside that ramp, which is the whole thesis of the palette. */
+.discord-card{position:relative;width:min(38ch,42vw);border:1px solid var(--line);
+  border-radius:6px;overflow:hidden;background:var(--surface);isolation:isolate}
+.discord-card::before{content:"";position:absolute;inset:0;z-index:1;
+  background:linear-gradient(180deg,color-mix(in srgb,var(--bg-primary) 45%,transparent) 0%,
+    var(--surface) 62%)}
+.discord-banner{position:absolute;inset:0 0 auto;z-index:0;width:100%;height:88px;
+  object-fit:cover;filter:saturate(.85)}
+.discord-body{position:relative;z-index:2;display:grid;gap:11px;padding:52px 16px 16px}
+.discord-head{display:flex;align-items:center;gap:13px}
+.discord-avatar-wrap{position:relative;display:block;width:64px;height:64px;flex:none}
+.discord-avatar{width:64px;height:64px;border-radius:50%;object-fit:cover;
+  border:3px solid var(--surface);display:block}
+.discord-decoration{position:absolute;inset:-9px;width:calc(100% + 18px);height:calc(100% + 18px);
+  pointer-events:none}
+.discord-activity{margin:0;padding-left:9px;border-left:2px solid var(--discord-accent);
+  font:11px/1.5 Jet,monospace;letter-spacing:.1em;color:var(--text-primary)}
+.discord-bio{margin:0;font:13px/1.55 Manrope,Arial,sans-serif;color:var(--text-secondary);
+  letter-spacing:0;text-transform:none}
+
+/* Two Steam accounts, side by side: one person, two logins, different halves
+   of the same five thousand hours. */
+.account-row{display:flex;flex-wrap:wrap;gap:22px;margin:0;padding:0;list-style:none}
+.account-row li{display:flex;align-items:center;gap:11px}
+.account-avatar{width:40px;height:40px;border-radius:4px;object-fit:cover;
   border:1px solid var(--line-strong)}
-.profile-identity{display:grid;gap:3px}
-.profile-identity strong{font:500 18px/1.2 Manrope,Arial,sans-serif;letter-spacing:-.01em;
+.account-identity{display:grid;gap:2px}
+.account-identity strong{font:500 15px/1.2 Manrope,Arial,sans-serif;letter-spacing:-.01em;
   color:var(--text-primary);text-transform:none}
-.profile-identity span{font:11px/1 Jet,monospace;letter-spacing:.12em;color:var(--text-secondary)}
-.chapter-note--activity{color:var(--text-primary)!important}
+.account-identity span{display:flex;align-items:center;gap:6px;font:10px/1 Jet,monospace;
+  letter-spacing:.12em;color:var(--text-secondary);text-transform:uppercase}
+.account-identity small{font:10px/1 Jet,monospace;letter-spacing:.12em;color:var(--text-faint)}
+.account-identity .presence-dot{width:6px;height:6px}
 
 .badge-row{display:flex;flex-wrap:wrap;gap:7px;margin:2px 0 0;padding:0;list-style:none}
 .badge-row li{padding:4px 8px;border:1px solid var(--line);border-radius:2px;
