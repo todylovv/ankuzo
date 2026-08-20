@@ -50,21 +50,28 @@ test("smoothstep is clamped, symmetric and monotonic", () => {
   }
 });
 
+// The boundary values themselves are visual decisions and get re-tuned when
+// the scene changes, so this pins the RULE rather than the numbers: a boundary
+// belongs to the chapter that starts there, and the ends are clamped.
 test("chapterFor snaps every boundary to the chapter that starts there", () => {
   assert.equal(chapterFor(0), "portal");
   assert.equal(chapterFor(-1), "portal", "progress can never fall below the portal");
-  assert.equal(chapterFor(0.2249), "portal");
-  assert.equal(chapterFor(0.225), "library", "a boundary belongs to the NEXT chapter");
-  assert.equal(chapterFor(0.4299), "library");
-  assert.equal(chapterFor(0.43), "platforms");
-  assert.equal(chapterFor(0.5999), "platforms");
-  assert.equal(chapterFor(0.6), "online");
-  assert.equal(chapterFor(0.7599), "online");
-  assert.equal(chapterFor(0.76), "build");
-  assert.equal(chapterFor(0.9099), "build");
-  assert.equal(chapterFor(0.91), "final");
-  assert.equal(chapterFor(1), "final");
-  assert.equal(chapterFor(2), "final", "overscroll stays on the final chapter");
+
+  const order = [...CHAPTER_BOUNDS.map((bound) => bound.id), FINAL_CHAPTER];
+  CHAPTER_BOUNDS.forEach((bound, index) => {
+    const next = order[index + 1];
+    assert.equal(
+      chapterFor(bound.end - 0.0001), bound.id,
+      `just before ${bound.end} still belongs to ${bound.id}`,
+    );
+    assert.equal(
+      chapterFor(bound.end), next,
+      `the boundary at ${bound.end} belongs to the next chapter, ${next}`,
+    );
+  });
+
+  assert.equal(chapterFor(1), FINAL_CHAPTER);
+  assert.equal(chapterFor(2), FINAL_CHAPTER, "overscroll stays on the final chapter");
 });
 
 test("chapterFor never moves backwards as progress grows", () => {

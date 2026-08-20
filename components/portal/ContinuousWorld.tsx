@@ -10,107 +10,127 @@ import type { GameIdentity } from "../../lib/experience-data";
 import { useGothicTwoGeometry } from "./GothicTwo";
 import { DARK_PALETTE, getChromeResponseTexture, LIGHT_PALETTE, mixColor, mixNumber } from "./theme";
 
+// Chapter windows in master progress. Each chapter owns its own material and
+// hands nothing over to the next one: reusing a plane across chapters is what
+// made ONLINE read as a zoomed library cover rather than a place of its own.
+const LIBRARY: readonly [number, number] = [0.2, 0.45];
+const PLATFORMS: readonly [number, number] = [0.45, 0.6];
+const BUILD: readonly [number, number] = [0.76, 0.91];
+
+// The strip: one axis, one spacing, one reading position. Everything about a
+// cover's place in the frame follows from its index and the scroll, so no two
+// covers can drift into each other the way four hand-tuned tracks did.
+const STRIP_COUNT = 6;
+const STRIP_STEP = 5.4;
+const STRIP_X = 2.45;
+const STRIP_READ_Z = -12.6;
+const STRIP_NEAR_Z = -7.4;
+const STRIP_FAR_Z = -40;
+
 type MediaState = {
-  p: number;
   x: number;
   y: number;
   z: number;
   sx: number;
   sy: number;
-  rx?: number;
-  ry?: number;
-  rz?: number;
+  ry: number;
   opacity: number;
-  shade?: number;
+  shade: number;
 };
 
-const TRACKS: MediaState[][] = [
-  [
-    { p: 0, x: 0.45, y: 0, z: -14.5, sx: 6.3, sy: 3.55, opacity: 0.12 },
-    { p: 0.22, x: 0.35, y: 0, z: -14.35, sx: 7.4, sy: 4.15, opacity: 1 },
-    { p: 0.33, x: -1.75, y: 0.08, z: -13.85, sx: 7.8, sy: 4.35, ry: 0.05, opacity: 1 },
-    { p: 0.43, x: -4.15, y: 0.28, z: -14.8, sx: 5.5, sy: 3.1, ry: 0.16, opacity: 0.76 },
-    { p: 0.5, x: -3.35, y: 0.5, z: -13.9, sx: 5.1, sy: 2.9, ry: 0.1, opacity: 0.95 },
-    { p: 0.59, x: 0, y: 0, z: -13.55, sx: 8.15, sy: 4.55, opacity: 1 },
-    { p: 0.68, x: 0, y: 0, z: -13.15, sx: 8.55, sy: 4.75, opacity: 0.86, shade: 0.72 },
-    { p: 0.75, x: 0, y: 0, z: -13.35, sx: 8.0, sy: 4.45, opacity: 0.62, shade: 0.48 },
-    { p: 0.84, x: 0, y: 0, z: -13.58, sx: 7.4, sy: 4.05, opacity: 0.25, shade: 0.23 },
-    { p: 0.9, x: 0, y: 0, z: -13.8, sx: 6.6, sy: 3.55, opacity: 0.12, shade: 0.16 },
-    { p: 1, x: -2.25, y: 0, z: -14.25, sx: 0.24, sy: 3.5, rz: -0.16, opacity: 0.2, shade: 0.14 },
-  ],
-  [
-    { p: 0, x: -3.2, y: 1.25, z: -19, sx: 3.8, sy: 2.15, ry: -0.15, opacity: 0.05 },
-    { p: 0.22, x: -3.15, y: 1.15, z: -18, sx: 4.4, sy: 2.5, ry: -0.13, opacity: 0.35 },
-    { p: 0.33, x: 2.45, y: -0.2, z: -14.2, sx: 6.5, sy: 3.65, ry: -0.08, opacity: 0.9 },
-    { p: 0.43, x: 3.55, y: -0.32, z: -14.05, sx: 5.5, sy: 3.05, ry: -0.12, opacity: 1 },
-    { p: 0.5, x: 3.2, y: -0.5, z: -14.35, sx: 4.8, sy: 2.7, ry: -0.13, opacity: 0.95 },
-    { p: 0.59, x: -2.8, y: 0.45, z: -16.8, sx: 4.2, sy: 2.35, ry: 0.12, opacity: 0.28 },
-    { p: 0.68, x: -3.2, y: 0.55, z: -17.3, sx: 4.0, sy: 2.25, ry: 0.15, opacity: 0.16, shade: 0.42 },
-    { p: 0.75, x: -2.9, y: 0.9, z: -15.8, sx: 3.3, sy: 1.85, rz: 0.04, opacity: 0.22, shade: 0.3 },
-    { p: 0.84, x: -3.2, y: 1.25, z: -14.1, sx: 2.7, sy: 0.28, rz: 0.08, opacity: 0.52, shade: 0.25 },
-    { p: 0.9, x: -2.25, y: 1.05, z: -14, sx: 2.1, sy: 0.2, rz: 0.38, opacity: 0.58, shade: 0.16 },
-    { p: 1, x: -1.45, y: 1.55, z: -14.2, sx: 0.22, sy: 2.3, rz: -0.7, opacity: 0.2, shade: 0.12 },
-  ],
-  [
-    { p: 0, x: 4.8, y: -0.5, z: -17.5, sx: 3.5, sy: 1.95, ry: 0.2, opacity: 0.04 },
-    { p: 0.22, x: 4.4, y: -0.55, z: -16.8, sx: 4.1, sy: 2.3, ry: 0.18, opacity: 0.3 },
-    { p: 0.33, x: 4.75, y: 0.7, z: -17.1, sx: 4.2, sy: 2.35, ry: 0.19, opacity: 0.34 },
-    { p: 0.43, x: 0.4, y: 1.0, z: -16.1, sx: 4.5, sy: 2.55, ry: 0.03, opacity: 0.48 },
-    { p: 0.5, x: -0.9, y: -0.75, z: -15.2, sx: 4.7, sy: 2.65, ry: 0.05, opacity: 0.68 },
-    { p: 0.59, x: 3.0, y: -0.45, z: -16.5, sx: 4.0, sy: 2.25, ry: -0.14, opacity: 0.28 },
-    { p: 0.68, x: 3.45, y: -0.5, z: -17.2, sx: 3.7, sy: 2.08, ry: -0.18, opacity: 0.15, shade: 0.4 },
-    { p: 0.75, x: 3.1, y: -1.0, z: -15.6, sx: 3.1, sy: 1.75, rz: -0.05, opacity: 0.22, shade: 0.28 },
-    { p: 0.84, x: 3.1, y: -1.15, z: -14.05, sx: 2.5, sy: 0.25, rz: -0.09, opacity: 0.5, shade: 0.23 },
-    { p: 0.9, x: 2.3, y: -0.9, z: -14, sx: 2.0, sy: 0.18, rz: -0.4, opacity: 0.58, shade: 0.16 },
-    { p: 1, x: 1.45, y: -1.55, z: -14.2, sx: 0.22, sy: 2.3, rz: -0.7, opacity: 0.2, shade: 0.12 },
-  ],
-  [
-    { p: 0, x: 0, y: -2.3, z: -21, sx: 3.2, sy: 1.8, opacity: 0 },
-    { p: 0.22, x: 0, y: -2.2, z: -19.5, sx: 3.5, sy: 1.95, opacity: 0.08 },
-    { p: 0.33, x: -4.5, y: -1.25, z: -17, sx: 3.7, sy: 2.1, ry: -0.2, opacity: 0.25 },
-    { p: 0.43, x: -1.7, y: -0.95, z: -15.8, sx: 4.3, sy: 2.4, ry: -0.08, opacity: 0.44 },
-    { p: 0.5, x: 0.7, y: 0.85, z: -15.5, sx: 4.4, sy: 2.45, ry: -0.04, opacity: 0.58 },
-    { p: 0.59, x: 0, y: -1.7, z: -18.3, sx: 3.4, sy: 1.9, opacity: 0.12 },
-    { p: 0.68, x: 0, y: -1.9, z: -18.8, sx: 3.1, sy: 1.75, opacity: 0.07, shade: 0.35 },
-    { p: 0.75, x: 0, y: -1.55, z: -16.4, sx: 3.0, sy: 1.65, opacity: 0.16, shade: 0.25 },
-    { p: 0.84, x: 0, y: 1.65, z: -14.15, sx: 3.2, sy: 0.23, opacity: 0.48, shade: 0.22 },
-    { p: 0.9, x: 0, y: -1.6, z: -14, sx: 3.0, sy: 0.18, opacity: 0.56, shade: 0.15 },
-    { p: 1, x: 0, y: -1.65, z: -14.2, sx: 3.1, sy: 0.14, opacity: 0.2, shade: 0.1 },
-  ],
-];
+// Reused every frame so the loop stays allocation-free.
+const SAMPLED: MediaState = { x: 0, y: 0, z: 0, sx: 0, sy: 0, ry: 0, opacity: 0, shade: 1 };
+
+function clamp01(value: number) {
+  return Math.min(1, Math.max(0, value));
+}
+
+function span(value: number, from: number, to: number) {
+  return clamp01((value - from) / (to - from));
+}
 
 function ease(value: number) {
   return value * value * (3 - 2 * value);
 }
 
-function lerp(a = 0, b = 0, t: number) {
-  return a + (b - a) * t;
+/**
+ * Advance in beats instead of at a constant rate: each cover travels into the
+ * reading position, then the strip holds still while it can actually be read.
+ * The hold is the whole point — a frame that never stops never resolves.
+ */
+function beatEase(t: number, beats: number) {
+  const scaled = clamp01(t) * beats;
+  const index = Math.min(beats - 1, Math.floor(scaled));
+  const local = scaled - index;
+  const MOVE = 0.58;
+  const advanced = local < MOVE ? ease(local / MOVE) : 1;
+  return (index + advanced) / beats;
 }
 
-// Reused across the four per-frame samples so the loop stays allocation-free.
-const SAMPLED: MediaState = {
-  p: 0, x: 0, y: 0, z: 0, sx: 0, sy: 0, rx: 0, ry: 0, rz: 0, opacity: 0, shade: 1,
-};
+/** Fade a plane in from the far end of the strip and out as it passes camera. */
+function stripOpacity(z: number) {
+  return span(z, STRIP_FAR_Z, STRIP_FAR_Z + 9) * (1 - span(z, STRIP_NEAR_Z - 3.5, STRIP_NEAR_Z));
+}
 
-function sample(track: MediaState[], progress: number) {
-  const endIndex = track.findIndex((state) => state.p >= progress);
-  if (endIndex === -1) return track[track.length - 1];
-  if (endIndex === 0) return track[0];
-  const start = track[endIndex - 1];
-  const end = track[endIndex];
-  const t = ease((progress - start.p) / (end.p - start.p));
-  SAMPLED.p = progress;
-  SAMPLED.x = lerp(start.x, end.x, t);
-  SAMPLED.y = lerp(start.y, end.y, t);
-  SAMPLED.z = lerp(start.z, end.z, t);
-  SAMPLED.sx = lerp(start.sx, end.sx, t);
-  SAMPLED.sy = lerp(start.sy, end.sy, t);
-  SAMPLED.rx = lerp(start.rx, end.rx, t);
-  SAMPLED.ry = lerp(start.ry, end.ry, t);
-  SAMPLED.rz = lerp(start.rz, end.rz, t);
-  SAMPLED.opacity = lerp(start.opacity, end.opacity, t);
-  SAMPLED.shade = lerp(start.shade ?? 1, end.shade ?? 1, t);
-  return SAMPLED;
+/**
+ * Where plane `index` sits at this scroll position. One function for the whole
+ * journey: the chapter decides the arrangement, the index decides the slot.
+ */
+function layout(index: number, progress: number, out: MediaState) {
+  out.x = 0; out.y = 0; out.z = STRIP_READ_Z; out.sx = 0; out.sy = 0;
+  out.ry = 0; out.opacity = 0; out.shade = 1;
+
+  // LIBRARY — a film strip travelling past the camera, one cover at a time.
+  if (progress < PLATFORMS[0]) {
+    const travelled = beatEase(span(progress, LIBRARY[0], LIBRARY[1]), STRIP_COUNT + 1);
+    const z = STRIP_READ_Z - (index + 1) * STRIP_STEP + travelled * (STRIP_COUNT + 1) * STRIP_STEP;
+    // Sharp and bright only in the reading position; neighbours recede.
+    const focus = clamp01(1 - Math.abs(z - STRIP_READ_Z) / STRIP_STEP);
+    out.x = STRIP_X;
+    out.z = z;
+    out.sy = 3.15;
+    out.sx = 3.15 * 0.72;
+    out.ry = -0.14;
+    out.opacity = stripOpacity(z);
+    out.shade = 0.3 + 0.7 * focus;
+    return out;
+  }
+
+  // PLATFORMS — two masses only, mirrored, converging. No strip, no third item.
+  if (progress < PLATFORMS[1]) {
+    if (index > 1) return out;
+    const t = ease(span(progress, PLATFORMS[0], PLATFORMS[1]));
+    const side = index === 0 ? -1 : 1;
+    out.x = side * (3.5 - 2.5 * t);
+    out.z = -13.4;
+    out.sy = 3.3;
+    out.sx = 3.3 * 0.72;
+    out.ry = side * -0.1 * (1 - t);
+    out.opacity = span(progress, PLATFORMS[0], PLATFORMS[0] + 0.03)
+      * (1 - span(progress, PLATFORMS[1] - 0.04, PLATFORMS[1]));
+    out.shade = 0.85;
+    return out;
+  }
+
+  // ONLINE — deliberately empty. After a dense strip and two masses, an empty
+  // frame is the loudest thing available; it is also the chapter's own material.
+  if (progress < BUILD[0]) return out;
+
+  // BUILD — a single narrow column, code treated as printed matter.
+  if (progress < BUILD[1]) {
+    if (index !== 0) return out;
+    const t = span(progress, BUILD[0], BUILD[1]);
+    out.x = 2.15;
+    out.y = 0;
+    out.z = -13.1;
+    out.sy = 4.6;
+    out.sx = 0.62;
+    out.opacity = span(t, 0, 0.12) * (1 - span(t, 0.86, 1));
+    out.shade = 0.55;
+    return out;
+  }
+
+  return out;
 }
 
 function cropTexture(source: Texture, index: number) {
@@ -200,14 +220,22 @@ export function ContinuousWorld({
   games: GameIdentity[];
 }) {
   const source = useTexture("/assets/library-atlas.webp");
-  const textures = useMemo(() => [0, 1, 3, 5].map((index) => cropTexture(source, index)), [source]);
+  const textures = useMemo(
+    () => Array.from({ length: STRIP_COUNT }, (_, index) => cropTexture(source, index)),
+    [source],
+  );
   const media = useRef<Array<Mesh | null>>([]);
   const materials = useRef<Array<MeshBasicMaterial | null>>([]);
+  // The strip alternates platforms so the library reads as one life across two
+  // machines rather than a Steam block followed by a PlayStation block.
   const remoteUrls = useMemo(() => {
-    const steam = games.filter((game) => game.platform === "steam").slice(0, 2);
-    const playstation = games.filter((game) => game.platform === "playstation").slice(0, 2);
-    return [steam[0], playstation[0], steam[1], playstation[1]]
-      .map((game) => game?.artwork ?? game?.icon);
+    const steam = games.filter((game) => game.platform === "steam");
+    const playstation = games.filter((game) => game.platform === "playstation");
+    return Array.from({ length: STRIP_COUNT }, (_, index) => {
+      const source = index % 2 === 0 ? steam : playstation;
+      const game = source[Math.floor(index / 2)];
+      return game?.artwork ?? game?.icon;
+    });
   }, [games]);
   const { textures: remoteMedia, releaseRetired } = useRemoteMedia(remoteUrls);
   const finalGroup = useRef<Group>(null);
@@ -251,26 +279,27 @@ export function ContinuousWorld({
     mixColor(finalSideMaterial.color, LIGHT_PALETTE.chromeSide, DARK_PALETTE.chromeSide, theme);
     finalSideMaterial.roughness = mixNumber(0.19, 0.16, theme);
     finalSideMaterial.envMapIntensity = mixNumber(1.85, 2.05, theme);
-    const displayTransform = ease(Math.min(1, Math.max(0, (value - 0.53) / 0.1)));
-    const identityCollapse = ease(Math.min(1, Math.max(0, (value - 0.9) / 0.1)));
-    textures[0].repeat.x = 0.165 + displayTransform * 0.61;
-    textures[0].offset.x = 0.004 + displayTransform * 0.02;
-    TRACKS.forEach((track, index) => {
+    const identityCollapse = ease(span(value, 0.9, 1));
+    for (let index = 0; index < STRIP_COUNT; index += 1) {
       const mesh = media.current[index];
       const material = materials.current[index];
-      if (!mesh || !material) return;
-      const state = sample(track, value);
-      const mobileX = portrait ? state.x * 0.58 : state.x;
-      const mobileScale = portrait ? 0.82 : 1;
-      const baseAspect = index === 0 ? 0.72 + displayTransform * 1.02 : 0.72;
-      const aspect = baseAspect + (0.07 - baseAspect) * identityCollapse;
-      mesh.position.set(mobileX, state.y * (portrait ? 0.82 : 1), state.z + (portrait ? 0.8 : 0));
-      mesh.scale.set(state.sy * aspect * mobileScale, state.sy * mobileScale, 1);
-      mesh.rotation.set(state.rx ?? 0, state.ry ?? 0, state.rz ?? 0);
+      if (!mesh || !material) continue;
+      const state = layout(index, value, SAMPLED);
+      const visible = state.opacity > 0.005;
+      mesh.visible = visible;
+      if (!visible) continue;
+      const shrink = 1 - identityCollapse;
+      mesh.position.set(
+        portrait ? state.x * 0.58 : state.x,
+        state.y * (portrait ? 0.82 : 1),
+        state.z + (portrait ? 0.8 : 0),
+      );
+      const scale = portrait ? 0.82 : 1;
+      mesh.scale.set(state.sx * scale * shrink, state.sy * scale * shrink, 1);
+      mesh.rotation.set(0, state.ry, 0);
       material.opacity = state.opacity;
-      material.color.setScalar(state.shade ?? 1);
-      mesh.visible = state.opacity > 0.005;
-    });
+      material.color.setScalar(state.shade);
+    }
 
     const finalReveal = ease(Math.min(1, Math.max(0, (value - 0.91) / 0.09)));
     finalMaterial.opacity = finalReveal;

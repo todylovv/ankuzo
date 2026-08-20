@@ -23,12 +23,15 @@ export type ChapterId = (typeof CHAPTERS)[number]["id"];
 
 /**
  * Upper bound (exclusive) of every chapter except the last one.
- * NOTE: these are visually tuned hand-offs and intentionally do not equal
- * `CHAPTERS[].progress`; see tests/progress.test.mjs.
+ *
+ * These are hand-offs between what the scene shows and what the copy says, so
+ * they must line up with the chapter windows in ContinuousWorld's `layout()`.
+ * They still do not equal `CHAPTERS[].progress` — those are jump targets, aimed
+ * at the middle of a chapter rather than its edge; see tests/progress.test.mjs.
  */
 export const CHAPTER_BOUNDS = [
   { id: "portal", end: 0.225 },
-  { id: "library", end: 0.43 },
+  { id: "library", end: 0.45 },
   { id: "platforms", end: 0.6 },
   { id: "online", end: 0.76 },
   { id: "build", end: 0.91 },
