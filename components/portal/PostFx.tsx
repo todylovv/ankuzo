@@ -39,7 +39,7 @@ export function PostFx({ reducedMotion = false }: { reducedMotion?: boolean }) {
         // happened at 0.62. Only the specular streaks should pass.
         luminanceThreshold={0.86}
         luminanceSmoothing={0.14}
-        intensity={0.5}
+        intensity={0.4}
         kernelSize={KernelSize.LARGE}
         mipmapBlur
       />

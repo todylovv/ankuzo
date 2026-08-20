@@ -150,9 +150,38 @@ html[data-chapter="portal"] .experience-stage::after{opacity:0}
    time it takes to land is itself the measure of how large it is. An animatable
    custom property does it without a single React render per frame. */
 @property --figure-now{syntax:"<integer>";initial-value:0;inherits:false}
+/* The number is extruded, so it belongs to the same world as the artefact
+   rather than sitting on the glass in front of it.
+
+   It is drawn twice from one counter. The lower copy is a stack of hard
+   shadows stepping down and right — that is the extrusion body, and hard
+   shadows are what make it read as a solid side rather than as a blur. The
+   upper copy carries a metal gradient clipped to the glyphs, so the face has
+   the same run of light the chrome does. The two cannot be one element:
+   background-clip:text makes the fill transparent, and a text-shadow behind
+   transparent glyphs shows through instead of hiding behind them. */
 .figure-count{--figure-now:0;counter-reset:figure var(--figure-now);
-  font-variant-numeric:tabular-nums;transition:--figure-now 1.5s cubic-bezier(.16,.84,.3,1)}
-.figure-count::after{content:counter(figure)}
+  position:relative;font-variant-numeric:tabular-nums;
+  transition:--figure-now 1.5s cubic-bezier(.16,.84,.3,1)}
+.figure-count::before{content:counter(figure);position:absolute;inset:0;z-index:-1;
+  color:var(--chrome-shadow);
+  text-shadow:
+    0.012em 0.014em 0 var(--chrome-shadow), 0.024em 0.028em 0 var(--chrome-shadow),
+    0.036em 0.042em 0 var(--chrome-shadow), 0.048em 0.056em 0 var(--chrome-shadow),
+    0.060em 0.070em 0 #2A323E, 0.072em 0.084em 0 #2A323E,
+    0.084em 0.098em 0 #222932, 0.096em 0.112em 0 #222932,
+    0.108em 0.126em 0 #1A2029, 0.120em 0.140em 0 #1A2029,
+    0.132em 0.154em 0 #141922, 0.144em 0.168em 0 #141922,
+    /* One soft shadow under the whole stack seats it on the ground. */
+    0.16em 0.20em 0.4em rgba(0,0,0,.6)}
+.figure-count::after{content:counter(figure);position:relative;
+  /* Light from the upper left, a dark band through the middle, a second
+     highlight low down: the standard three-band metal ramp, and the same
+     order the environment puts on the artefact. */
+  background:linear-gradient(166deg,
+    var(--chrome-highlight) 0%, #D3DAE4 22%, var(--chrome-base) 46%,
+    #6E7A8B 58%, var(--chrome-mid) 74%, #9AA5B2 100%);
+  -webkit-background-clip:text;background-clip:text;color:transparent}
 html[data-chapter="steam"] .chapter-copy--steam .figure-count,
 html[data-chapter="playstation"] .chapter-copy--playstation .figure-count{--figure-now:var(--figure-target)}
 
