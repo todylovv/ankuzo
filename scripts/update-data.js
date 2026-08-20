@@ -252,8 +252,12 @@ async function updateDiscord() {
   const userId = (process.env.DISCORD_USER_ID || "").trim();
   if (!userId) return writeJson("discord.json", unavailable(fallback));
 
+  // Lanyard only tracks people who joined its own Discord server, so a 404 is
+  // a normal answer rather than a failure — and it must not take the profile
+  // down with it, because japi carries everything except live presence.
   const [lanyard, profile] = await Promise.all([
-    requestJson(`https://api.lanyard.rest/v1/users/${encodeURIComponent(userId)}`),
+    requestJson(`https://api.lanyard.rest/v1/users/${encodeURIComponent(userId)}`)
+      .catch(() => ({})),
     requestJson(`https://japi.rest/discord/v1/user/${encodeURIComponent(userId)}`)
   ]);
   const user = profile.data || lanyard.data?.discord_user || {};
