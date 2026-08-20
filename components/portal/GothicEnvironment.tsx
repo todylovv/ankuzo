@@ -111,15 +111,12 @@ function getColumnGeometries() {
   return columnGeometries;
 }
 
+// The architecture holds still. It used to ease toward the cursor, which made
+// the whole set sway underneath a camera that was already moving.
 export function GothicEnvironment({
   themeProgress,
-  pointer,
-  reducedMotion = false,
 }: {
   themeProgress: MutableRefObject<number>;
-  pointer: MutableRefObject<{ x: number; y: number }>;
-  /** When set, the architecture stops drifting with the cursor. */
-  reducedMotion?: boolean;
 }) {
   const group = useRef<Group>(null);
   const { size } = useThree();
@@ -171,14 +168,6 @@ export function GothicEnvironment({
     mixColor(working, LIGHT_PALETTE.surface, DARK_PALETTE.surface, t);
     stoneMaterial.color.copy(working);
     stoneMaterial.opacity = 0.18 + t * 0.1;
-    if (group.current) {
-      // Reduced motion parks the architecture at rest instead of tracking the
-      // pointer; it still eases there so a mid-session preference flip is calm.
-      const targetX = reducedMotion ? 0 : pointer.current.x * 0.045;
-      const targetY = reducedMotion ? 0 : pointer.current.y * 0.025;
-      group.current.position.x += (targetX - group.current.position.x) * 0.025;
-      group.current.position.y += (targetY - group.current.position.y) * 0.025;
-    }
   });
 
   const sideX = portrait ? 4.7 : 7.2;

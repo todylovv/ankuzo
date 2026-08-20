@@ -178,11 +178,13 @@ function ProgressDriver({ target, rendered, portal, immediate, onDataStage, onCh
   return null;
 }
 
-function CameraRig({ portal, master, pointer, reducedMotion }: {
+// The camera follows the authored curve and nothing else. It used to also
+// drift with the cursor, which read as the shot wobbling rather than moving —
+// on a slow flight the parallax competes with the travel instead of
+// supporting it, and it is the most vestibular-hostile motion on the page.
+function CameraRig({ portal, master }: {
   portal: MutableRefObject<number>;
   master: MutableRefObject<number>;
-  pointer: MutableRefObject<{ x: number; y: number }>;
-  reducedMotion: boolean;
 }) {
   const { camera, size } = useThree();
   const portrait = size.width / size.height < 0.78;
@@ -211,13 +213,6 @@ function CameraRig({ portal, master, pointer, reducedMotion }: {
       const travel = Math.min(0.999, remapPortalTravel(portal.current));
       portalCurve.getPointAt(travel, current);
       portalCurve.getPointAt(Math.min(0.999, travel + 0.032), look);
-      // Pointer parallax is the most vestibular-hostile motion here, so
-      // prefers-reduced-motion removes the cursor's contribution entirely.
-      const pointerFade = reducedMotion ? 0 : 1 - smoothstep(0.04, 0.1, masterValue);
-      current.x += pointer.current.x * 0.075 * pointerFade;
-      current.y += pointer.current.y * 0.05 * pointerFade;
-      look.x += pointer.current.x * 0.035 * pointerFade;
-      look.y += pointer.current.y * 0.022 * pointerFade;
     } else {
       const libraryDrift = smoothstep(0.22, 0.43, masterValue);
       const platformDrift = smoothstep(0.43, 0.6, masterValue);
@@ -245,16 +240,14 @@ function CameraRig({ portal, master, pointer, reducedMotion }: {
   return null;
 }
 
-function ExperienceScene({ target, rendered, portal, pointer, themeTarget, themeProgress, games, immediate, reducedMotion, onDataStage, onChapterChange }: {
+function ExperienceScene({ target, rendered, portal, themeTarget, themeProgress, games, immediate, onDataStage, onChapterChange }: {
   target: MutableRefObject<number>;
   rendered: MutableRefObject<number>;
   portal: MutableRefObject<number>;
-  pointer: MutableRefObject<{ x: number; y: number }>;
   themeTarget: MutableRefObject<number>;
   themeProgress: MutableRefObject<number>;
   games: GameIdentity[];
   immediate: boolean;
-  reducedMotion: boolean;
   onDataStage: (stage: number) => void;
   onChapterChange: (chapter: string) => void;
 }) {
@@ -269,10 +262,10 @@ function ExperienceScene({ target, rendered, portal, pointer, themeTarget, theme
         <Lightformer form="rect" intensity={2.2} color={LIGHT_PALETTE.reflectionShadow} position={[-6.4, -0.2, 0.4]} rotation={[0, 0.78, 0]} scale={[1.3, 5.8, 1]} />
         <Lightformer form="rect" intensity={1.55} color={LIGHT_PALETTE.reflectionFloor} position={[0, -4.8, -3]} rotation={[Math.PI / 2, 0, 0]} scale={[5.4, 0.75, 1]} />
       </Environment>
-      <GothicEnvironment themeProgress={themeProgress} pointer={pointer} reducedMotion={reducedMotion} />
+      <GothicEnvironment themeProgress={themeProgress} />
       <ContinuousWorld progress={rendered} themeProgress={themeProgress} games={games} />
       <PortalTwentyTwo progress={portal} masterProgress={rendered} themeProgress={themeProgress} />
-      <CameraRig portal={portal} master={rendered} pointer={pointer} reducedMotion={reducedMotion} />
+      <CameraRig portal={portal} master={rendered} />
       <ProgressDriver target={target} rendered={rendered} portal={portal} immediate={immediate}
         onDataStage={onDataStage} onChapterChange={onChapterChange} />
     </>
@@ -289,7 +282,6 @@ export function PortalExperience() {
   const themeTarget = useRef(0);
   const themeProgress = useRef(0);
   const themeSynced = useRef(false);
-  const pointer = useRef({ x: 0, y: 0 });
   const touchY = useRef<number | null>(null);
   const reduced = useRef(false);
   // Both of these live outside React (a media query and an attribute the head
@@ -418,10 +410,6 @@ export function PortalExperience() {
       setProgress(targetProgress.current + delta * (reduced.current ? 0.002 : 0.00052), reduced.current);
     };
     const onTouchEnd = () => { touchY.current = null; };
-    const onPointerMove = (event: PointerEvent) => {
-      pointer.current.x = event.clientX / window.innerWidth * 2 - 1;
-      pointer.current.y = -(event.clientY / window.innerHeight * 2 - 1);
-    };
     const onKeyDown = (event: KeyboardEvent) => {
       // Never steal keys from a focused control: the space bar has to keep
       // activating the theme switch and the six chapter buttons.
@@ -439,14 +427,12 @@ export function PortalExperience() {
     window.addEventListener("touchstart", onTouchStart, { passive: true });
     window.addEventListener("touchmove", onTouchMove, { passive: false });
     window.addEventListener("touchend", onTouchEnd, { passive: true });
-    window.addEventListener("pointermove", onPointerMove, { passive: true });
     window.addEventListener("keydown", onKeyDown);
     return () => {
       window.removeEventListener("wheel", onWheel);
       window.removeEventListener("touchstart", onTouchStart);
       window.removeEventListener("touchmove", onTouchMove);
       window.removeEventListener("touchend", onTouchEnd);
-      window.removeEventListener("pointermove", onPointerMove);
       window.removeEventListener("keydown", onKeyDown);
       delete document.documentElement.dataset.experienceLocked;
       delete document.documentElement.dataset.chapter;
@@ -477,39 +463,36 @@ export function PortalExperience() {
           camera={{ position: [0, 0, 13.5], fov: 35, near: 0.035, far: 70 }}
           gl={{ antialias: true, alpha: false, toneMapping: ACESFilmicToneMapping, toneMappingExposure: 1.02 }}>
           <ExperienceScene target={targetProgress} rendered={renderedProgress} portal={portalProgress}
-            pointer={pointer} themeTarget={themeTarget} themeProgress={themeProgress}
+            themeTarget={themeTarget} themeProgress={themeProgress}
             games={experienceData.games} onDataStage={activateDataStage} onChapterChange={setActiveChapter}
-            reducedMotion={reducedMotion} immediate={Boolean(reviewState) || reducedMotion} />
+            immediate={Boolean(reviewState) || reducedMotion} />
         </Canvas>
 
         <header className="experience-header">
           <button type="button" className="wordmark" onClick={() => setProgress(0)}>ANKUZO</button>
-          <p id="experience-title">CONTINUOUS SESSION / 22</p>
+          <p id="experience-title" className="sr-only">CONTINUOUS SESSION / 22</p>
           <div className="header-tools">
             <button type="button" className="theme-switch" onClick={() => applyTheme(theme === "light" ? "dark" : "light")}
               aria-label={`Switch to ${theme === "light" ? "dark" : "light"} theme`} aria-pressed={theme === "dark"}>
-              <i aria-hidden="true" /><span>THEME / {theme.toUpperCase()}</span>
+              <i aria-hidden="true" /><span className="sr-only">THEME / {theme.toUpperCase()}</span>
             </button>
-            <p className="experience-counter">00—05</p>
           </div>
         </header>
 
         <div className="chapter-copy chapter-copy--portal" {...chapterState("portal")}>
-          <p>SILVER / SESSION 22</p><h1>22</h1><span>SCROLL TO ENTER</span>
+          <h1>22</h1><span>SCROLL TO ENTER</span>
         </div>
         <div className="chapter-copy chapter-copy--library" id="library" {...chapterState("library")}>
-          <p>ANKUZO LIBRARY / 001</p><h2>LIBRARY</h2><span>PC · CURRENT · ARCHIVE</span>
+          <h2>LIBRARY</h2>
         </div>
         <div className="chapter-copy chapter-copy--platforms" {...chapterState("platforms")}>
-          <p>TWO ECOSYSTEMS / ONE IDENTITY</p><h2>PLATFORMS</h2>
-          <div className="platform-labels"><span>PC / STEAM</span><span>PLAYSTATION</span></div>
+          <h2>PLATFORMS</h2>
         </div>
         <div className="chapter-copy chapter-copy--online" {...chapterState("online")}>
-          <p>PERSONAL NETWORK / SIGNAL</p><h2>ONLINE</h2>
+          <h2>ONLINE</h2>
         </div>
         <div className="chapter-copy chapter-copy--build" {...chapterState("build")}>
-          <p>BUILD / CURRENT</p><h2>BUILD</h2>
-          <div className="build-traces"><span>components/portal/</span><span>ContinuousWorld.tsx</span><span>BUILD / PASSING</span></div>
+          <h2>BUILD</h2>
         </div>
         <div className="chapter-copy chapter-copy--final" {...chapterState("final")}>
           <p>22 / END</p><h2>ANKUZO</h2><span>IDENTITY RECONSTRUCTED</span>
@@ -520,12 +503,12 @@ export function PortalExperience() {
             <button key={chapter.id} type="button" data-target-chapter={chapter.id}
               onClick={() => setProgress(chapter.progress, reducedMotion)}
               aria-label={`${chapter.index} ${chapter.label}`}>
-              <i /><span>{chapter.index}</span><b>{chapter.label}</b>
+              <i /><b>{chapter.label}</b>
             </button>
           ))}
         </nav>
 
-        <div className="experience-meter" aria-hidden="true"><i><b /></i><span>SCENE PROGRESS</span></div>
+        <div className="experience-meter" aria-hidden="true"><i><b /></i></div>
         <ExperienceSignals data={experienceData} />
 
         {reviewNavVisible && (
