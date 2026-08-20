@@ -86,7 +86,7 @@ export function Atmosphere({ reducedMotion = false }: { reducedMotion?: boolean 
       uTime: { value: 0 },
       uResolution: { value: new Vector2(1, 1) },
       uBase: { value: new Color(SCENE.background) },
-      uGrain: { value: 0.035 },
+      uGrain: { value: 0.012 },
     },
   }), []);
 
@@ -106,7 +106,9 @@ export function Atmosphere({ reducedMotion = false }: { reducedMotion?: boolean 
   useEffect(() => {
     // Reduced motion keeps the grain but calms it: texture is what makes the
     // room a place, movement is what makes some people ill.
-    material.uniforms.uGrain.value = reducedMotion ? 0.022 : 0.035;
+    // Most of the grain comes from the post pass now; this is only what keeps
+    // the backdrop itself from banding.
+    material.uniforms.uGrain.value = reducedMotion ? 0.008 : 0.012;
   }, [material, reducedMotion]);
 
   useFrame((state) => {

@@ -13,6 +13,7 @@ import {
 } from "three";
 import { Atmosphere } from "./Atmosphere";
 import { ContinuousWorld } from "./ContinuousWorld";
+import { PostFx } from "./PostFx";
 import { DiscordCard } from "./DiscordCard";
 import { RibbonField } from "./RibbonField";
 import { PortalTwentyTwo } from "./FracturedTwo";
@@ -245,6 +246,7 @@ function ExperienceScene({ target, rendered, portal, immediate, archiveDensity, 
       <ContinuousWorld progress={rendered} />
       <PortalTwentyTwo progress={portal} masterProgress={rendered} />
       <CameraRig portal={portal} master={rendered} />
+      <PostFx reducedMotion={reducedMotion} />
       <ProgressDriver target={target} rendered={rendered} portal={portal} immediate={immediate}
         onChapterChange={onChapterChange} />
     </>
