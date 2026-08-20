@@ -554,20 +554,17 @@ export function PortalExperience() {
             <span className="figure-unit">TROPHIES</span>
           </h2>
           <p className="chapter-note">{figures.playstationNote}</p>
-          <ol className="data-list data-list--tiers">
+          <ol className="tier-grid">
             {figures.tiers.map((tier) => (
               <li key={tier.id} data-tier={tier.id} data-empty={tier.value === 0 ? "true" : undefined}>
-                <svg className="trophy-icon" viewBox="0 0 16 16" aria-hidden="true">
-                  <path d="M4.4 1.6h7.2v3.1a3.6 3.6 0 0 1-7.2 0z" />
-                  <path d="M7.2 8.3h1.6v3.1H7.2z" />
-                  <path d="M4.9 11.6h6.2v1.7H4.9z" />
-                  <path d="M12.4 2.6h2.2v1.6a2.2 2.2 0 0 1-2.2 2.2zM3.6 2.6H1.4v1.6a2.2 2.2 0 0 0 2.2 2.2z" />
+                <svg className="tier-cup" viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M6.6 2.4h10.8v4.7a5.4 5.4 0 0 1-10.8 0z" />
+                  <path d="M10.8 12.5h2.4v4.6h-2.4z" />
+                  <path d="M7.4 17.4h9.2v2.6H7.4z" />
+                  <path d="M18.6 3.9h3.3v2.4a3.3 3.3 0 0 1-3.3 3.3zM5.4 3.9H2.1v2.4a3.3 3.3 0 0 0 3.3 3.3z" />
                 </svg>
-                <span className="data-name">{tier.label}</span>
-                <span className="data-bar" aria-hidden="true">
-                  <i style={{ transform: `scaleX(${tier.value / figures.tierPeak})` }} />
-                </span>
-                <span className="data-value">{tier.value}</span>
+                <b>{tier.value}</b>
+                <span>{tier.label}</span>
               </li>
             ))}
           </ol>
