@@ -1,0 +1,42 @@
+# ANKUZO — append this block to /opt/infrastructure/config/caddy/Caddyfile
+# and set ANKUZO_DOMAIN in /opt/infrastructure/compose/.env.
+#
+# The domain comes from the environment for the same reason SITE_ADDRESS and
+# STATUS_DOMAIN do: the address is configuration, not code. The `.invalid`
+# default follows the STATUS_DOMAIN pattern — until the variable is set the
+# block matches nothing, so merging this file cannot affect the running site
+# or trigger a certificate request for a domain that does not resolve yet.
+#
+# edge.yml must also pass the variable through to the container:
+#   environment:
+#     ANKUZO_DOMAIN: ${ANKUZO_DOMAIN:-ankuzo.invalid}
+
+{$ANKUZO_DOMAIN:ankuzo.invalid} {
+	encode gzip
+
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		Referrer-Policy "strict-origin-when-cross-origin"
+		-Server
+	}
+
+	# Hashed build output and fonts never change under the same URL, so they
+	# can be cached hard. Everything else stays revalidated because the HTML
+	# is server-rendered per request.
+	@immutable path /_next/* /assets/* /fonts/*
+	header @immutable Cache-Control "public, max-age=31536000, immutable"
+
+	# Cross-origin isolation, needed only if the GPU particle work ends up
+	# using SharedArrayBuffer. Left off on purpose: with COEP on, every
+	# cross-origin subresource must send CORP, and the site pulls cover art
+	# straight from cdn.cloudflare.steamstatic.com, which does not. Turning
+	# this on before those images are proxied locally would break the library
+	# chapter.
+	# header {
+	# 	Cross-Origin-Opener-Policy "same-origin"
+	# 	Cross-Origin-Embedder-Policy "require-corp"
+	# }
+
+	reverse_proxy ankuzo:3000
+}

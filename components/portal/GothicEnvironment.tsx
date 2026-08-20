@@ -2,9 +2,11 @@
 /* eslint-disable react/no-unknown-property, react-hooks/immutability -- R3F scene objects are updated per frame. */
 
 import { useFrame, useThree } from "@react-three/fiber";
-import { useMemo, useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import type { MutableRefObject } from "react";
 import {
+  BoxGeometry,
+  BufferGeometry,
   CatmullRomCurve3,
   Color,
   ExtrudeGeometry,
@@ -73,6 +75,42 @@ function createPointedArchSlab(width: number, height: number, thickness: number)
   return geometry;
 }
 
+type RibSpec = { geometry: BufferGeometry; opacity: number };
+type SlabSpec = { geometry: BufferGeometry; z: number; opacity: number };
+
+// The architecture never changes shape, so its geometry is built once per module
+// and shared by every mount rather than rebuilt (and leaked) per instance.
+let ribSpecs: RibSpec[] | null = null;
+let slabSpecs: SlabSpec[] | null = null;
+let columnGeometries: BufferGeometry[] | null = null;
+
+function getRibs() {
+  ribSpecs ??= [
+    { geometry: createPointedRib(7.7, 8.4, -7.8, 0.085), opacity: 0.28 },
+    { geometry: createPointedRib(6.0, 7.1, -4.6, 0.065), opacity: 0.24 },
+    { geometry: createPointedRib(4.65, 6.15, -1.4, 0.045), opacity: 0.18 },
+  ];
+  return ribSpecs;
+}
+
+function getSlabs() {
+  slabSpecs ??= [
+    { geometry: createPointedArchSlab(7.85, 8.5, 0.48), z: -8.05, opacity: 0.12 },
+    { geometry: createPointedArchSlab(6.1, 7.18, 0.38), z: -4.78, opacity: 0.085 },
+  ];
+  return slabSpecs;
+}
+
+function getColumnGeometries() {
+  // Both sides share the same three column profiles.
+  columnGeometries ??= [0, 1, 2].map((index) => new BoxGeometry(
+    0.46 + index * 0.13,
+    13.5 - index * 1.2,
+    0.5 + index * 0.12,
+  ));
+  return columnGeometries;
+}
+
 export function GothicEnvironment({
   themeProgress,
   pointer,
@@ -83,15 +121,9 @@ export function GothicEnvironment({
   const group = useRef<Group>(null);
   const { size } = useThree();
   const portrait = size.width / size.height < 0.78;
-  const ribs = useMemo(() => [
-    { geometry: createPointedRib(7.7, 8.4, -7.8, 0.085), opacity: 0.28 },
-    { geometry: createPointedRib(6.0, 7.1, -4.6, 0.065), opacity: 0.24 },
-    { geometry: createPointedRib(4.65, 6.15, -1.4, 0.045), opacity: 0.18 },
-  ], []);
-  const slabs = useMemo(() => [
-    { geometry: createPointedArchSlab(7.85, 8.5, 0.48), z: -8.05, opacity: 0.12 },
-    { geometry: createPointedArchSlab(6.1, 7.18, 0.38), z: -4.78, opacity: 0.085 },
-  ], []);
+  const ribs = getRibs();
+  const slabs = getSlabs();
+  const columns = getColumnGeometries();
   const ribMaterials = useMemo(() => ribs.map(({ opacity }) => new MeshStandardMaterial({
     color: LIGHT_PALETTE.architecture,
     metalness: 0.18,
@@ -117,6 +149,11 @@ export function GothicEnvironment({
     depthWrite: false,
   }), []);
   const working = useMemo(() => new Color(), []);
+
+  // Materials are passed as props, so R3F will not dispose them for us.
+  useEffect(() => () => ribMaterials.forEach((material) => material.dispose()), [ribMaterials]);
+  useEffect(() => () => slabMaterials.forEach((material) => material.dispose()), [slabMaterials]);
+  useEffect(() => () => stoneMaterial.dispose(), [stoneMaterial]);
 
   useFrame(() => {
     const t = themeProgress.current;
@@ -149,12 +186,11 @@ export function GothicEnvironment({
       {[-1, 1].flatMap((side) => [0, 1, 2].map((index) => (
         <mesh
           key={`${side}-${index}`}
+          geometry={columns[index]}
           material={stoneMaterial}
           position={[side * (sideX + index * 1.22), -0.5 + index * 0.12, -2.2 - index * 2.4]}
           rotation={[0, side * (0.08 + index * 0.035), side * 0.015]}
-        >
-          <boxGeometry args={[0.46 + index * 0.13, 13.5 - index * 1.2, 0.5 + index * 0.12]} />
-        </mesh>
+        />
       )))}
     </group>
   );

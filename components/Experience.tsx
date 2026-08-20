@@ -1,5 +1,5 @@
-import { PortalExperience } from "./portal/PortalExperience";
+import { ExperienceBoundary } from "./ExperienceBoundary";
 
 export function Experience() {
-  return <PortalExperience />;
+  return <ExperienceBoundary />;
 }

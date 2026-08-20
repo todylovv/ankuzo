@@ -112,9 +112,10 @@ export function mixNumber(light: number, dark: number, progress: number) {
   return light + (dark - light) * progress;
 }
 
-export function createChromeResponseTexture() {
-  const width = 256;
-  const height = 256;
+function createChromeResponseTexture() {
+  // 128px is plenty: the response is a smooth sweep with no high-frequency detail.
+  const width = 128;
+  const height = 128;
   const data = new Uint8Array(width * height * 4);
   const gaussian = (value: number, center: number, spread: number) => {
     const distance = (value - center) / spread;
@@ -149,4 +150,15 @@ export function createChromeResponseTexture() {
   texture.magFilter = LinearFilter;
   texture.needsUpdate = true;
   return texture;
+}
+
+let chromeResponseTexture: DataTexture | null = null;
+
+/**
+ * Immutable, shared by every chrome material for the lifetime of the module —
+ * building it costs ~460k Math.exp on the main thread, so it is never disposed.
+ */
+export function getChromeResponseTexture() {
+  chromeResponseTexture ??= createChromeResponseTexture();
+  return chromeResponseTexture;
 }

@@ -3,12 +3,12 @@
 
 import { useTexture } from "@react-three/drei";
 import { useFrame, useThree } from "@react-three/fiber";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { MutableRefObject } from "react";
 import { Group, Mesh, MeshBasicMaterial, MeshPhysicalMaterial, SRGBColorSpace, Texture, TextureLoader } from "three";
 import type { GameIdentity } from "../../lib/experience-data";
 import { useGothicTwoGeometry } from "./GothicTwo";
-import { createChromeResponseTexture, DARK_PALETTE, LIGHT_PALETTE, mixColor, mixNumber } from "./theme";
+import { DARK_PALETTE, getChromeResponseTexture, LIGHT_PALETTE, mixColor, mixNumber } from "./theme";
 
 type MediaState = {
   p: number;
@@ -83,21 +83,34 @@ function ease(value: number) {
   return value * value * (3 - 2 * value);
 }
 
+function lerp(a = 0, b = 0, t: number) {
+  return a + (b - a) * t;
+}
+
+// Reused across the four per-frame samples so the loop stays allocation-free.
+const SAMPLED: MediaState = {
+  p: 0, x: 0, y: 0, z: 0, sx: 0, sy: 0, rx: 0, ry: 0, rz: 0, opacity: 0, shade: 1,
+};
+
 function sample(track: MediaState[], progress: number) {
   const endIndex = track.findIndex((state) => state.p >= progress);
-  if (endIndex <= 0) return track[Math.max(0, endIndex)];
   if (endIndex === -1) return track[track.length - 1];
+  if (endIndex === 0) return track[0];
   const start = track[endIndex - 1];
   const end = track[endIndex];
   const t = ease((progress - start.p) / (end.p - start.p));
-  const mix = (a = 0, b = 0) => a + (b - a) * t;
-  return {
-    p: progress,
-    x: mix(start.x, end.x), y: mix(start.y, end.y), z: mix(start.z, end.z),
-    sx: mix(start.sx, end.sx), sy: mix(start.sy, end.sy),
-    rx: mix(start.rx, end.rx), ry: mix(start.ry, end.ry), rz: mix(start.rz, end.rz),
-    opacity: mix(start.opacity, end.opacity), shade: mix(start.shade ?? 1, end.shade ?? 1),
-  };
+  SAMPLED.p = progress;
+  SAMPLED.x = lerp(start.x, end.x, t);
+  SAMPLED.y = lerp(start.y, end.y, t);
+  SAMPLED.z = lerp(start.z, end.z, t);
+  SAMPLED.sx = lerp(start.sx, end.sx, t);
+  SAMPLED.sy = lerp(start.sy, end.sy, t);
+  SAMPLED.rx = lerp(start.rx, end.rx, t);
+  SAMPLED.ry = lerp(start.ry, end.ry, t);
+  SAMPLED.rz = lerp(start.rz, end.rz, t);
+  SAMPLED.opacity = lerp(start.opacity, end.opacity, t);
+  SAMPLED.shade = lerp(start.shade ?? 1, end.shade ?? 1, t);
+  return SAMPLED;
 }
 
 function cropTexture(source: Texture, index: number) {
@@ -129,13 +142,19 @@ function coverTexture(texture: Texture, targetAspect = 0.72) {
 }
 
 function useRemoteMedia(urls: Array<string | undefined>) {
-  const [loaded, setLoaded] = useState<Array<Texture | null>>(() => urls.map(() => null));
+  // The loaded set is stamped with the url key it belongs to, so a url change
+  // falls back to the placeholder slots without a state write inside the effect.
+  const key = urls.join("|");
+  const [loaded, setLoaded] = useState<{ key: string; textures: Array<Texture | null> }>(
+    () => ({ key, textures: urls.map(() => null) }),
+  );
+  const empty = useMemo(() => urls.map(() => null), [urls]);
+  const retired = useRef<Texture[]>([]);
 
   useEffect(() => {
     let active = true;
     const owned: Texture[] = [];
     const loader = new TextureLoader();
-    setLoaded(urls.map(() => null));
     urls.forEach((url, index) => {
       if (!url) return;
       loader.load(url, (texture) => {
@@ -146,19 +165,29 @@ function useRemoteMedia(urls: Array<string | undefined>) {
         const prepared = coverTexture(texture);
         owned.push(prepared);
         setLoaded((current) => {
-          const next = [...current];
-          next[index] = prepared;
-          return next;
+          const textures = current.key === key ? [...current.textures] : urls.map(() => null);
+          textures[index] = prepared;
+          return { key, textures };
         });
       }, undefined, () => undefined);
     });
     return () => {
       active = false;
-      owned.forEach((texture) => texture.dispose());
+      // Disposing here would free GL textures still bound to a live material;
+      // ownership is handed to the caller, which releases them after the swap.
+      retired.current.push(...owned);
     };
-  }, [urls]);
+  }, [urls, key]);
 
-  return loaded;
+  const releaseRetired = useCallback(() => {
+    retired.current.forEach((texture) => texture.dispose());
+    retired.current = [];
+  }, []);
+
+  return {
+    textures: loaded.key === key ? loaded.textures : empty,
+    releaseRetired,
+  };
 }
 
 export function ContinuousWorld({
@@ -180,9 +209,9 @@ export function ContinuousWorld({
     return [steam[0], playstation[0], steam[1], playstation[1]]
       .map((game) => game?.artwork ?? game?.icon);
   }, [games]);
-  const remoteMedia = useRemoteMedia(remoteUrls);
+  const { textures: remoteMedia, releaseRetired } = useRemoteMedia(remoteUrls);
   const finalGroup = useRef<Group>(null);
-  const chromeResponse = useMemo(() => createChromeResponseTexture(), []);
+  const chromeResponse = getChromeResponseTexture();
   const finalMaterial = useMemo(() => new MeshPhysicalMaterial({
     color: LIGHT_PALETTE.chrome, map: chromeResponse, roughnessMap: chromeResponse,
     metalness: 0.98, roughness: 0.115, envMapIntensity: 2.35,
@@ -197,14 +226,21 @@ export function ContinuousWorld({
   const portrait = size.width / size.height < 0.78;
 
   useEffect(() => () => textures.forEach((texture) => texture.dispose()), [textures]);
-  useEffect(() => () => chromeResponse.dispose(), [chromeResponse]);
+  // Materials are passed as props, so R3F will not dispose them for us.
+  useEffect(() => () => {
+    finalMaterial.dispose();
+    finalSideMaterial.dispose();
+  }, [finalMaterial, finalSideMaterial]);
   useEffect(() => {
     materials.current.forEach((material, index) => {
       if (!material) return;
       material.map = remoteMedia[index] ?? textures[index];
       material.needsUpdate = true;
     });
-  }, [remoteMedia, textures]);
+    // Only now that nothing points at them are the previous textures freed.
+    releaseRetired();
+  }, [remoteMedia, textures, releaseRetired]);
+  useEffect(() => () => releaseRetired(), [releaseRetired]);
 
   useFrame(() => {
     const value = progress.current;

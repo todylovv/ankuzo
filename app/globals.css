@@ -182,3 +182,26 @@ html[data-chapter="online"] .experience-signal--online{opacity:1;transform:trans
   html,body,.experience-shell,.experience-stage,.chapter-copy,.chapter-nav button,.chapter-nav i,.chapter-nav b,.theme-switch i{transition:none}
   .experience-meter{display:none}
 }
+
+.experience-intro{display:grid;align-items:center;padding:0 clamp(15px,7vw,90px);overflow:hidden}
+.experience-intro-inner{width:min(100%,980px)}
+.experience-intro-eyebrow{margin:0;color:var(--text-secondary);font:8px/1.35 Jet,monospace;letter-spacing:.18em;text-transform:uppercase}
+.experience-intro-title{margin:11px 0 0;color:var(--text-primary);font:650 clamp(4rem,13vw,11rem)/.8 Manrope,Arial,sans-serif;letter-spacing:-.07em}
+.experience-intro-lede{margin:23px 0 0;max-width:46ch;color:var(--text-secondary);font:400 clamp(.95rem,1.5vw,1.2rem)/1.45 Manrope,Arial,sans-serif;letter-spacing:-.012em}
+.experience-intro-index{display:grid;gap:9px;margin:33px 0 0;padding:0 0 0 13px;border-left:1px solid var(--line-strong);list-style:none}
+.experience-intro-index li{display:grid;grid-template-columns:26px 1fr;gap:9px;color:var(--text-faint);font:7px/1 Jet,monospace;letter-spacing:.14em;text-transform:uppercase}
+.experience-intro-index b{color:var(--accent);font-weight:400}
+.experience-intro-status{margin:32px 0 0;color:var(--text-faint);font:7px/1 Jet,monospace;letter-spacing:.18em;text-transform:uppercase}
+.experience-intro-status::after{display:inline-block;content:"";width:5px;height:5px;margin-left:9px;border-radius:50%;background:var(--accent);vertical-align:middle;animation:experience-intro-pulse 2.4s ease-in-out infinite}
+.experience-intro-note{margin:12px 0 0;max-width:54ch;color:var(--text-primary);font:8px/1.55 Jet,monospace;letter-spacing:.1em}
+@keyframes experience-intro-pulse{0%,100%{opacity:.22}50%{opacity:1}}
+
+@media(max-width:800px){
+  .experience-intro-lede{margin-top:18px}
+  .experience-intro-index{margin-top:26px}
+  .experience-intro-status{margin-top:24px}
+}
+
+@media(prefers-reduced-motion:reduce){
+  .experience-intro-status::after{opacity:1;animation:none}
+}

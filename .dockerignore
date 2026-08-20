@@ -1,0 +1,23 @@
+# Build context hygiene. node_modules alone is hundreds of megabytes and the
+# builder reinstalls from the lockfile anyway, so shipping it would only slow
+# the upload and risk mixing host-built binaries into a linux image.
+node_modules
+dist
+.next
+.vinext
+.wrangler
+.git
+.github
+
+# Local artefacts that must never reach the image.
+*.log
+*.tsbuildinfo
+/*.png
+/qa/
+.env*
+.edge-mobile
+
+# Docs and review material — not needed to build or serve the site.
+*.md
+docs/
+examples/

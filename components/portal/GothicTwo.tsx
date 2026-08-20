@@ -1,6 +1,5 @@
 "use client";
 
-import { useMemo } from "react";
 import { ExtrudeGeometry, Shape } from "three";
 
 export const GOTHIC_TWO_CONTOUR: Array<[number, number]> = [
@@ -28,20 +27,30 @@ export function makeGothicTwoShape(contour = GOTHIC_TWO_CONTOUR) {
   return shape;
 }
 
+function createGothicTwoGeometry() {
+  const geometry = new ExtrudeGeometry(makeGothicTwoShape(), {
+    depth: 1.62,
+    curveSegments: 36,
+    steps: 1,
+    bevelEnabled: true,
+    bevelSegments: 8,
+    bevelSize: 0.12,
+    bevelThickness: 0.16,
+  });
+  geometry.scale(0.78, 0.78, 0.78);
+  geometry.center();
+  geometry.computeVertexNormals();
+  return geometry;
+}
+
+let gothicTwoGeometry: ExtrudeGeometry | null = null;
+
+/**
+ * The pristine glyph is immutable and shared across every consumer, so it is
+ * built once per module and never disposed — a per-instance useMemo would
+ * rebuild this heavy extrusion for each mounted component.
+ */
 export function useGothicTwoGeometry() {
-  return useMemo(() => {
-    const geometry = new ExtrudeGeometry(makeGothicTwoShape(), {
-      depth: 1.62,
-      curveSegments: 36,
-      steps: 1,
-      bevelEnabled: true,
-      bevelSegments: 8,
-      bevelSize: 0.12,
-      bevelThickness: 0.16,
-    });
-    geometry.scale(0.78, 0.78, 0.78);
-    geometry.center();
-    geometry.computeVertexNormals();
-    return geometry;
-  }, []);
+  gothicTwoGeometry ??= createGothicTwoGeometry();
+  return gothicTwoGeometry;
 }

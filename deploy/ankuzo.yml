@@ -1,0 +1,35 @@
+# ANKUZO — the personal site, published through the host's existing edge.
+#
+# Deliberately publishes no ports. Everything on this host that faces the
+# internet goes through edge-caddy, which reaches backends by container name
+# over the shared `edge` network; opening 3000 on the host would bypass TLS
+# and add a second way in for no benefit.
+services:
+  ankuzo:
+    build:
+      # Context is the repository root so the builder can see package.json and
+      # the whole source tree; the Dockerfile itself lives under deploy/.
+      context: ..
+      dockerfile: deploy/Dockerfile
+    image: ankuzo:latest
+    container_name: ankuzo
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      PORT: "3000"
+      TZ: ${TZ:-UTC}
+    networks: [edge]
+    logging:
+      driver: json-file
+      options: {max-size: "20m", max-file: "5"}
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://127.0.0.1:3000/"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
+
+networks:
+  edge:
+    name: edge
+    external: true

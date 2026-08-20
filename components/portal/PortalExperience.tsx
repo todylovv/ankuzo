@@ -20,21 +20,11 @@ import { ContinuousWorld } from "./ContinuousWorld";
 import { ExperienceSignals } from "./ExperienceSignals";
 import { PortalTwentyTwo } from "./FracturedTwo";
 import { GothicEnvironment } from "./GothicEnvironment";
+import { CHAPTERS, PORTAL_END, chapterFor, clamp, remapPortalTravel, smoothstep } from "./progress";
 import { DARK_PALETTE, LIGHT_PALETTE, mixColor, mixNumber } from "./theme";
 import type { ThemeName } from "./theme";
 import { useExperienceData } from "../data/useExperienceData";
 import type { ExperienceSource, GameIdentity } from "../../lib/experience-data";
-
-const PORTAL_END = 0.22;
-
-const CHAPTERS = [
-  { id: "portal", label: "22", index: "00", progress: 0 },
-  { id: "library", label: "LIBRARY", index: "01", progress: 0.24 },
-  { id: "platforms", label: "PLATFORMS", index: "02", progress: 0.46 },
-  { id: "online", label: "ONLINE", index: "03", progress: 0.63 },
-  { id: "build", label: "BUILD", index: "04", progress: 0.79 },
-  { id: "final", label: "22 / END", index: "05", progress: 1 },
-] as const;
 
 const REVIEW_STATES = [
   { scene: "portal", frame: "pristine", progress: 0 },
@@ -50,40 +40,6 @@ const REVIEW_STATES = [
   { scene: "build", frame: "active", progress: 0.83 },
   { scene: "final", frame: "22", progress: 1 },
 ] as const;
-
-function clamp(value: number) {
-  return Math.min(1, Math.max(0, value));
-}
-
-function smoothstep(start: number, end: number, value: number) {
-  const t = clamp((value - start) / (end - start));
-  return t * t * (3 - 2 * t);
-}
-
-function chapterFor(progress: number) {
-  if (progress < 0.225) return "portal";
-  if (progress < 0.43) return "library";
-  if (progress < 0.6) return "platforms";
-  if (progress < 0.76) return "online";
-  if (progress < 0.91) return "build";
-  return "final";
-}
-
-function remapPortalTravel(progress: number) {
-  const knots: Array<[number, number]> = [
-    [0, 0], [0.25, 0.1], [0.4, 0.2], [0.55, 0.34],
-    [0.7, 0.51], [0.88, 0.78], [1, 1],
-  ];
-  for (let index = 1; index < knots.length; index += 1) {
-    const [endProgress, endTravel] = knots[index];
-    if (progress <= endProgress) {
-      const [startProgress, startTravel] = knots[index - 1];
-      const local = smoothstep(0, 1, (progress - startProgress) / (endProgress - startProgress));
-      return startTravel + (endTravel - startTravel) * local;
-    }
-  }
-  return 1;
-}
 
 function themeFromDocument(): ThemeName {
   if (typeof document === "undefined") return "light";

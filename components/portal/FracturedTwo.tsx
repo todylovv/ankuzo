@@ -7,7 +7,6 @@ import type { MutableRefObject } from "react";
 import {
   CatmullRomCurve3,
   ExtrudeGeometry,
-  Group,
   Mesh,
   MeshPhysicalMaterial,
   MeshStandardMaterial,
@@ -15,7 +14,7 @@ import {
   Vector3,
 } from "three";
 import { GOTHIC_TWO_CONTOUR, makeGothicTwoShape, useGothicTwoGeometry } from "./GothicTwo";
-import { createChromeResponseTexture, DARK_PALETTE, LIGHT_PALETTE, mixColor, mixNumber } from "./theme";
+import { DARK_PALETTE, getChromeResponseTexture, LIGHT_PALETTE, mixColor, mixNumber } from "./theme";
 
 type Point = [number, number];
 type Bounds = [number, number, number, number];
@@ -101,27 +100,32 @@ function createFragmentGeometry(contour: Point[]) {
   return geometry;
 }
 
+// Fragments are immutable, so they are built once per module and shared.
+let fragmentGeometries: ExtrudeGeometry[] | null = null;
+
 function useFragmentGeometries() {
-  return useMemo(
-    () => PIECE_BOUNDS.map((bounds) => createFragmentGeometry(clipPolygon(GOTHIC_TWO_CONTOUR, bounds))),
-    [],
+  fragmentGeometries ??= PIECE_BOUNDS.map(
+    (bounds) => createFragmentGeometry(clipPolygon(GOTHIC_TWO_CONTOUR, bounds)),
   );
+  return fragmentGeometries;
 }
 
+const CRACK_PATHS: Array<Array<[number, number]>> = [
+  [[-0.12, 3.35], [0.08, 3.08], [0.4, 2.72]],
+  [[-1.7, 1.92], [-1.42, 1.55], [-1.08, 1.14]],
+  [[0.42, 0.56], [0.17, 0.18], [-0.06, -0.43]],
+  [[-0.2, -1.72], [0.08, -2.15], [0.34, -2.62]],
+  [[0.06, -3.0], [0.32, -3.34], [0.73, -3.58]],
+];
+
 function useCrackGeometries(radius: number) {
-  return useMemo(() => {
-    const paths: Array<Array<[number, number]>> = [
-      [[-0.12, 3.35], [0.08, 3.08], [0.4, 2.72]],
-      [[-1.7, 1.92], [-1.42, 1.55], [-1.08, 1.14]],
-      [[0.42, 0.56], [0.17, 0.18], [-0.06, -0.43]],
-      [[-0.2, -1.72], [0.08, -2.15], [0.34, -2.62]],
-      [[0.06, -3.0], [0.32, -3.34], [0.73, -3.58]],
-    ];
-    return paths.map((points) => {
-      const curve = new CatmullRomCurve3(points.map(([x, y]) => new Vector3(x, y, 0.67)));
-      return new TubeGeometry(curve, 16, radius, 5, false);
-    });
-  }, [radius]);
+  const geometries = useMemo(() => CRACK_PATHS.map((points) => {
+    const curve = new CatmullRomCurve3(points.map(([x, y]) => new Vector3(x, y, 0.67)));
+    return new TubeGeometry(curve, 16, radius, 5, false);
+  }), [radius]);
+  // Passed as a prop, so R3F will not dispose it for us.
+  useEffect(() => () => geometries.forEach((geometry) => geometry.dispose()), [geometries]);
+  return geometries;
 }
 
 function CrackLayer({
@@ -153,12 +157,11 @@ export function PortalTwentyTwo({
   const pristineGeometry = useGothicTwoGeometry();
   const fragments = useFragmentGeometries();
   const pieceRefs = useRef<Array<Mesh | null>>([]);
-  const digitRefs = useRef<Array<Group | null>>([]);
   const { size } = useThree();
   const portrait = size.width / size.height < 0.78;
   const offset = portrait ? 1.68 : 2.2;
   const scale = portrait ? 0.72 : 0.84;
-  const chromeResponse = useMemo(() => createChromeResponseTexture(), []);
+  const chromeResponse = getChromeResponseTexture();
 
   const pristineMaterial = useMemo(() => new MeshPhysicalMaterial({
     color: LIGHT_PALETTE.chrome,
@@ -212,7 +215,22 @@ export function PortalTwentyTwo({
     depthWrite: false,
   }), []);
 
-  useEffect(() => () => chromeResponse.dispose(), [chromeResponse]);
+  // Materials are passed as props, so R3F will not dispose them for us.
+  useEffect(() => () => {
+    pristineMaterial.dispose();
+    pristineSideMaterial.dispose();
+    fragmentMaterial.dispose();
+    rawMaterial.dispose();
+    darkCrackMaterial.dispose();
+    lightCrackMaterial.dispose();
+  }, [
+    pristineMaterial,
+    pristineSideMaterial,
+    fragmentMaterial,
+    rawMaterial,
+    darkCrackMaterial,
+    lightCrackMaterial,
+  ]);
 
   useFrame(() => {
     const value = progress.current;
@@ -265,12 +283,11 @@ export function PortalTwentyTwo({
       {[-1, 1].map((side, digitIndex) => (
         <group
           key={side}
-          ref={(node) => { digitRefs.current[digitIndex] = node; }}
           position={[side * offset, side < 0 ? 0.02 : -0.02, 0]}
           rotation={[side < 0 ? 0.02 : -0.02, side < 0 ? 0.055 : -0.055, side < 0 ? -0.025 : 0.025]}
           scale={scale}
         >
-          <mesh geometry={pristineGeometry} material={[pristineMaterial, pristineSideMaterial]} castShadow receiveShadow />
+          <mesh geometry={pristineGeometry} material={[pristineMaterial, pristineSideMaterial]} />
           <CrackLayer darkMaterial={darkCrackMaterial} lightMaterial={lightCrackMaterial} />
           {fragments.map((geometry, pieceIndex) => (
             <mesh
@@ -278,8 +295,6 @@ export function PortalTwentyTwo({
               ref={(node) => { pieceRefs.current[digitIndex * fragments.length + pieceIndex] = node; }}
               geometry={geometry}
               material={[fragmentMaterial, rawMaterial]}
-              castShadow
-              receiveShadow
             />
           ))}
         </group>
