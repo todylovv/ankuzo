@@ -22,7 +22,7 @@ import { Vector2 } from "three";
 export function PostFx({ reducedMotion = false }: { reducedMotion?: boolean }) {
   // Aberration is a constant vector; rebuilding it each render would hand the
   // effect a new uniform every frame for no reason.
-  const aberration = useMemo(() => new Vector2(0.0006, 0.0008), []);
+  const aberration = useMemo(() => new Vector2(0.00022, 0.0003), []);
 
   return (
     <EffectComposer
@@ -36,9 +36,9 @@ export function PostFx({ reducedMotion = false }: { reducedMotion?: boolean }) {
         // Threshold sits just under the brightest the metal reaches, so only
         // true highlights bloom. Lower and the whole glyph glows, which is the
         // usual way this effect goes wrong.
-        luminanceThreshold={0.72}
+        luminanceThreshold={0.62}
         luminanceSmoothing={0.28}
-        intensity={0.85}
+        intensity={1.15}
         kernelSize={KernelSize.LARGE}
         mipmapBlur
       />
@@ -47,8 +47,10 @@ export function PostFx({ reducedMotion = false }: { reducedMotion?: boolean }) {
           type, which is where a heavier setting starts to look broken. */}
       <ChromaticAberration offset={aberration} />
       {/* Grain last, so it sits on top of the bloom rather than being blurred
-          into it — film grain lives on the film, not in the scene. */}
-      <Noise premultiply blendFunction={BlendFunction.SOFT_LIGHT} opacity={reducedMotion ? 0.16 : 0.24} />
+          into it — film grain lives on the film, not in the scene. Kept very
+          low: grain you can see as grain is dirt, and the dust field is
+          already supplying texture in the same frequency band. */}
+      <Noise premultiply blendFunction={BlendFunction.SOFT_LIGHT} opacity={reducedMotion ? 0.04 : 0.07} />
       <Vignette eskil={false} offset={0.24} darkness={0.72} />
     </EffectComposer>
   );
