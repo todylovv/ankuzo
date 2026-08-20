@@ -23,6 +23,7 @@ import { CHAPTERS, PORTAL_END, chapterFor, clamp, remapPortalTravel, smoothstep 
 import { DARK_PALETTE, LIGHT_PALETTE, mixColor, mixNumber } from "./theme";
 import type { ThemeName } from "./theme";
 import { useExperienceData } from "../data/useExperienceData";
+import { useLivePresence } from "../data/useLivePresence";
 import type { ExperienceSource } from "../../lib/experience-data";
 
 const REVIEW_STATES = [
@@ -167,7 +168,9 @@ function ProgressDriver({ target, rendered, portal, immediate, onDataStage, onCh
     }
     document.documentElement.style.setProperty("--experience-progress", rendered.current.toFixed(4));
     document.documentElement.style.setProperty("--portal-progress", portal.current.toFixed(4));
-    const dataStage = rendered.current >= 0.58 ? 2 : rendered.current >= 0.18 ? 1 : 0;
+    // Fetch well before the first data chapter arrives, or its number would
+    // count up from a placeholder zero while the request is still in flight.
+    const dataStage = rendered.current >= 0.4 ? 2 : rendered.current >= 0.06 ? 1 : 0;
     if (dataStage > lastDataStage.current) {
       lastDataStage.current = dataStage;
       onDataStage(dataStage);
@@ -306,50 +309,56 @@ export function PortalExperience() {
   }, [dataStage]);
   const { data: experienceData } = useExperienceData({ enabledSources });
 
-  // The middle of the site is carried by these three numbers. Each falls back
-  // to the authored snapshot rather than to zero: a chapter that says "0 hours"
-  // would be a lie, while a slightly stale number is merely old.
+  const livePresence = useLivePresence(experienceData.discord.id);
+
+  // The middle of the site is carried by real records, not by labels. Each
+  // falls back to the committed snapshot rather than to zero: a chapter that
+  // says "0 hours" would be a lie, while a slightly stale number is merely old.
   const figures = useMemo(() => {
     const steam = experienceData.steam;
     const trophies = experienceData.playstation.trophies;
     const discord = experienceData.discord;
-    const topGame = steam.featured[0];
+
+    const topGames = steam.featured.slice(0, 5).map((game) => ({
+      id: game.id,
+      title: game.title,
+      hours: Math.round(game.hours ?? 0),
+    })).filter((game) => game.hours > 0);
+    const topHours = topGames[0]?.hours ?? 0;
     const totalHours = Math.round(steam.totalHours ?? 0);
-    const topHours = Math.round(topGame?.hours ?? 0);
-    const shareOfLife = totalHours > 0 && topHours > 0
-      ? Math.round((topHours / totalHours) * 100)
-      : 0;
+    const share = totalHours > 0 && topHours > 0 ? Math.round((topHours / totalHours) * 100) : 0;
 
-    const steamNote = topGame && shareOfLife > 0
-      ? `${steam.totalGames ?? steam.games.length} GAMES · ${topGame.title.toUpperCase()} TOOK ${shareOfLife}% OF IT`
-      : `${steam.totalGames ?? steam.games.length} GAMES`;
-
-    const platinum = trophies.platinum ?? 0;
-    const playstationNote = [
-      trophies.level ? `LEVEL ${trophies.level}` : null,
-      `${experienceData.playstation.games.length} TITLES`,
-      platinum > 0 ? `${platinum} PLATINUM` : "NO PLATINUM YET",
-    ].filter(Boolean).join(" · ");
-
-    const presenceNote = [
-      discord.displayName ?? discord.username,
-      "TEAMSPEAK ON THE SAME MACHINE AS THIS PAGE",
-    ].filter(Boolean).join(" · ").toUpperCase();
+    const tiers = [
+      { id: "platinum", label: "PLATINUM", value: trophies.platinum ?? 0 },
+      { id: "gold", label: "GOLD", value: trophies.gold ?? 0 },
+      { id: "silver", label: "SILVER", value: trophies.silver ?? 0 },
+      { id: "bronze", label: "BRONZE", value: trophies.bronze ?? 0 },
+    ];
+    const tierPeak = Math.max(1, ...tiers.map((tier) => tier.value));
 
     return {
       steamHours: totalHours,
-      steamNote,
+      steamGames: steam.totalGames ?? steam.games.length,
+      steamNote: share > 0
+        ? `${steam.totalGames ?? steam.games.length} GAMES · ${share}% OF IT IN ONE`
+        : `${steam.totalGames ?? steam.games.length} GAMES`,
+      topGames,
+      topPeak: Math.max(1, topHours),
       trophies: trophies.total ?? 0,
-      trophySplit: [
-        { id: "bronze", value: trophies.bronze ?? 0 },
-        { id: "silver", value: trophies.silver ?? 0 },
-        { id: "gold", value: trophies.gold ?? 0 },
-      ].filter((part) => part.value > 0),
-      playstationNote,
-      presence: discord.presence,
-      presenceNote,
+      tiers,
+      tierPeak,
+      playstationNote: [
+        trophies.level ? `LEVEL ${trophies.level}` : null,
+        `${experienceData.playstation.games.length} TITLES`,
+        experienceData.playstation.onlineId ? `@${experienceData.playstation.onlineId}` : null,
+      ].filter(Boolean).join(" · "),
+      discord,
+      presence: livePresence?.presence ?? discord.presence,
+      isLive: Boolean(livePresence),
+      activity: livePresence?.activity,
+      activityDetail: livePresence?.activityDetail,
     };
-  }, [experienceData]);
+  }, [experienceData, livePresence]);
   const searchParams = typeof window === "undefined" ? null : new URLSearchParams(window.location.search);
   const queryScene = searchParams?.get("scene") ?? null;
   const queryFrame = searchParams?.get("frame") ?? null;
@@ -540,6 +549,17 @@ export function PortalExperience() {
             <span className="figure-unit">HOURS</span>
           </h2>
           <p className="chapter-note">{figures.steamNote}</p>
+          <ol className="data-list">
+            {figures.topGames.map((game) => (
+              <li key={game.id}>
+                <span className="data-name">{game.title}</span>
+                <span className="data-bar" aria-hidden="true">
+                  <i style={{ transform: `scaleX(${game.hours / figures.topPeak})` }} />
+                </span>
+                <span className="data-value">{game.hours.toLocaleString("en-US")}</span>
+              </li>
+            ))}
+          </ol>
         </div>
         <div className="chapter-copy chapter-copy--playstation" {...chapterState("playstation")}>
           <p className="chapter-eyebrow">PLAYSTATION</p>
@@ -549,19 +569,50 @@ export function PortalExperience() {
             <span className="figure-unit">TROPHIES</span>
           </h2>
           <p className="chapter-note">{figures.playstationNote}</p>
-          <div className="trophy-bar" aria-hidden="true">
-            {figures.trophySplit.map((part) => (
-              <i key={part.id} className={`trophy-bar--${part.id}`} style={{ flexGrow: part.value } as CSSProperties} />
+          <ol className="data-list data-list--tiers">
+            {figures.tiers.map((tier) => (
+              <li key={tier.id} data-tier={tier.id} data-empty={tier.value === 0 ? "true" : undefined}>
+                <span className="data-name">{tier.label}</span>
+                <span className="data-bar" aria-hidden="true">
+                  <i style={{ transform: `scaleX(${tier.value / figures.tierPeak})` }} />
+                </span>
+                <span className="data-value">{tier.value}</span>
+              </li>
             ))}
-          </div>
+          </ol>
         </div>
         <div className="chapter-copy chapter-copy--presence" {...chapterState("presence")}>
-          <p className="chapter-eyebrow">DISCORD / TEAMSPEAK</p>
+          <p className="chapter-eyebrow">DISCORD{figures.isLive ? " / LIVE" : " / LAST KNOWN"}</p>
           <h2 className="chapter-figure chapter-figure--word">
             <span className={`presence-dot presence-dot--${figures.presence}`} aria-hidden="true" />
             {figures.presence.toUpperCase()}
           </h2>
-          <p className="chapter-note">{figures.presenceNote}</p>
+          <div className="profile-card">
+            {figures.discord.avatar ? (
+              /* A 52px avatar inside a lazily mounted chapter is never the LCP
+                 element, and the `next` package is not actually installed here
+                 (vinext ships shims), so next/image would add risk for no gain. */
+              // eslint-disable-next-line @next/next/no-img-element
+              <img className="profile-avatar" src={figures.discord.avatar} alt="" width={52} height={52} loading="lazy" />
+            ) : null}
+            <div className="profile-identity">
+              <strong>{figures.discord.displayName ?? figures.discord.username ?? "ANKUZO"}</strong>
+              {figures.discord.username ? <span>@{figures.discord.username}</span> : null}
+            </div>
+          </div>
+          {figures.activity ? (
+            <p className="chapter-note chapter-note--activity">
+              {figures.activity}{figures.activityDetail ? ` · ${figures.activityDetail}` : ""}
+            </p>
+          ) : null}
+          {figures.discord.badges.length > 0 ? (
+            <ul className="badge-row">
+              {figures.discord.badges.map((badge) => (
+                <li key={badge}>{badge.replace(/_/g, " ")}</li>
+              ))}
+            </ul>
+          ) : null}
+          <p className="chapter-note">TEAMSPEAK · SAME MACHINE AS THIS PAGE</p>
         </div>
         <div className="chapter-copy chapter-copy--final" {...chapterState("final")}>
           <h2>ANKUZO</h2><span>IDENTITY RECONSTRUCTED</span>

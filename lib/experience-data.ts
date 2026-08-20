@@ -75,6 +75,8 @@ export type DiscordPresence = "online" | "idle" | "dnd" | "offline";
 
 export interface DiscordSignal {
   health: SourceHealth;
+  /** Snowflake, recovered from the CDN paths when the snapshot omits it. */
+  id?: string;
   username?: string;
   displayName?: string;
   bio?: string;
@@ -412,9 +414,16 @@ function normalizeDiscord(
   const displayName = text(snapshot.displayName);
   const avatar = safeUrl(snapshot.avatarUrl);
   const hasPayload = Boolean(username || displayName || avatar);
+  // The snapshot writer does not store the id, but every Discord CDN path
+  // carries it, and live presence lookups need it.
+  const id = text(snapshot.id)
+    ?? [avatar, safeUrl(snapshot.bannerUrl)]
+      .map((url) => url?.match(/\/(?:avatars|banners)\/(\d{5,})\//)?.[1])
+      .find(Boolean);
 
   return {
     health: sourceHealth(snapshot, hasPayload, now, staleAfterMs),
+    id,
     username,
     displayName,
     bio: text(snapshot.bio),

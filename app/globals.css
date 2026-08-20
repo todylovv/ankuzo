@@ -122,7 +122,8 @@ button{font:inherit}
 /* The three data chapters share one anchor and one internal rhythm, so moving
    between them feels like turning a page rather than entering a new site. */
 .chapter-copy--steam,.chapter-copy--playstation,.chapter-copy--presence{
-  top:50%;transform:translateY(-46%);display:grid;gap:16px;justify-items:start
+  top:50%;transform:translateY(-46%);display:grid;gap:15px;justify-items:start;
+  max-width:min(46ch,46vw)
 }
 .chapter-eyebrow{color:var(--text-secondary)}
 .chapter-note{max-width:34ch;color:var(--text-secondary);
@@ -145,11 +146,42 @@ button{font:inherit}
 html[data-chapter="steam"] .chapter-copy--steam .figure-count,
 html[data-chapter="playstation"] .chapter-copy--playstation .figure-count{--figure-now:var(--figure-target)}
 
-/* Trophy split: proportion carried by width, only gold gets the warm accent. */
-.trophy-bar{display:flex;width:min(26ch,30vw);height:2px;gap:2px}
-.trophy-bar i{display:block;height:100%;background:var(--text-faint)}
-.trophy-bar--silver{background:var(--text-secondary)!important}
-.trophy-bar--gold{background:var(--ember)!important}
+/* Records, not labels. A row is a name, a proportional bar and a number, with
+   the numbers on a shared right edge and tabular figures so they line up as a
+   column the eye can compare down. This is the "fullness" the chapters were
+   missing: three lines of copy state a fact, a ranked list shows it. */
+.data-list{display:grid;gap:9px;margin:4px 0 0;padding:0;list-style:none;width:min(38ch,40vw)}
+.data-list li{display:grid;grid-template-columns:1fr 4.5rem auto;align-items:center;gap:12px;
+  font:11px/1.4 Jet,monospace;letter-spacing:.1em;color:var(--text-secondary);text-transform:uppercase}
+.data-name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.data-value{color:var(--text-primary);font-variant-numeric:tabular-nums;text-align:right}
+.data-bar{display:block;height:2px;background:var(--line)}
+.data-bar i{display:block;height:100%;background:var(--accent);transform-origin:left;
+  transform:scaleX(0);transition:transform .9s cubic-bezier(.16,.84,.3,1)}
+
+/* Trophy tiers keep their own metals rather than the site accent, because the
+   tier IS the information. Platinum at zero stays visible and greyed — an
+   empty row is a fact about the collection, not a gap to hide. */
+.data-list--tiers .data-bar i{background:var(--text-faint)}
+[data-tier="silver"] .data-bar i{background:var(--chrome-mid)}
+[data-tier="gold"] .data-bar i{background:var(--ember)}
+[data-tier="platinum"] .data-bar i{background:var(--chrome-highlight)}
+[data-empty="true"]{opacity:.45}
+[data-empty="true"] .data-value{color:var(--text-faint)}
+
+/* Discord identity — the one borrowed image left on the site, and it is his. */
+.profile-card{display:flex;align-items:center;gap:14px;margin-top:2px}
+.profile-avatar{width:52px;height:52px;border-radius:50%;object-fit:cover;
+  border:1px solid var(--line-strong)}
+.profile-identity{display:grid;gap:3px}
+.profile-identity strong{font:500 18px/1.2 Manrope,Arial,sans-serif;letter-spacing:-.01em;
+  color:var(--text-primary);text-transform:none}
+.profile-identity span{font:11px/1 Jet,monospace;letter-spacing:.12em;color:var(--text-secondary)}
+.chapter-note--activity{color:var(--text-primary)!important}
+
+.badge-row{display:flex;flex-wrap:wrap;gap:7px;margin:2px 0 0;padding:0;list-style:none}
+.badge-row li{padding:4px 8px;border:1px solid var(--line);border-radius:2px;
+  font:10px/1 Jet,monospace;letter-spacing:.14em;color:var(--text-secondary);text-transform:uppercase}
 
 .presence-dot{display:block;width:.34em;height:.34em;border-radius:50%;
   background:var(--text-faint);flex:none}
@@ -222,7 +254,8 @@ html[data-chapter="final"] [data-target-chapter="final"] i{background:var(--acce
   .chapter-figure{font-size:19vw!important}
   .chapter-figure--word{font-size:13vw!important}
   .chapter-note{max-width:none}
-  .trophy-bar{width:min(26ch,68vw)}
+  .data-list{width:100%}
+  .data-list li{grid-template-columns:1fr 3rem auto;gap:10px}
   .chapter-copy--final h2{font-size:22vw}
   .chapter-nav{top:auto;bottom:52px;display:flex;gap:14px;transform:none}
   .chapter-nav button{display:flex;gap:4px}
