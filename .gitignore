@@ -51,3 +51,6 @@ yarn-error.log*
 
 # deploy snapshot worktrees
 /.deploy-snapshot-*/
+
+# scratch file used to pass long commit messages to git
+.commitmsg
