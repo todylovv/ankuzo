@@ -121,8 +121,6 @@ button{font:inherit}
 /* The entrance carries the largest type on the site — it used to occupy 0.7%
    of the viewport in a corner, which told a first-time visitor nothing. */
 .chapter-copy--portal{bottom:var(--gutter);transform:translateY(10px)}
-.chapter-copy--portal h1{font-size:var(--t-4);line-height:.86}
-.chapter-copy--portal span{display:block;margin-top:18px;color:var(--text-secondary);font-size:var(--t-0);letter-spacing:.14em}
 
 .chapter-copy--library{bottom:var(--gutter);transform:translateX(-18px)}
 .chapter-copy--platforms{bottom:var(--gutter);transform:translateY(14px)}
@@ -215,7 +213,6 @@ html[data-chapter="online"] .experience-signal--online{opacity:1;visibility:visi
   .header-tools{gap:11px}
   .chapter-copy{max-width:none;width:calc(100% - var(--gutter) * 2)}
   .chapter-copy--portal{bottom:96px}
-  .chapter-copy--portal h1{font-size:26vw}
   .chapter-copy--library{bottom:15vh}
   .chapter-copy--platforms{bottom:14vh}
   .chapter-copy--build{top:14vh}

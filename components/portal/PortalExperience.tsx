@@ -480,7 +480,9 @@ export function PortalExperience() {
         </header>
 
         <div className="chapter-copy chapter-copy--portal" {...chapterState("portal")}>
-          <h1>22</h1><span>SCROLL TO ENTER</span>
+          {/* The entrance is the scene itself: no overlay type competes with it.
+              The heading stays for the document outline and screen readers. */}
+          <h1 className="sr-only">22</h1>
         </div>
         <div className="chapter-copy chapter-copy--library" id="library" {...chapterState("library")}>
           <h2>LIBRARY</h2>
