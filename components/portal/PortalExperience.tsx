@@ -211,21 +211,34 @@ function ExperienceScene({ target, rendered, portal, immediate, archiveDensity, 
           subtends. As the reflected vector sweeps across a face it now crosses
           light, gap, light — and that sweep IS the gradient. */}
       <Environment resolution={256}>
-        {/* Four slats behind the camera, unevenly spaced and unevenly bright.
-            Even spacing would read as a pattern; uneven reads as a place. */}
-        <Lightformer form="rect" intensity={1.75} color={SCENE.reflectionSky}
-          position={[-5.6, 2.4, 9]} rotation={[0, Math.PI, 0]} scale={[2.6, 12, 1]} />
-        <Lightformer form="rect" intensity={1.1} color={SCENE.reflectionSide}
-          position={[-1.4, 1.2, 9.4]} rotation={[0, Math.PI, 0]} scale={[1.5, 11, 1]} />
-        <Lightformer form="rect" intensity={2.05} color={SCENE.reflectionEdge}
-          position={[2.9, 2, 9.1]} rotation={[0, Math.PI, 0]} scale={[3.4, 12.5, 1]} />
-        <Lightformer form="rect" intensity={0.8} color={SCENE.reflectionSide}
-          position={[6.8, 0.6, 9.6]} rotation={[0, Math.PI, 0]} scale={[1.8, 10, 1]} />
+        {/* Narrow and hot, with real darkness between them.
 
-        {/* Sky and floor keep the top and bottom of the glyph from matching. */}
-        <Lightformer form="rect" intensity={1.3} color={SCENE.reflectionSky}
+            Measured on the rendered frame, the metal was sitting with a median
+            luminance of 102 and 88% of its pixels inside one mid-grey band —
+            the signature of matte paint. Polished chrome is bimodal instead:
+            large near-black areas reflecting an unlit room, small near-white
+            ones reflecting a source, and a fast transition between them.
+
+            The previous slats were wide and moderate, so the reflection swept
+            across them and averaged out to exactly that grey. Total light is
+            about the same here; it is concentrated instead. Brightness was
+            never the missing thing — contrast was. */}
+        <Lightformer form="rect" intensity={9} color={SCENE.reflectionEdge}
+          position={[-4.4, 2.6, 8.6]} rotation={[0, Math.PI, 0]} scale={[0.55, 13, 1]} />
+        <Lightformer form="rect" intensity={5.5} color={SCENE.reflectionSky}
+          position={[-1.9, 1, 9.2]} rotation={[0, Math.PI, 0]} scale={[0.34, 11, 1]} />
+        <Lightformer form="rect" intensity={12} color={SCENE.reflectionEdge}
+          position={[2.4, 2.2, 8.8]} rotation={[0, Math.PI, 0]} scale={[0.7, 13.5, 1]} />
+        <Lightformer form="rect" intensity={4} color={SCENE.reflectionSky}
+          position={[5.9, 0.4, 9.4]} rotation={[0, Math.PI, 0]} scale={[0.3, 10, 1]} />
+
+        {/* Sky and floor keep the top and bottom of the glyph from matching.
+            Both are kept low: they are the "unlit room" the dark half of the
+            surface is supposed to be reflecting, and lifting them is what
+            collapses the range back into grey. */}
+        <Lightformer form="rect" intensity={0.55} color={SCENE.reflectionSky}
           position={[-1.2, 7.4, 3.4]} rotation={[0.5, 0.14, 0]} scale={[15, 4.2, 1]} />
-        <Lightformer form="rect" intensity={0.5} color={SCENE.reflectionFloor}
+        <Lightformer form="rect" intensity={0.22} color={SCENE.reflectionFloor}
           position={[0, -6.2, -1]} rotation={[Math.PI / 2, 0, 0]} scale={[14, 9, 1]} />
 
         {/* The two specular edges that draw the silhouette. */}
@@ -236,11 +249,11 @@ function ExperienceScene({ target, rendered, portal, immediate, archiveDensity, 
 
         {/* One warm sliver, low and dim: uniformly cold chrome starts to read
             as plastic, and a single warm bounce is what stops it. */}
-        <Lightformer form="rect" intensity={0.95} color={SCENE.reflectionWarm}
-          position={[6.2, -2.2, 2.6]} rotation={[0, -0.95, 0]} scale={[1.2, 5, 1]} />
+        <Lightformer form="rect" intensity={2.2} color={SCENE.reflectionWarm}
+          position={[6.2, -2.2, 2.6]} rotation={[0, -0.95, 0]} scale={[0.5, 5, 1]} />
 
         {/* Rim from behind the artefact, separating it from the dust. */}
-        <Lightformer form="rect" intensity={1.5} color={SCENE.reflectionSky}
+        <Lightformer form="rect" intensity={0.9} color={SCENE.reflectionSky}
           position={[0, 1.5, -22]} rotation={[0, 0, 0]} scale={[9, 7, 1]} />
       </Environment>
       <RibbonField progress={rendered} density={archiveDensity} reducedMotion={reducedMotion} />

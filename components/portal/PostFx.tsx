@@ -22,7 +22,10 @@ import { Vector2 } from "three";
 export function PostFx({ reducedMotion = false }: { reducedMotion?: boolean }) {
   // Aberration is a constant vector; rebuilding it each render would hand the
   // effect a new uniform every frame for no reason.
-  const aberration = useMemo(() => new Vector2(0.00022, 0.0003), []);
+  // Down again: on the rendered frame the split had become visible as magenta
+  // and green rims along the glyph, which reads as a defect rather than as a
+  // lens. This is meant to be felt as an absence when removed, never seen.
+  const aberration = useMemo(() => new Vector2(0.00008, 0.00011), []);
 
   return (
     <EffectComposer

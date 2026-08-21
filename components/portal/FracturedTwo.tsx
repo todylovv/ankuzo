@@ -169,14 +169,14 @@ export function PortalTwentyTwo({
   const pristineMaterial = useMemo(() => new MeshPhysicalMaterial({
     color: SCENE.chrome,
     metalness: 0.96,
-    roughness: 0.22,
-    envMapIntensity: 0.82,
+    roughness: 0.13,
+    envMapIntensity: 1.35,
     clearcoat: 0.3,
     clearcoatRoughness: 0.36,
     // Brushed rather than mirror-smooth: anisotropy stretches each reflection
     // along one axis, so the slats behind the camera arrive as long vertical
     // draws down the face instead of as one flat wash.
-    anisotropy: 0.42,
+    anisotropy: 0.22,
     anisotropyRotation: Math.PI / 2,
     // A trace of thin-film. Purely neutral chrome looks computed; a faint cold
     // shift at grazing angles is what real plating does.
