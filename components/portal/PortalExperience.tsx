@@ -38,6 +38,49 @@ const REVIEW_STATES = [
   { scene: "final", frame: "22", progress: 1 },
 ] as const;
 
+/**
+ * The blinds standing behind the camera, which is the only thing the artefact's
+ * front faces can see.
+ *
+ * The count is the point, not the brightness. A flat face has a nearly constant
+ * normal, so it samples the environment across a very narrow arc — measured on
+ * the rendered frame, four wide slats put 88% of the surface in one grey band,
+ * and four narrow ones put 77% of it in shadow. Neither is metal, because in
+ * both cases the whole face landed inside a single feature of the room.
+ *
+ * Twelve of them, spaced closer than the arc a face sweeps, means the surface
+ * crosses light and dark several times over: bright bands and dark bands on one
+ * face, which is what a mirror in a room with blinds actually shows. The widths
+ * and intensities are irregular so the result reads as a place rather than as a
+ * test pattern, and a couple carry the warm and cool ends of the palette so the
+ * metal is not uniformly one temperature.
+ */
+type Slat = {
+  x: number;
+  y: number;
+  width: number;
+  intensity: number;
+  /** Tints this blind toward the cold end of the palette. */
+  cool?: boolean;
+  /** The single warm one, so the metal is not all one temperature. */
+  warm?: boolean;
+};
+
+const SLATS: readonly Slat[] = [
+  { x: -7.2, y: 2.2, width: 0.42, intensity: 6.5, cool: true },
+  { x: -6.1, y: 1.0, width: 0.22, intensity: 3.0 },
+  { x: -5.2, y: 2.8, width: 0.5, intensity: 9.5 },
+  { x: -4.0, y: 0.6, width: 0.26, intensity: 4.2, cool: true },
+  { x: -2.9, y: 2.4, width: 0.6, intensity: 11.0 },
+  { x: -1.7, y: 1.2, width: 0.24, intensity: 3.4 },
+  { x: -0.5, y: 2.6, width: 0.46, intensity: 8.0 },
+  { x: 0.8, y: 0.8, width: 0.3, intensity: 4.6, cool: true },
+  { x: 2.0, y: 2.5, width: 0.66, intensity: 12.0 },
+  { x: 3.3, y: 1.0, width: 0.24, intensity: 3.2, warm: true },
+  { x: 4.6, y: 2.3, width: 0.44, intensity: 7.5 },
+  { x: 6.0, y: 1.4, width: 0.28, intensity: 4.0, cool: true },
+];
+
 /** Controls that own the space bar / arrow keys themselves. */
 const INTERACTIVE_SELECTOR = "button, a, input, select, textarea, [contenteditable]";
 const REDUCED_MOTION_QUERY = "(prefers-reduced-motion: reduce)";
@@ -223,14 +266,12 @@ function ExperienceScene({ target, rendered, portal, immediate, archiveDensity, 
             across them and averaged out to exactly that grey. Total light is
             about the same here; it is concentrated instead. Brightness was
             never the missing thing — contrast was. */}
-        <Lightformer form="rect" intensity={9} color={SCENE.reflectionEdge}
-          position={[-4.4, 2.6, 8.6]} rotation={[0, Math.PI, 0]} scale={[0.55, 13, 1]} />
-        <Lightformer form="rect" intensity={5.5} color={SCENE.reflectionSky}
-          position={[-1.9, 1, 9.2]} rotation={[0, Math.PI, 0]} scale={[0.34, 11, 1]} />
-        <Lightformer form="rect" intensity={12} color={SCENE.reflectionEdge}
-          position={[2.4, 2.2, 8.8]} rotation={[0, Math.PI, 0]} scale={[0.7, 13.5, 1]} />
-        <Lightformer form="rect" intensity={4} color={SCENE.reflectionSky}
-          position={[5.9, 0.4, 9.4]} rotation={[0, Math.PI, 0]} scale={[0.3, 10, 1]} />
+        {SLATS.map((slat, index) => (
+          <Lightformer key={index} form="rect" intensity={slat.intensity}
+            color={slat.warm ? SCENE.reflectionWarm : slat.cool ? SCENE.reflectionSky : SCENE.reflectionEdge}
+            position={[slat.x, slat.y, 8.8]} rotation={[0, Math.PI, 0]}
+            scale={[slat.width, 13, 1]} />
+        ))}
 
         {/* Sky and floor keep the top and bottom of the glyph from matching.
             Both are kept low: they are the "unlit room" the dark half of the

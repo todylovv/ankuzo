@@ -84,7 +84,12 @@ function createGothicTwoGeometry() {
     bevelSize: 0.2,
     bevelThickness: 0.22,
   });
-  bowCaps(geometry, depth, 0.16);
+  // Deep enough that the normal actually sweeps. At 0.16 the face turned by
+  // roughly five degrees corner to corner, which is far less than the angular
+  // width of a single light in the room — so the whole cap kept landing inside
+  // one feature and came out uniform, first grey and then dark. This is still
+  // shallow enough to leave the silhouette alone.
+  bowCaps(geometry, depth, 0.34);
   geometry.scale(0.78, 0.78, 0.78);
   geometry.center();
   geometry.computeVertexNormals();
