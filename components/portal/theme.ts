@@ -57,10 +57,10 @@ export const SCENE = {
   reflectionWarm: "#FFB489",
 
   ambientIntensity: 0.42,
-  keyIntensity: 3.7,
+  keyIntensity: 2.2,
   fillIntensity: 1.35,
-  rearIntensity: 2.6,
-  exposure: 1.06,
+  rearIntensity: 1.7,
+  exposure: 0.94,
 } as const;
 
 export type ScenePalette = typeof SCENE;

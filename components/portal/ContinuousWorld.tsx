@@ -92,7 +92,7 @@ export function ContinuousWorld({
   // sweep has a soft edge rather than a hard boundary.
   const faceMaterial = useMemo(() => new MeshPhysicalMaterial({
     color: SCENE.chrome,
-    metalness: 0.96, roughness: 0.22, envMapIntensity: 1.15,
+    metalness: 0.96, roughness: 0.22, envMapIntensity: 0.82,
     clearcoat: 0.3, clearcoatRoughness: 0.36,
     // Brushed rather than mirror-smooth. Anisotropy stretches every reflection
     // along one axis, so the slats behind the camera arrive as long vertical
@@ -111,7 +111,7 @@ export function ContinuousWorld({
   // wide enough to read as a rim rather than as a glint. The gap between this
   // and the faces above is what gives the extrusion its depth.
   const sideMaterial = useMemo(() => new MeshPhysicalMaterial({
-    color: SCENE.chromeSide, metalness: 0.92, roughness: 0.32, envMapIntensity: 2.1,
+    color: SCENE.chromeSide, metalness: 0.92, roughness: 0.32, envMapIntensity: 1.5,
     clearcoat: 0.12, clearcoatRoughness: 0.3,
     anisotropy: 0.3, anisotropyRotation: 0,
     transparent: true, opacity: 0,
@@ -180,7 +180,10 @@ export function ContinuousWorld({
     group.current.scale.setScalar(scale);
   });
 
-  const offset = portrait ? 1.02 : 1.35;
+  // The pair had grown into each other: the left glyph's tail ran under the
+  // right one's stem, which reads as a rendering fault rather than as a
+  // ligature. Widened until the silhouettes clear each other outright.
+  const offset = portrait ? 1.22 : 1.66;
 
   return (
     <group ref={group} visible={false}>

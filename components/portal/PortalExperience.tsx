@@ -213,34 +213,34 @@ function ExperienceScene({ target, rendered, portal, immediate, archiveDensity, 
       <Environment resolution={256}>
         {/* Four slats behind the camera, unevenly spaced and unevenly bright.
             Even spacing would read as a pattern; uneven reads as a place. */}
-        <Lightformer form="rect" intensity={3.4} color={SCENE.reflectionSky}
+        <Lightformer form="rect" intensity={1.75} color={SCENE.reflectionSky}
           position={[-5.6, 2.4, 9]} rotation={[0, Math.PI, 0]} scale={[2.6, 12, 1]} />
-        <Lightformer form="rect" intensity={2.1} color={SCENE.reflectionSide}
+        <Lightformer form="rect" intensity={1.1} color={SCENE.reflectionSide}
           position={[-1.4, 1.2, 9.4]} rotation={[0, Math.PI, 0]} scale={[1.5, 11, 1]} />
-        <Lightformer form="rect" intensity={4.2} color={SCENE.reflectionEdge}
+        <Lightformer form="rect" intensity={2.05} color={SCENE.reflectionEdge}
           position={[2.9, 2, 9.1]} rotation={[0, Math.PI, 0]} scale={[3.4, 12.5, 1]} />
-        <Lightformer form="rect" intensity={1.4} color={SCENE.reflectionSide}
+        <Lightformer form="rect" intensity={0.8} color={SCENE.reflectionSide}
           position={[6.8, 0.6, 9.6]} rotation={[0, Math.PI, 0]} scale={[1.8, 10, 1]} />
 
         {/* Sky and floor keep the top and bottom of the glyph from matching. */}
-        <Lightformer form="rect" intensity={2.3} color={SCENE.reflectionSky}
+        <Lightformer form="rect" intensity={1.3} color={SCENE.reflectionSky}
           position={[-1.2, 7.4, 3.4]} rotation={[0.5, 0.14, 0]} scale={[15, 4.2, 1]} />
-        <Lightformer form="rect" intensity={0.85} color={SCENE.reflectionFloor}
+        <Lightformer form="rect" intensity={0.5} color={SCENE.reflectionFloor}
           position={[0, -6.2, -1]} rotation={[Math.PI / 2, 0, 0]} scale={[14, 9, 1]} />
 
         {/* The two specular edges that draw the silhouette. */}
-        <Lightformer form="rect" intensity={9} color={SCENE.reflectionEdge}
+        <Lightformer form="rect" intensity={4.4} color={SCENE.reflectionEdge}
           position={[-3.1, 0.2, 5.6]} rotation={[0, 0.5, 0.06]} scale={[0.22, 9, 1]} />
-        <Lightformer form="rect" intensity={6} color={SCENE.reflectionEdge}
+        <Lightformer form="rect" intensity={3} color={SCENE.reflectionEdge}
           position={[3.4, 0.4, 5.4]} rotation={[0, -0.46, -0.07]} scale={[0.3, 7.4, 1]} />
 
         {/* One warm sliver, low and dim: uniformly cold chrome starts to read
             as plastic, and a single warm bounce is what stops it. */}
-        <Lightformer form="rect" intensity={1.6} color={SCENE.reflectionWarm}
+        <Lightformer form="rect" intensity={0.95} color={SCENE.reflectionWarm}
           position={[6.2, -2.2, 2.6]} rotation={[0, -0.95, 0]} scale={[1.2, 5, 1]} />
 
         {/* Rim from behind the artefact, separating it from the dust. */}
-        <Lightformer form="rect" intensity={2.8} color={SCENE.reflectionSky}
+        <Lightformer form="rect" intensity={1.5} color={SCENE.reflectionSky}
           position={[0, 1.5, -22]} rotation={[0, 0, 0]} scale={[9, 7, 1]} />
       </Environment>
       <RibbonField progress={rendered} density={archiveDensity} reducedMotion={reducedMotion} />
@@ -317,6 +317,7 @@ export function PortalExperience() {
         id: profile.id,
         nickname: profile.nickname,
         avatar: profile.avatar,
+        url: profile.profileUrl,
         online: profile.online,
         currentGame: profile.currentGame,
         hours: Math.round(profile.totalHours ?? 0),
@@ -525,18 +526,26 @@ export function PortalExperience() {
           <ul className="account-row">
             {figures.steamProfiles.map((profile) => (
               <li key={profile.id}>
-                {profile.avatar ? (
-                  /* eslint-disable-next-line @next/next/no-img-element */
-                  <img className="account-avatar" src={profile.avatar} alt="" width={40} height={40} loading="lazy" />
-                ) : null}
-                <div className="account-identity">
-                  <strong>{profile.nickname}</strong>
-                  <span>
-                    <i className={`presence-dot presence-dot--${profile.online ? "online" : "offline"}`} aria-hidden="true" />
-                    {profile.currentGame ? profile.currentGame : profile.online ? "ONLINE" : "OFFLINE"}
+                <a className="account" href={profile.url ?? undefined}
+                  target="_blank" rel="noreferrer noopener">
+                  <span className="account-portrait">
+                    {profile.avatar ? (
+                      /* eslint-disable-next-line @next/next/no-img-element */
+                      <img src={profile.avatar} alt="" width={54} height={54} loading="lazy" />
+                    ) : null}
+                    <i className={`account-state account-state--${profile.online ? "online" : "offline"}`}
+                      aria-hidden="true" />
                   </span>
-                  <small>{profile.games} GAMES · {profile.hours.toLocaleString("en-US")} H</small>
-                </div>
+                  <span className="account-body">
+                    <b>{profile.nickname}</b>
+                    <em>{profile.currentGame ? profile.currentGame : profile.online ? "ONLINE" : "OFFLINE"}</em>
+                    <span className="account-stats">
+                      <span><b>{profile.games}</b> games</span>
+                      <span><b>{profile.hours.toLocaleString("en-US")}</b> h</span>
+                    </span>
+                  </span>
+                  <span className="account-go" aria-hidden="true">↗</span>
+                </a>
               </li>
             ))}
           </ul>

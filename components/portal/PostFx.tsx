@@ -37,9 +37,9 @@ export function PostFx({ reducedMotion = false }: { reducedMotion?: boolean }) {
         // just under its peak. Set too low the whole face qualifies as a
         // highlight and the glyph turns into a lamp — which is exactly what
         // happened at 0.62. Only the specular streaks should pass.
-        luminanceThreshold={0.86}
+        luminanceThreshold={0.9}
         luminanceSmoothing={0.14}
-        intensity={0.4}
+        intensity={0.26}
         kernelSize={KernelSize.LARGE}
         mipmapBlur
       />

@@ -49,7 +49,7 @@
   --t-1up:18px;
   --t-2:28px;
   --t-3:clamp(2.75rem,7vw,6rem);
-  --t-4:clamp(4rem,13.5vw,12rem);
+  --t-4:clamp(3.5rem,11.9vw,10.6rem);
 }
 *{box-sizing:border-box}
 html{background:var(--bg-primary)}
@@ -320,21 +320,45 @@ html[data-chapter="playstation"] .chapter-copy--playstation .figure-count{--figu
    that belonged to neither. The row now holds its own register: a larger
    thumbnail, the nickname at reading size in the text face, and the state line
    at the 11px floor instead of below it. */
-.account-row{display:flex;flex-wrap:wrap;gap:38px;margin:0;padding:0;list-style:none}
-.account-row li{display:flex;align-items:center;gap:13px}
-.account-avatar{width:48px;height:48px;border-radius:4px;object-fit:cover;
-  border:1px solid var(--line-strong)}
-.account-identity{display:grid;gap:3px}
-.account-identity strong{font:600 18px/1.15 Manrope,Arial,sans-serif;letter-spacing:-.015em;
+   Each is now something you can open rather than a square with a name beside
+   it. The profiles are public, and a page built on someone's accounts should
+   let you go and look at them. */
+.account-row{display:flex;flex-wrap:wrap;gap:14px;margin:0;padding:0;list-style:none}
+.account{position:relative;display:flex;align-items:center;gap:13px;
+  padding:11px 34px 11px 12px;pointer-events:auto;text-decoration:none;
+  border:1px solid var(--line);border-radius:5px;
+  background:color-mix(in srgb,var(--surface) 70%,transparent);
+  transition:border-color .3s ease,background .3s ease,transform .35s cubic-bezier(.16,.84,.3,1)}
+.account:hover{border-color:color-mix(in srgb,var(--accent) 46%,transparent);
+  background:color-mix(in srgb,var(--surface) 94%,transparent);transform:translateY(-2px)}
+.account:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+
+.account-portrait{position:relative;display:block;width:54px;height:54px;flex:none}
+.account-portrait img{width:54px;height:54px;border-radius:4px;object-fit:cover;display:block;
+  filter:saturate(.75) brightness(.92);transition:filter .3s ease}
+.account:hover .account-portrait img{filter:none}
+/* The state dot overlaps the corner of the portrait the way a chat client
+   shows it, so the account reads as a live thing rather than a record of one. */
+.account-state{position:absolute;right:-3px;bottom:-3px;width:12px;height:12px;border-radius:50%;
+  border:3px solid var(--bg-primary);background:var(--text-faint);display:block}
+.account-state--online{background:#23a55a}
+
+.account-body{display:grid;gap:3px}
+.account-body b{font:500 16px/1.15 Manrope,Arial,sans-serif;letter-spacing:-.01em;
   color:var(--text-primary);text-transform:none}
-.account-identity span{display:flex;align-items:center;gap:7px;font:11px/1 Jet,monospace;
-  letter-spacing:.12em;color:var(--text-secondary);text-transform:uppercase}
-/* A login that is live right now is machine state, which is exactly what the
-   cold accent is for — so the whole line lights, not just the dot. An offline
-   account keeps the neutral grey and the contrast between them is the point. */
-.account-identity span:has(.presence-dot--online){color:var(--accent)}
-.account-identity small{font:11px/1 Jet,monospace;letter-spacing:.12em;color:var(--text-faint)}
-.account-identity .presence-dot{width:6px;height:6px}
+.account-body em{font:10px/1 Jet,monospace;letter-spacing:.13em;color:var(--text-faint);
+  font-style:normal;text-transform:uppercase}
+.account-stats{display:flex;gap:12px;font:11px/1 Jet,monospace;letter-spacing:.06em;
+  color:var(--text-faint);text-transform:none}
+.account-stats b{font:500 12px/1 Jet,monospace;color:var(--text-secondary);
+  font-variant-numeric:tabular-nums}
+
+/* The arrow is the only thing announcing that this leaves the page, so it has
+   to be visible at rest and unmistakable on hover. */
+.account-go{position:absolute;right:12px;top:12px;font:12px/1 Jet,monospace;
+  color:var(--text-faint);opacity:.5;
+  transition:opacity .3s ease,color .3s ease,transform .3s ease}
+.account:hover .account-go{opacity:1;color:var(--accent);transform:translate(1px,-1px)}
 
 /* Game covers as objects you can turn.
    Cover art was removed from this site once, for a real reason: at full-bleed
@@ -545,9 +569,10 @@ html[data-chapter="final"] [data-target-chapter="final"] i{background:var(--acce
   .chapter-copy--steam .data-list li:first-child .data-name{font-size:15px}
   .chapter-copy--steam .data-list li:first-child .data-value{font-size:18px}
 
-  .account-row{gap:16px}
-  .account-avatar{width:34px;height:34px}
-  .account-identity strong{font-size:14px}
+  .account-row{gap:10px}
+  .account{padding:9px 28px 9px 10px;gap:10px}
+  .account-portrait,.account-portrait img{width:44px;height:44px}
+  .account-body b{font-size:15px}
 
   .discord-card{width:100%}
   .discord-body{padding:46px 14px 14px}
