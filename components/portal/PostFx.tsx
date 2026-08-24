@@ -1,6 +1,6 @@
 "use client";
 
-import { Bloom, ChromaticAberration, EffectComposer, Noise, ToneMapping, Vignette } from "@react-three/postprocessing";
+import { Bloom, ChromaticAberration, EffectComposer, N8AO, Noise, ToneMapping, Vignette } from "@react-three/postprocessing";
 import { BlendFunction, KernelSize, ToneMappingMode } from "postprocessing";
 import { useMemo } from "react";
 import { Vector2 } from "three";
@@ -35,6 +35,25 @@ export function PostFx({ reducedMotion = false }: { reducedMotion?: boolean }) {
       multisampling={0}
       enableNormalPass={false}
     >
+      {/* Contact darkening, and it is not decoration.
+          A polished surface gets its form from what it reflects, so it can
+          survive without this. A matte one cannot: diffuse shading alone gives
+          every part of the glyph facing the same way the same value, so the
+          counters — the enclosed holes in each digit — come out as flat black
+          cut-outs and the point where the two digits pass each other reads as
+          one silhouette rather than as two objects at different depths. AO is
+          what puts a seam back between them, by darkening the crevices light
+          would struggle to reach.
+
+          Placed before Bloom so the darkening happens in linear light, on the
+          scene, rather than being applied over a bloomed image where it would
+          fight the very highlights it is supposed to leave alone. */}
+      {/* Radius kept short deliberately. At 1.4 the occlusion reached past the
+          glyph onto the dust field behind it and drew a dark aura around the
+          silhouette — which reads as a drop shadow pasted under the object,
+          the one thing that instantly makes a 3D scene look composited. This
+          radius stays inside the geometry, where the crevices actually are. */}
+      <N8AO aoRadius={0.75} intensity={2.1} distanceFalloff={0.5} quality="medium" halfRes />
       <Bloom
         // The threshold has to sit ABOVE the metal's general brightness, not
         // just under its peak. Set too low the whole face qualifies as a

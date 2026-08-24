@@ -1,4 +1,13 @@
 @import "tailwindcss";
+/* The body chapter's card. Its own header asks for this line to go after the
+   @font-face block; it goes here instead because @import is only valid before
+   any other rule, and a @font-face is a rule — placed lower the browser drops
+   the import outright on any path where the CSS is served without a bundler
+   inlining it first. Nothing is lost by sitting first: body.css only reads the
+   tokens declared on :root below, and the one place it meets .chapter-copy's own
+   typography is separated by an explicit rule further down rather than by
+   whichever file happens to come last. */
+@import "./body.css";
 
 /* Three roles, three faces: Unbounded is the wide display voice, Manrope the
    quiet grotesk underneath it, Jet carries coordinates and states.
@@ -104,9 +113,9 @@ html[data-chapter="portal"] .experience-stage::after{opacity:0}
 
 .chapter-copy--portal{bottom:var(--gutter);transform:translateY(10px)}
 
-/* The three data chapters share one anchor and one internal rhythm, so moving
+/* The four data chapters share one anchor and one internal rhythm, so moving
    between them feels like turning a page rather than entering a new site. */
-.chapter-copy--steam,.chapter-copy--playstation,.chapter-copy--presence{
+.chapter-copy--steam,.chapter-copy--playstation,.chapter-copy--presence,.chapter-copy--body{
   top:50%;transform:translateY(-46%);display:grid;gap:19px;justify-items:start;
   /* Widths are absolute on purpose. These were written as `ch`, which resolves
      against the element's OWN font — JetBrains Mono at 11px here — so a column
@@ -146,6 +155,19 @@ html[data-chapter="portal"] .experience-stage::after{opacity:0}
   text-transform:uppercase}
 .chapter-figure--word{font-size:var(--t-3)!important;align-items:center;gap:.34em}
 
+/* The body card gets the same quarantine .dc-card gives itself.
+   `.chapter-copy p` and `.chapter-copy div` above match every descendant, not
+   just the chapter's own blocks, so the card was being uppercased from outside:
+   the unit strings came out "KG" and "W" where body.css sets them lowercase on
+   purpose, and the absent-state sentence came out shouting. Only
+   text-transform is reset — the chapter's font and colour are the card's
+   intended base and body.css overrides both wherever it cares. Specificity does
+   the work (0,2,1 against 0,1,1), so nothing here needs !important and every
+   real type declaration stays in body.css. */
+.chapter-copy--body .bc-stage,
+.chapter-copy--body .bc-stage p,
+.chapter-copy--body .bc-stage div{text-transform:none}
+
 /* Counting is the arrival: the number climbs while the chapter settles, so the
    time it takes to land is itself the measure of how large it is. An animatable
    custom property does it without a single React render per frame. */
@@ -183,7 +205,8 @@ html[data-chapter="portal"] .experience-stage::after{opacity:0}
     #6E7A8B 58%, var(--chrome-mid) 74%, #9AA5B2 100%);
   -webkit-background-clip:text;background-clip:text;color:transparent}
 html[data-chapter="steam"] .chapter-copy--steam .figure-count,
-html[data-chapter="playstation"] .chapter-copy--playstation .figure-count{--figure-now:var(--figure-target)}
+html[data-chapter="playstation"] .chapter-copy--playstation .figure-count,
+html[data-chapter="body"] .chapter-copy--body .figure-count{--figure-now:var(--figure-target)}
 
 /* Records, not labels. A row is a name, a proportional bar and a number, with
    the numbers on a shared right edge and tabular figures so they line up as a
@@ -495,11 +518,13 @@ html[data-chapter="portal"] .chapter-copy--portal,
 html[data-chapter="steam"] .chapter-copy--steam,
 html[data-chapter="playstation"] .chapter-copy--playstation,
 html[data-chapter="presence"] .chapter-copy--presence,
+html[data-chapter="body"] .chapter-copy--body,
 html[data-chapter="final"] .chapter-copy--final{opacity:1;visibility:visible;transition-delay:0s}
 html[data-chapter="portal"] .chapter-copy--portal{transform:translateY(0)}
 html[data-chapter="steam"] .chapter-copy--steam,
 html[data-chapter="playstation"] .chapter-copy--playstation,
-html[data-chapter="presence"] .chapter-copy--presence{transform:translateY(-50%)}
+html[data-chapter="presence"] .chapter-copy--presence,
+html[data-chapter="body"] .chapter-copy--body{transform:translateY(-50%)}
 html[data-chapter="final"] .chapter-copy--final{transform:translateY(0)}
 
 /* Rows arrive one after another rather than all at once: a list that appears
@@ -521,24 +546,25 @@ html[data-chapter="final"] .chapter-copy--final{transform:translateY(0)}
 .chapter-nav button:hover,.chapter-nav button:focus-visible{color:var(--text-primary);outline:2px solid var(--accent);outline-offset:4px}
 .chapter-nav button:hover i,.chapter-nav button:focus-visible i{width:13px}
 .chapter-nav button:hover b,.chapter-nav button:focus-visible b{opacity:1;transform:none}
+/* One selector per chapter id, and they have to be the ids the nav actually
+   emits. The previous list named library / platforms / online / build — the ids
+   from before the chapters were renamed after the accounts they show — so
+   `data-chapter` matched none of them and only the first and last buttons in the
+   strip ever lit. This is the list that has to be edited alongside CHAPTERS in
+   components/portal/progress.ts; `body` appears here because that button exists
+   on exactly the loads where the chapter does. */
 html[data-chapter="portal"] [data-target-chapter="portal"],
-html[data-chapter="library"] [data-target-chapter="library"],
-html[data-chapter="platforms"] [data-target-chapter="platforms"],
-html[data-chapter="online"] [data-target-chapter="online"],
-html[data-chapter="build"] [data-target-chapter="build"],
+html[data-chapter="steam"] [data-target-chapter="steam"],
+html[data-chapter="playstation"] [data-target-chapter="playstation"],
+html[data-chapter="presence"] [data-target-chapter="presence"],
+html[data-chapter="body"] [data-target-chapter="body"],
 html[data-chapter="final"] [data-target-chapter="final"]{color:var(--text-primary)}
 html[data-chapter="portal"] [data-target-chapter="portal"] i,
-html[data-chapter="library"] [data-target-chapter="library"] i,
-html[data-chapter="platforms"] [data-target-chapter="platforms"] i,
-html[data-chapter="online"] [data-target-chapter="online"] i,
-html[data-chapter="build"] [data-target-chapter="build"] i,
-html[data-chapter="final"] [data-target-chapter="final"] i{width:13px}
-html[data-chapter="portal"] [data-target-chapter="portal"] i,
-html[data-chapter="library"] [data-target-chapter="library"] i,
-html[data-chapter="platforms"] [data-target-chapter="platforms"] i,
-html[data-chapter="online"] [data-target-chapter="online"] i,
-html[data-chapter="build"] [data-target-chapter="build"] i,
-html[data-chapter="final"] [data-target-chapter="final"] i{background:var(--accent)}
+html[data-chapter="steam"] [data-target-chapter="steam"] i,
+html[data-chapter="playstation"] [data-target-chapter="playstation"] i,
+html[data-chapter="presence"] [data-target-chapter="presence"] i,
+html[data-chapter="body"] [data-target-chapter="body"] i,
+html[data-chapter="final"] [data-target-chapter="final"] i{width:13px;background:var(--accent)}
 
 .experience-meter{position:absolute;z-index:6;left:50%;bottom:var(--gutter);display:flex;align-items:center;gap:11px;transform:translateX(-50%);color:var(--text-faint);font:11px/1 Jet,monospace;letter-spacing:.12em}
 .experience-meter i{display:block;width:104px;height:1px;background:var(--line);overflow:hidden}
@@ -563,7 +589,7 @@ html[data-chapter="final"] [data-target-chapter="final"] i{background:var(--acce
   .chapter-copy{max-width:none;width:calc(100% - var(--gutter) * 2)}
   .chapter-copy--portal{bottom:calc(var(--gutter) + env(safe-area-inset-bottom,0px) + 58px)}
 
-  .chapter-copy--steam,.chapter-copy--playstation,.chapter-copy--presence{
+  .chapter-copy--steam,.chapter-copy--playstation,.chapter-copy--presence,.chapter-copy--body{
     top:auto;bottom:calc(var(--gutter) + env(safe-area-inset-bottom,0px) + 58px);
     transform:none;gap:13px;justify-items:start;text-align:left
   }
@@ -578,10 +604,19 @@ html[data-chapter="final"] [data-target-chapter="final"] i{background:var(--acce
   html[data-chapter="steam"] .chapter-copy--steam,
   html[data-chapter="playstation"] .chapter-copy--playstation,
   html[data-chapter="presence"] .chapter-copy--presence,
+  html[data-chapter="body"] .chapter-copy--body,
   html[data-chapter="final"] .chapter-copy--final{transform:none}
 
   .chapter-figure{font-size:23vw!important}
   .chapter-figure--word{font-size:15vw!important}
+  /* The body chapter pays for its card the same way PRESENCE does. Stacked at
+     390 x 844 the block runs eyebrow + figure + note + card: at 23vw the figure
+     alone is 90px and the total comes to ~445px against the 480px this
+     breakpoint leaves between the header and the 82px bottom offset — inside
+     the frame, but only on the tallest phones. 18vw takes 20px back and holds
+     on a 667px viewport too, and it is still the largest thing on the screen,
+     which is the only thing the size has to be. */
+  .chapter-copy--body .chapter-figure{font-size:18vw!important}
   /* 26vw was a guess and it never fitted. ANKUZO set in Unbounded 500 at
      -.045em measures 5.06x its own font-size — measured, not estimated — so
      26vw drew a 513px word inside a 342px rail on a 390pt phone and the stage
@@ -651,11 +686,18 @@ html[data-chapter="final"] [data-target-chapter="final"] i{background:var(--acce
 
 /* Short landscape phones have no room for a bottom-anchored stack at all. */
 @media(max-height:520px) and (orientation:landscape){
-  .chapter-copy--steam,.chapter-copy--playstation,.chapter-copy--presence{
+  .chapter-copy--steam,.chapter-copy--playstation,.chapter-copy--presence,.chapter-copy--body{
     bottom:auto;top:var(--gutter);gap:9px
   }
   .chapter-figure{font-size:11vh!important}
   .data-list li:nth-child(n+4){display:none}
+  /* The card is the tallest single block any chapter carries — 190px at its
+     floor against a 520px viewport that has already spent a gutter and a
+     ~120px figure. The three metrics move onto one line each so the stack
+     ends above the meter instead of under it. */
+  .bc-card{gap:11px;padding:14px 16px 15px}
+  .bc-metrics{padding-top:11px;gap:9px}
+  .bc-lift{padding-top:11px}
 }
 
 @media(prefers-reduced-motion:reduce){

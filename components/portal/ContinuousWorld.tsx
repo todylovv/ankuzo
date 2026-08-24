@@ -5,6 +5,8 @@ import { useFrame, useThree } from "@react-three/fiber";
 import { useEffect, useMemo, useRef } from "react";
 import type { MutableRefObject } from "react";
 import { Group, MeshPhysicalMaterial, PerspectiveCamera } from "three";
+import { CHAPTER_BOUNDS, transposeProgress } from "./progress";
+import type { ChapterBound } from "./progress";
 import { useGothicTwoGeometry } from "./GothicTwo";
 import { SCENE } from "./theme";
 
@@ -20,10 +22,108 @@ import { SCENE } from "./theme";
  * reads as someone else's poster.
  */
 
-/** Where the artefact fades in, and where the ending begins. The chapter
- *  boundaries themselves now live in ARTEFACT_PATH, one anchor each. */
+/**
+ * The artefact's finish, as one decision in one place.
+ *
+ * These are not two sets of numbers to taste between — they are two different
+ * strategies for making a shape read as solid, and each one collapses if given
+ * the other's supporting cast.
+ *
+ * POLISHED gets its form from the room. A mirror has no shading of its own, so
+ * every gradient on it is something reflected; the rig's twelve slats and the
+ * horizon band exist entirely to give it that something. Sharp, expensive,
+ * and completely dependent on the environment being interesting.
+ *
+ * MATTE gets its form from occlusion and from the direct lights. Roughness
+ * this high blurs the environment into a single soft gradient, which means the
+ * slats stop mattering almost completely — and that is exactly the condition
+ * that produced the flat grey this scene fought for weeks. It only works with
+ * the N8AO pass carving the counters and the seam between the two digits.
+ * Turn AO off and this finish dies immediately.
+ *
+ * Metalness stays high in both. Dropping it is what turns matte metal into
+ * grey plastic: a blasted aluminium panel is still a conductor, it just
+ * scatters. The difference between the two rows below is roughness and what
+ * the surface is allowed to do with a specular lobe — the polished one carries
+ * a brushed anisotropic stretch, a clearcoat and a trace of thin-film, none of
+ * which survive being scattered and all of which look like noise on a matte
+ * surface.
+ */
+type Finish = {
+  face: { roughness: number; envMapIntensity: number; metalness: number };
+  side: { roughness: number; envMapIntensity: number; metalness: number };
+  /** Polish-only lobe tricks. Meaningless once the surface scatters. */
+  specular: boolean;
+};
+
+const FINISHES: Record<"polished" | "matte" | "satin", Finish> = {
+  polished: {
+    face: { metalness: 0.96, roughness: 0.13, envMapIntensity: 1.35 },
+    side: { metalness: 0.92, roughness: 0.32, envMapIntensity: 1.5 },
+    specular: true,
+  },
+  matte: {
+    // Blasted graphite rather than chalk. Roughness 0.58 is past the point
+    // where the slats resolve as separate reflections but well short of fully
+    // diffuse, so the horizon still arrives as one broad sweep down the glyph
+    // instead of vanishing. The environment intensity is lifted because a
+    // blurred sample is a dimmer sample — this is compensation for the blur,
+    // not extra light.
+    face: { metalness: 0.88, roughness: 0.58, envMapIntensity: 1.15 },
+    // The walls go rougher still. On the polished finish they were lifted to
+    // keep the extrusion's edge from sinking into the background; here that
+    // job belongs to AO, and matching the faces too closely would flatten the
+    // glyph back into a single silhouette.
+    side: { metalness: 0.85, roughness: 0.72, envMapIntensity: 1.4 },
+    specular: false,
+  },
+  // The middle road, and on this glyph probably the right one. Roughness 0.34
+  // is past the point where the room resolves as a sharp picture — no slat
+  // arrives with a hard edge — but nowhere near where it stops arriving at all.
+  // The horizon still sweeps the length of the face, just softly, so the large
+  // flat caps keep something to do. That is the whole problem with full matte
+  // here: the glyph is mostly broad flat planes, and a scattered surface gives
+  // a broad flat plane one value and nothing else.
+  //
+  // The lobe tricks stay on, because at this roughness they still read. It is
+  // brushed titanium rather than either a mirror or a chalk cast.
+  satin: {
+    face: { metalness: 0.94, roughness: 0.34, envMapIntensity: 1.55 },
+    side: { metalness: 0.9, roughness: 0.5, envMapIntensity: 1.7 },
+    specular: true,
+  },
+};
+
+/**
+ * Polished, chosen against the other two on the rendered frame.
+ *
+ * Matte was tried properly rather than dismissed — AO carving the counters,
+ * the darker swatch, the tightened radius — and it measured the way it looked:
+ * the interquartile range halved to 73 against this one's 123, the dark
+ * fraction fell from 40% to 20%, and the median rose to 172. That is the
+ * numeric signature of flat. The glyph is mostly broad flat planes, and a
+ * scattered surface gives a broad flat plane one value and nothing more.
+ *
+ * Satin measured best of the three on range alone (137) and is the one to
+ * revisit if this ever reads as too bright; it is kept below rather than
+ * deleted for exactly that reason.
+ */
+export const FINISH = FINISHES.polished;
+
+/**
+ * Where the artefact fades in, and where the ending begins.
+ *
+ * These, and every `p` in ARTEFACT_PATH, are authored against the SIX-chapter
+ * spacing — the one the site runs when body data exists. The site may instead
+ * be running the five-chapter spacing, where the same raw progress value sits
+ * somewhere completely different: 0.5 is a quarter of the way into PLAYSTATION
+ * on one and well past its middle on the other. Sampling authored anchors with
+ * a raw value from the other spacing is what would put the artefact on the same
+ * side as the copy for most of two chapters, so the value is carried across
+ * before it is used, exactly the way the review states are.
+ */
 const STEAM_START = 0.225;
-const FINAL_START = 0.86;
+const FINAL_START = 0.89;
 
 function clamp01(value: number) {
   return Math.min(1, Math.max(0, value));
@@ -62,8 +162,8 @@ const GLYPH_WIDTH = 3.38;
  */
 const ARTEFACT_PATH = [
   { p: 0.19, x: 2, y: 0.15, z: -16.8, ry: -0.42 },
-  { p: 0.34, x: 1.62, y: 0.1, z: -15.9, ry: -0.3 },
-  { p: 0.45, x: 1.55, y: 0.05, z: -15.7, ry: -0.24 },
+  { p: 0.317, x: 1.62, y: 0.1, z: -15.9, ry: -0.3 },
+  { p: 0.405, x: 1.55, y: 0.05, z: -15.7, ry: -0.24 },
   // The crossings dive. Every anchor pair used to be joined at a constant depth,
   // so the artefact swapped sides by sliding straight across the middle of the
   // frame at full size — and the middle of the frame is where the copy lives.
@@ -99,10 +199,10 @@ const ARTEFACT_PATH = [
   // on the frame, and what it overlapped was the platinum card. x = -1.5 moves
   // the centre to 561px and the right edge to 688px, 46px clear of the column,
   // with the left edge still 434px inside the frame.
-  { p: 0.5, x: -1.5, y: -0.06, z: -22.2, ry: 0 },
+  { p: 0.444, x: -1.5, y: -0.06, z: -22.2, ry: 0 },
   // PLAYSTATION mirrors: type moves right, so the artefact crosses to the left.
-  { p: 0.58, x: -1.62, y: 0.02, z: -15.9, ry: 0.28 },
-  { p: 0.66, x: -1.56, y: 0, z: -16.1, ry: 0.34 },
+  { p: 0.507, x: -1.62, y: 0.02, z: -15.9, ry: 0.28 },
+  { p: 0.57, x: -1.56, y: 0, z: -16.1, ry: 0.34 },
   // p 0.72, incoming PRESENCE, copy on the LEFT. d = 13.9 gives 103 px/unit and
   // half the pair is 124px, so x = 0 left an edge at 596px — nominally past the
   // left third at 480px, which is why it looked survivable and was not: the
@@ -110,10 +210,17 @@ const ARTEFACT_PATH = [
   // frame the two together read as a column reaching the midline. Measuring
   // against 720px instead, x = +1.5 puts the centre at 874px and the left edge
   // at 750px, and the far side has 442px to spare.
-  { p: 0.72, x: 1.5, y: -0.14, z: -22.6, ry: 0.05 },
+  { p: 0.618, x: 1.5, y: -0.14, z: -22.6, ry: 0.05 },
   // PRESENCE: back to the right and further away — the quiet chapter.
-  { p: 0.78, x: 1.55, y: -0.22, z: -17.6, ry: -0.3 },
-  { p: 0.86, x: 1.48, y: -0.26, z: -17.9, ry: -0.26 },
+  { p: 0.666, x: 1.55, y: -0.22, z: -17.6, ry: -0.3 },
+  // BODY. The copy takes the left rail here, so the artefact stays right the
+  // whole way and there is no side swap anywhere in this stretch — but it does
+  // need anchors, or a single interpolation would carry it across two chapters
+  // in one unbroken drift and the chapter would have no beat of its own. It
+  // draws back and settles instead, which is the quiet before the ending.
+  { p: 0.75, x: 1.52, y: -0.24, z: -18.3, ry: -0.28 },
+  { p: 0.84, x: 1.5, y: -0.2, z: -18.1, ry: -0.24 },
+  { p: 0.89, x: 1.48, y: -0.26, z: -17.9, ry: -0.26 },
   // The ending brings it home and closer, and hard over to the right. The
   // previous x = 0.55 was described here as clearing the left third; it did not,
   // and the frame says so. d = 6.9 makes the plane 4.35 units tall and 6.96
@@ -135,8 +242,13 @@ const ARTEFACT_PATH = [
 
 export function ContinuousWorld({
   progress,
+  bounds,
 }: {
   progress: MutableRefObject<number>;
+  /** The spacing the scroll is actually running, so authored anchors can be
+   *  carried onto it. A ref rather than a prop so swapping it never re-renders
+   *  the Canvas. Optional, so the component still stands alone. */
+  bounds?: MutableRefObject<readonly ChapterBound[]>;
 }) {
   const group = useRef<Group>(null);
   // Chrome cannot be one material here. The flat faces and the extruded walls
@@ -157,14 +269,19 @@ export function ContinuousWorld({
   // A broad, weak clearcoat adds a second lobe offset from the first, so the
   // sweep has a soft edge rather than a hard boundary.
   const faceMaterial = useMemo(() => new MeshPhysicalMaterial({
-    color: SCENE.chrome,
-    metalness: 0.96, roughness: 0.13, envMapIntensity: 1.35,
-    clearcoat: 0.3, clearcoatRoughness: 0.36,
+    // A mirror barely shows its own colour — almost everything it returns is
+    // the room. A scattered surface shows a great deal of it, so the tint
+    // that reads as bright chrome reads as white plaster once matte. The
+    // darker swatch is what makes this graphite rather than chalk.
+    color: FINISH.specular ? SCENE.chrome : SCENE.chromeSecondary,
+    metalness: FINISH.face.metalness, roughness: FINISH.face.roughness,
+    envMapIntensity: FINISH.face.envMapIntensity,
+    clearcoat: FINISH.specular ? 0.3 : 0, clearcoatRoughness: 0.36,
     // Brushed rather than mirror-smooth. Anisotropy stretches every reflection
     // along one axis, so the slats behind the camera arrive as long vertical
     // draws down the face instead of as a single flat wash — it is the same
     // trick that makes a real brushed-steel panel read as metal in a photo.
-    anisotropy: 0.22, anisotropyRotation: Math.PI / 2,
+    anisotropy: FINISH.specular ? 0.22 : 0, anisotropyRotation: Math.PI / 2,
     // A trace of thin-film. Chrome that is purely neutral looks computed; a
     // faint cold shift is what real plating does, and it should land inside the
     // palette's own blue rather than fight it.
@@ -185,7 +302,7 @@ export function ContinuousWorld({
     // second order at 234nm is ultraviolet. As the angle opens the path can only
     // shorten, so the shift runs blue toward violet and then out of the visible
     // — there is no longer a warm band anywhere on the sweep to find.
-    iridescence: 0.2, iridescenceIOR: 1.3, iridescenceThicknessRange: [120, 180] as [number, number],
+    iridescence: FINISH.specular ? 0.2 : 0, iridescenceIOR: 1.3, iridescenceThicknessRange: [120, 180] as [number, number],
     transparent: true, opacity: 0,
   }), []);
   // The walls face sideways into a room that is nearly empty, so the same
@@ -194,9 +311,11 @@ export function ContinuousWorld({
   // wide enough to read as a rim rather than as a glint. The gap between this
   // and the faces above is what gives the extrusion its depth.
   const sideMaterial = useMemo(() => new MeshPhysicalMaterial({
-    color: SCENE.chromeSide, metalness: 0.92, roughness: 0.32, envMapIntensity: 1.5,
-    clearcoat: 0.12, clearcoatRoughness: 0.3,
-    anisotropy: 0.3, anisotropyRotation: 0,
+    color: SCENE.chromeSide,
+    metalness: FINISH.side.metalness, roughness: FINISH.side.roughness,
+    envMapIntensity: FINISH.side.envMapIntensity,
+    clearcoat: FINISH.specular ? 0.12 : 0, clearcoatRoughness: 0.3,
+    anisotropy: FINISH.specular ? 0.3 : 0, anisotropyRotation: 0,
     transparent: true, opacity: 0,
   }), []);
   const geometry = useGothicTwoGeometry();
@@ -217,7 +336,12 @@ export function ContinuousWorld({
   }, [faceMaterial, sideMaterial]);
 
   useFrame(() => {
-    const value = progress.current;
+    // Into the spacing the anchors were authored in. Identical to the raw value
+    // whenever the six-chapter sequence is live, so this costs nothing there.
+    const live = progress.current;
+    const value = bounds
+      ? transposeProgress(live, bounds.current, CHAPTER_BOUNDS) ?? live
+      : live;
 
     // Only opacity changes per frame. The colour and the shading numbers used
     // to be rewritten here every tick, left over from the two-theme blend; with

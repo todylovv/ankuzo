@@ -14,35 +14,69 @@ import {
 import { Atmosphere } from "./Atmosphere";
 import { ContinuousWorld } from "./ContinuousWorld";
 import { PostFx } from "./PostFx";
+import { BodyCard } from "./BodyCard";
 import { DiscordCard } from "./DiscordCard";
 import { GameCard } from "./GameCard";
 import { RibbonField } from "./RibbonField";
 import { PortalTwentyTwo } from "./FracturedTwo";
-import { CHAPTERS, PORTAL_END, chapterFor, clamp, remapPortalTravel, smoothstep } from "./progress";
+import {
+  CHAPTER_BOUNDS,
+  PORTAL_END,
+  SEQUENCE_WITHOUT_BODY,
+  SEQUENCE_WITH_BODY,
+  chapterFor,
+  clamp,
+  remapPortalTravel,
+  smoothstep,
+  transposeProgress,
+} from "./progress";
+import type { ChapterBound, ChapterSequence } from "./progress";
 import { SCENE } from "./theme";
+import { useBodySummary } from "../data/useBodySummary";
 import { useExperienceData } from "../data/useExperienceData";
 import { useLivePresence } from "../data/useLivePresence";
 import type { ExperienceSource } from "../../lib/experience-data";
 
+/**
+ * Every progress value below is authored against the six-chapter sequence — the
+ * one the site runs once /data/body.json exists. On a build without it they are
+ * carried across to the five-chapter spacing by `transposeProgress`, because a
+ * raw number means a different chapter in each: 0.642 is PRESENCE with the body
+ * chapter present and PLAYSTATION without it. The body frames have no
+ * counterpart there and drop out of the strip, which is correct — there is
+ * nothing to photograph.
+ *
+ * The numbers themselves are the previous ones moved, not re-tuned: each was
+ * held at the same fraction of the same chapter through the re-space, so
+ * `steam/hold` is still exactly three fifths of the way through STEAM and every
+ * frame that has been reviewed before frames the same thing it did.
+ */
 const REVIEW_STATES = [
+  // The portal band is 0 to 0.225 in both sequences, so these never move.
   { scene: "portal", frame: "pristine", progress: 0 },
   { scene: "portal", frame: "stress", progress: 0.066 },
   { scene: "portal", frame: "cracks", progress: 0.105 },
   { scene: "portal", frame: "fracture", progress: 0.132 },
   { scene: "portal", frame: "breakthrough", progress: 0.18 },
-  { scene: "steam", frame: "arrival", progress: 0.26 },
-  { scene: "steam", frame: "hold", progress: 0.36 },
-  { scene: "playstation", frame: "arrival", progress: 0.49 },
-  { scene: "playstation", frame: "hold", progress: 0.58 },
-  { scene: "presence", frame: "hold", progress: 0.75 },
+  { scene: "steam", frame: "arrival", progress: 0.253 },
+  { scene: "steam", frame: "hold", progress: 0.333 },
+  { scene: "playstation", frame: "arrival", progress: 0.436 },
+  { scene: "playstation", frame: "hold", progress: 0.507 },
+  { scene: "presence", frame: "hold", progress: 0.642 },
+  { scene: "body", frame: "hold", progress: 0.802 },
   { scene: "final", frame: "22", progress: 1 },
   // The hand-offs. Every review state until now was a chapter at rest, so the
   // moments where the artefact crosses the frame and the type swaps rails were
   // the only part of the journey nobody had ever looked at.
   { scene: "cross", frame: "portal-steam", progress: 0.215 },
-  { scene: "cross", frame: "steam-ps", progress: 0.5 },
-  { scene: "cross", frame: "ps-presence", progress: 0.68 },
-  { scene: "cross", frame: "presence-final", progress: 0.9 },
+  { scene: "cross", frame: "steam-ps", progress: 0.444 },
+  { scene: "cross", frame: "ps-presence", progress: 0.586 },
+  { scene: "cross", frame: "presence-body", progress: 0.746 },
+  // Successor to the old `presence-final`, and the same shot: without the body
+  // chapter this transposes to 0.899, within a thousandth of where that frame
+  // used to sit. The name follows the sequence the site is built for rather
+  // than the one it is temporarily running.
+  { scene: "cross", frame: "body-final", progress: 0.921 },
 ] as const;
 
 /**
@@ -134,10 +168,12 @@ function SceneLighting() {
   );
 }
 
-function ProgressDriver({ target, rendered, portal, immediate, onChapterChange }: {
+function ProgressDriver({ target, rendered, portal, bounds, immediate, onChapterChange }: {
   target: MutableRefObject<number>;
   rendered: MutableRefObject<number>;
   portal: MutableRefObject<number>;
+  /** A ref, not a prop: swapping the sequence must not re-render the Canvas. */
+  bounds: MutableRefObject<readonly ChapterBound[]>;
   immediate: boolean;
   onChapterChange: (chapter: string) => void;
 }) {
@@ -150,7 +186,7 @@ function ProgressDriver({ target, rendered, portal, immediate, onChapterChange }
       if (Math.abs(target.current - rendered.current) < 0.00035) rendered.current = target.current;
     }
     portal.current = clamp(rendered.current / PORTAL_END);
-    const activeChapter = chapterFor(rendered.current);
+    const activeChapter = chapterFor(rendered.current, bounds.current);
     if (activeChapter !== lastChapter.current) {
       document.documentElement.dataset.chapter = activeChapter;
       lastChapter.current = activeChapter;
@@ -232,10 +268,11 @@ function CameraRig({ portal, master }: {
   return null;
 }
 
-function ExperienceScene({ target, rendered, portal, immediate, archiveDensity, reducedMotion, onChapterChange }: {
+function ExperienceScene({ target, rendered, portal, bounds, immediate, archiveDensity, reducedMotion, onChapterChange }: {
   target: MutableRefObject<number>;
   rendered: MutableRefObject<number>;
   portal: MutableRefObject<number>;
+  bounds: MutableRefObject<readonly ChapterBound[]>;
   immediate: boolean;
   /** One background point per record, so the depth is the size of the archive. */
   /** Scales the ribbon density — the archive's size, gently applied. */
@@ -345,12 +382,12 @@ function ExperienceScene({ target, rendered, portal, immediate, archiveDensity, 
           position={[0, 1.5, -22]} rotation={[0, 0, 0]} scale={[9, 7, 1]} />
       </Environment>
       <RibbonField progress={rendered} density={archiveDensity} reducedMotion={reducedMotion} />
-      <ContinuousWorld progress={rendered} />
+      <ContinuousWorld progress={rendered} bounds={bounds} />
       <PortalTwentyTwo progress={portal} masterProgress={rendered} />
       <CameraRig portal={portal} master={rendered} />
       <PostFx reducedMotion={reducedMotion} />
-      <ProgressDriver target={target} rendered={rendered} portal={portal} immediate={immediate}
-        onChapterChange={onChapterChange} />
+      <ProgressDriver target={target} rendered={rendered} portal={portal} bounds={bounds}
+        immediate={immediate} onChapterChange={onChapterChange} />
     </>
   );
 }
@@ -372,6 +409,18 @@ export function PortalExperience() {
     getServerReducedMotionSnapshot,
   );
   const [activeChapter, setActiveChapter] = useState<string>(() => chapterFor(0));
+  // Which sequence the scroll is running. It starts as the five-chapter one, so
+  // a cold load — and every load until openGym is deployed — is exactly the site
+  // that shipped: no sixth chapter, no band of scroll reserved for one, nothing
+  // to lay out differently once the probe answers. The six-chapter sequence is
+  // adopted at most once, by the effect below, and only where it cannot be felt.
+  const [sequence, setSequence] = useState<ChapterSequence>(SEQUENCE_WITHOUT_BODY);
+  // The frame loop and the stable `setProgress` callback both need the live
+  // bounds without being rebuilt when they change: rebuilding setProgress would
+  // re-run the effect that owns the wheel/touch/key listeners, and that effect
+  // parks progress back at 0 on the way in.
+  const activeBounds = useRef<readonly ChapterBound[]>(SEQUENCE_WITHOUT_BODY.bounds);
+  const { summary: bodySummary, gate: bodyGate } = useBodySummary();
   // Every source, immediately. These snapshots ARE the content of the middle of
   // the site, so staging them behind scroll progress made the copy hostage to
   // the render loop: if the frame loop stalls for any reason the chapters show
@@ -446,6 +495,39 @@ export function PortalExperience() {
       activityDetail: livePresence?.activityDetail,
     };
   }, [experienceData, livePresence]);
+
+  /**
+   * The body chapter's copy. Kept out of `figures` above because it is built
+   * from a different request, and because unlike the three accounts it is
+   * allowed to have nothing behind it — this only ever runs when the gate has
+   * already said there is.
+   *
+   * The headline is the session count for the same reason STEAM's is hours and
+   * PLAYSTATION's is trophies: it is a count of records the machine made, and it
+   * is the one number in the chapter that gets larger the more there is to say.
+   * The note underneath carries what the card below does not repeat — the rate,
+   * which is the only figure here that is a judgement about the period rather
+   * than a total of it, and where the file comes from.
+   */
+  const bodyCopy = useMemo(() => {
+    const periodDays = bodySummary?.periodDays && bodySummary.periodDays > 0
+      ? Math.round(bodySummary.periodDays) : 90;
+    const sessions = Math.max(0, Math.round(bodySummary?.training?.workouts ?? 0));
+    // Sessions per week rather than per day: a training week is the unit the
+    // log is actually planned in, and one decimal is the resolution a 90-day
+    // window supports — 41 sessions is 3.2/week, 42 is 3.3, and a second
+    // decimal would be claiming a precision the sample size does not have.
+    const perWeek = periodDays > 0 ? (sessions * 7) / periodDays : 0;
+    return {
+      sessions,
+      note: [
+        `LAST ${periodDays} DAYS`,
+        perWeek > 0 ? `${perWeek.toFixed(1)} SESSIONS / WEEK` : null,
+        "OPENGYM ON THE SAME MACHINE",
+      ].filter(Boolean).join(" · "),
+    };
+  }, [bodySummary]);
+
   const searchParams = typeof window === "undefined" ? null : new URLSearchParams(window.location.search);
   const queryScene = searchParams?.get("scene") ?? null;
   const queryFrame = searchParams?.get("frame") ?? null;
@@ -457,8 +539,15 @@ export function PortalExperience() {
   // pins a deterministic scene state) never paints debug UI over the scene.
   const reviewNavVisible = reviewMode
     && (process.env.NODE_ENV !== "production" || searchParams?.get("reviewNav") === "1");
+  // Authored against the six-chapter spacing, carried onto whichever sequence is
+  // actually running. The body frames return null on the five-chapter one and
+  // leave the strip entirely rather than pointing at a neighbour.
+  const reviewStates = useMemo(() => REVIEW_STATES.flatMap((state) => {
+    const progress = transposeProgress(state.progress, CHAPTER_BOUNDS, sequence.bounds);
+    return progress === null ? [] : [{ scene: state.scene, frame: state.frame, progress }];
+  }), [sequence]);
   const reviewState = reviewMode && queryScene && queryFrame
-    ? REVIEW_STATES.find((state) => state.scene === queryScene && state.frame === queryFrame)
+    ? reviewStates.find((state) => state.scene === queryScene && state.frame === queryFrame)
     : undefined;
 
   const setProgress = useCallback((value: number, immediate = false) => {
@@ -469,9 +558,34 @@ export function PortalExperience() {
       portalProgress.current = clamp(next / PORTAL_END);
       document.documentElement.style.setProperty("--experience-progress", next.toFixed(4));
       document.documentElement.style.setProperty("--portal-progress", portalProgress.current.toFixed(4));
-      document.documentElement.dataset.chapter = chapterFor(next);
+      document.documentElement.dataset.chapter = chapterFor(next, activeBounds.current);
     }
   }, []);
+
+  /**
+   * Adopt the body chapter, once, and only where the swap cannot be observed.
+   *
+   * Adding a chapter re-spaces every hand-off after the portal, so taking the
+   * swap under a reader who is already in the world would teleport them: 0.5 is
+   * 24% of the way into PLAYSTATION on the five-chapter spacing and 58% of the
+   * way into it on the six-chapter one. Inside the portal there is nothing to
+   * teleport — the band is 0 to 0.225 in both sequences and identical in every
+   * frame — so the swap is only taken there.
+   *
+   * The race is not close in practice: /data/body.json is same-origin, a few
+   * hundred bytes, and requested at mount, while the flythrough is ~1500px of
+   * wheel travel. Losing it costs the chapter for that one page load and nothing
+   * else, which is the right way to lose — a chapter nobody knew about is
+   * invisible, and a scroll position that jumps underneath the reader is not.
+   * Review mode is exempt because there is no reader: it pins a deterministic
+   * progress value at mount and the effect below re-pins it after the swap.
+   */
+  useEffect(() => {
+    if (bodyGate !== "present" || sequence === SEQUENCE_WITH_BODY) return;
+    if (!reviewMode && targetProgress.current > PORTAL_END) return;
+    activeBounds.current = SEQUENCE_WITH_BODY.bounds;
+    setSequence(SEQUENCE_WITH_BODY);
+  }, [bodyGate, reviewMode, sequence]);
 
   // `data-theme` on <html> is the source of truth; writing it notifies the
   // subscription above, which re-renders the switch with the new label.
@@ -610,6 +724,7 @@ export function PortalExperience() {
           camera={{ position: [0, 0, 13.5], fov: 35, near: 0.035, far: 70 }}
           gl={{ antialias: true, alpha: false, toneMapping: AgXToneMapping, toneMappingExposure: 1.02 }}>
           <ExperienceScene target={targetProgress} rendered={renderedProgress} portal={portalProgress}
+            bounds={activeBounds}
             archiveDensity={figures.archiveDensity} reducedMotion={reducedMotion} onChapterChange={setActiveChapter}
             immediate={Boolean(reviewState) || reducedMotion} />
         </Canvas>
@@ -713,12 +828,33 @@ export function PortalExperience() {
             <span> · SAME MACHINE AS THIS PAGE</span>
           </p>
         </div>
+        {/* The body chapter only exists on a build that has something to put in
+            it — `sequence` is the six-chapter one exactly when the gate found a
+            usable /data/body.json, so this is never mounted empty and never
+            reserves a band of scroll it cannot fill.
+
+            It holds the LEFT rail. That is not a default: ARTEFACT_PATH parks
+            the artefact at x +1.5 for the whole run from the PLAYSTATION ->
+            PRESENCE dive to the ending, so everything in this half of the scroll
+            has the object on the right and the type stays opposite it. */}
+        {sequence === SEQUENCE_WITH_BODY && (
+          <div className="chapter-copy chapter-copy--body" {...chapterState("body")}>
+            <p className="chapter-eyebrow">OPENGYM / BODY</p>
+            <h2 className="chapter-figure">
+              <span className="figure-count" style={{ "--figure-target": bodyCopy.sessions } as CSSProperties}
+                aria-label={`${bodyCopy.sessions} sessions`} />
+              <span className="figure-unit">SESSIONS</span>
+            </h2>
+            <p className="chapter-note">{bodyCopy.note}</p>
+            <BodyCard />
+          </div>
+        )}
         <div className="chapter-copy chapter-copy--final" {...chapterState("final")}>
           <h2>ANKUZO</h2><span>IDENTITY RECONSTRUCTED</span>
         </div>
 
         <nav className="chapter-nav" aria-label="Experience chapters">
-          {CHAPTERS.map((chapter) => (
+          {sequence.chapters.map((chapter) => (
             <button key={chapter.id} type="button" data-target-chapter={chapter.id}
               onClick={() => setProgress(chapter.progress, reducedMotion)}
               aria-label={`${chapter.index} ${chapter.label}`}>
@@ -731,7 +867,7 @@ export function PortalExperience() {
 
         {reviewNavVisible && (
           <nav className="review-nav" aria-label="Experience review states">
-            <div>{REVIEW_STATES.map((state) => (
+            <div>{reviewStates.map((state) => (
               <button type="button" className={queryScene === state.scene && queryFrame === state.frame ? "active" : ""}
                 onClick={() => navigateReview(state.scene, state.frame)} key={`${state.scene}-${state.frame}`}>
                 {state.scene}/{state.frame}
