@@ -57,13 +57,34 @@ services:
       DATA_DIR: /data
       TZ: ${TZ:-UTC}
 
-      # Passkeys are bound to the exact hostname and the exact origin. These
-      # two are the whole reason gym.ankuzo.online has to resolve and has to be
-      # served over real HTTPS before anybody can register: a credential
-      # created against the wrong RP_ID is not repairable, it is only
-      # re-registrable.
-      RP_ID: gym.ankuzo.online
-      ORIGIN: https://gym.ankuzo.online
+      # Passkeys are bound to the exact hostname and the exact origin, and a
+      # credential created against the wrong RP_ID is not repairable, only
+      # re-registrable — so these two are worth reading before changing.
+      #
+      # Served under a path on the main domain rather than on a subdomain of
+      # it, so there is no DNS record to add and nothing new to get a
+      # certificate for. WebAuthn is indifferent to paths — the relying party
+      # is a domain — so this is simply the apex.
+      #
+      # It works because three things happen to line up upstream, all verified
+      # in the source rather than assumed:
+      #   - vite.config.js sets `base: './'`, so the built asset URLs are
+      #     relative and resolve against /gym/ without a rebuild. This is the
+      #     one that would otherwise have forced a fork, and with it the AGPL
+      #     obligation to publish the modified source.
+      #   - App.jsx mounts a HashRouter, so every route lives after the '#'
+      #     and the path never deepens past /gym/. A BrowserRouter would have
+      #     broken relative assets on any deep link.
+      #   - main.jsx registers 'sw.js' relatively with no scope override, so
+      #     the service worker's scope is /gym/ and it cannot reach, cache or
+      #     interfere with the main site.
+      #
+      # The trade to be aware of: a passkey registered against this RP ID is
+      # valid for the whole of ankuzo.online, not only /gym. That is acceptable
+      # while every page on the domain is the owner's own, and it is the reason
+      # not to host untrusted third-party content anywhere on this origin.
+      RP_ID: ankuzo.online
+      ORIGIN: https://ankuzo.online
       RP_NAME: openGym
 
       # Locked down. INVITE_ONLY makes a new profile need a code that only the

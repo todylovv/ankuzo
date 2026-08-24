@@ -1,6 +1,6 @@
 # openGym on the ankuzo host
 
-A private workout tracker at `gym.ankuzo.online`, and a read-only summary of
+A private workout tracker at `ankuzo.online/gym/`, and a read-only summary of
 the numbers it produces published as a chapter of `ankuzo.online`.
 
 Two halves, and they are deliberately separate:
@@ -67,30 +67,36 @@ upstream `NOTICE.md`.
 
 ---
 
-## 1. DNS — do this first
+## 1. No DNS record is needed
 
-`gym.ankuzo.online` does not resolve today. Passkeys are bound to the exact
-hostname and browsers only allow them over HTTPS, so **nothing further works
-until this record exists and has propagated.** A credential registered against
-the wrong origin is not repairable, only re-registrable.
+An earlier draft of this runbook put openGym on `ankuzo.online/gym/` and made an
+A-record step 1. That is no longer the plan. It is served at
+**`https://ankuzo.online/gym/`** instead: nothing to register, nothing to
+propagate, no second certificate to obtain, and no new name that can expire or
+be mis-delegated.
 
-At the DNS provider for `ankuzo.online`, add:
+Hosting a single-page app under a path usually means rebuilding it with a base
+path, which for an AGPL project means becoming a distributor of modified source.
+That is avoided here, because three things upstream happen to line up. All three
+were checked in the source, not assumed:
 
-```
-Type   Name   Value            TTL
-A      gym    83.217.210.79    300
-```
+| what | where | why it matters |
+|---|---|---|
+| `base: './'` | `frontend/vite.config.js` | Built asset URLs are relative, so they resolve against `/gym/` unchanged. **No rebuild, no fork, no AGPL obligation.** |
+| `HashRouter` | `frontend/src/App.jsx` | Every route lives after the `#`, so the path never deepens past `/gym/` and relative assets keep resolving on deep links. A `BrowserRouter` would have broken this. |
+| `register('sw.js')` | `frontend/src/main.jsx` | Relative, with no scope override, so the service worker's scope is `/gym/`. It cannot reach, cache or interfere with the main site. |
 
-(Plus an `AAAA` if the host has a public v6 address and the rest of the site
-uses one.)
+The one trade, and it is worth understanding rather than skimming: **a passkey
+registered here is valid for the whole of `ankuzo.online`, not only `/gym`.**
+WebAuthn binds credentials to a domain, never to a path. That is fine while
+every page on this domain is the owner's own, and it is the reason not to host
+untrusted third-party content anywhere on this origin.
 
-Confirm before continuing — Caddy will ask Let's Encrypt for a certificate the
-moment the site block loads, and a failed challenge lands you in a rate limit:
-
-```sh
-dig +short gym.ankuzo.online
-# must print 83.217.210.79
-```
+`/api`, `/img` and `/gif` are routed to openGym at the apex, because that is
+where its frontend asks for them. Verified free first — the site is a single
+page (`app/page.tsx`) with no API routes, and all three return 404 in production
+today. If the main site ever grows a real `/api`, this is the thing that has to
+be revisited.
 
 ---
 
@@ -106,31 +112,69 @@ Back up:
 
 ```sh
 mkdir -p /root/backups-caddy
-cp /opt/infrastructure/config/caddy/Caddyfile \
-   /root/backups-caddy/Caddyfile.$(date +%Y%m%d-%H%M%S)
+cp /opt/infrastructure/config/caddy/Caddyfile    /root/backups-caddy/Caddyfile.$(date +%Y%m%d-%H%M%S)
 ```
 
-Append this block to `/opt/infrastructure/config/caddy/Caddyfile`:
+This is an edit to the **existing** `{$ANKUZO_DOMAIN:ankuzo.invalid}` block, not
+a new site block. The bare `reverse_proxy ankuzo:3000` becomes a set of `handle`
+blocks, because a site can only route by path once its directives are in
+mutually exclusive handlers. Replace the block with:
 
 ```caddyfile
-# openGym — private workout tracker. Reached only by its owner.
-gym.ankuzo.online {
+{$ANKUZO_DOMAIN:ankuzo.invalid} {
 	encode gzip
 
 	header {
 		Strict-Transport-Security "max-age=31536000; includeSubDomains"
 		X-Content-Type-Options "nosniff"
 		Referrer-Policy "strict-origin-when-cross-origin"
-		# This instance has exactly one user and no reason to be in anyone's
-		# index. It is not a secret — it is just not a publication.
-		X-Robots-Tag "noindex, nofollow"
 		-Server
 	}
 
-	# The web container is nginx serving the built React app and proxying /api
-	# to the API container. One origin, which is what WebAuthn requires: split
-	# the app and the API across two hostnames and passkeys stop working.
-	reverse_proxy opengym-web:80
+	# openGym — private workout tracker, one user, reached only by its owner.
+	# It is not a secret, it is just not a publication.
+	header /gym* X-Robots-Tag "noindex, nofollow"
+
+	# The trailing slash is load-bearing. openGym's assets are relative, so
+	# from /gym they would resolve against the apex and 404 into the main
+	# site; from /gym/ they resolve against /gym/ and hit nginx.
+	handle /gym {
+		redir https://{host}/gym/ permanent
+	}
+
+	# handle_path strips the prefix, so nginx receives / and serves the app
+	# exactly as it would on its own hostname.
+	handle_path /gym/* {
+		reverse_proxy opengym-web:80
+	}
+
+	# Not stripped: the frontend asks for these at the root, and nginx inside
+	# the web container is what proxies them on to the api and media
+	# containers. One origin throughout, which is what WebAuthn requires —
+	# split the app and its API across two hostnames and passkeys stop
+	# working.
+	handle /api/* {
+		reverse_proxy opengym-web:80
+	}
+	handle /img/* {
+		reverse_proxy opengym-web:80
+	}
+	handle /gif/* {
+		reverse_proxy opengym-web:80
+	}
+
+	# Everything else is the site. This must come last: handle blocks are
+	# evaluated in order and the first match wins.
+	handle {
+		# Hashed build output and fonts never change under the same URL. The
+		# HTML itself is rendered per request and stays revalidated. The
+		# matcher is anchored at the start of the path, so /gym/assets/* does
+		# not match it and openGym keeps its own caching.
+		@immutable path /_next/* /assets/* /fonts/*
+		header @immutable Cache-Control "public, max-age=31536000, immutable"
+
+		reverse_proxy ankuzo:3000
+	}
 }
 ```
 
@@ -138,9 +182,7 @@ Validate it in a throwaway container that never touches the running one, then
 reload:
 
 ```sh
-docker run --rm \
-  -v /opt/infrastructure/config/caddy/Caddyfile:/etc/caddy/Caddyfile:ro \
-  caddy:latest caddy validate --config /etc/caddy/Caddyfile
+docker run --rm   -v /opt/infrastructure/config/caddy/Caddyfile:/etc/caddy/Caddyfile:ro   caddy:latest caddy validate --config /etc/caddy/Caddyfile
 
 # only if that printed "Valid configuration"
 docker exec -w /etc/caddy edge-caddy caddy reload --config /etc/caddy/Caddyfile
@@ -148,6 +190,15 @@ docker exec -w /etc/caddy edge-caddy caddy reload --config /etc/caddy/Caddyfile
 
 If the reload fails, restore the newest file from `/root/backups-caddy/` and
 reload again before doing anything else.
+
+Check the site itself still serves before going further — this edit touched its
+routing, not just openGym's:
+
+```sh
+curl -s -o /dev/null -w "%{http_code}
+" https://ankuzo.online/
+# must print 200
+```
 
 ---
 
@@ -171,7 +222,7 @@ then exits — that is expected, and `docker compose ps` showing it as `exited
 ```sh
 docker compose -f opengym.yml ps
 docker compose -f opengym.yml logs opengym-api | tail -5
-# gym-api on :3000 (rpID=gym.ankuzo.online, origin=https://gym.ankuzo.online)
+# gym-api on :3000 (rpID=ankuzo.online, origin=https://ankuzo.online)
 ```
 
 Check that the RP id and origin in that log line are exactly right before you
@@ -196,7 +247,7 @@ docker compose -f opengym.yml up -d opengym-api
 
 Leave `ALLOW_GUEST: "0"` as it is — it does not block registration.
 
-**4b. Register.** Open `https://gym.ankuzo.online` on the device whose passkey
+**4b. Register.** Open `https://ankuzo.online/gym/` on the device whose passkey
 you want to use, choose "Create profile", pick a name, and complete the
 WebAuthn prompt. Do this from a device you will still have next year: the
 private key never leaves it.
@@ -229,7 +280,7 @@ docker compose -f opengym.yml exec opengym-web \
 And then the real one, from a browser — ideally a private window on a *second*
 device, so a signed-in session is not confusing the picture:
 
-1. Open `https://gym.ankuzo.online`.
+1. Open `https://ankuzo.online/gym/`.
 2. There must be **no** "Continue without account" button. If there is,
    `ALLOW_GUEST=0` did not take.
 3. Choose "Create profile", enter any name, and submit **without** an invite
@@ -400,7 +451,7 @@ is visible.
 
 ## Blocked on you, in order
 
-1. The `gym.ankuzo.online` A-record (§1). Everything else waits on it.
+1. The `ankuzo.online/gym/` A-record (§1). Everything else waits on it.
 2. The Caddy site block, backed up and validated (§2).
 3. Bringing the stack up (§3).
 4. The one-time open-gate registration and closing it again, including the
