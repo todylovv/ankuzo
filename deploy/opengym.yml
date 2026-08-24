@@ -1,0 +1,151 @@
+# openGym — the owner's private workout tracker, published through the host's
+# existing edge. Runbook: deploy/OPENGYM.md.
+#
+# Upstream: https://gitlab.com/DuarteSantos8/opengym  (AGPL-3.0-or-later)
+# This file only *runs* the published images; it contains none of openGym's
+# code. Modifying openGym's own source and serving the result to anybody makes
+# the modified source something the AGPL obliges you to offer them — see the
+# licence note in OPENGYM.md before you patch anything upstream.
+#
+# Like ankuzo.yml, this deliberately publishes no ports. Upstream's own
+# compose maps WEB_PORT to the host, which would put an authentication surface
+# on 0.0.0.0:8080 with no TLS in front of it — and passkeys need the real
+# HTTPS origin anyway, so the host port would not even be usable for signing
+# in. Everything internet-facing on this box goes through edge-caddy, which
+# reaches backends by name over the shared `edge` network.
+name: opengym
+
+services:
+  # One-time fetch of the exercise images and GIFs (~140 MB) into named
+  # volumes. Runs to completion and stays exited; `restart: "no"` so a reboot
+  # does not re-run a download that is already done.
+  #
+  # The media is NOT under openGym's AGPL: the metadata is MIT, the images and
+  # animations are © Gym visual and are used under the upstream dataset's
+  # terms. They are pulled from their own source here, never redistributed by
+  # this host. See upstream NOTICE.md.
+  opengym-media:
+    image: alpine/git
+    container_name: opengym-media
+    volumes:
+      - opengym-img:/out/img
+      - opengym-gif:/out/gif
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - |
+        if [ -z "$$(ls -A /out/img 2>/dev/null)" ]; then
+          git clone --depth 1 https://github.com/hasaneyldrm/exercises-dataset /tmp/ds
+          cp /tmp/ds/images/*.jpg /out/img/ && cp /tmp/ds/videos/*.gif /out/gif/
+          echo "exercise media ready ($$(ls /out/img | wc -l) images)"
+        else
+          echo "exercise media already present"
+        fi
+    restart: "no"
+    logging:
+      driver: json-file
+      options: {max-size: "20m", max-file: "5"}
+
+  # Passkey auth and per-user state. Not on `edge`: nothing outside this stack
+  # has any business talking to it, and the web container proxies /api.
+  opengym-api:
+    image: registry.gitlab.com/duartesantos8/opengym/api:latest
+    container_name: opengym-api
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      PORT: "3000"
+      DATA_DIR: /data
+      TZ: ${TZ:-UTC}
+
+      # Passkeys are bound to the exact hostname and the exact origin. These
+      # two are the whole reason gym.ankuzo.online has to resolve and has to be
+      # served over real HTTPS before anybody can register: a credential
+      # created against the wrong RP_ID is not repairable, it is only
+      # re-registrable.
+      RP_ID: gym.ankuzo.online
+      ORIGIN: https://gym.ankuzo.online
+      RP_NAME: openGym
+
+      # Locked down. INVITE_ONLY makes a new profile need a code that only the
+      # admin dashboard can mint; ALLOW_GUEST removes the "continue without
+      # account" door entirely.
+      #
+      # NOTE THE ORDER OF OPERATIONS: with INVITE_ONLY already on, the *first*
+      # registration is refused too, and there is no admin yet to issue the
+      # code that would let it through. The instance therefore comes up once
+      # with INVITE_ONLY commented out, the owner registers, his uid goes into
+      # ADMIN_UIDS, and only then does this line get uncommented. OPENGYM.md
+      # walks through it.
+      INVITE_ONLY: "1"
+      ALLOW_GUEST: "0"
+
+      # Fill in after the first registration, from data/db.json → users[].id.
+      # ADMIN_UIDS: ""
+
+      # Shorter than the 90-day default: this is on the open internet, and the
+      # owner signs in with a passkey, so a re-auth costs him a touch.
+      SESSION_DAYS: "30"
+
+      # The activity log stays on (it records strictly less than db.json and
+      # the state files already hold), but without addresses. AUDIT_IP=off is
+      # upstream's default and is restated here so a future upstream change of
+      # heart cannot quietly start writing IPs into this box.
+      AUDIT_IP: "off"
+    volumes:
+      # Profiles, passkey public keys, per-user state, the session secret and
+      # the VAPID keys. BACK THIS UP — it is the only copy.
+      #
+      # A named volume rather than a bind mount, matching how ankuzo.yml keeps
+      # runtime data out of the image. publish-body.js reads the state file out
+      # of it; OPENGYM.md shows how.
+      - opengym-data:/data
+    networks: [opengym]
+    logging:
+      driver: json-file
+      options: {max-size: "20m", max-file: "5"}
+
+  # nginx: serves the built React app and proxies /api to the API container, so
+  # the whole thing is one origin — which is what passkeys require. The only
+  # service on `edge`; this is what Caddy reverse-proxies to.
+  opengym-web:
+    image: registry.gitlab.com/duartesantos8/opengym/web:latest
+    container_name: opengym-web
+    restart: unless-stopped
+    depends_on:
+      opengym-media:
+        condition: service_completed_successfully
+      opengym-api:
+        condition: service_started
+    environment:
+      TZ: ${TZ:-UTC}
+      NGINX_PORT: "80"
+      # The web image renders its nginx config at start-up from these, so the
+      # API service does not have to be called `api`. It is not, here: `api` is
+      # far too generic a name to claim on a shared network.
+      BACKEND: opengym-api
+      PORT: "3000"
+    volumes:
+      - opengym-img:/usr/share/nginx/html/img:ro
+      - opengym-gif:/usr/share/nginx/html/gif:ro
+    networks: [edge, opengym]
+    logging:
+      driver: json-file
+      options: {max-size: "20m", max-file: "5"}
+
+    # Both upstream images already declare their own HEALTHCHECK, so none is
+    # added here — a second one would only disagree with the first.
+
+volumes:
+  opengym-data:
+  opengym-img:
+  opengym-gif:
+
+networks:
+  # Shared with edge-caddy and with ankuzo. Only opengym-web joins it.
+  edge:
+    name: edge
+    external: true
+  # Private to this stack: api and media are reachable from web and from
+  # nowhere else.
+  opengym:
+    name: opengym

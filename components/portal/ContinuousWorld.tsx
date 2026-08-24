@@ -4,7 +4,7 @@
 import { useFrame, useThree } from "@react-three/fiber";
 import { useEffect, useMemo, useRef } from "react";
 import type { MutableRefObject } from "react";
-import { Group, MeshPhysicalMaterial } from "three";
+import { Group, MeshPhysicalMaterial, PerspectiveCamera } from "three";
 import { useGothicTwoGeometry } from "./GothicTwo";
 import { SCENE } from "./theme";
 
@@ -38,6 +38,15 @@ function ease(value: number) {
 }
 
 /**
+ * One glyph's own width at scale 1, with the pair's gap taken out of it. The
+ * pair measures 6.7 units at the landscape offset of 1.66, so the glyph is
+ * 6.7 - 2 * 1.66 wide; portrait sets a different offset and therefore a
+ * different pair width, and the only way to know either is to derive them from
+ * this rather than to keep two hand-measured totals that can drift apart.
+ */
+const GLYPH_WIDTH = 3.38;
+
+/**
  * Where the artefact sits at each hand-off. Anchors rather than a formula,
  * because this is a piece of choreography and choreography is authored: the
  * object has to be on the opposite side from whichever rail the type is using.
@@ -66,18 +75,62 @@ const ARTEFACT_PATH = [
   // on, and comes back. It also solves the swap being the loudest moment in a
   // chapter it does not belong to — receding reads as the scene breathing out
   // between statements.
-  { p: 0.5, x: 0, y: -0.06, z: -22.2, ry: 0 },
+  //
+  // Dead centre was still wrong, though. The dive fixed the *size* of the
+  // intrusion and not its position: a mid anchor has to lean away from whichever
+  // rail the INCOMING chapter's copy holds, because that is the copy the reader
+  // is arriving at and the one the artefact is about to be read against.
+  //
+  // Sizing that lean off the frame rather than by eye: with the camera at rest
+  // at z = -8.7 and a 35° vertical fov, a plane at distance d is
+  // 2 * d * tan(17.5°) = 0.631 * d units tall, and that height is the frame's
+  // 900px — so one world unit is 900 / (0.631 * d) = 1427 / d pixels. (The
+  // flight leaves the fov at 36.4° rather than 35°, which only ever widens the
+  // frame, so every clearance worked out below is a floor and not an estimate.)
+  // Both mids land within 0.12 units of the anchor that follows them, which is
+  // the point: the sideways swap now finishes while the artefact is deep and
+  // small, and the return is a straight run forward down its own side instead of
+  // a diagonal drawn across the chapter's text.
+  //
+  // p 0.5, incoming PLAYSTATION, copy on the RIGHT. d = 13.5 gives 106 px/unit;
+  // the pair is 6.7 units wide at the mid-chapter scale of 0.36, so 255px, half
+  // of it 127px. At x = 0 the right edge sat at 720 + 127 = 847px while the
+  // trophy column starts at 0.51 * 1440 = 734px — the 113px of overlap measured
+  // on the frame, and what it overlapped was the platinum card. x = -1.5 moves
+  // the centre to 561px and the right edge to 688px, 46px clear of the column,
+  // with the left edge still 434px inside the frame.
+  { p: 0.5, x: -1.5, y: -0.06, z: -22.2, ry: 0 },
   // PLAYSTATION mirrors: type moves right, so the artefact crosses to the left.
   { p: 0.58, x: -1.62, y: 0.02, z: -15.9, ry: 0.28 },
   { p: 0.66, x: -1.56, y: 0, z: -16.1, ry: 0.34 },
-  { p: 0.72, x: 0, y: -0.14, z: -22.6, ry: 0.05 },
+  // p 0.72, incoming PRESENCE, copy on the LEFT. d = 13.9 gives 103 px/unit and
+  // half the pair is 124px, so x = 0 left an edge at 596px — nominally past the
+  // left third at 480px, which is why it looked survivable and was not: the
+  // OFFLINE headline is set large and the Discord card sits under it, and on the
+  // frame the two together read as a column reaching the midline. Measuring
+  // against 720px instead, x = +1.5 puts the centre at 874px and the left edge
+  // at 750px, and the far side has 442px to spare.
+  { p: 0.72, x: 1.5, y: -0.14, z: -22.6, ry: 0.05 },
   // PRESENCE: back to the right and further away — the quiet chapter.
   { p: 0.78, x: 1.55, y: -0.22, z: -17.6, ry: -0.3 },
   { p: 0.86, x: 1.48, y: -0.26, z: -17.9, ry: -0.26 },
-  // The ending brings it home and closer, but not centred: ANKUZO holds the
-  // left rail there, so the artefact stops clear of the left third of the frame
-  // instead of landing on top of the wordmark.
-  { p: 1, x: 0.55, y: 0, z: -15.6, ry: 0 },
+  // The ending brings it home and closer, and hard over to the right. The
+  // previous x = 0.55 was described here as clearing the left third; it did not,
+  // and the frame says so. d = 6.9 makes the plane 4.35 units tall and 6.96
+  // wide at 207 px/unit, and at the ending scale of 0.41 the pair covers
+  // 568 x 610px of it — so x = 0.55 spanned 550-1118px against a wordmark
+  // sitting at 65-925px. "ZO" was underneath the artefact outright, which is why
+  // the payoff shot read as a rendering fault.
+  //
+  // x = 1.53 is the largest offset the frame still carries cleanly: it sets the
+  // right edge at 1440 - 120 = 1320px and the left edge at 752px, so the whole
+  // silhouette sits in the right half of the frame and the 120px it keeps at the
+  // side is of a piece with what it keeps above and below. y = 0.22 is the 45px
+  // of lift that makes those vertical margins 100px and 190px rather than 145px
+  // twice — the artefact rides high, and the wordmark clears the rest by moving
+  // down out of this band in CSS. z stays at -15.6: this is the shot the whole
+  // scroll is for and it does not get smaller to solve a layout problem.
+  { p: 1, x: 1.53, y: 0.22, z: -15.6, ry: 0 },
 ] as const;
 
 export function ContinuousWorld({
@@ -113,9 +166,26 @@ export function ContinuousWorld({
     // trick that makes a real brushed-steel panel read as metal in a photo.
     anisotropy: 0.22, anisotropyRotation: Math.PI / 2,
     // A trace of thin-film. Chrome that is purely neutral looks computed; a
-    // faint cold shift at grazing angles is what real plating does, and it
-    // lands inside the palette's own blue rather than fighting it.
-    iridescence: 0.2, iridescenceIOR: 1.5, iridescenceThicknessRange: [140, 420] as [number, number],
+    // faint cold shift is what real plating does, and it should land inside the
+    // palette's own blue rather than fight it.
+    //
+    // It was landing on salmon instead — caught on the PLAYSTATION -> PRESENCE
+    // hand-off, where the right glyph came out orange. The range is the reason,
+    // and not the half of it that looks like it is doing the work: with no
+    // iridescenceThicknessMap bound, three.js takes the range's MAXIMUM and
+    // ignores the minimum entirely, so the film was a flat 420nm at IOR 1.5.
+    // That is an optical path of 2 * 1.5 * 420 = 1260nm, and a path that long
+    // has no first-order peak in the visible at all — the peak that does fall
+    // in it is the second order at 1260 / 2 = 630nm, which is orange. It is
+    // also strongest where a face looks straight back down the barrel, which
+    // is precisely the deep, nearly un-yawed anchor at p 0.72.
+    //
+    // 180nm at IOR 1.3 pulls the whole effect into the first order: the peak is
+    // at 2 * 1.3 * 180 = 468nm, the middle of the palette's blue, and the
+    // second order at 234nm is ultraviolet. As the angle opens the path can only
+    // shorten, so the shift runs blue toward violet and then out of the visible
+    // — there is no longer a warm band anywhere on the sweep to find.
+    iridescence: 0.2, iridescenceIOR: 1.3, iridescenceThicknessRange: [120, 180] as [number, number],
     transparent: true, opacity: 0,
   }), []);
   // The walls face sideways into a room that is nearly empty, so the same
@@ -130,8 +200,15 @@ export function ContinuousWorld({
     transparent: true, opacity: 0,
   }), []);
   const geometry = useGothicTwoGeometry();
-  const { size } = useThree();
+  const { size, camera } = useThree();
   const portrait = size.width / size.height < 0.78;
+
+  // The pair had grown into each other: the left glyph's tail ran under the
+  // right one's stem, which reads as a rendering fault rather than as a
+  // ligature. Widened until the silhouettes clear each other outright. It is
+  // read per frame as well as in the JSX, because the pair's total width is
+  // what decides how far sideways the choreography can actually go.
+  const offset = portrait ? 1.22 : 1.66;
 
   // Materials are passed as props, so R3F will not dispose them for us.
   useEffect(() => () => {
@@ -157,10 +234,10 @@ export function ContinuousWorld({
 
     // The artefact crosses the frame instead of sitting on one side. It stays
     // opposite the type: right while STEAM holds the left rail, left once
-    // PLAYSTATION mirrors to the right, right again for PRESENCE, and just off
-    // centre for the ending, where ANKUZO takes the left rail back. The swap is
-    // the reason the chapters read as a sequence rather than as three versions
-    // of one screen.
+    // PLAYSTATION mirrors to the right, right again for PRESENCE, and further
+    // right still for the ending, where ANKUZO takes the left rail back. The
+    // swap is the reason the chapters read as a sequence rather than as three
+    // versions of one screen.
     const path = ARTEFACT_PATH;
     let index = 1;
     while (index < path.length - 1 && value > path[index].p) index += 1;
@@ -174,14 +251,6 @@ export function ContinuousWorld({
     // rewriting the choreography for a second aspect ratio.
     const sideways = portrait ? 0.36 : 1;
     const setback = portrait ? 1.7 : 0;
-    group.current.position.set(
-      (from.x + (to.x - from.x) * t) * sideways,
-      from.y + (to.y - from.y) * t,
-      from.z + (to.z - from.z) * t - setback,
-    );
-    // Always angled back toward the reader's side of the frame.
-    group.current.rotation.y = from.ry + (to.ry - from.ry) * t;
-    group.current.rotation.x = 0.03 * Math.sin((value - STEAM_START) * 2.2);
 
     // Largest at the ending, but sized off the frame rather than off ambition.
     // The pair measures 6.7 x 7.2 units at scale 1; the ending's plane is 4.4
@@ -191,12 +260,39 @@ export function ContinuousWorld({
     const scale = (portrait ? 0.3 : 0.36)
       + (portrait ? 0.12 : 0.05) * ease(span(value, FINAL_START, 1));
     group.current.scale.setScalar(scale);
-  });
 
-  // The pair had grown into each other: the left glyph's tail ran under the
-  // right one's stem, which reads as a rendering fault rather than as a
-  // ligature. Widened until the silhouettes clear each other outright.
-  const offset = portrait ? 1.22 : 1.66;
+    const z = from.z + (to.z - from.z) * t - setback;
+
+    // The lateral swing is clamped against the frame the artefact is standing
+    // in, rather than trusted. Every x above is authored against the landscape
+    // shot and portrait gets one blanket 0.36 on top of it, which is a guess and
+    // not a fit — and at the ending the guess loses: portrait opens the fov to
+    // 42° and stands 1.7 further back, giving a plane 3.09 units wide, while the
+    // pair at its narrower offset is 2.44 of them. That leaves 0.26 units of
+    // room in total, so the ending's offset hangs a glyph over the edge, and the
+    // mid-chapter anchors were already trimming ~25px off one side before this
+    // change made the ending worse. Two trig calls turn the header's claim that
+    // "each x keeps the whole silhouette inside the frame" from an assertion
+    // about the numbers into a property of them, on every aspect ratio. It never
+    // engages on desktop: the tightest landscape limit is 2.11 against a
+    // requested 1.53.
+    const fov = camera instanceof PerspectiveCamera ? camera.fov : 35;
+    const halfHeight = Math.abs(camera.position.z - z) * Math.tan((fov * Math.PI) / 360);
+    const halfWidth = halfHeight * (size.width / size.height);
+    // The last 4% is held back so the limit reads as a margin; a silhouette
+    // stopped exactly on the edge looks clipped even when it is not.
+    const limit = Math.max(0, halfWidth - (offset * 2 + GLYPH_WIDTH) * 0.5 * scale - halfWidth * 0.04);
+    const x = (from.x + (to.x - from.x) * t) * sideways;
+
+    group.current.position.set(
+      Math.min(Math.max(x, -limit), limit),
+      from.y + (to.y - from.y) * t,
+      z,
+    );
+    // Always angled back toward the reader's side of the frame.
+    group.current.rotation.y = from.ry + (to.ry - from.ry) * t;
+    group.current.rotation.x = 0.03 * Math.sin((value - STEAM_START) * 2.2);
+  });
 
   return (
     <group ref={group} visible={false}>

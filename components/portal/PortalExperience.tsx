@@ -6,7 +6,7 @@ import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
 import type { CSSProperties, MutableRefObject } from "react";
 import {
-  ACESFilmicToneMapping,
+  AgXToneMapping,
   CatmullRomCurve3,
   PerspectiveCamera,
   Vector3,
@@ -260,7 +260,13 @@ function ExperienceScene({ target, rendered, portal, immediate, archiveDensity, 
           strips separated by dark gaps, at the angular scale the glyph actually
           subtends. As the reflected vector sweeps across a face it now crosses
           light, gap, light — and that sweep IS the gradient. */}
-      <Environment resolution={256}>
+      {/* 512 rather than 256. The room is now built from thin features — a
+          0.9-unit horizon band and slats down to 0.22 — and at 256 a cube
+          face spans those in two or three texels, so their edges arrive on
+          the metal already blurred. Sharpness in the reflection is most of
+          what separates expensive-looking chrome from soft chrome, and this
+          bakes once at mount rather than per frame. */}
+      <Environment resolution={512}>
         {/* Narrow and hot, with real darkness between them.
 
             Measured on the rendered frame, the metal was sitting with a median
@@ -279,6 +285,40 @@ function ExperienceScene({ target, rendered, portal, immediate, archiveDensity, 
             position={[slat.x, slat.y, 8.8]} rotation={[0, Math.PI, 0]}
             scale={[slat.width, 13, 1]} />
         ))}
+
+        {/* THE HORIZON.
+            Chrome is identified by one feature before any other: it shows the
+            sky squeezed into a bright band, a hard edge where the sky stops,
+            and a darker ground under it. Every photograph of a polished object
+            has that line running through it, and no arrangement of slats
+            substitutes for it — slats give the surface incident, a horizon
+            gives it a place to be.
+
+            Its absence is why the metal has been merely acceptable through
+            every previous pass: sky sat at y +7.4 and floor at y -6.2 with a
+            void between them, so the surface reflected points of light in
+            blackness. This is thin (0.9 units against the sky plane's 4.2) and
+            sits just above the artefact's own centre line, so the band crosses
+            the upper third of the glyph rather than cutting it in half. Bright
+            enough to be the strongest thing in the room, because the real sky
+            always is.
+
+            It stands at z 10.4, BEHIND the slats at 8.8, and that ordering is
+            the whole thing. The cube map is baked from the origin, so a panel
+            nearer the centre simply occludes whatever is behind it — put this
+            in front and its 30 x 0.9 span erases the slat field it was meant
+            to complement, and the metal collapses to the one flat grey the
+            slats exist to prevent. Measured: the faces went to a uniform dark
+            slate, worse than before the horizon was added at all. Behind them
+            the two read together instead — a bright window seen through
+            blinds, which is a room rather than a light. */}
+        <Lightformer form="rect" intensity={6.4} color={SCENE.reflectionEdge}
+          position={[0, 1.9, 10.4]} rotation={[0, Math.PI, 0]} scale={[30, 0.9, 1]} />
+        {/* The ground immediately under it, dim and wide. The pair is what
+            makes the edge an edge — a bright band alone is just another slat
+            lying on its side. */}
+        <Lightformer form="rect" intensity={0.5} color={SCENE.reflectionFloor}
+          position={[0, -0.4, 10.4]} rotation={[0, Math.PI, 0]} scale={[30, 2.4, 1]} />
 
         {/* Sky and floor keep the top and bottom of the glyph from matching.
             Both are kept low: they are the "unlit room" the dark half of the
@@ -556,9 +596,19 @@ export function PortalExperience() {
     <main lang="en" className={`experience-shell ${reviewDevice === "mobile" ? "review-mobile" : ""}`}>
       <a className="skip-link" href="#library" onClick={skipPortal}>Skip the portal</a>
       <section className="experience-stage" ref={stage} aria-labelledby="experience-title">
+        {/* AgX rather than ACES Filmic.
+          The scene is a mirror, so almost everything of interest happens in
+          the top of the range, and that is precisely where the two curves
+          differ. Measured on the ending frame, ACES was putting 15.3% of the
+          metal at 250+ — not bright, but clipped: a sixth of the surface
+          arriving as a single flat white with no form left in it, which is the
+          "it just glows" reading. AgX has a far longer shoulder and desaturates
+          into it properly instead of clamping, so those pixels keep their
+          gradient. It renders darker overall, which the exposure below pays
+          back. */}
         <Canvas className="experience-canvas" dpr={[1, 1.35]}
           camera={{ position: [0, 0, 13.5], fov: 35, near: 0.035, far: 70 }}
-          gl={{ antialias: true, alpha: false, toneMapping: ACESFilmicToneMapping, toneMappingExposure: 1.02 }}>
+          gl={{ antialias: true, alpha: false, toneMapping: AgXToneMapping, toneMappingExposure: 1.02 }}>
           <ExperienceScene target={targetProgress} rendered={renderedProgress} portal={portalProgress}
             archiveDensity={figures.archiveDensity} reducedMotion={reducedMotion} onChapterChange={setActiveChapter}
             immediate={Boolean(reviewState) || reducedMotion} />

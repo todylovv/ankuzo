@@ -1,0 +1,217 @@
+/* The body chapter — see components/portal/BodyCard.tsx.
+ *
+ * NOT IMPORTED YET. Nothing pulls this file in on purpose: wiring the chapter
+ * into the scroll sequence is a separate step, and app/globals.css is being
+ * edited elsewhere. When the chapter goes in, add
+ *
+ *   @import "./body.css";
+ *
+ * near the top of app/globals.css, after the @font-face block, and the tokens
+ * below resolve against :root there. Until then this file is inert.
+ *
+ * No new colours. Everything here is --text-*, --surface, --line, --accent and
+ * --ember out of the palette in components/portal/theme.ts and :root in
+ * globals.css. The one warm value on the site, --ember, is spent here exactly
+ * once — on weight moving toward the goal — because it is the only number on
+ * the page that is about the author rather than about a machine, and that is
+ * what the counter-accent is reserved for.
+ *
+ * The type follows the card idiom already established by .game-card and
+ * .dc-card: mono uppercase labels with wide tracking, figures set in the
+ * display face with tabular numerals, hairline rules, no boxes inside boxes.
+ */
+
+.bc-stage {
+  perspective: 1000px;
+  perspective-origin: 50% 45%;
+  pointer-events: auto;
+}
+
+.bc-card {
+  position: relative;
+  width: min(360px, 40vw);
+  display: grid;
+  gap: 18px;
+  padding: 20px 22px 22px;
+  border-radius: 6px;
+  overflow: hidden;
+  background: linear-gradient(
+    168deg,
+    color-mix(in srgb, var(--surface) 92%, transparent) 0%,
+    color-mix(in srgb, var(--bg-depth) 96%, transparent) 100%
+  );
+  border: 1px solid var(--line);
+  box-shadow: 0 18px 44px rgba(0, 0, 0, 0.55);
+  transform-style: preserve-3d;
+  will-change: transform;
+  transform: rotateX(var(--tilt-x, 0deg)) rotateY(var(--tilt-y, 0deg));
+  transition: transform 0.5s cubic-bezier(0.16, 0.84, 0.3, 1);
+}
+.bc-card:hover { transition: transform 0.09s linear; }
+
+/* Nothing has arrived yet, or nothing ever will. Either way the card keeps its
+   footprint: a chapter that collapses to zero height while a fetch is in
+   flight pulls the whole scroll sequence upward under the reader. */
+.bc-card[data-phase="loading"],
+.bc-card[data-phase="absent"] { min-height: 190px; align-content: start; }
+
+.bc-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  padding-bottom: 13px;
+  border-bottom: 1px solid var(--line);
+}
+.bc-kicker {
+  margin: 0 !important;
+  color: var(--text-primary) !important;
+  font: 10px/1 Jet, monospace !important;
+  letter-spacing: 0.14em !important;
+  text-transform: uppercase !important;
+}
+.bc-period {
+  margin: 0 !important;
+  color: var(--text-faint) !important;
+  font: 10px/1 Jet, monospace !important;
+  letter-spacing: 0.09em !important;
+  text-transform: uppercase !important;
+}
+
+.bc-empty {
+  margin: 0 !important;
+  color: var(--text-faint) !important;
+  font: 11px/1.5 Jet, monospace !important;
+  letter-spacing: 0.07em !important;
+}
+
+/* The weight is the figure the chapter is built around, so it gets step 2 of
+   the modular scale and everything else stays below it. */
+.bc-weight { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+.bc-weight-value {
+  margin: 0 !important;
+  color: var(--text-primary) !important;
+  font: 300 var(--t-2) / 0.95 Unbounded, Manrope, Arial, sans-serif !important;
+  letter-spacing: -0.045em !important;
+  font-variant-numeric: tabular-nums;
+}
+.bc-unit {
+  margin-left: 5px;
+  color: var(--text-faint);
+  font: 11px/1 Jet, monospace;
+  letter-spacing: 0.08em;
+}
+
+/* Down is the direction he is training toward, so down is the one place the
+   warm accent appears. Up and flat stay in the neutral ramp — the card reports
+   a number, it does not grade it. */
+.bc-delta {
+  margin: 0 !important;
+  color: var(--text-secondary) !important;
+  font: 11px/1 Jet, monospace !important;
+  letter-spacing: 0.07em !important;
+  font-variant-numeric: tabular-nums;
+}
+.bc-delta[data-direction="down"] { color: var(--ember) !important; }
+
+.bc-metrics {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+}
+.bc-metric { display: grid; gap: 6px; align-content: start; min-width: 0; }
+.bc-metric-value {
+  margin: 0 !important;
+  color: var(--text-primary) !important;
+  font: 400 var(--t-1up) / 1 Unbounded, Manrope, Arial, sans-serif !important;
+  letter-spacing: -0.035em !important;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.bc-metric-value span {
+  margin-left: 3px;
+  color: var(--text-faint);
+  font: 10px/1 Jet, monospace;
+  letter-spacing: 0.08em;
+}
+/* A zero stays in the row, greyed, the way an empty trophy slot does: it is a
+   fact about the period, and hiding it would be flattering the period. */
+.bc-metric[data-muted="true"] .bc-metric-value { color: var(--text-faint) !important; }
+.bc-metric-label {
+  margin: 0 !important;
+  color: var(--text-secondary) !important;
+  font: 10px/1.3 Jet, monospace !important;
+  letter-spacing: 0.11em !important;
+  text-transform: uppercase !important;
+}
+
+.bc-lift { display: grid; gap: 8px; padding-top: 16px; border-top: 1px solid var(--line); }
+.bc-lift-label {
+  margin: 0 !important;
+  color: var(--text-secondary) !important;
+  font: 10px/1 Jet, monospace !important;
+  letter-spacing: 0.11em !important;
+  text-transform: uppercase !important;
+}
+.bc-lift-value {
+  margin: 0 !important;
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 6px;
+  color: var(--text-faint) !important;
+  font: 11px/1.3 Jet, monospace !important;
+  letter-spacing: 0.06em !important;
+}
+.bc-lift-name {
+  flex: 1 1 100%;
+  color: var(--text-primary);
+  font: 11px/1.3 Jet, monospace;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+}
+.bc-lift-value b {
+  color: var(--accent);
+  font: 500 var(--t-1up) / 1 Unbounded, Manrope, Arial, sans-serif;
+  letter-spacing: -0.03em;
+  font-variant-numeric: tabular-nums;
+}
+.bc-lift-value i { color: var(--text-faint); font-style: normal; }
+.bc-lift-value--empty { color: var(--text-faint) !important; }
+
+/* Stale is stated, not hidden and not styled as an alarm. Old data on a
+   personal page is normal; pretending it is current is not. */
+.bc-stale {
+  margin: 0 !important;
+  color: var(--text-faint) !important;
+  font: 10px/1 Jet, monospace !important;
+  letter-spacing: 0.09em !important;
+  text-transform: uppercase !important;
+}
+.bc-card[data-stale="true"] .bc-weight-value,
+.bc-card[data-stale="true"] .bc-metric-value { color: var(--text-secondary) !important; }
+
+.bc-sheen {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border-radius: 6px;
+  background: linear-gradient(
+    112deg,
+    transparent 34%,
+    rgba(255, 255, 255, 0.07) calc(var(--sheen, 0.5) * 100%),
+    transparent 68%
+  );
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bc-card { transform: none !important; transition: none; }
+  .bc-sheen { display: none; }
+}
+
+@media (max-width: 900px) {
+  .bc-card { width: min(360px, 78vw); padding: 18px 18px 20px; gap: 16px; }
+  .bc-metrics { gap: 10px; }
+}

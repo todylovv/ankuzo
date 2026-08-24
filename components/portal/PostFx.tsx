@@ -1,7 +1,7 @@
 "use client";
 
-import { Bloom, ChromaticAberration, EffectComposer, Noise, Vignette } from "@react-three/postprocessing";
-import { BlendFunction, KernelSize } from "postprocessing";
+import { Bloom, ChromaticAberration, EffectComposer, Noise, ToneMapping, Vignette } from "@react-three/postprocessing";
+import { BlendFunction, KernelSize, ToneMappingMode } from "postprocessing";
 import { useMemo } from "react";
 import { Vector2 } from "three";
 
@@ -46,6 +46,28 @@ export function PostFx({ reducedMotion = false }: { reducedMotion?: boolean }) {
         kernelSize={KernelSize.LARGE}
         mipmapBlur
       />
+      {/* The tone curve, and it has to live HERE.
+          Mounting a composer hands it the output, and it runs the scene
+          through with the renderer's own tone mapping switched off — so the
+          `toneMapping` and `toneMappingExposure` set on the Canvas and in
+          SceneLighting have been inert for as long as this file has existed.
+          The scene was reaching the screen with no curve on it at all, which
+          is why the highlights ended in a hard edge: nothing was rolling them
+          off, they simply ran out of range. Measured on the ending frame,
+          15.3% of the metal sat at 250+ with no gradient left in it.
+
+          Proof it was inert, for whoever doubts it later: switching the
+          renderer from ACES to AgX and lifting its exposure from 0.94 to 1.38
+          moved the median luminance by 0.1 and the clipped fraction by 0.01
+          points. Both changes were doing nothing.
+
+          AgX rather than ACES now that the choice is real. Its shoulder is far
+          longer and it desaturates into it instead of clamping to white, which
+          is what a mirror needs — nearly everything interesting in this scene
+          happens in the top of the range. It sits directly after Bloom because
+          bloom belongs in linear light, and before the grain and vignette,
+          which are darkroom steps and belong on the finished image. */}
+      <ToneMapping mode={ToneMappingMode.AGX} />
       {/* Kept to the one prop the package types accept cleanly. The split is
           deliberately tiny — visible at the frame's edges, invisible on the
           type, which is where a heavier setting starts to look broken. */}

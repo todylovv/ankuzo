@@ -60,6 +60,14 @@ export const SCENE = {
   keyIntensity: 2.2,
   fillIntensity: 1.35,
   rearIntensity: 1.7,
+  /* Inert while PostFx is mounted, which is always. Mounting a composer
+     turns the renderer's own tone mapping off and puts the curve in the
+     effect chain instead, so this value and the `toneMapping` on the
+     Canvas reach nothing. Verified rather than assumed: moving this from
+     0.94 to 1.38 changed the ending frame's median luminance by 0.1.
+     Kept at its original value because it is what the scene falls back to
+     if the composer is ever removed; the live control is the ToneMapping
+     effect in PostFx. */
   exposure: 0.94,
 } as const;
 

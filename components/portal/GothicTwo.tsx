@@ -45,11 +45,16 @@ function bowCaps(geometry: ExtrudeGeometry, depth: number, amount: number) {
   const position = geometry.attributes.position;
   const array = position.array as Float32Array;
   const front = depth;
-  let maxRadius = 0;
+  // Per-axis extents, because the two axes are weighted differently below and
+  // a single radius cannot express that.
+  let maxX = 0;
+  let maxY = 0;
 
   for (let i = 0; i < array.length; i += 3) {
-    const radius = Math.hypot(array[i], array[i + 1]);
-    if (radius > maxRadius) maxRadius = radius;
+    const x = Math.abs(array[i]);
+    const y = Math.abs(array[i + 1]);
+    if (x > maxX) maxX = x;
+    if (y > maxY) maxY = y;
   }
 
   for (let i = 0; i < array.length; i += 3) {
@@ -59,10 +64,35 @@ function bowCaps(geometry: ExtrudeGeometry, depth: number, amount: number) {
     const onFront = Math.abs(z - front) < 1e-3;
     const onBack = Math.abs(z) < 1e-3;
     if (!onFront && !onBack) continue;
-    const radius = Math.hypot(array[i], array[i + 1]) / (maxRadius || 1);
-    // Cosine profile: flat at the rim, fullest at the centre, so the cap meets
-    // the bevel tangentially instead of with a crease.
-    const bow = Math.cos(Math.min(1, radius) * Math.PI * 0.5) * amount;
+    // A cylinder lying on its side, not a dome.
+    //
+    // A dome curves equally in every direction, so its normals fan out from
+    // the centre and it reflects the room as a blob in the middle of the face.
+    // Weighting the curvature onto the vertical axis instead makes the normal
+    // sweep through a wide arc down the height while barely turning across the
+    // width, so the surface reads the room's vertical structure — sky, horizon,
+    // ground — as one continuous band running the length of the glyph. That
+    // band is what the eye uses to identify chrome, and it is what the horizon
+    // light in the rig exists to supply.
+    //
+    // The weighting has to be a PRODUCT of two full-range profiles, one per
+    // axis, and not a squashed radius. Compressing x inside a hypot was the
+    // obvious thing to try and it is wrong: shrinking one term shrinks the
+    // radius everywhere, the cosine no longer traverses its full range, and
+    // the cap comes out nearly flat — which is a constant normal, a constant
+    // environment sample, and the matte grey this whole approach exists to
+    // avoid. Measured on the rendered frame it collapsed straight back to it.
+    //
+    // As a product, each axis still reaches zero at its own rim, so the cap
+    // meets the bevel tangentially all the way round with no crease. The
+    // fractional exponent is what does the weighting: cos(x)^0.35 is still
+    // 0.89 at the halfway point, so the horizontal profile stays out of the
+    // way across the body of the face and only bends near the outline.
+    const nx = Math.min(1, Math.abs(array[i]) / (maxX || 1));
+    const ny = Math.min(1, Math.abs(array[i + 1]) / (maxY || 1));
+    const bow = amount
+      * Math.pow(Math.cos(nx * Math.PI * 0.5), 0.35)
+      * Math.cos(ny * Math.PI * 0.5);
     array[i + 2] = onFront ? z + bow : z - bow;
   }
   position.needsUpdate = true;
@@ -72,7 +102,11 @@ function createGothicTwoGeometry() {
   const depth = 1.62;
   const geometry = new ExtrudeGeometry(makeGothicTwoShape(), {
     depth,
-    curveSegments: 48,
+    // No curveSegments here. The contour is 37 hand-placed points joined with
+    // straight segments — there is not a single curve in the shape for that
+    // option to subdivide, so the 48 it used to carry cost tessellation on the
+    // bevel and bought nothing. Blackletter is built from straight strokes;
+    // the roundness in this glyph comes from the bevel below, not the outline.
     // The caps have to be subdivided or there is nothing to bow: a two-triangle
     // face stays flat however far its corners move.
     steps: 6,

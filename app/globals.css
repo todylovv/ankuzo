@@ -245,7 +245,13 @@ html[data-chapter="playstation"] .chapter-copy--playstation .figure-count{--figu
   transition:border-color .4s ease,opacity .4s ease}
 .tier-grid b{font:500 clamp(1.5rem,2.4vw,2.1rem)/1 Unbounded,Manrope,Arial,sans-serif;
   letter-spacing:-.03em;color:var(--text-primary);font-variant-numeric:tabular-nums}
-.tier-grid span{font:10px/1 Jet,monospace;letter-spacing:.13em;color:var(--text-faint);
+/* At the 11px floor like every other mono label, not below it. The tightest
+   track in the site is this grid at the desktop breakpoint: at 801px the four
+   columns come out 89.6px wide, 75.6px inside the padding, and the longest
+   label — PLATINUM — measures 64.3px at 11px with this tracking. 11.4px to
+   spare, so no track resizing and no padding change is needed; the card grows
+   by exactly 1px in height and nothing below it moves. */
+.tier-grid span{font:11px/1 Jet,monospace;letter-spacing:.13em;color:var(--text-faint);
   text-transform:uppercase}
 .tier-cup{width:19px;height:19px;fill:var(--text-faint)}
 [data-tier="bronze"] .tier-cup{fill:#B87333}
@@ -319,7 +325,8 @@ html[data-chapter="playstation"] .chapter-copy--playstation .figure-count{--figu
    worst place in the composition to be quiet — at 10px they read as a caption
    that belonged to neither. The row now holds its own register: a larger
    thumbnail, the nickname at reading size in the text face, and the state line
-   at the 11px floor instead of below it. */
+   at the 11px floor instead of below it.
+
    Each is now something you can open rather than a square with a name beside
    it. The profiles are public, and a page built on someone's accounts should
    let you go and look at them. */
@@ -438,8 +445,12 @@ html[data-chapter="playstation"] .chapter-copy--playstation .figure-count{--figu
 .ts-invite:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
 
 .badge-row{display:flex;flex-wrap:wrap;gap:7px;margin:2px 0 0;padding:0;list-style:none}
+/* Same floor as .dc-badges, which already made this argument: these are the
+   smallest things in their row and they still have to be read. Nothing needs
+   adjusting around them — the row is flex-wrap and every chip is sized by its
+   own content, so a wider chip takes the next line instead of overflowing. */
 .badge-row li{padding:4px 8px;border:1px solid var(--line);border-radius:2px;
-  font:10px/1 Jet,monospace;letter-spacing:.14em;color:var(--text-secondary);text-transform:uppercase}
+  font:11px/1 Jet,monospace;letter-spacing:.14em;color:var(--text-secondary);text-transform:uppercase}
 
 .presence-dot{display:block;width:.34em;height:.34em;border-radius:50%;
   background:var(--text-faint);flex:none}
@@ -449,7 +460,32 @@ html[data-chapter="playstation"] .chapter-copy--playstation .figure-count{--figu
 .presence-dot--idle,.presence-dot--dnd{background:var(--accent-soft)}
 @keyframes presence-pulse{0%,100%{opacity:1}50%{opacity:.45}}
 
-.chapter-copy--final{top:50%;transform:translateY(-42%)}
+/* The ending is a diagonal, not a stack.
+   Measured on a 1440x900 frame it was neither: the block sat vertically
+   centred, its baseline landing at y 470 — the artefact's own midline — while
+   the wordmark ran x 65 to 923 against an artefact spanning x 545 to 1140. The
+   last two letters were behind the metal, and the frame the whole scroll is
+   built toward read as a rendering fault. The artefact answers by moving up
+   and right; the type answers by moving down and staying on the left rail, so
+   the two hold opposite corners instead of one rectangle.
+
+   Shrinking the wordmark was the cheaper dodge and the wrong one. This is
+   where step 4 is spent, and a payoff that had to make itself small to fit is
+   not a payoff.
+
+   Bottom-anchored rather than nudged off centre, because what it has to clear
+   lives at the bottom: the meter sits one gutter from the floor and is --t-1
+   tall, so one further gutter of air above it is the entire offset — no new
+   magic number, just the rail counted three times. On 1440x900 that lands the
+   wordmark's ink at y 554-765 (was 331-542) with the mono line ending 65px —
+   exactly one gutter — above the meter. Verified down to 801px, where the
+   clearance is the gutter there, 36px. */
+.chapter-copy--final{top:auto;bottom:calc(var(--gutter) * 2 + var(--t-1));
+  /* Same arrival as .chapter-copy--portal, the site's other bottom-anchored
+     block: a short rise, not a half-height slide. 14px is what the old
+     -42%/-50% pair actually travelled on this block, so the motion is
+     unchanged even though the anchor is not. */
+  transform:translateY(14px)}
 /* Step 4 is spent twice and only twice: arrival and departure. */
 .chapter-copy--final h2{font-size:var(--t-4);line-height:.86}
 .chapter-copy--final span{display:block;margin-top:16px;color:var(--text-secondary);
@@ -464,7 +500,7 @@ html[data-chapter="portal"] .chapter-copy--portal{transform:translateY(0)}
 html[data-chapter="steam"] .chapter-copy--steam,
 html[data-chapter="playstation"] .chapter-copy--playstation,
 html[data-chapter="presence"] .chapter-copy--presence{transform:translateY(-50%)}
-html[data-chapter="final"] .chapter-copy--final{transform:translateY(-50%)}
+html[data-chapter="final"] .chapter-copy--final{transform:translateY(0)}
 
 /* Rows arrive one after another rather than all at once: a list that appears
    whole reads as a screenshot, a list that assembles reads as a reveal. */
@@ -546,7 +582,23 @@ html[data-chapter="final"] [data-target-chapter="final"] i{background:var(--acce
 
   .chapter-figure{font-size:23vw!important}
   .chapter-figure--word{font-size:15vw!important}
-  .chapter-copy--final h2{font-size:26vw}
+  /* 26vw was a guess and it never fitted. ANKUZO set in Unbounded 500 at
+     -.045em measures 5.06x its own font-size — measured, not estimated — so
+     26vw drew a 513px word inside a 342px rail on a 390pt phone and the stage
+     clipped the last letters off the right edge. The same failure as the
+     desktop collision, arrived at from the other side. It overran the frame at
+     every portrait width tested: +147px at 390, +160 at 430, +138 at 360,
+     +125 at 320, +289 at the 800px edge of this query.
+     Dividing the rail by 5.15 makes the word fill the rail exactly, with the
+     ~2% left over absorbing hinting and sub-pixel rounding. The size is still
+     the largest thing on the screen — it is the rail that sets it now, not a
+     number someone liked.
+     Sideways is not available here, so the whole separation from the artefact
+     is vertical, which is what this breakpoint already does with every other
+     chapter: the same gutter + safe-area + 58px stack clearance, putting the
+     ink at y 665-747 of 844 with the artefact holding the space above it. */
+  .chapter-copy--final{bottom:calc(var(--gutter) + env(safe-area-inset-bottom,0px) + 58px)}
+  .chapter-copy--final h2{font-size:calc((100vw - var(--gutter) * 2) / 5.15)}
   .chapter-note{max-width:none;font-size:10px!important;letter-spacing:.11em}
 
   /* Three columns do not fit in 390px, so the bar moves under its row and
