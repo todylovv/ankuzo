@@ -55,9 +55,22 @@ const ARTEFACT_PATH = [
   { p: 0.19, x: 2, y: 0.15, z: -16.8, ry: -0.42 },
   { p: 0.34, x: 1.62, y: 0.1, z: -15.9, ry: -0.3 },
   { p: 0.45, x: 1.55, y: 0.05, z: -15.7, ry: -0.24 },
+  // The crossings dive. Every anchor pair used to be joined at a constant depth,
+  // so the artefact swapped sides by sliding straight across the middle of the
+  // frame at full size — and the middle of the frame is where the copy lives.
+  // Caught on the hand-off frames: at the STEAM -> PLAYSTATION swap the glyph
+  // stood on top of the trophy row and hid the platinum card outright.
+  //
+  // A mid anchor set six units further back turns the slide into an arc away
+  // from the reader: the object recedes, passes behind the plane the type sits
+  // on, and comes back. It also solves the swap being the loudest moment in a
+  // chapter it does not belong to — receding reads as the scene breathing out
+  // between statements.
+  { p: 0.5, x: 0, y: -0.06, z: -22.2, ry: 0 },
   // PLAYSTATION mirrors: type moves right, so the artefact crosses to the left.
   { p: 0.58, x: -1.62, y: 0.02, z: -15.9, ry: 0.28 },
   { p: 0.66, x: -1.56, y: 0, z: -16.1, ry: 0.34 },
+  { p: 0.72, x: 0, y: -0.14, z: -22.6, ry: 0.05 },
   // PRESENCE: back to the right and further away — the quiet chapter.
   { p: 0.78, x: 1.55, y: -0.22, z: -17.6, ry: -0.3 },
   { p: 0.86, x: 1.48, y: -0.26, z: -17.9, ry: -0.26 },
