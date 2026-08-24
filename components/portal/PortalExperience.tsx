@@ -36,6 +36,13 @@ const REVIEW_STATES = [
   { scene: "playstation", frame: "hold", progress: 0.58 },
   { scene: "presence", frame: "hold", progress: 0.75 },
   { scene: "final", frame: "22", progress: 1 },
+  // The hand-offs. Every review state until now was a chapter at rest, so the
+  // moments where the artefact crosses the frame and the type swaps rails were
+  // the only part of the journey nobody had ever looked at.
+  { scene: "cross", frame: "portal-steam", progress: 0.215 },
+  { scene: "cross", frame: "steam-ps", progress: 0.5 },
+  { scene: "cross", frame: "ps-presence", progress: 0.68 },
+  { scene: "cross", frame: "presence-final", progress: 0.9 },
 ] as const;
 
 /**
