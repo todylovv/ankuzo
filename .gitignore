@@ -1,0 +1,7 @@
+node_modules
+dist
+_unpacked
+_extract.mjs
+_to_react.mjs
+*.local
+.DS_Store
