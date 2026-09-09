@@ -295,9 +295,9 @@ export function Archive({ rootRef, tsLabel, copyTs, live }: ArchiveProps) {
               <div style={css(`margin-top:8px;display:flex;align-items:center;gap:9px;font-size:12px;letter-spacing:.1em;color:rgba(11,11,11,.6)`)}><span style={css(`width:7px;height:7px;border-radius:50%;background:#0b0b0b;display:inline-block`)}></span>{live.discordStatus}</div>
             </div>
           </div>
-          <p style={css(`margin:clamp(28px,6vh,64px) 0 0;font-family:'Bodoni Moda',serif;font-size:clamp(20px,2.4vw,38px);line-height:1.28;color:#0b0b0b`)}>За всеми числами выше — один человек, который чаще всего просто сидит в канале и слушает, как играют другие.</p>
+          <p style={css(`margin:clamp(28px,6vh,64px) 0 0;font-family:'Bodoni Moda',serif;font-size:clamp(20px,2.4vw,38px);line-height:1.28;color:#0b0b0b`)}>За всеми числами выше — я один. Уверенный одинокий волк: стая не нужна, чтобы заходить в игру.</p>
           <p style={css(`margin:22px 0 0;font-size:13px;line-height:1.75;color:rgba(11,11,11,.62);max-width:42ch`)}>
-            Discord — «Погреб». Голос — в TeamSpeak: в поиске{" "}
+            Если есть вопросы — пиши сюда. Голос в TeamSpeak: в поиске{" "}
             <span style={css(`color:#0b0b0b`)}>Ankuzo</span>, или по ссылке{" "}
             <a href="https://tmspk.gg/3Vi7A7Y9" style={css(`color:#0b0b0b;text-decoration:underline;text-underline-offset:3px`)}>tmspk.gg/3Vi7A7Y9</a>.
           </p>
