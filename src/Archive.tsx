@@ -1,13 +1,142 @@
 import type { Ref } from "react";
 import { css } from "./css";
+import type { ArchiveLive, CreditGame, RecentGame } from "./useArchiveData";
 
 type ArchiveProps = {
   rootRef: Ref<HTMLDivElement>;
   tsLabel: string;
   copyTs: () => void;
+  live: ArchiveLive;
 };
 
-export function Archive({ rootRef, tsLabel, copyTs }: ArchiveProps) {
+function hoursWord(value: number) {
+  const abs = Math.abs(value) % 100;
+  const last = abs % 10;
+  if (abs > 10 && abs < 20) return "часов";
+  if (last === 1) return "час";
+  if (last >= 2 && last <= 4) return "часа";
+  return "часов";
+}
+
+const CREDIT_SHIFT = [-8, 7, -6, 5, -4, 3];
+const CREDIT_PAD = ["0", "clamp(0px,6vw,120px)", "0", "clamp(0px,10vw,200px)", "0", "clamp(0px,14vw,280px)"];
+const CREDIT_SIZE = [
+  "clamp(26px,3.6vw,60px)",
+  "clamp(24px,3.2vw,52px)",
+  "clamp(22px,2.9vw,46px)",
+  "clamp(20px,2.5vw,40px)",
+  "clamp(18px,2.1vw,34px)",
+  "clamp(17px,1.9vw,30px)",
+];
+const CREDIT_NAME = [
+  "#f6f5f3",
+  "#f6f5f3",
+  "#f6f5f3",
+  "rgba(246,245,243,.92)",
+  "rgba(246,245,243,.86)",
+  "rgba(246,245,243,.8)",
+];
+const CREDIT_HOURS = [
+  "rgba(246,245,243,.92)",
+  "rgba(246,245,243,.86)",
+  "rgba(246,245,243,.82)",
+  "rgba(246,245,243,.78)",
+  "rgba(246,245,243,.72)",
+  "rgba(246,245,243,.66)",
+];
+
+function CreditRow({ game, index, last }: { game: CreditGame; index: number; last: boolean }) {
+  const i = Math.min(index, CREDIT_SHIFT.length - 1);
+  return (
+    <div
+      style={css(
+        `display:flex;align-items:baseline;justify-content:space-between;gap:24px;padding:clamp(14px,2.4vh,26px) 0 clamp(14px,2.4vh,26px) ${CREDIT_PAD[i]};border-top:1px solid rgba(241,240,238,.16);${last ? "border-bottom:1px solid rgba(241,240,238,.16);" : ""}transform:translate3d(calc((1 - var(--p))*${CREDIT_SHIFT[i]}vw),0,0)`,
+      )}
+    >
+      <span style={css(`font-family:'Bodoni Moda',serif;font-size:${CREDIT_SIZE[i]};line-height:1;color:${CREDIT_NAME[i]}`)}>{game.name}</span>
+      <span style={css(`font-family:'Bodoni Moda',serif;font-size:${CREDIT_SIZE[i]};line-height:1;color:${CREDIT_HOURS[i]}`)}>{game.hours}</span>
+    </div>
+  );
+}
+
+function RecentSlide({ game, index }: { game: RecentGame; index: number }) {
+  const caption = (
+    <span style={css(`position:absolute;left:14px;bottom:10px;font-family:ui-monospace,Menlo,monospace;font-size:10px;color:rgba(241,240,238,.28)`)}>{game.caption}</span>
+  );
+  if (index === 1) {
+    return (
+      <article style={css(`position:relative;width:80vw;height:100%;flex:none;display:flex;align-items:center;justify-content:center`)}>
+        <div style={css(`position:absolute;inset:20vh clamp(16px,3vw,48px) 10vh;transform:translate3d(calc(var(--p)*7vw),0,0);background:repeating-linear-gradient(96deg,rgba(255,255,255,.05) 0 2px,rgba(255,255,255,0) 2px 12px),linear-gradient(184deg,#4e4e4e 0%,#242424 56%,#080808 100%);box-shadow:inset 0 0 160px rgba(0,0,0,.6)`)}>{caption}</div>
+        <div style={css(`position:relative;z-index:2;width:100%;padding:0 clamp(24px,5vw,80px);display:flex;justify-content:space-between;align-items:flex-start;gap:32px;transform:translate3d(calc(var(--p)*22vw),0,0)`)}>
+          <div style={css(`max-width:26ch;font-size:13px;line-height:1.6;color:rgba(241,240,238,.5)`)}>{game.meta}</div>
+          <h3 style={css(`margin:0;text-align:right;font-family:'Bodoni Moda',serif;font-weight:400;font-style:italic;font-size:clamp(40px,6.4vw,120px);line-height:.88;color:#f6f5f3`)}>
+            {game.name}
+            <span style={css(`display:block;font-style:normal;font-family:'Archivo',sans-serif;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:rgba(241,240,238,.42);margin-top:14px`)}>{game.hours}</span>
+          </h3>
+        </div>
+      </article>
+    );
+  }
+  if (index === 2) {
+    return (
+      <article style={css(`position:relative;width:80vw;height:100%;flex:none;display:flex;align-items:flex-end;justify-content:center`)}>
+        <div style={css(`position:absolute;inset:8vh clamp(60px,12vw,220px) 22vh clamp(16px,3vw,48px);transform:translate3d(calc(var(--p)*-6vw),0,0);background:repeating-linear-gradient(108deg,rgba(255,255,255,.05) 0 2px,rgba(255,255,255,0) 2px 12px),linear-gradient(160deg,#c6c6c6 0%,#4a4a4a 50%,#0a0a0a 100%);box-shadow:inset 0 0 160px rgba(0,0,0,.66)`)}>
+          <span style={css(`position:absolute;left:14px;bottom:10px;font-family:ui-monospace,Menlo,monospace;font-size:10px;color:rgba(20,20,20,.5)`)}>{game.caption}</span>
+        </div>
+        <div style={css(`position:relative;z-index:2;width:100%;padding:0 clamp(24px,5vw,80px) clamp(26px,7vh,80px);transform:translate3d(calc(var(--p)*26vw),0,0)`)}>
+          <h3 style={css(`margin:0;font-family:'Bodoni Moda',serif;font-weight:400;font-size:clamp(44px,7.2vw,138px);line-height:.86;letter-spacing:-.02em;color:#f6f5f3`)}>{game.name}</h3>
+          <div style={css(`margin-top:12px;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:rgba(241,240,238,.44)`)}>{game.hours} · {game.meta}</div>
+        </div>
+      </article>
+    );
+  }
+  if (index === 3) {
+    return (
+      <article style={css(`position:relative;width:80vw;height:100%;flex:none;display:flex;align-items:center;justify-content:center`)}>
+        <div style={css(`position:absolute;inset:16vh clamp(16px,3vw,48px);transform:translate3d(calc(var(--p)*10vw),0,0) scale(calc(1.1 - var(--p)*.1));background:repeating-linear-gradient(92deg,rgba(255,255,255,.05) 0 2px,rgba(255,255,255,0) 2px 12px),linear-gradient(200deg,#5f5f5f 0%,#1d1d1d 52%,#070707 100%);box-shadow:inset 0 0 170px rgba(0,0,0,.6)`)}>{caption}</div>
+        <div style={css(`position:relative;z-index:2;text-align:center;padding:0 clamp(24px,5vw,80px);transform:translate3d(calc(var(--p)*18vw),0,0)`)}>
+          <h3 style={css(`margin:0;font-family:'Bodoni Moda',serif;font-weight:400;font-size:clamp(42px,6.8vw,128px);line-height:.88;color:#f6f5f3`)}>{game.name}</h3>
+          <div style={css(`margin-top:16px;font-size:13px;line-height:1.6;color:rgba(241,240,238,.5)`)}>{game.hours} · {game.meta}</div>
+        </div>
+      </article>
+    );
+  }
+  if (index >= 4) {
+    const [first, ...rest] = game.name.split(" ");
+    const second = rest.join(" ");
+    return (
+      <article style={css(`position:relative;width:80vw;height:100%;flex:none;display:flex;align-items:center;justify-content:flex-start`)}>
+        <div style={css(`position:absolute;inset:12vh clamp(16px,3vw,48px) 12vh 34vw;transform:translate3d(calc(var(--p)*-8vw),0,0);background:repeating-linear-gradient(116deg,rgba(255,255,255,.05) 0 2px,rgba(255,255,255,0) 2px 12px),linear-gradient(176deg,#7d7d7d 0%,#2c2c2c 54%,#0a0a0a 100%);box-shadow:inset 0 0 150px rgba(0,0,0,.6)`)}>{caption}</div>
+        <div style={css(`position:relative;z-index:2;padding:0 clamp(24px,5vw,80px);max-width:44vw;transform:translate3d(calc(var(--p)*14vw),0,0)`)}>
+          <h3 style={css(`margin:0;font-family:'Bodoni Moda',serif;font-weight:400;font-size:clamp(38px,5.6vw,104px);line-height:.9;color:#f6f5f3`)}>
+            {first}
+            {second ? (
+              <>
+                <br />
+                <span style={css(`font-style:italic`)}>{second}</span>
+              </>
+            ) : null}
+          </h3>
+          <div style={css(`margin-top:18px;font-size:13px;line-height:1.6;color:rgba(241,240,238,.52);max-width:30ch`)}>{game.hours} · {game.meta}</div>
+        </div>
+      </article>
+    );
+  }
+  return (
+    <article style={css(`position:relative;width:80vw;height:100%;flex:none;display:flex;align-items:center;justify-content:center`)}>
+      <div style={css(`position:absolute;inset:14vh clamp(16px,3vw,48px);transform:translate3d(calc(var(--p)*-9vw),0,0) scale(calc(1 + var(--p)*.12));background:repeating-linear-gradient(100deg,rgba(255,255,255,.055) 0 2px,rgba(255,255,255,0) 2px 12px),linear-gradient(168deg,#9b9b9b 0%,#3a3a3a 54%,#0d0d0d 100%);box-shadow:inset 0 0 160px rgba(0,0,0,.62)`)}>{caption}</div>
+      <div style={css(`position:relative;z-index:2;width:100%;padding:0 clamp(24px,5vw,80px);display:flex;justify-content:space-between;align-items:flex-end;gap:32px;transform:translate3d(calc(var(--p)*30vw),0,0)`)}>
+        <h3 style={css(`margin:0;font-family:'Bodoni Moda',serif;font-weight:400;font-size:clamp(40px,6.4vw,120px);line-height:.88;letter-spacing:-.02em;color:#f6f5f3`)}>{game.name}</h3>
+        <div style={css(`text-align:right;flex:none`)}>
+          <div style={css(`font-family:'Bodoni Moda',serif;font-size:clamp(30px,3.4vw,58px);line-height:1;color:#f6f5f3`)}>{game.hours}</div>
+          <div style={css(`font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:rgba(241,240,238,.42);margin-top:6px`)}>{game.meta}</div>
+        </div>
+      </div>
+    </article>
+  );
+}
+
+export function Archive({ rootRef, tsLabel, copyTs, live }: ArchiveProps) {
   return (
     <div ref={rootRef} style={css(`position:relative;background:#090909;overflow-x:clip;font-family:'Archivo',system-ui,sans-serif`)}>
 
@@ -46,15 +175,23 @@ export function Archive({ rootRef, tsLabel, copyTs }: ArchiveProps) {
   <section data-scene="now" data-chapter="now" data-static="0.6" style={css(`--p:0;--s:0;position:relative;z-index:1;height:250vh`)}>
     <div data-sticky="" style={css(`position:sticky;top:0;height:100vh;overflow:hidden`)}>
       <div style={css(`position:absolute;top:9vh;right:0;width:min(64vw,940px);height:82vh;clip-path:inset(calc(28% - var(--p)*28%) 0 calc(28% - var(--p)*28%) 0);filter:invert(var(--s,0)) contrast(calc(1 + var(--s,0)*.4));transform:scale(calc(1.16 - var(--p)*.16)) translate3d(calc(var(--mx,0)*12px),calc(var(--my,0)*9px),0);background:repeating-linear-gradient(105deg,rgba(255,255,255,.06) 0 2px,rgba(255,255,255,0) 2px 12px),linear-gradient(196deg,#a4a4a4 0%,#404040 46%,#0e0e0e 100%);box-shadow:inset 0 0 200px rgba(0,0,0,.62)`)}>
-        <span style={css(`position:absolute;left:16px;bottom:12px;font-family:ui-monospace,Menlo,monospace;font-size:10px;letter-spacing:.08em;color:rgba(241,240,238,.32)`)}>artwork / elden ring — shadow of the erdtree</span>
+        <span style={css(`position:absolute;left:16px;bottom:12px;font-family:ui-monospace,Menlo,monospace;font-size:10px;letter-spacing:.08em;color:rgba(241,240,238,.32)`)}>{live.nowCaption}</span>
       </div>
       <div style={css(`position:absolute;left:clamp(20px,4.5vw,72px);top:22vh;z-index:2;max-width:min(58vw,760px);transform:translate3d(0,calc((1 - var(--p))*9vh),0);opacity:calc(.15 + var(--p)*1.5)`)}>
-        <div style={css(`font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:#f6f5f3;display:flex;align-items:center;gap:10px`)}><span style={css(`width:7px;height:7px;border-radius:50%;background:#f6f5f3;display:inline-block`)}></span>сейчас в игре</div>
-        <h2 style={css(`margin:14px 0 0;font-family:'Bodoni Moda',serif;font-weight:400;font-size:clamp(46px,7.4vw,138px);line-height:.86;letter-spacing:-.025em;color:#f6f5f3`)}>Elden&nbsp;Ring<br /><span style={css(`font-style:italic;color:rgba(246,245,243,.66)`)}>Shadow of the Erdtree</span></h2>
+        <div style={css(`font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:#f6f5f3;display:flex;align-items:center;gap:10px`)}><span style={css(`width:7px;height:7px;border-radius:50%;background:#f6f5f3;display:inline-block`)}></span>{live.nowLabel}</div>
+        <h2 style={css(`margin:14px 0 0;font-family:'Bodoni Moda',serif;font-weight:400;font-size:clamp(46px,7.4vw,138px);line-height:.86;letter-spacing:-.025em;color:#f6f5f3`)}>
+          {live.nowName}
+          {live.nowSub ? (
+            <>
+              <br />
+              <span style={css(`font-style:italic;color:rgba(246,245,243,.66)`)}>{live.nowSub}</span>
+            </>
+          ) : null}
+        </h2>
       </div>
       <div style={css(`position:absolute;left:clamp(20px,4.5vw,72px);bottom:clamp(28px,7vh,72px);z-index:2;display:flex;flex-wrap:wrap;align-items:flex-end;gap:clamp(20px,4vw,64px);transform:translate3d(calc((1 - var(--p))*-4vw),0,0);opacity:calc(var(--p)*1.4 - .2)`)}>
-        <div><div style={css(`font-family:'Bodoni Moda',serif;font-size:clamp(52px,7vw,104px);line-height:.8;color:#f6f5f3`)}>41</div><div style={css(`font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:rgba(241,240,238,.45);margin-top:8px`)}>час за месяц</div></div>
-        <div style={css(`font-size:13px;line-height:1.6;color:rgba(241,240,238,.52);max-width:34ch`)}>PC · Steam. Хожу медленно, читаю описания предметов, дважды заблудился в Аббатстве. Это не спешка — это отпуск.</div>
+        <div><div style={css(`font-family:'Bodoni Moda',serif;font-size:clamp(52px,7vw,104px);line-height:.8;color:#f6f5f3`)}>{live.monthHours}</div><div style={css(`font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:rgba(241,240,238,.45);margin-top:8px`)}>{hoursWord(live.monthHours)} за две недели</div></div>
+        <div style={css(`font-size:13px;line-height:1.6;color:rgba(241,240,238,.52);max-width:34ch`)}>PC · Steam. Часы за последние две недели по двум аккаунтам.</div>
       </div>
     </div>
   </section>
@@ -64,46 +201,9 @@ export function Archive({ rootRef, tsLabel, copyTs }: ArchiveProps) {
       <div style={css(`position:absolute;top:clamp(22px,4vh,44px);left:clamp(20px,4.5vw,72px);z-index:3;font-family:'Bodoni Moda',serif;font-style:italic;font-size:clamp(15px,1.5vw,22px);color:rgba(241,240,238,.5)`)}>последние две недели</div>
       <div style={css(`position:absolute;left:clamp(20px,4.5vw,72px);right:clamp(20px,4.5vw,72px);bottom:clamp(22px,4vh,40px);height:1px;background:rgba(241,240,238,.14);z-index:3`)}><div style={css(`position:absolute;left:0;top:-1px;height:3px;background:#f6f5f3;width:calc(var(--p)*100%)`)}></div></div>
       <div data-track="" style={css(`position:absolute;top:0;left:0;height:100%;display:flex;width:400vw;transform:translate3d(calc(var(--p)*-300vw),0,0);will-change:transform`)}>
-
-        <article style={css(`position:relative;width:80vw;height:100%;flex:none;display:flex;align-items:center;justify-content:center`)}>
-          <div style={css(`position:absolute;inset:14vh clamp(16px,3vw,48px);transform:translate3d(calc(var(--p)*-9vw),0,0) scale(calc(1 + var(--p)*.12));background:repeating-linear-gradient(100deg,rgba(255,255,255,.055) 0 2px,rgba(255,255,255,0) 2px 12px),linear-gradient(168deg,#9b9b9b 0%,#3a3a3a 54%,#0d0d0d 100%);box-shadow:inset 0 0 160px rgba(0,0,0,.62)`)}><span style={css(`position:absolute;left:14px;bottom:10px;font-family:ui-monospace,Menlo,monospace;font-size:10px;color:rgba(241,240,238,.28)`)}>artwork / elden ring</span></div>
-          <div style={css(`position:relative;z-index:2;width:100%;padding:0 clamp(24px,5vw,80px);display:flex;justify-content:space-between;align-items:flex-end;gap:32px;transform:translate3d(calc(var(--p)*30vw),0,0)`)}>
-            <h3 style={css(`margin:0;font-family:'Bodoni Moda',serif;font-weight:400;font-size:clamp(40px,6.4vw,120px);line-height:.88;letter-spacing:-.02em;color:#f6f5f3`)}>Elden Ring</h3>
-            <div style={css(`text-align:right;flex:none`)}><div style={css(`font-family:'Bodoni Moda',serif;font-size:clamp(30px,3.4vw,58px);line-height:1;color:#f6f5f3`)}>41 ч</div><div style={css(`font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:rgba(241,240,238,.42);margin-top:6px`)}>вчера · PC</div></div>
-          </div>
-        </article>
-
-        <article style={css(`position:relative;width:80vw;height:100%;flex:none;display:flex;align-items:center;justify-content:center`)}>
-          <div style={css(`position:absolute;inset:20vh clamp(16px,3vw,48px) 10vh;transform:translate3d(calc(var(--p)*7vw),0,0);background:repeating-linear-gradient(96deg,rgba(255,255,255,.05) 0 2px,rgba(255,255,255,0) 2px 12px),linear-gradient(184deg,#4e4e4e 0%,#242424 56%,#080808 100%);box-shadow:inset 0 0 160px rgba(0,0,0,.6)`)}><span style={css(`position:absolute;left:14px;bottom:10px;font-family:ui-monospace,Menlo,monospace;font-size:10px;color:rgba(241,240,238,.28)`)}>artwork / rain world</span></div>
-          <div style={css(`position:relative;z-index:2;width:100%;padding:0 clamp(24px,5vw,80px);display:flex;justify-content:space-between;align-items:flex-start;gap:32px;transform:translate3d(calc(var(--p)*22vw),0,0)`)}>
-            <div style={css(`max-width:26ch;font-size:13px;line-height:1.6;color:rgba(241,240,238,.5)`)}>Мир, которому на меня плевать. Из всего, во что я играл в этом году, — самое честное.</div>
-            <h3 style={css(`margin:0;text-align:right;font-family:'Bodoni Moda',serif;font-weight:400;font-style:italic;font-size:clamp(40px,6.4vw,120px);line-height:.88;color:#f6f5f3`)}>Rain World<span style={css(`display:block;font-style:normal;font-family:'Archivo',sans-serif;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:rgba(241,240,238,.42);margin-top:14px`)}>27 ч · четыре дня назад · PC</span></h3>
-          </div>
-        </article>
-
-        <article style={css(`position:relative;width:80vw;height:100%;flex:none;display:flex;align-items:flex-end;justify-content:center`)}>
-          <div style={css(`position:absolute;inset:8vh clamp(60px,12vw,220px) 22vh clamp(16px,3vw,48px);transform:translate3d(calc(var(--p)*-6vw),0,0);background:repeating-linear-gradient(108deg,rgba(255,255,255,.05) 0 2px,rgba(255,255,255,0) 2px 12px),linear-gradient(160deg,#c6c6c6 0%,#4a4a4a 50%,#0a0a0a 100%);box-shadow:inset 0 0 160px rgba(0,0,0,.66)`)}><span style={css(`position:absolute;left:14px;bottom:10px;font-family:ui-monospace,Menlo,monospace;font-size:10px;color:rgba(20,20,20,.5)`)}>artwork / bloodborne</span></div>
-          <div style={css(`position:relative;z-index:2;width:100%;padding:0 clamp(24px,5vw,80px) clamp(26px,7vh,80px);transform:translate3d(calc(var(--p)*26vw),0,0)`)}>
-            <h3 style={css(`margin:0;font-family:'Bodoni Moda',serif;font-weight:400;font-size:clamp(44px,7.2vw,138px);line-height:.86;letter-spacing:-.02em;color:#f6f5f3`)}>Bloodborne</h3>
-            <div style={css(`margin-top:12px;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:rgba(241,240,238,.44)`)}>18 ч · PS5 · четвёртое прохождение</div>
-          </div>
-        </article>
-
-        <article style={css(`position:relative;width:80vw;height:100%;flex:none;display:flex;align-items:center;justify-content:center`)}>
-          <div style={css(`position:absolute;inset:16vh clamp(16px,3vw,48px);transform:translate3d(calc(var(--p)*10vw),0,0) scale(calc(1.1 - var(--p)*.1));background:repeating-linear-gradient(92deg,rgba(255,255,255,.05) 0 2px,rgba(255,255,255,0) 2px 12px),linear-gradient(200deg,#5f5f5f 0%,#1d1d1d 52%,#070707 100%);box-shadow:inset 0 0 170px rgba(0,0,0,.6)`)}><span style={css(`position:absolute;left:14px;bottom:10px;font-family:ui-monospace,Menlo,monospace;font-size:10px;color:rgba(241,240,238,.28)`)}>artwork / outer wilds</span></div>
-          <div style={css(`position:relative;z-index:2;text-align:center;padding:0 clamp(24px,5vw,80px);transform:translate3d(calc(var(--p)*18vw),0,0)`)}>
-            <h3 style={css(`margin:0;font-family:'Bodoni Moda',serif;font-weight:400;font-size:clamp(42px,6.8vw,128px);line-height:.88;color:#f6f5f3`)}>Outer Wilds</h3>
-            <div style={css(`margin-top:16px;font-size:13px;line-height:1.6;color:rgba(241,240,238,.5)`)}>22 минуты до конца света, и так двадцать два часа подряд.</div>
-          </div>
-        </article>
-
-        <article style={css(`position:relative;width:80vw;height:100%;flex:none;display:flex;align-items:center;justify-content:flex-start`)}>
-          <div style={css(`position:absolute;inset:12vh clamp(16px,3vw,48px) 12vh 34vw;transform:translate3d(calc(var(--p)*-8vw),0,0);background:repeating-linear-gradient(116deg,rgba(255,255,255,.05) 0 2px,rgba(255,255,255,0) 2px 12px),linear-gradient(176deg,#7d7d7d 0%,#2c2c2c 54%,#0a0a0a 100%);box-shadow:inset 0 0 150px rgba(0,0,0,.6)`)}><span style={css(`position:absolute;left:14px;bottom:10px;font-family:ui-monospace,Menlo,monospace;font-size:10px;color:rgba(241,240,238,.28)`)}>artwork / disco elysium</span></div>
-          <div style={css(`position:relative;z-index:2;padding:0 clamp(24px,5vw,80px);max-width:44vw;transform:translate3d(calc(var(--p)*14vw),0,0)`)}>
-            <h3 style={css(`margin:0;font-family:'Bodoni Moda',serif;font-weight:400;font-size:clamp(38px,5.6vw,104px);line-height:.9;color:#f6f5f3`)}>Disco<br /><span style={css(`font-style:italic`)}>Elysium</span></h3>
-            <div style={css(`margin-top:18px;font-size:13px;line-height:1.6;color:rgba(241,240,238,.52);max-width:30ch`)}>Перечитываю как книгу. 96 часов, и до сих пор не проходил трезвым копом.</div>
-          </div>
-        </article>
+        {live.recents.map((game, index) => (
+          <RecentSlide key={`${game.name}-${index}`} game={game} index={index} />
+        ))}
 
       </div>
     </div>
@@ -121,11 +221,11 @@ export function Archive({ rootRef, tsLabel, copyTs }: ArchiveProps) {
   <section data-scene="steam" data-chapter="steam" data-static="0.5" style={css(`--p:0;position:relative;z-index:1;height:270vh`)}>
     <div data-sticky="" style={css(`position:sticky;top:0;height:100vh;overflow:hidden;display:flex;align-items:center`)}>
       <div style={css(`position:relative;width:100%;padding:0 clamp(20px,4.5vw,72px)`)}>
-        <div data-count="2450" style={css(`font-family:'Bodoni Moda',serif;font-size:clamp(120px,27vw,420px);line-height:.74;letter-spacing:-.05em;color:#f6f5f3;font-variant-numeric:tabular-nums;transform:translate3d(calc(var(--p)*-7vw),0,0)`)}>2450</div>
+        <div data-count={String(live.steamHours)} style={css(`font-family:'Bodoni Moda',serif;font-size:clamp(120px,27vw,420px);line-height:.74;letter-spacing:-.05em;color:#f6f5f3;font-variant-numeric:tabular-nums;transform:translate3d(calc(var(--p)*-7vw),0,0)`)}>{live.steamHours}</div>
         <div style={css(`display:flex;flex-wrap:wrap;gap:clamp(20px,5vw,90px);align-items:flex-start;margin-top:clamp(14px,2.4vh,28px);transform:translate3d(calc(var(--p)*9vw),0,0)`)}>
-          <div style={css(`font-family:'Bodoni Moda',serif;font-style:italic;font-size:clamp(26px,3.4vw,60px);line-height:1;color:rgba(246,245,243,.82)`)}>часов в Dota&nbsp;2</div>
-          <div style={css(`max-width:36ch;font-size:13px;line-height:1.65;color:rgba(241,240,238,.5)`)}>Больше, чем в любой другой игре, и я не уверен, что горжусь этим. Зато знаю, как выглядит дружба, разложенная на пять ролей.</div>
-          <div style={css(`font-size:12px;line-height:2;letter-spacing:.06em;color:rgba(241,240,238,.42)`)}>steam · ankuzo<br />уровень 47 · 312 игр</div>
+          <div style={css(`font-family:'Bodoni Moda',serif;font-style:italic;font-size:clamp(26px,3.4vw,60px);line-height:1;color:rgba(246,245,243,.82)`)}>{hoursWord(live.steamHours)} на Steam</div>
+          <div style={css(`max-width:36ch;font-size:13px;line-height:1.65;color:rgba(241,240,238,.5)`)}>Сумма двух аккаунтов. Больше всего времени — в {live.topGame}.</div>
+          <div style={css(`font-size:12px;line-height:2;letter-spacing:.06em;color:rgba(241,240,238,.42)`)}>steam · {live.steamAccounts}<br />{live.steamGames} игр</div>
         </div>
       </div>
     </div>
@@ -134,12 +234,9 @@ export function Archive({ rootRef, tsLabel, copyTs }: ArchiveProps) {
   <section data-scene="credits" data-chapter="steam" data-static="1" style={css(`--p:0;position:relative;z-index:1;padding:14vh clamp(20px,4.5vw,72px) 22vh`)}>
     <div style={css(`font-family:'Bodoni Moda',serif;font-style:italic;font-size:clamp(16px,1.7vw,26px);color:rgba(241,240,238,.5);margin-bottom:clamp(28px,6vh,72px)`)}>всё, что осталось в часах</div>
     <div style={css(`display:flex;flex-direction:column`)}>
-      <div style={css(`display:flex;align-items:baseline;justify-content:space-between;gap:24px;padding:clamp(14px,2.4vh,26px) 0;border-top:1px solid rgba(241,240,238,.16);transform:translate3d(calc((1 - var(--p))*-8vw),0,0)`)}><span style={css(`font-family:'Bodoni Moda',serif;font-size:clamp(26px,3.6vw,60px);line-height:1;color:#f6f5f3`)}>Dota 2</span><span style={css(`font-family:'Bodoni Moda',serif;font-size:clamp(26px,3.6vw,60px);line-height:1;color:rgba(246,245,243,.92)`)}>2450</span></div>
-      <div style={css(`display:flex;align-items:baseline;justify-content:space-between;gap:24px;padding:clamp(14px,2.4vh,26px) 0 clamp(14px,2.4vh,26px) clamp(0px,6vw,120px);border-top:1px solid rgba(241,240,238,.16);transform:translate3d(calc((1 - var(--p))*7vw),0,0)`)}><span style={css(`font-family:'Bodoni Moda',serif;font-size:clamp(24px,3.2vw,52px);line-height:1;color:#f6f5f3`)}>Red Dead Redemption 2</span><span style={css(`font-family:'Bodoni Moda',serif;font-size:clamp(24px,3.2vw,52px);line-height:1;color:rgba(246,245,243,.86)`)}>412</span></div>
-      <div style={css(`display:flex;align-items:baseline;justify-content:space-between;gap:24px;padding:clamp(14px,2.4vh,26px) 0;border-top:1px solid rgba(241,240,238,.16);transform:translate3d(calc((1 - var(--p))*-6vw),0,0)`)}><span style={css(`font-family:'Bodoni Moda',serif;font-size:clamp(22px,2.9vw,46px);line-height:1;color:#f6f5f3`)}>Elden Ring</span><span style={css(`font-family:'Bodoni Moda',serif;font-size:clamp(22px,2.9vw,46px);line-height:1;color:rgba(246,245,243,.82)`)}>388</span></div>
-      <div style={css(`display:flex;align-items:baseline;justify-content:space-between;gap:24px;padding:clamp(14px,2.4vh,26px) 0 clamp(14px,2.4vh,26px) clamp(0px,10vw,200px);border-top:1px solid rgba(241,240,238,.16);transform:translate3d(calc((1 - var(--p))*5vw),0,0)`)}><span style={css(`font-family:'Bodoni Moda',serif;font-size:clamp(20px,2.5vw,40px);line-height:1;color:rgba(246,245,243,.92)`)}>Kenshi</span><span style={css(`font-family:'Bodoni Moda',serif;font-size:clamp(20px,2.5vw,40px);line-height:1;color:rgba(246,245,243,.78)`)}>214</span></div>
-      <div style={css(`display:flex;align-items:baseline;justify-content:space-between;gap:24px;padding:clamp(14px,2.4vh,26px) 0;border-top:1px solid rgba(241,240,238,.16);transform:translate3d(calc((1 - var(--p))*-4vw),0,0)`)}><span style={css(`font-family:'Bodoni Moda',serif;font-size:clamp(18px,2.1vw,34px);line-height:1;color:rgba(246,245,243,.86)`)}>Disco Elysium</span><span style={css(`font-family:'Bodoni Moda',serif;font-size:clamp(18px,2.1vw,34px);line-height:1;color:rgba(246,245,243,.72)`)}>96</span></div>
-      <div style={css(`display:flex;align-items:baseline;justify-content:space-between;gap:24px;padding:clamp(14px,2.4vh,26px) 0 clamp(14px,2.4vh,26px) clamp(0px,14vw,280px);border-top:1px solid rgba(241,240,238,.16);border-bottom:1px solid rgba(241,240,238,.16);transform:translate3d(calc((1 - var(--p))*3vw),0,0)`)}><span style={css(`font-family:'Bodoni Moda',serif;font-size:clamp(17px,1.9vw,30px);line-height:1;color:rgba(246,245,243,.8)`)}>Outer Wilds</span><span style={css(`font-family:'Bodoni Moda',serif;font-size:clamp(17px,1.9vw,30px);line-height:1;color:rgba(246,245,243,.66)`)}>41</span></div>
+      {live.credits.map((game, index) => (
+        <CreditRow key={game.name} game={game} index={index} last={index === live.credits.length - 1} />
+      ))}
     </div>
   </section>
 
@@ -162,9 +259,9 @@ export function Archive({ rootRef, tsLabel, copyTs }: ArchiveProps) {
     </div>
 
     <div style={css(`display:flex;flex-wrap:wrap;align-items:flex-end;gap:clamp(24px,6vw,110px);padding:16vh clamp(20px,4.5vw,72px) 0`)}>
-      <div><div style={css(`font-family:'Bodoni Moda',serif;font-size:clamp(72px,13vw,220px);line-height:.78;letter-spacing:-.03em;color:#f6f5f3`)}>2184</div><div style={css(`margin-top:12px;font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:rgba(241,240,238,.45)`)}>трофея</div></div>
-      <div><div style={css(`font-family:'Bodoni Moda',serif;font-size:clamp(40px,6vw,96px);line-height:.82;color:rgba(246,245,243,.86)`)}>19</div><div style={css(`margin-top:10px;font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:rgba(241,240,238,.4)`)}>платин</div></div>
-      <div style={css(`font-size:12px;line-height:2;letter-spacing:.06em;color:rgba(241,240,238,.42)`)}>psn · ankuzo<br />уровень 214<br />God of War Ragnarök — 94%</div>
+      <div><div style={css(`font-family:'Bodoni Moda',serif;font-size:clamp(72px,13vw,220px);line-height:.78;letter-spacing:-.03em;color:#f6f5f3`)}>{live.psnTotal}</div><div style={css(`margin-top:12px;font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:rgba(241,240,238,.45)`)}>трофея</div></div>
+      <div><div style={css(`font-family:'Bodoni Moda',serif;font-size:clamp(40px,6vw,96px);line-height:.82;color:rgba(246,245,243,.86)`)}>{live.psnPlatinum}</div><div style={css(`margin-top:10px;font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:rgba(241,240,238,.4)`)}>платин</div></div>
+      <div style={css(`font-size:12px;line-height:2;letter-spacing:.06em;color:rgba(241,240,238,.42)`)}>psn · {live.psnId}<br />уровень {live.psnLevel}{live.psnHighlight ? <><br />{live.psnHighlight}</> : null}</div>
     </div>
   </section>
 
@@ -174,10 +271,15 @@ export function Archive({ rootRef, tsLabel, copyTs }: ArchiveProps) {
       <div style={css(`position:absolute;inset:0;display:flex;align-items:center;padding:0 clamp(20px,4.5vw,72px);opacity:calc(var(--p)*2.6 - .5)`)}>
         <div style={css(`max-width:min(52ch,86vw);margin-left:clamp(0px,8vw,180px)`)}>
           <div style={css(`display:flex;align-items:center;gap:20px`)}>
-            <div style={css(`position:relative;width:76px;height:76px;flex:none;border-radius:50%;background:repeating-linear-gradient(120deg,rgba(0,0,0,.07) 0 2px,rgba(0,0,0,0) 2px 9px),linear-gradient(150deg,#c9c8c5,#8c8b88)`)}><span style={css(`position:absolute;left:0;right:0;bottom:-18px;text-align:center;font-family:ui-monospace,Menlo,monospace;font-size:9px;color:rgba(11,11,11,.4)`)}>avatar</span></div>
+            <div style={css(`position:relative;width:76px;height:76px;flex:none`)}>
+              <div style={css(`width:76px;height:76px;border-radius:50%;overflow:hidden;background:repeating-linear-gradient(120deg,rgba(0,0,0,.07) 0 2px,rgba(0,0,0,0) 2px 9px),linear-gradient(150deg,#c9c8c5,#8c8b88)`)}>
+                {live.discordAvatar ? <img src={live.discordAvatar} alt="" width={76} height={76} style={{ width: "100%", height: "100%", objectFit: "cover" }} /> : null}
+              </div>
+              <span style={css(`position:absolute;left:0;right:0;bottom:-18px;text-align:center;font-family:ui-monospace,Menlo,monospace;font-size:9px;color:rgba(11,11,11,.4)`)}>avatar</span>
+            </div>
             <div>
-              <div style={css(`font-family:'Bodoni Moda',serif;font-size:clamp(28px,3.4vw,54px);line-height:1;color:#0b0b0b`)}>ankuzo</div>
-              <div style={css(`margin-top:8px;display:flex;align-items:center;gap:9px;font-size:12px;letter-spacing:.1em;color:rgba(11,11,11,.6)`)}><span style={css(`width:7px;height:7px;border-radius:50%;background:#0b0b0b;display:inline-block`)}></span>в голосовом · 3 часа</div>
+              <div style={css(`font-family:'Bodoni Moda',serif;font-size:clamp(28px,3.4vw,54px);line-height:1;color:#0b0b0b`)}>{live.discordName}</div>
+              <div style={css(`margin-top:8px;display:flex;align-items:center;gap:9px;font-size:12px;letter-spacing:.1em;color:rgba(11,11,11,.6)`)}><span style={css(`width:7px;height:7px;border-radius:50%;background:#0b0b0b;display:inline-block`)}></span>{live.discordStatus}</div>
             </div>
           </div>
           <p style={css(`margin:clamp(28px,6vh,64px) 0 0;font-family:'Bodoni Moda',serif;font-size:clamp(20px,2.4vw,38px);line-height:1.28;color:#0b0b0b`)}>За всеми числами выше — один человек, который чаще всего просто сидит в канале и слушает, как играют другие.</p>

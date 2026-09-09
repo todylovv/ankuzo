@@ -1,0 +1,20 @@
+{
+  "updatedAt": "2026-09-09T10:06:36.414Z",
+  "lastSuccessfulAt": "2026-09-09T10:06:36.414Z",
+  "lastAttemptAt": "2026-09-09T10:06:36.414Z",
+  "source": "api",
+  "status": "available",
+  "username": "ankuz0",
+  "displayName": "Interpretation of Youngness",
+  "bio": "Discord — основной канал связи.",
+  "presence": "offline",
+  "avatarUrl": "https://cdn.discordapp.com/avatars/514852654552186880/bb8378990f84fc297b76327ca079be8a.webp?size=256",
+  "bannerUrl": "https://cdn.discordapp.com/banners/514852654552186880/50331f5a0e57ee3bb941672d54585624.webp?size=1024",
+  "decorationUrl": "https://cdn.discordapp.com/avatar-decoration-presets/a_6f272deccc1cdebfb82a032a80af5564.png?size=512&passthrough=true",
+  "accentColor": "#6f7bf7",
+  "badges": [
+    "HOUSE_BRAVERY",
+    "NITRO",
+    "Discord Nameplate"
+  ]
+}

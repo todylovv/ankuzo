@@ -6,6 +6,7 @@ type ArchiveMotionOptions = {
   motion?: Motion;
   cursorDepth?: boolean;
   grain?: boolean;
+  steamHours?: number;
 };
 
 export function useArchiveMotion(
@@ -15,6 +16,7 @@ export function useArchiveMotion(
   const motion = options.motion ?? "full";
   const cursorDepth = options.cursorDepth ?? true;
   const grain = options.grain ?? true;
+  const steamHours = options.steamHours ?? 0;
   const [copied, setCopied] = useState(false);
   const copyTimer = useRef<number>(0);
 
@@ -107,7 +109,7 @@ export function useArchiveMotion(
         if (name === "steam" && counter) {
           const t = Math.min(1, p / 0.45);
           const e = 1 - Math.pow(1 - t, 3);
-          const v = Math.round(e * 2450);
+          const v = Math.round(e * steamHours);
           if (v !== countValue) {
             countValue = v;
             counter.textContent = String(v);
@@ -172,7 +174,7 @@ export function useArchiveMotion(
       removeEventListener("pointermove", onMove);
       io?.disconnect();
     };
-  }, [motion, cursorDepth, grain, rootRef]);
+  }, [motion, cursorDepth, grain, rootRef, steamHours]);
 
   const copyTs = () => {
     const done = () => {
