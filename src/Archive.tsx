@@ -36,9 +36,8 @@ export function Archive({ rootRef, tsLabel, copyTs }: ArchiveProps) {
       <div style={css(`position:absolute;left:50%;top:50%;transform:translate3d(calc(-50% - var(--p)*40vw),-50%,0) scale(calc(1 + var(--p)*.7));opacity:calc(1 - var(--p)*.9);font-family:'Bodoni Moda',serif;font-size:clamp(88px,21vw,320px);line-height:.78;letter-spacing:-.035em;color:#f6f5f3;white-space:nowrap;clip-path:inset(0 50% 0 0)`)}>ankuzo</div>
       <div style={css(`position:absolute;left:50%;top:50%;transform:translate3d(calc(-50% + var(--p)*40vw),-50%,0) scale(calc(1 + var(--p)*.7));opacity:calc(1 - var(--p)*.9);font-family:'Bodoni Moda',serif;font-size:clamp(88px,21vw,320px);line-height:.78;letter-spacing:-.035em;color:#f6f5f3;white-space:nowrap;clip-path:inset(0 0 0 50%)`)}>ankuzo</div>
       <p style={css(`position:absolute;left:50%;top:calc(50% + clamp(52px,7.4vw,120px));margin:0;transform:translate3d(-50%,calc(var(--p)*-6vh),0);opacity:calc(1 - var(--p)*2.4);font-family:'Bodoni Moda',serif;font-style:italic;font-size:clamp(15px,1.6vw,24px);color:rgba(241,240,238,.6);white-space:nowrap`)}>личный игровой архив</p>
-      <div style={css(`position:absolute;left:0;right:0;bottom:0;display:flex;justify-content:space-between;align-items:flex-end;gap:24px;padding:0 clamp(20px,4vw,56px) clamp(24px,4vh,44px);transform:translate3d(0,calc(var(--p)*8vh),0);opacity:calc(1 - var(--p)*2)`)}>
-        <div style={css(`font-size:13px;line-height:1.5;color:rgba(241,240,238,.5);max-width:38ch`)}>Илья Морозов, Москва.<br />Восемнадцать лет в чужих мирах, сведённые на одну страницу.</div>
-        <div style={css(`font-size:13px;letter-spacing:.06em;color:rgba(241,240,238,.38);text-align:right`)}>2009 — 2026</div>
+      <div style={css(`position:absolute;left:0;right:0;bottom:0;padding:0 clamp(20px,4vw,56px) clamp(24px,4vh,44px);transform:translate3d(0,calc(var(--p)*8vh),0);opacity:calc(1 - var(--p)*2)`)}>
+        <div style={css(`font-size:13px;line-height:1.5;color:rgba(241,240,238,.5);max-width:38ch`)}>Восемнадцать лет в чужих мирах, сведённые на одну страницу.</div>
       </div>
       <div style={css(`position:absolute;left:50%;bottom:clamp(70px,11vh,120px);transform:translateX(-50%);opacity:calc(.65 - var(--p)*3);font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:rgba(241,240,238,.6)`)}>пройти насквозь</div>
     </div>
@@ -126,7 +125,7 @@ export function Archive({ rootRef, tsLabel, copyTs }: ArchiveProps) {
         <div style={css(`display:flex;flex-wrap:wrap;gap:clamp(20px,5vw,90px);align-items:flex-start;margin-top:clamp(14px,2.4vh,28px);transform:translate3d(calc(var(--p)*9vw),0,0)`)}>
           <div style={css(`font-family:'Bodoni Moda',serif;font-style:italic;font-size:clamp(26px,3.4vw,60px);line-height:1;color:rgba(246,245,243,.82)`)}>часов в Dota&nbsp;2</div>
           <div style={css(`max-width:36ch;font-size:13px;line-height:1.65;color:rgba(241,240,238,.5)`)}>Больше, чем в любой другой игре, и я не уверен, что горжусь этим. Зато знаю, как выглядит дружба, разложенная на пять ролей.</div>
-          <div style={css(`font-size:12px;line-height:2;letter-spacing:.06em;color:rgba(241,240,238,.42)`)}>steam · ankuzo<br />уровень 47 · 312 игр<br />аккаунт с 2009</div>
+          <div style={css(`font-size:12px;line-height:2;letter-spacing:.06em;color:rgba(241,240,238,.42)`)}>steam · ankuzo<br />уровень 47 · 312 игр</div>
         </div>
       </div>
     </div>
@@ -153,7 +152,7 @@ export function Archive({ rootRef, tsLabel, copyTs }: ArchiveProps) {
     <div style={css(`position:relative;width:min(74vw,1080px);height:74vh;background:repeating-linear-gradient(102deg,rgba(255,255,255,.045) 0 2px,rgba(255,255,255,0) 2px 13px),linear-gradient(168deg,#b8b8b8 0%,#3c3c3c 52%,#080808 100%);box-shadow:inset 0 0 190px rgba(0,0,0,.6);filter:contrast(calc(.35 + var(--p)*1.05)) brightness(calc(1.75 - var(--p)*.85)) grayscale(1)`)}>
       <span style={css(`position:absolute;left:16px;bottom:12px;font-family:ui-monospace,Menlo,monospace;font-size:10px;color:rgba(20,20,20,.45)`)}>still / bloodborne</span>
     </div>
-    <div style={css(`display:flex;justify-content:flex-end;padding:0 clamp(20px,4.5vw,72px);margin-top:26px`)}><div style={css(`text-align:right;max-width:18ch`)}><div style={css(`font-family:'Bodoni Moda',serif;font-style:italic;font-size:clamp(22px,2.6vw,42px);line-height:1.05;color:#f6f5f3`)}>платина, 2015</div><div style={css(`margin-top:10px;font-size:12px;line-height:1.6;color:rgba(241,240,238,.5)`)}>первая и до сих пор самая тяжёлая</div></div></div>
+    <div style={css(`display:flex;justify-content:flex-end;padding:0 clamp(20px,4.5vw,72px);margin-top:26px`)}><div style={css(`text-align:right;max-width:18ch`)}><div style={css(`font-family:'Bodoni Moda',serif;font-style:italic;font-size:clamp(22px,2.6vw,42px);line-height:1.05;color:#f6f5f3`)}>платина</div><div style={css(`margin-top:10px;font-size:12px;line-height:1.6;color:rgba(241,240,238,.5)`)}>первая и до сих пор самая тяжёлая</div></div></div>
 
     <div style={css(`display:flex;justify-content:flex-end;margin-top:16vh;padding-right:clamp(20px,4.5vw,72px)`)}>
       <div style={css(`position:relative;width:min(52vw,720px);height:52vh;background:repeating-linear-gradient(88deg,rgba(255,255,255,.045) 0 2px,rgba(255,255,255,0) 2px 13px),linear-gradient(190deg,#8a8a8a 0%,#2a2a2a 54%,#070707 100%);box-shadow:inset 0 0 160px rgba(0,0,0,.6);filter:contrast(calc(.5 + var(--p)*.9)) brightness(calc(1.5 - var(--p)*.6)) grayscale(1)`)}>
@@ -182,7 +181,7 @@ export function Archive({ rootRef, tsLabel, copyTs }: ArchiveProps) {
             </div>
           </div>
           <p style={css(`margin:clamp(28px,6vh,64px) 0 0;font-family:'Bodoni Moda',serif;font-size:clamp(20px,2.4vw,38px);line-height:1.28;color:#0b0b0b`)}>За всеми числами выше — один человек, который чаще всего просто сидит в канале и слушает, как играют другие.</p>
-          <p style={css(`margin:22px 0 0;font-size:13px;line-height:1.75;color:rgba(11,11,11,.62);max-width:38ch`)}>Сервер «Погреб», шесть человек, с 2014 года. По вторникам после полуночи там почти всегда кто-то есть.</p>
+          <p style={css(`margin:22px 0 0;font-size:13px;line-height:1.75;color:rgba(11,11,11,.62);max-width:38ch`)}>Сервер «Погреб», шесть человек. По вторникам после полуночи там почти всегда кто-то есть.</p>
         </div>
       </div>
     </div>
@@ -205,8 +204,7 @@ export function Archive({ rootRef, tsLabel, copyTs }: ArchiveProps) {
 
   <section data-scene="final" data-chapter="final" data-static="0.5" style={css(`--p:0;position:relative;z-index:1;height:100vh;overflow:hidden;display:flex;flex-direction:column;justify-content:flex-end`)}>
     <div style={css(`padding:0 clamp(20px,4.5vw,72px);font-family:'Bodoni Moda',serif;font-style:italic;font-size:clamp(17px,2vw,30px);color:rgba(246,245,243,.62);margin-bottom:clamp(20px,4vh,40px)`)}>увидимся в голосовом</div>
-    <div style={css(`font-family:'Bodoni Moda',serif;font-size:clamp(110px,25vw,400px);line-height:.7;letter-spacing:-.045em;color:#f6f5f3;padding:0 clamp(20px,4.5vw,72px);margin-bottom:-.02em;transform:translate3d(0,calc(var(--p)*-2vh),0)`)}>ankuzo</div>
-    <div style={css(`display:flex;justify-content:space-between;gap:20px;padding:clamp(22px,4vh,44px) clamp(20px,4.5vw,72px);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:rgba(241,240,238,.34)`)}><span>Илья Морозов</span><span>обновлено вручную, сентябрь 2026</span></div>
+    <div style={css(`font-family:'Bodoni Moda',serif;font-size:clamp(110px,25vw,400px);line-height:.7;letter-spacing:-.045em;color:#f6f5f3;padding:0 clamp(20px,4.5vw,72px) clamp(22px,4vh,44px);margin-bottom:-.02em;transform:translate3d(0,calc(var(--p)*-2vh),0)`)}>ankuzo</div>
   </section>
 
 </div>

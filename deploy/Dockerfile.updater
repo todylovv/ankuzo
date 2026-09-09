@@ -1,0 +1,23 @@
+# Snapshot updater.
+#
+# Runs on a timer on the host and writes into the same directory the site
+# serves, so refreshed data appears without rebuilding or redeploying the app.
+# Keeping it as its own image means the runtime image stays free of the
+# updater's dependencies and of anything that touches credentials.
+
+FROM node:22-alpine
+WORKDIR /app
+
+# psn-api is only needed here, which is why it is not a project dependency.
+COPY package.json package-lock.json ./
+RUN npm ci --omit=dev --ignore-scripts \
+ && npm install --no-save --package-lock=false --ignore-scripts psn-api@2.18.0
+
+COPY scripts ./scripts
+
+# update-data.js resolves its output as <root>/public/data, so this is the path
+# the host directory gets mounted onto.
+RUN mkdir -p public/data
+
+USER node
+CMD ["node", "scripts/update-data.js"]
