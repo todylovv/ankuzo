@@ -183,12 +183,12 @@ export function useArchiveMotion(
       copyTimer.current = window.setTimeout(() => setCopied(false), 2200);
     };
     if (navigator.clipboard && navigator.clipboard.writeText) {
-      navigator.clipboard.writeText("ts.pogreb.su:9987").then(done, done);
+      navigator.clipboard.writeText("https://tmspk.gg/3Vi7A7Y9").then(done, done);
     } else done();
   };
 
   return {
-    tsLabel: copied ? "адрес скопирован" : "скопировать адрес",
+    tsLabel: copied ? "ссылка скопирована" : "скопировать ссылку",
     copyTs,
   };
 }

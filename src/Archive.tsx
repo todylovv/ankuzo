@@ -296,7 +296,11 @@ export function Archive({ rootRef, tsLabel, copyTs, live }: ArchiveProps) {
             </div>
           </div>
           <p style={css(`margin:clamp(28px,6vh,64px) 0 0;font-family:'Bodoni Moda',serif;font-size:clamp(20px,2.4vw,38px);line-height:1.28;color:#0b0b0b`)}>За всеми числами выше — один человек, который чаще всего просто сидит в канале и слушает, как играют другие.</p>
-          <p style={css(`margin:22px 0 0;font-size:13px;line-height:1.75;color:rgba(11,11,11,.62);max-width:38ch`)}>Сервер «Погреб», шесть человек. По вторникам после полуночи там почти всегда кто-то есть.</p>
+          <p style={css(`margin:22px 0 0;font-size:13px;line-height:1.75;color:rgba(11,11,11,.62);max-width:42ch`)}>
+            Discord — «Погреб». Голос — в TeamSpeak: в поиске{" "}
+            <span style={css(`color:#0b0b0b`)}>Ankuzo</span>, или по ссылке{" "}
+            <a href="https://tmspk.gg/3Vi7A7Y9" style={css(`color:#0b0b0b;text-decoration:underline;text-underline-offset:3px`)}>tmspk.gg/3Vi7A7Y9</a>.
+          </p>
         </div>
       </div>
     </div>
@@ -307,12 +311,14 @@ export function Archive({ rootRef, tsLabel, copyTs, live }: ArchiveProps) {
       <div style={css(`position:absolute;left:50%;top:50%;transform:translate3d(-50%,-50%,0);width:calc(6vw + var(--p)*64vw);height:calc(46vh + var(--p)*44vh);background:linear-gradient(180deg,rgba(255,255,255,.72),rgba(255,255,255,.16) 58%,rgba(255,255,255,0));box-shadow:0 0 140px rgba(255,255,255,.18)`)}></div>
       <div style={css(`position:relative;text-align:center;padding:0 24px;opacity:calc(var(--p)*2.2 - .7);transform:translate3d(0,calc((1 - var(--p))*4vh),0);mix-blend-mode:difference;color:#fff`)}>
         <div style={css(`font-family:'Bodoni Moda',serif;font-style:italic;font-size:clamp(18px,2vw,32px)`)}>последняя комната</div>
-        <div style={css(`margin-top:clamp(14px,2.6vh,28px);font-family:'Bodoni Moda',serif;font-size:clamp(28px,5.2vw,86px);line-height:1;letter-spacing:-.02em`)}>ts.pogreb.su</div>
-        <div style={css(`margin-top:14px;font-size:12px;letter-spacing:.2em;text-transform:uppercase`)}>порт 9987 · TeamSpeak 3</div>
+        <div style={css(`margin-top:clamp(14px,2.6vh,28px);font-family:'Bodoni Moda',serif;font-size:clamp(28px,5.2vw,86px);line-height:1;letter-spacing:-.02em`)}>Ankuzo</div>
+        <div style={css(`margin-top:14px;font-size:12px;letter-spacing:.2em;text-transform:uppercase`)}>в поиске TeamSpeak</div>
       </div>
       <div style={css(`position:absolute;left:50%;bottom:clamp(60px,12vh,130px);transform:translateX(-50%);text-align:center;opacity:calc(var(--p)*2.2 - .9)`)}>
         <button type="button" className="copy-btn" onClick={copyTs} style={css(`background:transparent;border:1px solid rgba(241,240,238,.45);color:#f6f5f3;font-family:'Archivo',sans-serif;font-size:12px;letter-spacing:.18em;text-transform:uppercase;padding:14px 30px;cursor:pointer;transition:background 300ms,border-color 300ms`)}>{tsLabel}</button>
-        <div style={css(`margin-top:16px;font-size:12px;color:rgba(241,240,238,.42)`)}>пароль — в дискорде, если мы знакомы</div>
+        <div style={css(`margin-top:16px;font-size:12px;color:rgba(241,240,238,.42)`)}>
+          <a href="https://tmspk.gg/3Vi7A7Y9" style={css(`color:rgba(241,240,238,.55);text-decoration:none;letter-spacing:.04em`)}>tmspk.gg/3Vi7A7Y9</a>
+        </div>
       </div>
     </div>
   </section>
