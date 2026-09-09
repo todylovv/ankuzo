@@ -1,5 +1,6 @@
 import type { Ref } from "react";
 import { css } from "./css";
+import { GameStill } from "./GameStill";
 import type { ArchiveLive, CreditGame, RecentGame } from "./useArchiveData";
 
 type ArchiveProps = {
@@ -50,26 +51,30 @@ function CreditRow({ game, index, last }: { game: CreditGame; index: number; las
   return (
     <div
       style={css(
-        `display:flex;align-items:baseline;justify-content:space-between;gap:24px;padding:clamp(14px,2.4vh,26px) 0 clamp(14px,2.4vh,26px) ${CREDIT_PAD[i]};border-top:1px solid rgba(241,240,238,.16);${last ? "border-bottom:1px solid rgba(241,240,238,.16);" : ""}transform:translate3d(calc((1 - var(--p))*${CREDIT_SHIFT[i]}vw),0,0)`,
+        `display:flex;align-items:center;justify-content:space-between;gap:24px;padding:clamp(14px,2.4vh,26px) 0 clamp(14px,2.4vh,26px) ${CREDIT_PAD[i]};border-top:1px solid rgba(241,240,238,.16);${last ? "border-bottom:1px solid rgba(241,240,238,.16);" : ""}transform:translate3d(calc((1 - var(--p))*${CREDIT_SHIFT[i]}vw),0,0)`,
       )}
     >
-      <span style={css(`font-family:'Bodoni Moda',serif;font-size:${CREDIT_SIZE[i]};line-height:1;color:${CREDIT_NAME[i]}`)}>{game.name}</span>
+      <span style={css(`display:flex;align-items:center;gap:clamp(12px,2vw,22px);min-width:0`)}>
+        <span style={css(`position:relative;display:block;width:52px;height:74px;flex:none;overflow:hidden;background:#141414;box-shadow:inset 0 0 24px rgba(0,0,0,.45)`)}>
+          <GameStill art={game.art} kind="poster" position="center center" />
+        </span>
+        <span style={css(`font-family:'Bodoni Moda',serif;font-size:${CREDIT_SIZE[i]};line-height:1;color:${CREDIT_NAME[i]}`)}>{game.name}</span>
+      </span>
       <span style={css(`font-family:'Bodoni Moda',serif;font-size:${CREDIT_SIZE[i]};line-height:1;color:${CREDIT_HOURS[i]}`)}>{game.hours}</span>
     </div>
   );
 }
 
 function RecentSlide({ game, index }: { game: RecentGame; index: number }) {
-  const caption = (
-    <span style={css(`position:absolute;left:14px;bottom:10px;font-family:ui-monospace,Menlo,monospace;font-size:10px;color:rgba(241,240,238,.28)`)}>{game.caption}</span>
-  );
   if (index === 1) {
     return (
       <article style={css(`position:relative;width:80vw;height:100%;flex:none;display:flex;align-items:center;justify-content:center`)}>
-        <div style={css(`position:absolute;inset:20vh clamp(16px,3vw,48px) 10vh;transform:translate3d(calc(var(--p)*7vw),0,0);background:repeating-linear-gradient(96deg,rgba(255,255,255,.05) 0 2px,rgba(255,255,255,0) 2px 12px),linear-gradient(184deg,#4e4e4e 0%,#242424 56%,#080808 100%);box-shadow:inset 0 0 160px rgba(0,0,0,.6)`)}>{caption}</div>
+        <div style={css(`position:absolute;inset:20vh clamp(16px,3vw,48px) 10vh;overflow:hidden;transform:translate3d(calc(var(--p)*7vw),0,0);background:#101010;box-shadow:inset 0 0 160px rgba(0,0,0,.6)`)}>
+          <GameStill art={game.art} kind="wide" caption={game.caption} />
+        </div>
         <div style={css(`position:relative;z-index:2;width:100%;padding:0 clamp(24px,5vw,80px);display:flex;justify-content:space-between;align-items:flex-start;gap:32px;transform:translate3d(calc(var(--p)*22vw),0,0)`)}>
           <div style={css(`max-width:26ch;font-size:13px;line-height:1.6;color:rgba(241,240,238,.5)`)}>{game.meta}</div>
-          <h3 style={css(`margin:0;text-align:right;font-family:'Bodoni Moda',serif;font-weight:400;font-style:italic;font-size:clamp(40px,6.4vw,120px);line-height:.88;color:#f6f5f3`)}>
+          <h3 style={css(`margin:0;text-align:right;font-family:'Bodoni Moda',serif;font-weight:400;font-style:italic;font-size:clamp(40px,6.4vw,120px);line-height:.88;color:#f6f5f3;text-shadow:0 12px 40px rgba(0,0,0,.55)`)}>
             {game.name}
             <span style={css(`display:block;font-style:normal;font-family:'Archivo',sans-serif;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:rgba(241,240,238,.42);margin-top:14px`)}>{game.hours}</span>
           </h3>
@@ -80,11 +85,11 @@ function RecentSlide({ game, index }: { game: RecentGame; index: number }) {
   if (index === 2) {
     return (
       <article style={css(`position:relative;width:80vw;height:100%;flex:none;display:flex;align-items:flex-end;justify-content:center`)}>
-        <div style={css(`position:absolute;inset:8vh clamp(60px,12vw,220px) 22vh clamp(16px,3vw,48px);transform:translate3d(calc(var(--p)*-6vw),0,0);background:repeating-linear-gradient(108deg,rgba(255,255,255,.05) 0 2px,rgba(255,255,255,0) 2px 12px),linear-gradient(160deg,#c6c6c6 0%,#4a4a4a 50%,#0a0a0a 100%);box-shadow:inset 0 0 160px rgba(0,0,0,.66)`)}>
-          <span style={css(`position:absolute;left:14px;bottom:10px;font-family:ui-monospace,Menlo,monospace;font-size:10px;color:rgba(20,20,20,.5)`)}>{game.caption}</span>
+        <div style={css(`position:absolute;inset:8vh clamp(60px,12vw,220px) 22vh clamp(16px,3vw,48px);overflow:hidden;transform:translate3d(calc(var(--p)*-6vw),0,0);background:#101010;box-shadow:inset 0 0 160px rgba(0,0,0,.66)`)}>
+          <GameStill art={game.art} kind="wide" caption={game.caption} captionDark />
         </div>
         <div style={css(`position:relative;z-index:2;width:100%;padding:0 clamp(24px,5vw,80px) clamp(26px,7vh,80px);transform:translate3d(calc(var(--p)*26vw),0,0)`)}>
-          <h3 style={css(`margin:0;font-family:'Bodoni Moda',serif;font-weight:400;font-size:clamp(44px,7.2vw,138px);line-height:.86;letter-spacing:-.02em;color:#f6f5f3`)}>{game.name}</h3>
+          <h3 style={css(`margin:0;font-family:'Bodoni Moda',serif;font-weight:400;font-size:clamp(44px,7.2vw,138px);line-height:.86;letter-spacing:-.02em;color:#f6f5f3;text-shadow:0 12px 40px rgba(0,0,0,.55)`)}>{game.name}</h3>
           <div style={css(`margin-top:12px;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:rgba(241,240,238,.44)`)}>{game.hours} · {game.meta}</div>
         </div>
       </article>
@@ -93,9 +98,11 @@ function RecentSlide({ game, index }: { game: RecentGame; index: number }) {
   if (index === 3) {
     return (
       <article style={css(`position:relative;width:80vw;height:100%;flex:none;display:flex;align-items:center;justify-content:center`)}>
-        <div style={css(`position:absolute;inset:16vh clamp(16px,3vw,48px);transform:translate3d(calc(var(--p)*10vw),0,0) scale(calc(1.1 - var(--p)*.1));background:repeating-linear-gradient(92deg,rgba(255,255,255,.05) 0 2px,rgba(255,255,255,0) 2px 12px),linear-gradient(200deg,#5f5f5f 0%,#1d1d1d 52%,#070707 100%);box-shadow:inset 0 0 170px rgba(0,0,0,.6)`)}>{caption}</div>
+        <div style={css(`position:absolute;inset:16vh clamp(16px,3vw,48px);overflow:hidden;transform:translate3d(calc(var(--p)*10vw),0,0) scale(calc(1.1 - var(--p)*.1));background:#101010;box-shadow:inset 0 0 170px rgba(0,0,0,.6)`)}>
+          <GameStill art={game.art} kind="wide" caption={game.caption} />
+        </div>
         <div style={css(`position:relative;z-index:2;text-align:center;padding:0 clamp(24px,5vw,80px);transform:translate3d(calc(var(--p)*18vw),0,0)`)}>
-          <h3 style={css(`margin:0;font-family:'Bodoni Moda',serif;font-weight:400;font-size:clamp(42px,6.8vw,128px);line-height:.88;color:#f6f5f3`)}>{game.name}</h3>
+          <h3 style={css(`margin:0;font-family:'Bodoni Moda',serif;font-weight:400;font-size:clamp(42px,6.8vw,128px);line-height:.88;color:#f6f5f3;text-shadow:0 12px 40px rgba(0,0,0,.55)`)}>{game.name}</h3>
           <div style={css(`margin-top:16px;font-size:13px;line-height:1.6;color:rgba(241,240,238,.5)`)}>{game.hours} · {game.meta}</div>
         </div>
       </article>
@@ -106,9 +113,11 @@ function RecentSlide({ game, index }: { game: RecentGame; index: number }) {
     const second = rest.join(" ");
     return (
       <article style={css(`position:relative;width:80vw;height:100%;flex:none;display:flex;align-items:center;justify-content:flex-start`)}>
-        <div style={css(`position:absolute;inset:12vh clamp(16px,3vw,48px) 12vh 34vw;transform:translate3d(calc(var(--p)*-8vw),0,0);background:repeating-linear-gradient(116deg,rgba(255,255,255,.05) 0 2px,rgba(255,255,255,0) 2px 12px),linear-gradient(176deg,#7d7d7d 0%,#2c2c2c 54%,#0a0a0a 100%);box-shadow:inset 0 0 150px rgba(0,0,0,.6)`)}>{caption}</div>
+        <div style={css(`position:absolute;inset:12vh clamp(16px,3vw,48px) 12vh 34vw;overflow:hidden;transform:translate3d(calc(var(--p)*-8vw),0,0);background:#101010;box-shadow:inset 0 0 150px rgba(0,0,0,.6)`)}>
+          <GameStill art={game.art} kind="poster" caption={game.caption} />
+        </div>
         <div style={css(`position:relative;z-index:2;padding:0 clamp(24px,5vw,80px);max-width:44vw;transform:translate3d(calc(var(--p)*14vw),0,0)`)}>
-          <h3 style={css(`margin:0;font-family:'Bodoni Moda',serif;font-weight:400;font-size:clamp(38px,5.6vw,104px);line-height:.9;color:#f6f5f3`)}>
+          <h3 style={css(`margin:0;font-family:'Bodoni Moda',serif;font-weight:400;font-size:clamp(38px,5.6vw,104px);line-height:.9;color:#f6f5f3;text-shadow:0 12px 40px rgba(0,0,0,.55)`)}>
             {first}
             {second ? (
               <>
@@ -124,9 +133,11 @@ function RecentSlide({ game, index }: { game: RecentGame; index: number }) {
   }
   return (
     <article style={css(`position:relative;width:80vw;height:100%;flex:none;display:flex;align-items:center;justify-content:center`)}>
-      <div style={css(`position:absolute;inset:14vh clamp(16px,3vw,48px);transform:translate3d(calc(var(--p)*-9vw),0,0) scale(calc(1 + var(--p)*.12));background:repeating-linear-gradient(100deg,rgba(255,255,255,.055) 0 2px,rgba(255,255,255,0) 2px 12px),linear-gradient(168deg,#9b9b9b 0%,#3a3a3a 54%,#0d0d0d 100%);box-shadow:inset 0 0 160px rgba(0,0,0,.62)`)}>{caption}</div>
+      <div style={css(`position:absolute;inset:14vh clamp(16px,3vw,48px);overflow:hidden;transform:translate3d(calc(var(--p)*-9vw),0,0) scale(calc(1 + var(--p)*.12));background:#101010;box-shadow:inset 0 0 160px rgba(0,0,0,.62)`)}>
+        <GameStill art={game.art} kind="wide" caption={game.caption} />
+      </div>
       <div style={css(`position:relative;z-index:2;width:100%;padding:0 clamp(24px,5vw,80px);display:flex;justify-content:space-between;align-items:flex-end;gap:32px;transform:translate3d(calc(var(--p)*30vw),0,0)`)}>
-        <h3 style={css(`margin:0;font-family:'Bodoni Moda',serif;font-weight:400;font-size:clamp(40px,6.4vw,120px);line-height:.88;letter-spacing:-.02em;color:#f6f5f3`)}>{game.name}</h3>
+        <h3 style={css(`margin:0;font-family:'Bodoni Moda',serif;font-weight:400;font-size:clamp(40px,6.4vw,120px);line-height:.88;letter-spacing:-.02em;color:#f6f5f3;text-shadow:0 12px 40px rgba(0,0,0,.55)`)}>{game.name}</h3>
         <div style={css(`text-align:right;flex:none`)}>
           <div style={css(`font-family:'Bodoni Moda',serif;font-size:clamp(30px,3.4vw,58px);line-height:1;color:#f6f5f3`)}>{game.hours}</div>
           <div style={css(`font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:rgba(241,240,238,.42);margin-top:6px`)}>{game.meta}</div>
@@ -141,15 +152,15 @@ export function Archive({ rootRef, tsLabel, copyTs, live }: ArchiveProps) {
     <div ref={rootRef} style={css(`position:relative;background:#090909;overflow-x:clip;font-family:'Archivo',system-ui,sans-serif`)}>
 
   <div aria-hidden="true" style={css(`position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;filter:blur(calc(var(--v,0)*16px)) contrast(calc(1 + var(--v,0)*.3));animation:bgdrift 38s ease-in-out infinite alternate`)}>
-    <div data-plate="hero" style={css(`position:absolute;inset:-18%;opacity:1;transition:opacity 1100ms cubic-bezier(.4,0,.2,1);filter:blur(72px) grayscale(1);transform:scale(1.16) translate3d(calc(var(--mx,0)*-16px),calc(var(--my,0)*-12px),0);background:radial-gradient(56% 52% at 36% 42%,#333 0%,rgba(51,51,51,0) 72%),radial-gradient(44% 52% at 76% 68%,rgba(120,120,120,.28) 0%,rgba(120,120,120,0) 70%),#0b0b0b`)}></div>
-    <div data-plate="now" style={css(`position:absolute;inset:-18%;opacity:0;transition:opacity 1100ms cubic-bezier(.4,0,.2,1);filter:blur(84px) grayscale(1);transform:scale(1.2) translate3d(calc(var(--mx,0)*-24px),calc(var(--my,0)*-16px),0);background:radial-gradient(54% 56% at 64% 38%,#6e6e6e 0%,rgba(110,110,110,0) 70%),radial-gradient(38% 38% at 22% 76%,rgba(30,30,30,.9) 0%,rgba(30,30,30,0) 72%),#0d0d0d`)}></div>
-    <div data-plate="recent0" style={css(`position:absolute;inset:-18%;opacity:0;transition:opacity 800ms cubic-bezier(.4,0,.2,1);filter:blur(86px) grayscale(1);transform:scale(1.2) translate3d(calc(var(--mx,0)*-20px),calc(var(--my,0)*-14px),0);background:radial-gradient(50% 50% at 32% 44%,#5a5a5a 0%,rgba(90,90,90,0) 72%),#0c0c0c`)}></div>
-    <div data-plate="recent1" style={css(`position:absolute;inset:-18%;opacity:0;transition:opacity 800ms cubic-bezier(.4,0,.2,1);filter:blur(90px) grayscale(1);transform:scale(1.22) translate3d(calc(var(--mx,0)*-20px),calc(var(--my,0)*-14px),0);background:radial-gradient(60% 46% at 62% 66%,#2b2b2b 0%,rgba(43,43,43,0) 74%),#070707`)}></div>
-    <div data-plate="recent2" style={css(`position:absolute;inset:-18%;opacity:0;transition:opacity 800ms cubic-bezier(.4,0,.2,1);filter:blur(78px) grayscale(1);transform:scale(1.18) translate3d(calc(var(--mx,0)*-20px),calc(var(--my,0)*-14px),0);background:radial-gradient(46% 46% at 48% 40%,#8e8e8e 0%,rgba(142,142,142,0) 70%),#101010`)}></div>
-    <div data-plate="recent3" style={css(`position:absolute;inset:-18%;opacity:0;transition:opacity 800ms cubic-bezier(.4,0,.2,1);filter:blur(92px) grayscale(1);transform:scale(1.24) translate3d(calc(var(--mx,0)*-20px),calc(var(--my,0)*-14px),0);background:radial-gradient(70% 40% at 50% 18%,#3d3d3d 0%,rgba(61,61,61,0) 76%),#060606`)}></div>
-    <div data-plate="recent4" style={css(`position:absolute;inset:-18%;opacity:0;transition:opacity 800ms cubic-bezier(.4,0,.2,1);filter:blur(84px) grayscale(1);transform:scale(1.2) translate3d(calc(var(--mx,0)*-20px),calc(var(--my,0)*-14px),0);background:radial-gradient(48% 54% at 26% 56%,#6a6a6a 0%,rgba(106,106,106,0) 72%),radial-gradient(34% 34% at 78% 30%,rgba(160,160,160,.22) 0%,rgba(160,160,160,0) 72%),#0b0b0b`)}></div>
-    <div data-plate="steam" style={css(`position:absolute;inset:-18%;opacity:0;transition:opacity 1200ms cubic-bezier(.4,0,.2,1);filter:blur(96px) grayscale(1);transform:scale(1.12) translate3d(calc(var(--mx,0)*-12px),calc(var(--my,0)*-10px),0);background:linear-gradient(96deg,rgba(120,120,120,.32) 0%,rgba(0,0,0,0) 52%),#0a0a0a`)}></div>
-    <div data-plate="psn" style={css(`position:absolute;inset:-18%;opacity:0;transition:opacity 1200ms cubic-bezier(.4,0,.2,1);filter:blur(96px) grayscale(1);transform:scale(1.14) translate3d(calc(var(--mx,0)*-14px),calc(var(--my,0)*-10px),0);background:radial-gradient(58% 54% at 70% 46%,#4c4c4c 0%,rgba(76,76,76,0) 74%),#080808`)}></div>
+    <div data-plate="hero" style={css(`position:absolute;inset:-18%;opacity:1;transition:opacity 1100ms cubic-bezier(.4,0,.2,1);filter:blur(72px) grayscale(1);transform:scale(1.16) translate3d(calc(var(--mx,0)*-16px),calc(var(--my,0)*-12px),0);background:#0b0b0b`)}><GameStill art={live.nowArt} kind="poster" tone="color" /></div>
+    <div data-plate="now" style={css(`position:absolute;inset:-18%;opacity:0;transition:opacity 1100ms cubic-bezier(.4,0,.2,1);filter:blur(84px) grayscale(1);transform:scale(1.2) translate3d(calc(var(--mx,0)*-24px),calc(var(--my,0)*-16px),0);background:#0d0d0d`)}><GameStill art={live.nowArt} kind="wide" tone="color" /></div>
+    <div data-plate="recent0" style={css(`position:absolute;inset:-18%;opacity:0;transition:opacity 800ms cubic-bezier(.4,0,.2,1);filter:blur(86px) grayscale(1);transform:scale(1.2) translate3d(calc(var(--mx,0)*-20px),calc(var(--my,0)*-14px),0);background:#0c0c0c`)}><GameStill art={live.recents[0]?.art || live.nowArt} kind="wide" tone="color" /></div>
+    <div data-plate="recent1" style={css(`position:absolute;inset:-18%;opacity:0;transition:opacity 800ms cubic-bezier(.4,0,.2,1);filter:blur(90px) grayscale(1);transform:scale(1.22) translate3d(calc(var(--mx,0)*-20px),calc(var(--my,0)*-14px),0);background:#070707`)}><GameStill art={live.recents[1]?.art || live.nowArt} kind="wide" tone="color" /></div>
+    <div data-plate="recent2" style={css(`position:absolute;inset:-18%;opacity:0;transition:opacity 800ms cubic-bezier(.4,0,.2,1);filter:blur(78px) grayscale(1);transform:scale(1.18) translate3d(calc(var(--mx,0)*-20px),calc(var(--my,0)*-14px),0);background:#101010`)}><GameStill art={live.recents[2]?.art || live.nowArt} kind="wide" tone="color" /></div>
+    <div data-plate="recent3" style={css(`position:absolute;inset:-18%;opacity:0;transition:opacity 800ms cubic-bezier(.4,0,.2,1);filter:blur(92px) grayscale(1);transform:scale(1.24) translate3d(calc(var(--mx,0)*-20px),calc(var(--my,0)*-14px),0);background:#060606`)}><GameStill art={live.recents[3]?.art || live.nowArt} kind="wide" tone="color" /></div>
+    <div data-plate="recent4" style={css(`position:absolute;inset:-18%;opacity:0;transition:opacity 800ms cubic-bezier(.4,0,.2,1);filter:blur(84px) grayscale(1);transform:scale(1.2) translate3d(calc(var(--mx,0)*-20px),calc(var(--my,0)*-14px),0);background:#0b0b0b`)}><GameStill art={live.recents[4]?.art || live.nowArt} kind="poster" tone="color" /></div>
+    <div data-plate="steam" style={css(`position:absolute;inset:-18%;opacity:0;transition:opacity 1200ms cubic-bezier(.4,0,.2,1);filter:blur(96px) grayscale(1);transform:scale(1.12) translate3d(calc(var(--mx,0)*-12px),calc(var(--my,0)*-10px),0);background:#0a0a0a`)}><GameStill art={live.topArt} kind="wide" tone="color" /></div>
+    <div data-plate="psn" style={css(`position:absolute;inset:-18%;opacity:0;transition:opacity 1200ms cubic-bezier(.4,0,.2,1);filter:blur(96px) grayscale(1);transform:scale(1.14) translate3d(calc(var(--mx,0)*-14px),calc(var(--my,0)*-10px),0);background:#080808`)}><GameStill art={live.psnStills[0]?.art || live.nowArt} kind="poster" tone="color" /></div>
     <div data-plate="discord" style={css(`position:absolute;inset:-18%;opacity:0;transition:opacity 1200ms cubic-bezier(.4,0,.2,1);filter:blur(90px) grayscale(1);transform:scale(1.08) translate3d(calc(var(--mx,0)*-10px),calc(var(--my,0)*-8px),0);background:radial-gradient(52% 50% at 44% 52%,#9a9a98 0%,rgba(154,154,152,0) 74%),#101010`)}></div>
     <div data-plate="ts" style={css(`position:absolute;inset:-18%;opacity:0;transition:opacity 1400ms cubic-bezier(.4,0,.2,1);filter:blur(88px) grayscale(1);transform:scale(1.08) translate3d(calc(var(--mx,0)*-8px),calc(var(--my,0)*-6px),0);background:radial-gradient(18% 64% at 50% 50%,rgba(255,255,255,.34) 0%,rgba(255,255,255,0) 72%),#050505`)}></div>
     <div data-plate="final" style={css(`position:absolute;inset:-18%;opacity:0;transition:opacity 1400ms cubic-bezier(.4,0,.2,1);filter:blur(90px) grayscale(1);transform:scale(1.06);background:radial-gradient(72% 56% at 50% 94%,#242424 0%,rgba(36,36,36,0) 76%),#080808`)}></div>
@@ -161,7 +172,9 @@ export function Archive({ rootRef, tsLabel, copyTs, live }: ArchiveProps) {
 
   <section data-scene="hero" data-chapter="hero" data-static="0" style={css(`--p:0;--b:0;position:relative;z-index:1;height:260vh`)}>
     <div data-sticky="" style={css(`position:sticky;top:0;height:100vh;overflow:hidden`)}>
-      <div style={css(`position:absolute;left:50%;top:50%;width:min(30vw,420px);height:70vh;transform:translate3d(-50%,-50%,0) scale(calc(.9 + var(--p)*2.4)) translate3d(calc(var(--mx,0)*10px),calc(var(--my,0)*8px),0);opacity:calc(.2 + var(--p)*.8);background:repeating-linear-gradient(102deg,rgba(255,255,255,.06) 0 2px,rgba(255,255,255,0) 2px 11px),linear-gradient(168deg,#8d8d8d 0%,#3a3a3a 46%,#0d0d0d 100%);box-shadow:inset 0 0 140px rgba(0,0,0,.7)`)}></div>
+      <div style={css(`position:absolute;left:50%;top:50%;width:min(30vw,420px);height:70vh;overflow:hidden;transform:translate3d(-50%,-50%,0) scale(calc(.9 + var(--p)*2.4)) translate3d(calc(var(--mx,0)*10px),calc(var(--my,0)*8px),0);opacity:calc(.2 + var(--p)*.8);background:#141414;box-shadow:inset 0 0 140px rgba(0,0,0,.7)`)}>
+        <GameStill art={live.nowArt} kind="poster" />
+      </div>
       <div style={css(`position:absolute;left:50%;top:50%;transform:translate3d(calc(-50% - var(--p)*40vw),-50%,0) scale(calc(1 + var(--p)*.7));opacity:calc(1 - var(--p)*.9);font-family:'Bodoni Moda',serif;font-size:clamp(88px,21vw,320px);line-height:.78;letter-spacing:-.035em;color:#f6f5f3;white-space:nowrap;clip-path:inset(0 50% 0 0)`)}>ankuzo</div>
       <div style={css(`position:absolute;left:50%;top:50%;transform:translate3d(calc(-50% + var(--p)*40vw),-50%,0) scale(calc(1 + var(--p)*.7));opacity:calc(1 - var(--p)*.9);font-family:'Bodoni Moda',serif;font-size:clamp(88px,21vw,320px);line-height:.78;letter-spacing:-.035em;color:#f6f5f3;white-space:nowrap;clip-path:inset(0 0 0 50%)`)}>ankuzo</div>
       <p style={css(`position:absolute;left:50%;top:calc(50% + clamp(52px,7.4vw,120px));margin:0;transform:translate3d(-50%,calc(var(--p)*-6vh),0);opacity:calc(1 - var(--p)*2.4);font-family:'Bodoni Moda',serif;font-style:italic;font-size:clamp(15px,1.6vw,24px);color:rgba(241,240,238,.6);white-space:nowrap`)}>личный игровой архив</p>
@@ -174,12 +187,12 @@ export function Archive({ rootRef, tsLabel, copyTs, live }: ArchiveProps) {
 
   <section data-scene="now" data-chapter="now" data-static="0.6" style={css(`--p:0;--s:0;position:relative;z-index:1;height:250vh`)}>
     <div data-sticky="" style={css(`position:sticky;top:0;height:100vh;overflow:hidden`)}>
-      <div style={css(`position:absolute;top:9vh;right:0;width:min(64vw,940px);height:82vh;clip-path:inset(calc(28% - var(--p)*28%) 0 calc(28% - var(--p)*28%) 0);filter:invert(var(--s,0)) contrast(calc(1 + var(--s,0)*.4));transform:scale(calc(1.16 - var(--p)*.16)) translate3d(calc(var(--mx,0)*12px),calc(var(--my,0)*9px),0);background:repeating-linear-gradient(105deg,rgba(255,255,255,.06) 0 2px,rgba(255,255,255,0) 2px 12px),linear-gradient(196deg,#a4a4a4 0%,#404040 46%,#0e0e0e 100%);box-shadow:inset 0 0 200px rgba(0,0,0,.62)`)}>
-        <span style={css(`position:absolute;left:16px;bottom:12px;font-family:ui-monospace,Menlo,monospace;font-size:10px;letter-spacing:.08em;color:rgba(241,240,238,.32)`)}>{live.nowCaption}</span>
+      <div style={css(`position:absolute;top:9vh;right:0;width:min(64vw,940px);height:82vh;overflow:hidden;clip-path:inset(calc(28% - var(--p)*28%) 0 calc(28% - var(--p)*28%) 0);filter:invert(var(--s,0)) contrast(calc(1 + var(--s,0)*.4));transform:scale(calc(1.16 - var(--p)*.16)) translate3d(calc(var(--mx,0)*12px),calc(var(--my,0)*9px),0);background:#101010;box-shadow:inset 0 0 200px rgba(0,0,0,.62)`)}>
+        <GameStill art={live.nowArt} kind="poster" caption={live.nowCaption} />
       </div>
       <div style={css(`position:absolute;left:clamp(20px,4.5vw,72px);top:22vh;z-index:2;max-width:min(58vw,760px);transform:translate3d(0,calc((1 - var(--p))*9vh),0);opacity:calc(.15 + var(--p)*1.5)`)}>
         <div style={css(`font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:#f6f5f3;display:flex;align-items:center;gap:10px`)}><span style={css(`width:7px;height:7px;border-radius:50%;background:#f6f5f3;display:inline-block`)}></span>{live.nowLabel}</div>
-        <h2 style={css(`margin:14px 0 0;font-family:'Bodoni Moda',serif;font-weight:400;font-size:clamp(46px,7.4vw,138px);line-height:.86;letter-spacing:-.025em;color:#f6f5f3`)}>
+        <h2 style={css(`margin:14px 0 0;font-family:'Bodoni Moda',serif;font-weight:400;font-size:clamp(46px,7.4vw,138px);line-height:.86;letter-spacing:-.025em;color:#f6f5f3;text-shadow:0 18px 50px rgba(0,0,0,.55)`)}>
           {live.nowName}
           {live.nowSub ? (
             <>
@@ -246,15 +259,15 @@ export function Archive({ rootRef, tsLabel, copyTs, live }: ArchiveProps) {
       <p style={css(`margin:18px 0 0;font-size:13px;line-height:1.7;color:rgba(241,240,238,.52)`)}>Консоль стоит в комнате, где нет рабочего стола. Поэтому здесь другие игры — те, которые я прохожу целиком, а не запускаю на двадцать минут.</p>
     </div>
 
-    <div style={css(`position:relative;width:min(74vw,1080px);height:74vh;background:repeating-linear-gradient(102deg,rgba(255,255,255,.045) 0 2px,rgba(255,255,255,0) 2px 13px),linear-gradient(168deg,#b8b8b8 0%,#3c3c3c 52%,#080808 100%);box-shadow:inset 0 0 190px rgba(0,0,0,.6);filter:contrast(calc(.35 + var(--p)*1.05)) brightness(calc(1.75 - var(--p)*.85)) grayscale(1)`)}>
-      <span style={css(`position:absolute;left:16px;bottom:12px;font-family:ui-monospace,Menlo,monospace;font-size:10px;color:rgba(20,20,20,.45)`)}>still / bloodborne</span>
+    <div style={css(`position:relative;width:min(74vw,1080px);height:74vh;overflow:hidden;background:#101010;box-shadow:inset 0 0 190px rgba(0,0,0,.6);filter:contrast(calc(.55 + var(--p)*.8)) brightness(calc(1.35 - var(--p)*.45)) grayscale(.35)`)}>
+      <GameStill art={live.psnStills[0]?.art || live.nowArt} kind="wide" caption={live.psnStills[0]?.caption || "still / playstation"} tone="color" />
     </div>
-    <div style={css(`display:flex;justify-content:flex-end;padding:0 clamp(20px,4.5vw,72px);margin-top:26px`)}><div style={css(`text-align:right;max-width:18ch`)}><div style={css(`font-family:'Bodoni Moda',serif;font-style:italic;font-size:clamp(22px,2.6vw,42px);line-height:1.05;color:#f6f5f3`)}>платина</div><div style={css(`margin-top:10px;font-size:12px;line-height:1.6;color:rgba(241,240,238,.5)`)}>первая и до сих пор самая тяжёлая</div></div></div>
+    <div style={css(`display:flex;justify-content:flex-end;padding:0 clamp(20px,4.5vw,72px);margin-top:26px`)}><div style={css(`text-align:right;max-width:22ch`)}><div style={css(`font-family:'Bodoni Moda',serif;font-style:italic;font-size:clamp(22px,2.6vw,42px);line-height:1.05;color:#f6f5f3`)}>{live.psnStills[0]?.title || "PlayStation"}</div><div style={css(`margin-top:10px;font-size:12px;line-height:1.6;color:rgba(241,240,238,.5)`)}>из библиотеки</div></div></div>
 
     <div style={css(`display:flex;justify-content:flex-end;margin-top:16vh;padding-right:clamp(20px,4.5vw,72px)`)}>
-      <div style={css(`position:relative;width:min(52vw,720px);height:52vh;background:repeating-linear-gradient(88deg,rgba(255,255,255,.045) 0 2px,rgba(255,255,255,0) 2px 13px),linear-gradient(190deg,#8a8a8a 0%,#2a2a2a 54%,#070707 100%);box-shadow:inset 0 0 160px rgba(0,0,0,.6);filter:contrast(calc(.5 + var(--p)*.9)) brightness(calc(1.5 - var(--p)*.6)) grayscale(1)`)}>
-        <span style={css(`position:absolute;left:16px;bottom:12px;font-family:ui-monospace,Menlo,monospace;font-size:10px;color:rgba(241,240,238,.3)`)}>still / ghost of tsushima</span>
-        <div style={css(`position:absolute;left:clamp(-140px,-12vw,-32px);top:16%;max-width:14ch`)}><div style={css(`font-family:'Bodoni Moda',serif;font-size:clamp(20px,2.3vw,36px);line-height:1.1;color:#f6f5f3`)}>платина</div><div style={css(`margin-top:8px;font-size:12px;color:rgba(241,240,238,.5)`)}>ради фоторежима</div></div>
+      <div style={css(`position:relative;width:min(52vw,720px);height:52vh;overflow:hidden;background:#101010;box-shadow:inset 0 0 160px rgba(0,0,0,.6);filter:contrast(calc(.6 + var(--p)*.7)) brightness(calc(1.25 - var(--p)*.35)) grayscale(.35)`)}>
+        <GameStill art={live.psnStills[1]?.art || live.psnStills[0]?.art || live.nowArt} kind="poster" caption={live.psnStills[1]?.caption || "still / playstation"} tone="color" />
+        <div style={css(`position:absolute;left:clamp(-140px,-12vw,-32px);top:16%;max-width:16ch;z-index:2`)}><div style={css(`font-family:'Bodoni Moda',serif;font-size:clamp(20px,2.3vw,36px);line-height:1.1;color:#f6f5f3`)}>{live.psnStills[1]?.title || "PlayStation"}</div><div style={css(`margin-top:8px;font-size:12px;color:rgba(241,240,238,.5)`)}>из библиотеки</div></div>
       </div>
     </div>
 

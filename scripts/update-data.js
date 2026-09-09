@@ -69,6 +69,59 @@ async function requestJson(url, options = {}) {
   return response.json();
 }
 
+function sleep(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+function collectArtIds(payload) {
+  const ids = [];
+  const add = (value) => {
+    const id = Number(value);
+    if (id && !ids.includes(id)) ids.push(id);
+  };
+  for (const game of payload.top || []) add(game.appId);
+  for (const profile of payload.profiles || []) {
+    add(profile.currentGameId);
+    for (const game of profile.games || []) {
+      if (game.hours2w > 0) add(game.appId);
+    }
+  }
+  return ids.slice(0, 18);
+}
+
+async function fetchAppArt(appId) {
+  const hero = `https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/${appId}/library_hero.jpg`;
+  const poster = `https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/${appId}/library_600x900.jpg`;
+  const fallbackHeader = `https://cdn.akamai.steamstatic.com/steam/apps/${appId}/header.jpg`;
+  let header = fallbackHeader;
+  let still = "";
+  let capsule = "";
+  try {
+    const json = await requestJson(
+      `https://store.steampowered.com/api/appdetails?appids=${appId}&cc=us&l=english`,
+    );
+    const data = json?.[String(appId)]?.data;
+    if (data) {
+      header = data.header_image || header;
+      still = data.screenshots?.[0]?.path_full || data.screenshots?.[1]?.path_full || "";
+      capsule = data.capsule_imagev5 || data.capsule_image || "";
+    }
+  } catch {
+    // CDN fallbacks still cover most store games.
+  }
+  return { hero, poster, header, still, capsule };
+}
+
+async function attachStoreArt(payload) {
+  const art = { ...(payload.art || {}) };
+  for (const appId of collectArtIds(payload)) {
+    art[String(appId)] = await fetchAppArt(appId);
+    await sleep(120);
+  }
+  payload.art = art;
+  return payload;
+}
+
 async function updateSteam() {
   const fallback = await readFallback("steam.json", { profiles: [], top: [] });
   const key = (process.env.STEAM_KEY || "").trim();
@@ -119,6 +172,7 @@ async function updateSteam() {
       avatarUrl: player.avatarfull || "",
       online: Number(player.personastate || 0) > 0,
       currentGame: player.gameextrainfo || "",
+      currentGameId: player.gameid || "",
       profileUrl: `https://steamcommunity.com/profiles/${steamId}/`,
       gameCount: owned.response?.game_count || games.length,
       totalHours: Math.round(games.reduce((sum, game) => sum + game.hours, 0) * 10) / 10,
@@ -127,7 +181,7 @@ async function updateSteam() {
   }
 
   const top = [...mergedGames.values()].sort((a, b) => b.hours - a.hours).slice(0, 10);
-  return writeJson("steam.json", {
+  const payload = {
     updatedAt: attemptedAt,
     lastSuccessfulAt: attemptedAt,
     lastAttemptAt: attemptedAt,
@@ -140,7 +194,9 @@ async function updateSteam() {
     },
     profiles,
     top
-  });
+  };
+  await attachStoreArt(payload);
+  return writeJson("steam.json", payload);
 }
 
 async function updatePsn() {
@@ -299,6 +355,14 @@ const sources = [
   { label: "PlayStation", file: "psn.json", update: updatePsn },
   { label: "Discord", file: "discord.json", update: updateDiscord }
 ];
+
+if (process.argv.includes("--art-only")) {
+  const steam = await readFallback("steam.json", {});
+  await attachStoreArt(steam);
+  await writeJson("steam.json", steam);
+  console.log("Steam artwork attached");
+  process.exit(0);
+}
 
 let unavailableCount = 0;
 for (const source of sources) {
