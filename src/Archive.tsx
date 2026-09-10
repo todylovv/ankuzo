@@ -10,7 +10,7 @@ type ArchiveProps = {
   live: ArchiveLive;
 };
 
-function hoursWord(value: number) {
+function hoursWord(value: number): string {
   const abs = Math.abs(value) % 100;
   const last = abs % 10;
   if (abs > 10 && abs < 20) return "часов";
@@ -19,273 +19,203 @@ function hoursWord(value: number) {
   return "часов";
 }
 
-const CREDIT_SHIFT = [-8, 7, -6, 5, -4, 3];
-const CREDIT_PAD = ["0", "clamp(0px,6vw,120px)", "0", "clamp(0px,10vw,200px)", "0", "clamp(0px,14vw,280px)"];
-const CREDIT_SIZE = [
-  "clamp(26px,3.6vw,60px)",
-  "clamp(24px,3.2vw,52px)",
-  "clamp(22px,2.9vw,46px)",
-  "clamp(20px,2.5vw,40px)",
-  "clamp(18px,2.1vw,34px)",
-  "clamp(17px,1.9vw,30px)",
-];
-const CREDIT_NAME = [
-  "#f6f5f3",
-  "#f6f5f3",
-  "#f6f5f3",
-  "rgba(246,245,243,.92)",
-  "rgba(246,245,243,.86)",
-  "rgba(246,245,243,.8)",
-];
-const CREDIT_HOURS = [
-  "rgba(246,245,243,.92)",
-  "rgba(246,245,243,.86)",
-  "rgba(246,245,243,.82)",
-  "rgba(246,245,243,.78)",
-  "rgba(246,245,243,.72)",
-  "rgba(246,245,243,.66)",
+type CreditLook = {
+  pad: string;
+  size: string;
+  name: string;
+  hours: string;
+};
+
+const CREDIT_LOOK: CreditLook[] = [
+  { pad: "0", size: "clamp(26px,3.6vw,60px)", name: "#f6f5f3", hours: "rgba(246,245,243,.92)" },
+  { pad: "clamp(0px,6vw,120px)", size: "clamp(24px,3.2vw,52px)", name: "#f6f5f3", hours: "rgba(246,245,243,.86)" },
+  { pad: "0", size: "clamp(22px,2.9vw,46px)", name: "#f6f5f3", hours: "rgba(246,245,243,.82)" },
+  { pad: "clamp(0px,10vw,200px)", size: "clamp(20px,2.5vw,40px)", name: "rgba(246,245,243,.92)", hours: "rgba(246,245,243,.78)" },
+  { pad: "0", size: "clamp(18px,2.1vw,34px)", name: "rgba(246,245,243,.86)", hours: "rgba(246,245,243,.72)" },
+  { pad: "clamp(0px,14vw,280px)", size: "clamp(17px,1.9vw,30px)", name: "rgba(246,245,243,.8)", hours: "rgba(246,245,243,.66)" },
 ];
 
 type Plate = {
   id: string;
-  opacity: number;
-  fade: number;
-  scale: number;
-  shift?: readonly [number, number];
+  on?: boolean;
   background: string;
 };
 
 const PLATES: Plate[] = [
   {
     id: "hero",
-    opacity: 1,
-    fade: 1100,
-    scale: 1.16,
-    shift: [-16, -12],
+    on: true,
     background:
       "radial-gradient(56% 52% at 36% 42%,#333 0%,rgba(51,51,51,0) 72%),radial-gradient(44% 52% at 76% 68%,rgba(120,120,120,.28) 0%,rgba(120,120,120,0) 70%),#0b0b0b",
   },
   {
     id: "now",
-    opacity: 0,
-    fade: 1100,
-    scale: 1.2,
-    shift: [-24, -16],
     background:
       "radial-gradient(54% 56% at 64% 38%,#6e6e6e 0%,rgba(110,110,110,0) 70%),radial-gradient(38% 38% at 22% 76%,rgba(30,30,30,.9) 0%,rgba(30,30,30,0) 72%),#0d0d0d",
   },
-  {
-    id: "recent0",
-    opacity: 0,
-    fade: 800,
-    scale: 1.2,
-    shift: [-20, -14],
-    background: "radial-gradient(50% 50% at 32% 44%,#5a5a5a 0%,rgba(90,90,90,0) 72%),#0c0c0c",
-  },
-  {
-    id: "recent1",
-    opacity: 0,
-    fade: 800,
-    scale: 1.22,
-    shift: [-20, -14],
-    background: "radial-gradient(60% 46% at 62% 66%,#2b2b2b 0%,rgba(43,43,43,0) 74%),#070707",
-  },
-  {
-    id: "recent2",
-    opacity: 0,
-    fade: 800,
-    scale: 1.18,
-    shift: [-20, -14],
-    background: "radial-gradient(46% 46% at 48% 40%,#8e8e8e 0%,rgba(142,142,142,0) 70%),#101010",
-  },
-  {
-    id: "recent3",
-    opacity: 0,
-    fade: 800,
-    scale: 1.24,
-    shift: [-20, -14],
-    background: "radial-gradient(70% 40% at 50% 18%,#3d3d3d 0%,rgba(61,61,61,0) 76%),#060606",
-  },
+  { id: "recent0", background: "radial-gradient(50% 50% at 32% 44%,#5a5a5a 0%,rgba(90,90,90,0) 72%),#0c0c0c" },
+  { id: "recent1", background: "radial-gradient(60% 46% at 62% 66%,#2b2b2b 0%,rgba(43,43,43,0) 74%),#070707" },
+  { id: "recent2", background: "radial-gradient(46% 46% at 48% 40%,#8e8e8e 0%,rgba(142,142,142,0) 70%),#101010" },
+  { id: "recent3", background: "radial-gradient(70% 40% at 50% 18%,#3d3d3d 0%,rgba(61,61,61,0) 76%),#060606" },
   {
     id: "recent4",
-    opacity: 0,
-    fade: 800,
-    scale: 1.2,
-    shift: [-20, -14],
     background:
       "radial-gradient(48% 54% at 26% 56%,#6a6a6a 0%,rgba(106,106,106,0) 72%),radial-gradient(34% 34% at 78% 30%,rgba(160,160,160,.22) 0%,rgba(160,160,160,0) 72%),#0b0b0b",
   },
-  {
-    id: "steam",
-    opacity: 0,
-    fade: 1200,
-    scale: 1.12,
-    shift: [-12, -10],
-    background: "linear-gradient(96deg,rgba(120,120,120,.32) 0%,rgba(0,0,0,0) 52%),#0a0a0a",
-  },
-  {
-    id: "psn",
-    opacity: 0,
-    fade: 1200,
-    scale: 1.14,
-    shift: [-14, -10],
-    background: "radial-gradient(58% 54% at 70% 46%,#4c4c4c 0%,rgba(76,76,76,0) 74%),#080808",
-  },
-  {
-    id: "discord",
-    opacity: 0,
-    fade: 1200,
-    scale: 1.08,
-    shift: [-10, -8],
-    background: "radial-gradient(52% 50% at 44% 52%,#9a9a98 0%,rgba(154,154,152,0) 74%),#101010",
-  },
-  {
-    id: "ts",
-    opacity: 0,
-    fade: 1400,
-    scale: 1.08,
-    shift: [-8, -6],
-    background: "radial-gradient(18% 64% at 50% 50%,rgba(255,255,255,.34) 0%,rgba(255,255,255,0) 72%),#050505",
-  },
-  {
-    id: "final",
-    opacity: 0,
-    fade: 1400,
-    scale: 1.06,
-    background: "radial-gradient(72% 56% at 50% 94%,#242424 0%,rgba(36,36,36,0) 76%),#080808",
-  },
+  { id: "steam", background: "linear-gradient(96deg,rgba(120,120,120,.32) 0%,rgba(0,0,0,0) 52%),#0a0a0a" },
+  { id: "psn", background: "radial-gradient(58% 54% at 70% 46%,#4c4c4c 0%,rgba(76,76,76,0) 74%),#080808" },
+  { id: "discord", background: "radial-gradient(52% 50% at 44% 52%,#9a9a98 0%,rgba(154,154,152,0) 74%),#101010" },
+  { id: "ts", background: "radial-gradient(18% 64% at 50% 50%,rgba(255,255,255,.34) 0%,rgba(255,255,255,0) 72%),#050505" },
+  { id: "final", background: "radial-gradient(72% 56% at 50% 94%,#242424 0%,rgba(36,36,36,0) 76%),#080808" },
 ];
 
 function plateStyle(plate: Plate): string {
-  const pan = plate.shift
-    ? ` translate3d(calc(var(--mx,0)*${plate.shift[0]}px),calc(var(--my,0)*${plate.shift[1]}px),0)`
-    : "";
-  return `position:absolute;inset:-18%;opacity:${plate.opacity};transition:opacity ${plate.fade}ms cubic-bezier(.4,0,.2,1);transform:scale(${plate.scale})${pan};background:${plate.background}`;
+  const show = plate.on ? "1" : "0";
+  const vis = plate.on ? "visible" : "hidden";
+  return `position:absolute;inset:0;opacity:${show};visibility:${vis};background:${plate.background}`;
 }
 
-function CreditRow({ game, index, last }: { game: CreditGame; index: number; last: boolean }) {
-  const i = Math.min(index, CREDIT_SHIFT.length - 1);
+type CreditRowProps = {
+  game: CreditGame;
+  index: number;
+  last: boolean;
+};
+
+function CreditRow({ game, index, last }: CreditRowProps) {
+  const look = CREDIT_LOOK[Math.min(index, CREDIT_LOOK.length - 1)];
   return (
     <div
       style={css(
-        `display:flex;align-items:center;justify-content:space-between;gap:24px;padding:clamp(14px,2.4vh,26px) 0 clamp(14px,2.4vh,26px) ${CREDIT_PAD[i]};border-top:1px solid rgba(241,240,238,.16);${last ? "border-bottom:1px solid rgba(241,240,238,.16);" : ""}transform:translate3d(calc((1 - var(--p))*${CREDIT_SHIFT[i]}vw),0,0)`,
+        `display:flex;align-items:center;justify-content:space-between;gap:24px;padding:clamp(14px,2.4vh,26px) 0 clamp(14px,2.4vh,26px) ${look.pad};border-top:1px solid rgba(241,240,238,.16);${last ? "border-bottom:1px solid rgba(241,240,238,.16);" : ""}`,
       )}
     >
       <span style={css(`display:flex;align-items:center;gap:clamp(12px,2vw,22px);min-width:0`)}>
-        <span style={css(`position:relative;display:block;width:52px;height:74px;flex:none;overflow:hidden;background:#141414;box-shadow:inset 0 0 24px rgba(0,0,0,.45)`)}>
+        <span style={css(`position:relative;display:block;width:52px;height:74px;flex:none;overflow:hidden;background:#141414`)}>
           <GameStill art={game.art} kind="poster" position="center center" />
         </span>
-        <span style={css(`font-family:'Bodoni Moda',serif;font-size:${CREDIT_SIZE[i]};line-height:1;color:${CREDIT_NAME[i]}`)}>{game.name}</span>
+        <span style={css(`font-family:'Bodoni Moda',serif;font-size:${look.size};line-height:1;color:${look.name}`)}>{game.name}</span>
       </span>
-      <span style={css(`font-family:'Bodoni Moda',serif;font-size:${CREDIT_SIZE[i]};line-height:1;color:${CREDIT_HOURS[i]}`)}>{game.hours}</span>
+      <span style={css(`font-family:'Bodoni Moda',serif;font-size:${look.size};line-height:1;color:${look.hours}`)}>{game.hours}</span>
     </div>
   );
 }
 
-function RecentSlide({ game, index }: { game: RecentGame; index: number }) {
-  if (index === 1) {
-    return (
-      <article style={css(`position:relative;width:80vw;height:100%;flex:none;display:flex;align-items:center;justify-content:center`)}>
-        <div style={css(`position:absolute;inset:20vh clamp(16px,3vw,48px) 10vh;overflow:hidden;transform:translate3d(calc(var(--p)*7vw),0,0);background:#101010;box-shadow:inset 0 0 160px rgba(0,0,0,.6)`)}>
-          <GameStill art={game.art} kind="wide" caption={game.caption} />
-        </div>
-        <div style={css(`position:relative;z-index:2;width:100%;padding:0 clamp(24px,5vw,80px);display:flex;justify-content:space-between;align-items:flex-start;gap:32px;transform:translate3d(calc(var(--p)*22vw),0,0)`)}>
-          <div style={css(`max-width:26ch;font-size:13px;line-height:1.6;color:rgba(241,240,238,.5)`)}>{game.meta}</div>
-          <h3 style={css(`margin:0;text-align:right;font-family:'Bodoni Moda',serif;font-weight:400;font-style:italic;font-size:clamp(40px,6.4vw,120px);line-height:.88;color:#f6f5f3;text-shadow:0 12px 40px rgba(0,0,0,.55)`)}>
-            {game.name}
-            <span style={css(`display:block;font-style:normal;font-family:'Archivo',sans-serif;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:rgba(241,240,238,.42);margin-top:14px`)}>{game.hours}</span>
-          </h3>
-        </div>
-      </article>
-    );
+const SLIDE = `position:relative;width:80vw;height:100%;flex:none;display:flex`;
+const STILL = `overflow:hidden;background:#101010`;
+const TITLE = `margin:0;font-family:'Bodoni Moda',serif;font-weight:400;color:#f6f5f3;text-shadow:0 12px 40px rgba(0,0,0,.55)`;
+
+type RecentSlideProps = {
+  game: RecentGame;
+  index: number;
+};
+
+function RecentSlide({ game, index }: RecentSlideProps) {
+  switch (index) {
+    case 0:
+      return (
+        <article style={css(`${SLIDE};align-items:center;justify-content:center`)}>
+          <div style={css(`position:absolute;inset:14vh clamp(16px,3vw,48px);${STILL}`)}>
+            <GameStill art={game.art} kind="wide" caption={game.caption} />
+          </div>
+          <div style={css(`position:relative;z-index:2;width:100%;padding:0 clamp(24px,5vw,80px);display:flex;justify-content:space-between;align-items:flex-end;gap:32px`)}>
+            <h3 style={css(`${TITLE};font-size:clamp(40px,6.4vw,120px);line-height:.88;letter-spacing:-.02em`)}>{game.name}</h3>
+            <div style={css(`text-align:right;flex:none`)}>
+              <div style={css(`font-family:'Bodoni Moda',serif;font-size:clamp(30px,3.4vw,58px);line-height:1;color:#f6f5f3`)}>{game.hours}</div>
+              <div style={css(`font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:rgba(241,240,238,.42);margin-top:6px`)}>{game.meta}</div>
+            </div>
+          </div>
+        </article>
+      );
+    case 1:
+      return (
+        <article style={css(`${SLIDE};align-items:center;justify-content:center`)}>
+          <div style={css(`position:absolute;inset:20vh clamp(16px,3vw,48px) 10vh;${STILL}`)}>
+            <GameStill art={game.art} kind="wide" caption={game.caption} />
+          </div>
+          <div style={css(`position:relative;z-index:2;width:100%;padding:0 clamp(24px,5vw,80px);display:flex;justify-content:space-between;align-items:flex-start;gap:32px`)}>
+            <div style={css(`max-width:26ch;font-size:13px;line-height:1.6;color:rgba(241,240,238,.5)`)}>{game.meta}</div>
+            <h3 style={css(`${TITLE};text-align:right;font-style:italic;font-size:clamp(40px,6.4vw,120px);line-height:.88`)}>
+              {game.name}
+              <span style={css(`display:block;font-style:normal;font-family:'Archivo',sans-serif;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:rgba(241,240,238,.42);margin-top:14px`)}>{game.hours}</span>
+            </h3>
+          </div>
+        </article>
+      );
+    case 2:
+      return (
+        <article style={css(`${SLIDE};align-items:flex-end;justify-content:center`)}>
+          <div style={css(`position:absolute;inset:8vh clamp(60px,12vw,220px) 22vh clamp(16px,3vw,48px);${STILL}`)}>
+            <GameStill art={game.art} kind="wide" caption={game.caption} captionDark />
+          </div>
+          <div style={css(`position:relative;z-index:2;width:100%;padding:0 clamp(24px,5vw,80px) clamp(26px,7vh,80px)`)}>
+            <h3 style={css(`${TITLE};font-size:clamp(44px,7.2vw,138px);line-height:.86;letter-spacing:-.02em`)}>{game.name}</h3>
+            <div style={css(`margin-top:12px;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:rgba(241,240,238,.44)`)}>{game.hours} · {game.meta}</div>
+          </div>
+        </article>
+      );
+    case 3:
+      return (
+        <article style={css(`${SLIDE};align-items:center;justify-content:center`)}>
+          <div style={css(`position:absolute;inset:16vh clamp(16px,3vw,48px);${STILL}`)}>
+            <GameStill art={game.art} kind="wide" caption={game.caption} />
+          </div>
+          <div style={css(`position:relative;z-index:2;text-align:center;padding:0 clamp(24px,5vw,80px)`)}>
+            <h3 style={css(`${TITLE};font-size:clamp(42px,6.8vw,128px);line-height:.88`)}>{game.name}</h3>
+            <div style={css(`margin-top:16px;font-size:13px;line-height:1.6;color:rgba(241,240,238,.5)`)}>{game.hours} · {game.meta}</div>
+          </div>
+        </article>
+      );
+    default: {
+      const space = game.name.indexOf(" ");
+      const first = space === -1 ? game.name : game.name.slice(0, space);
+      const second = space === -1 ? "" : game.name.slice(space + 1);
+      return (
+        <article style={css(`${SLIDE};align-items:center;justify-content:flex-start`)}>
+          <div style={css(`position:absolute;inset:12vh clamp(16px,3vw,48px) 12vh 34vw;${STILL}`)}>
+            <GameStill art={game.art} kind="poster" caption={game.caption} />
+          </div>
+          <div style={css(`position:relative;z-index:2;padding:0 clamp(24px,5vw,80px);max-width:44vw`)}>
+            <h3 style={css(`${TITLE};font-size:clamp(38px,5.6vw,104px);line-height:.9`)}>
+              {first}
+              {second ? (
+                <>
+                  <br />
+                  <span style={css(`font-style:italic`)}>{second}</span>
+                </>
+              ) : null}
+            </h3>
+            <div style={css(`margin-top:18px;font-size:13px;line-height:1.6;color:rgba(241,240,238,.52);max-width:30ch`)}>{game.hours} · {game.meta}</div>
+          </div>
+        </article>
+      );
+    }
   }
-  if (index === 2) {
-    return (
-      <article style={css(`position:relative;width:80vw;height:100%;flex:none;display:flex;align-items:flex-end;justify-content:center`)}>
-        <div style={css(`position:absolute;inset:8vh clamp(60px,12vw,220px) 22vh clamp(16px,3vw,48px);overflow:hidden;transform:translate3d(calc(var(--p)*-6vw),0,0);background:#101010;box-shadow:inset 0 0 160px rgba(0,0,0,.66)`)}>
-          <GameStill art={game.art} kind="wide" caption={game.caption} captionDark />
-        </div>
-        <div style={css(`position:relative;z-index:2;width:100%;padding:0 clamp(24px,5vw,80px) clamp(26px,7vh,80px);transform:translate3d(calc(var(--p)*26vw),0,0)`)}>
-          <h3 style={css(`margin:0;font-family:'Bodoni Moda',serif;font-weight:400;font-size:clamp(44px,7.2vw,138px);line-height:.86;letter-spacing:-.02em;color:#f6f5f3;text-shadow:0 12px 40px rgba(0,0,0,.55)`)}>{game.name}</h3>
-          <div style={css(`margin-top:12px;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:rgba(241,240,238,.44)`)}>{game.hours} · {game.meta}</div>
-        </div>
-      </article>
-    );
-  }
-  if (index === 3) {
-    return (
-      <article style={css(`position:relative;width:80vw;height:100%;flex:none;display:flex;align-items:center;justify-content:center`)}>
-        <div style={css(`position:absolute;inset:16vh clamp(16px,3vw,48px);overflow:hidden;transform:translate3d(calc(var(--p)*10vw),0,0) scale(calc(1.1 - var(--p)*.1));background:#101010;box-shadow:inset 0 0 170px rgba(0,0,0,.6)`)}>
-          <GameStill art={game.art} kind="wide" caption={game.caption} />
-        </div>
-        <div style={css(`position:relative;z-index:2;text-align:center;padding:0 clamp(24px,5vw,80px);transform:translate3d(calc(var(--p)*18vw),0,0)`)}>
-          <h3 style={css(`margin:0;font-family:'Bodoni Moda',serif;font-weight:400;font-size:clamp(42px,6.8vw,128px);line-height:.88;color:#f6f5f3;text-shadow:0 12px 40px rgba(0,0,0,.55)`)}>{game.name}</h3>
-          <div style={css(`margin-top:16px;font-size:13px;line-height:1.6;color:rgba(241,240,238,.5)`)}>{game.hours} · {game.meta}</div>
-        </div>
-      </article>
-    );
-  }
-  if (index >= 4) {
-    const [first, ...rest] = game.name.split(" ");
-    const second = rest.join(" ");
-    return (
-      <article style={css(`position:relative;width:80vw;height:100%;flex:none;display:flex;align-items:center;justify-content:flex-start`)}>
-        <div style={css(`position:absolute;inset:12vh clamp(16px,3vw,48px) 12vh 34vw;overflow:hidden;transform:translate3d(calc(var(--p)*-8vw),0,0);background:#101010;box-shadow:inset 0 0 150px rgba(0,0,0,.6)`)}>
-          <GameStill art={game.art} kind="poster" caption={game.caption} />
-        </div>
-        <div style={css(`position:relative;z-index:2;padding:0 clamp(24px,5vw,80px);max-width:44vw;transform:translate3d(calc(var(--p)*14vw),0,0)`)}>
-          <h3 style={css(`margin:0;font-family:'Bodoni Moda',serif;font-weight:400;font-size:clamp(38px,5.6vw,104px);line-height:.9;color:#f6f5f3;text-shadow:0 12px 40px rgba(0,0,0,.55)`)}>
-            {first}
-            {second ? (
-              <>
-                <br />
-                <span style={css(`font-style:italic`)}>{second}</span>
-              </>
-            ) : null}
-          </h3>
-          <div style={css(`margin-top:18px;font-size:13px;line-height:1.6;color:rgba(241,240,238,.52);max-width:30ch`)}>{game.hours} · {game.meta}</div>
-        </div>
-      </article>
-    );
-  }
-  return (
-    <article style={css(`position:relative;width:80vw;height:100%;flex:none;display:flex;align-items:center;justify-content:center`)}>
-      <div style={css(`position:absolute;inset:14vh clamp(16px,3vw,48px);overflow:hidden;transform:translate3d(calc(var(--p)*-9vw),0,0) scale(calc(1 + var(--p)*.12));background:#101010;box-shadow:inset 0 0 160px rgba(0,0,0,.62)`)}>
-        <GameStill art={game.art} kind="wide" caption={game.caption} />
-      </div>
-      <div style={css(`position:relative;z-index:2;width:100%;padding:0 clamp(24px,5vw,80px);display:flex;justify-content:space-between;align-items:flex-end;gap:32px;transform:translate3d(calc(var(--p)*30vw),0,0)`)}>
-        <h3 style={css(`margin:0;font-family:'Bodoni Moda',serif;font-weight:400;font-size:clamp(40px,6.4vw,120px);line-height:.88;letter-spacing:-.02em;color:#f6f5f3;text-shadow:0 12px 40px rgba(0,0,0,.55)`)}>{game.name}</h3>
-        <div style={css(`text-align:right;flex:none`)}>
-          <div style={css(`font-family:'Bodoni Moda',serif;font-size:clamp(30px,3.4vw,58px);line-height:1;color:#f6f5f3`)}>{game.hours}</div>
-          <div style={css(`font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:rgba(241,240,238,.42);margin-top:6px`)}>{game.meta}</div>
-        </div>
-      </div>
-    </article>
-  );
 }
 
 export function Archive({ rootRef, tsLabel, copyTs, live }: ArchiveProps) {
   return (
     <div ref={rootRef} style={css(`position:relative;background:#090909;overflow-x:clip;font-family:'Archivo',system-ui,sans-serif`)}>
 
-  <div aria-hidden="true" style={css(`position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;animation:bgdrift 38s ease-in-out infinite alternate`)}>
+  <div aria-hidden="true" style={css(`position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden`)}>
     {PLATES.map((plate) => (
-      <div key={plate.id} data-plate={plate.id} style={css(plateStyle(plate))}></div>
+      <div key={plate.id} data-plate={plate.id} style={css(plateStyle(plate))} />
     ))}
-    <div style={css(`position:absolute;inset:-30%;mix-blend-mode:soft-light;background:linear-gradient(104deg,rgba(255,255,255,0) 32%,rgba(255,255,255,.55) 50%,rgba(255,255,255,0) 68%);animation:haze 27s ease-in-out infinite alternate`)}></div>
-    <div style={css(`position:absolute;inset:-20%;mix-blend-mode:soft-light;background:radial-gradient(38% 44% at 68% 34%,rgba(255,255,255,.4) 0%,rgba(255,255,255,0) 72%);animation:breathe 19s ease-in-out infinite alternate`)}></div>
-    <div style={css(`position:absolute;inset:0;background:radial-gradient(122% 92% at 50% 50%,rgba(9,9,9,0) 32%,rgba(9,9,9,.78) 100%)`)}></div>
-    <div style={css(`position:absolute;inset:0;background:#000;opacity:calc(var(--v,0)*.28)`)}></div>
-    <div data-grain="" style={css(`position:absolute;inset:-50%;opacity:.12;mix-blend-mode:overlay`)}></div>
+    <div style={css(`position:absolute;inset:0;background:radial-gradient(122% 92% at 50% 50%,rgba(9,9,9,0) 32%,rgba(9,9,9,.78) 100%)`)} />
   </div>
 
   <section data-scene="hero" data-chapter="hero" data-static="0" style={css(`--p:0;--b:0;position:relative;z-index:1;height:260vh`)}>
     <div data-sticky="" style={css(`position:sticky;top:0;height:100vh;overflow:hidden`)}>
-      <div style={css(`position:absolute;left:50%;top:50%;width:min(30vw,420px);height:70vh;overflow:hidden;transform:translate3d(-50%,-50%,0) scale(calc(.9 + var(--p)*2.4)) translate3d(calc(var(--mx,0)*10px),calc(var(--my,0)*8px),0);opacity:calc(.2 + var(--p)*.8);background:#141414;box-shadow:inset 0 0 140px rgba(0,0,0,.7)`)}>
+      <div style={css(`position:absolute;left:50%;top:50%;width:min(30vw,420px);height:70vh;overflow:hidden;transform:translate3d(-50%,-50%,0) scale(calc(.9 + var(--p)*2.4));opacity:calc(.2 + var(--p)*.8);background:#141414`)}>
         <GameStill art={live.nowArt} kind="poster" eager />
       </div>
-      <div style={css(`position:absolute;left:50%;top:50%;transform:translate3d(calc(-50% - var(--p)*40vw),-50%,0) scale(calc(1 + var(--p)*.7));opacity:calc(1 - var(--p)*.9);font-family:'Bodoni Moda',serif;font-size:clamp(88px,21vw,320px);line-height:.78;letter-spacing:-.035em;color:#f6f5f3;white-space:nowrap;clip-path:inset(0 50% 0 0)`)}>ankuzo</div>
-      <div style={css(`position:absolute;left:50%;top:50%;transform:translate3d(calc(-50% + var(--p)*40vw),-50%,0) scale(calc(1 + var(--p)*.7));opacity:calc(1 - var(--p)*.9);font-family:'Bodoni Moda',serif;font-size:clamp(88px,21vw,320px);line-height:.78;letter-spacing:-.035em;color:#f6f5f3;white-space:nowrap;clip-path:inset(0 0 0 50%)`)}>ankuzo</div>
+      <div style={css(`position:absolute;left:50%;top:50%;display:flex;width:max-content;transform:translate3d(-50%,-50%,0) scale(calc(1 + var(--p)*.7));opacity:calc(1 - var(--p)*.9);font-family:'Bodoni Moda',serif;font-size:clamp(88px,21vw,320px);line-height:.78;letter-spacing:-.035em;color:#f6f5f3`)}>
+        <div style={css(`width:50%;overflow:hidden;transform:translate3d(calc(var(--p)*-40vw),0,0)`)}>
+          <div style={css(`width:200%;white-space:nowrap`)}>ankuzo</div>
+        </div>
+        <div style={css(`width:50%;overflow:hidden;transform:translate3d(calc(var(--p)*40vw),0,0)`)}>
+          <div style={css(`width:200%;margin-left:-100%;white-space:nowrap`)}>ankuzo</div>
+        </div>
+      </div>
       <p style={css(`position:absolute;left:50%;top:calc(50% + clamp(52px,7.4vw,120px));margin:0;transform:translate3d(-50%,calc(var(--p)*-6vh),0);opacity:calc(1 - var(--p)*2.4);font-family:'Bodoni Moda',serif;font-style:italic;font-size:clamp(15px,1.6vw,24px);color:rgba(241,240,238,.6);white-space:nowrap`)}>личный игровой архив</p>
       <div style={css(`position:absolute;left:0;right:0;bottom:0;padding:0 clamp(20px,4vw,56px) clamp(24px,4vh,44px);transform:translate3d(0,calc(var(--p)*8vh),0);opacity:calc(1 - var(--p)*2)`)}>
         <div style={css(`font-size:13px;line-height:1.5;color:rgba(241,240,238,.5);max-width:38ch`)}>Восемнадцать лет в чужих мирах, сведённые на одну страницу.</div>
@@ -296,7 +226,7 @@ export function Archive({ rootRef, tsLabel, copyTs, live }: ArchiveProps) {
 
   <section data-scene="now" data-chapter="now" data-static="0.6" style={css(`--p:0;position:relative;z-index:1;height:250vh`)}>
     <div data-sticky="" style={css(`position:sticky;top:0;height:100vh;overflow:hidden`)}>
-      <div style={css(`position:absolute;top:9vh;right:0;width:min(64vw,940px);height:82vh;overflow:hidden;transform:scale(calc(1.16 - var(--p)*.16)) translate3d(calc(var(--mx,0)*12px),calc(var(--my,0)*9px),0);background:#101010;box-shadow:inset 0 0 200px rgba(0,0,0,.62)`)}>
+      <div style={css(`position:absolute;top:9vh;right:0;width:min(64vw,940px);height:82vh;overflow:hidden;background:#101010`)}>
         <div style={css(`position:absolute;inset:0;transform:scaleY(calc(.44 + var(--p)*.56));transform-origin:50% 50%`)}>
           <GameStill art={live.nowArt} kind="poster" caption={live.nowCaption} eager />
         </div>
@@ -324,11 +254,10 @@ export function Archive({ rootRef, tsLabel, copyTs, live }: ArchiveProps) {
     <div data-sticky="" style={css(`position:sticky;top:0;height:100vh;overflow:hidden`)}>
       <div style={css(`position:absolute;top:clamp(22px,4vh,44px);left:clamp(20px,4.5vw,72px);z-index:3;font-family:'Bodoni Moda',serif;font-style:italic;font-size:clamp(15px,1.5vw,22px);color:rgba(241,240,238,.5)`)}>последние две недели</div>
       <div style={css(`position:absolute;left:clamp(20px,4.5vw,72px);right:clamp(20px,4.5vw,72px);bottom:clamp(22px,4vh,40px);height:1px;background:rgba(241,240,238,.14);z-index:3`)}><div style={css(`position:absolute;left:0;top:-1px;height:3px;background:#f6f5f3;width:calc(var(--p)*100%)`)}></div></div>
-      <div data-track="" style={css(`position:absolute;top:0;left:0;height:100%;display:flex;width:400vw;transform:translate3d(calc(var(--p)*-300vw),0,0);will-change:transform`)}>
+      <div data-track="" style={css(`position:absolute;top:0;left:0;height:100%;display:flex;width:400vw;transform:translate3d(calc(var(--p)*-300vw),0,0)`)}>
         {live.recents.map((game, index) => (
           <RecentSlide key={`${game.name}-${index}`} game={game} index={index} />
         ))}
-
       </div>
     </div>
   </section>
@@ -370,13 +299,13 @@ export function Archive({ rootRef, tsLabel, copyTs, live }: ArchiveProps) {
       <p style={css(`margin:18px 0 0;font-size:13px;line-height:1.7;color:rgba(241,240,238,.52)`)}>Консоль стоит в комнате, где нет рабочего стола. Поэтому здесь другие игры — те, которые я прохожу целиком, а не запускаю на двадцать минут.</p>
     </div>
 
-    <div style={css(`position:relative;width:min(74vw,1080px);height:74vh;overflow:hidden;background:#101010;box-shadow:inset 0 0 190px rgba(0,0,0,.6)`)}>
+    <div style={css(`position:relative;width:min(74vw,1080px);height:74vh;overflow:hidden;background:#101010`)}>
       <GameStill art={live.psnStills[0]?.art || live.nowArt} kind="wide" caption={live.psnStills[0]?.caption || "still / playstation"} />
     </div>
     <div style={css(`display:flex;justify-content:flex-end;padding:0 clamp(20px,4.5vw,72px);margin-top:26px`)}><div style={css(`text-align:right;max-width:22ch`)}><div style={css(`font-family:'Bodoni Moda',serif;font-style:italic;font-size:clamp(22px,2.6vw,42px);line-height:1.05;color:#f6f5f3`)}>{live.psnStills[0]?.title || "PlayStation"}</div><div style={css(`margin-top:10px;font-size:12px;line-height:1.6;color:rgba(241,240,238,.5)`)}>из библиотеки</div></div></div>
 
     <div style={css(`display:flex;justify-content:flex-end;margin-top:16vh;padding-right:clamp(20px,4.5vw,72px)`)}>
-      <div style={css(`position:relative;width:min(52vw,720px);height:52vh;overflow:hidden;background:#101010;box-shadow:inset 0 0 160px rgba(0,0,0,.6)`)}>
+      <div style={css(`position:relative;width:min(52vw,720px);height:52vh;overflow:hidden;background:#101010`)}>
         <GameStill art={live.psnStills[1]?.art || live.psnStills[0]?.art || live.nowArt} kind="poster" caption={live.psnStills[1]?.caption || "still / playstation"} />
         <div style={css(`position:absolute;left:clamp(-140px,-12vw,-32px);top:16%;max-width:16ch;z-index:2`)}><div style={css(`font-family:'Bodoni Moda',serif;font-size:clamp(20px,2.3vw,36px);line-height:1.1;color:#f6f5f3`)}>{live.psnStills[1]?.title || "PlayStation"}</div><div style={css(`margin-top:8px;font-size:12px;color:rgba(241,240,238,.5)`)}>из библиотеки</div></div>
       </div>
@@ -391,7 +320,7 @@ export function Archive({ rootRef, tsLabel, copyTs, live }: ArchiveProps) {
 
   <section data-scene="discord" data-chapter="discord" data-static="0.7" style={css(`--p:0;position:relative;z-index:2;height:230vh`)}>
     <div data-sticky="" style={css(`position:sticky;top:0;height:100vh;overflow:hidden`)}>
-      <div style={css(`position:absolute;left:50%;top:50%;width:140vmax;height:140vmax;margin:-70vmax;border-radius:50%;background:#eeedea;transform:scale(var(--p));transform-origin:50% 50%;will-change:transform`)}></div>
+      <div style={css(`position:absolute;left:50%;top:50%;width:140vmax;height:140vmax;margin:-70vmax;border-radius:50%;background:#eeedea;transform:scale(var(--p));transform-origin:50% 50%`)}></div>
       <div style={css(`position:absolute;inset:0;display:flex;align-items:center;padding:0 clamp(20px,4.5vw,72px);opacity:calc(var(--p)*2.6 - .5)`)}>
         <div style={css(`max-width:min(52ch,86vw);margin-left:clamp(0px,8vw,180px)`)}>
           <div style={css(`display:flex;align-items:center;gap:20px`)}>
@@ -419,8 +348,8 @@ export function Archive({ rootRef, tsLabel, copyTs, live }: ArchiveProps) {
 
   <section data-scene="ts" data-chapter="ts" data-static="1" style={css(`--p:0;position:relative;z-index:1;height:250vh`)}>
     <div data-sticky="" style={css(`position:sticky;top:0;height:100vh;overflow:hidden;display:grid;place-items:center`)}>
-      <div style={css(`position:absolute;left:50%;top:50%;transform:translate3d(-50%,-50%,0);width:calc(6vw + var(--p)*64vw);height:calc(46vh + var(--p)*44vh);background:linear-gradient(180deg,rgba(255,255,255,.72),rgba(255,255,255,.16) 58%,rgba(255,255,255,0));box-shadow:0 0 140px rgba(255,255,255,.18)`)}></div>
-      <div style={css(`position:relative;text-align:center;padding:0 24px;opacity:calc(var(--p)*2.2 - .7);transform:translate3d(0,calc((1 - var(--p))*4vh),0);mix-blend-mode:difference;color:#fff`)}>
+      <div style={css(`position:absolute;left:50%;top:50%;width:70vw;height:90vh;transform:translate3d(-50%,-50%,0) scale(calc(.12 + var(--p)*.88));transform-origin:50% 50%;background:linear-gradient(180deg,rgba(255,255,255,.72),rgba(255,255,255,.16) 58%,rgba(255,255,255,0))`)}></div>
+      <div style={css(`position:relative;text-align:center;padding:0 24px;opacity:calc(var(--p)*2.2 - .7);transform:translate3d(0,calc((1 - var(--p))*4vh),0);color:#f6f5f3`)}>
         <div style={css(`font-family:'Bodoni Moda',serif;font-style:italic;font-size:clamp(18px,2vw,32px)`)}>последняя комната</div>
         <div style={css(`margin-top:clamp(14px,2.6vh,28px);font-family:'Bodoni Moda',serif;font-size:clamp(28px,5.2vw,86px);line-height:1;letter-spacing:-.02em`)}>Ankuzo</div>
         <div style={css(`margin-top:14px;font-size:12px;letter-spacing:.2em;text-transform:uppercase`)}>в поиске TeamSpeak</div>

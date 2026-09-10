@@ -168,9 +168,6 @@
 }
 
 body{margin:0;background:#090909;color:#f1f0ee;-webkit-font-smoothing:antialiased}
-@keyframes bgdrift{0%{transform:translate3d(-1.4%,1%,0) scale(1.03)}50%{transform:translate3d(1.6%,-1.2%,0) scale(1.06)}100%{transform:translate3d(-.6%,1.4%,0) scale(1.04)}}
-@keyframes haze{0%{transform:translate3d(-16%,6%,0) rotate(-2deg);opacity:.28}50%{transform:translate3d(10%,-4%,0) rotate(1deg);opacity:.5}100%{transform:translate3d(-6%,8%,0) rotate(-1deg);opacity:.32}}
-@keyframes breathe{0%{opacity:.22;transform:scale(1.02)}100%{opacity:.5;transform:scale(1.12)}}
 @media (prefers-reduced-motion: reduce){*{animation-duration:.01ms !important;animation-iteration-count:1 !important}}
 ::selection{background:#f1f0ee;color:#090909}
 a{color:#f1f0ee;text-decoration:none;border-bottom:1px solid rgba(241,240,238,.3)}
