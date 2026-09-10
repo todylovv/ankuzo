@@ -7,8 +7,8 @@ type GameStillProps = {
   kind?: "wide" | "poster";
   caption?: string;
   captionDark?: boolean;
-  tone?: "archive" | "color";
   position?: string;
+  eager?: boolean;
 };
 
 export function GameStill({
@@ -16,8 +16,8 @@ export function GameStill({
   kind = "wide",
   caption,
   captionDark = false,
-  tone = "archive",
   position = "center 28%",
+  eager,
 }: GameStillProps) {
   const urls = useMemo(() => artUrls(art, kind), [art, kind]);
   const [index, setIndex] = useState(0);
@@ -25,10 +25,6 @@ export function GameStill({
     setIndex(0);
   }, [urls[0]]);
   const src = urls[index];
-  const filter =
-    tone === "color"
-      ? "contrast(1.05) saturate(0.92) brightness(0.92)"
-      : "grayscale(0.22) contrast(1.16) saturate(0.78) brightness(0.86)";
 
   return (
     <>
@@ -37,6 +33,7 @@ export function GameStill({
           src={src}
           alt=""
           decoding="async"
+          loading={eager ? "eager" : "lazy"}
           referrerPolicy="no-referrer"
           onError={() => setIndex((current) => current + 1)}
           style={{
@@ -46,15 +43,14 @@ export function GameStill({
             height: "100%",
             objectFit: "cover",
             objectPosition: position,
-            filter,
-            transform: "scale(1.06)",
+            transform: "translateZ(0) scale(1.06)",
           }}
         />
       ) : null}
       <div
         aria-hidden="true"
         style={css(
-          `position:absolute;inset:0;pointer-events:none;background:repeating-linear-gradient(102deg,rgba(255,255,255,.045) 0 2px,rgba(255,255,255,0) 2px 13px),linear-gradient(180deg,rgba(8,8,8,.12) 0%,rgba(8,8,8,.08) 42%,rgba(8,8,8,.72) 100%)`,
+          `position:absolute;inset:0;pointer-events:none;background:repeating-linear-gradient(102deg,rgba(255,255,255,.045) 0 2px,rgba(255,255,255,0) 2px 13px),linear-gradient(180deg,rgba(8,8,8,.18) 0%,rgba(8,8,8,.12) 42%,rgba(8,8,8,.72) 100%)`,
         )}
       />
       {caption ? (

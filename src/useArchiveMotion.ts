@@ -9,6 +9,18 @@ type ArchiveMotionOptions = {
   steamHours?: number;
 };
 
+function setCssVar(el: HTMLElement, name: string, next: string, prev: string | undefined): string {
+  if (prev !== next) el.style.setProperty(name, next);
+  return next;
+}
+
+function sceneProgress(rect: DOMRect, vh: number): number {
+  const span = rect.height - vh;
+  if (span > 40) return Math.min(1, Math.max(0, -rect.top / span));
+  if (rect.top < vh * 0.4) return 1;
+  return 0;
+}
+
 export function useArchiveMotion(
   rootRef: RefObject<HTMLDivElement | null>,
   options: ArchiveMotionOptions = {},
@@ -58,7 +70,6 @@ export function useArchiveMotion(
         const s = el.dataset.static || "0";
         el.style.setProperty("--p", s);
         el.style.setProperty("--b", "1");
-        el.style.setProperty("--s", "0");
         el.style.height = "auto";
         const sticky = el.querySelector<HTMLElement>("[data-sticky]");
         if (sticky) {
@@ -93,6 +104,16 @@ export function useArchiveMotion(
       }
     };
 
+    const reduced =
+      motion === "off" || matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduced) {
+      applyStatic();
+      return () => io?.disconnect();
+    }
+
+    const lastP = new WeakMap<HTMLElement, string>();
+    const lastB = new WeakMap<HTMLElement, string>();
+
     const update = () => {
       const vh = innerHeight;
       let best = 0;
@@ -100,19 +121,20 @@ export function useArchiveMotion(
       let activeP = 0;
       for (const el of scenes) {
         const r = el.getBoundingClientRect();
-        const span = r.height - vh;
-        const p = span > 40 ? Math.min(1, Math.max(0, -r.top / span)) : r.top < vh * 0.4 ? 1 : 0;
-        el.style.setProperty("--p", p.toFixed(4));
-        const name = el.dataset.scene;
-        if (name === "wipe") el.style.setProperty("--b", (1 - Math.abs(2 * p - 1)).toFixed(3));
-        if (name === "now") el.style.setProperty("--s", Math.max(0, 1 - Math.abs(p - 0.44) * 11).toFixed(3));
-        if (name === "steam" && counter) {
-          const t = Math.min(1, p / 0.45);
-          const e = 1 - Math.pow(1 - t, 3);
-          const v = Math.round(e * steamHours);
-          if (v !== countValue) {
-            countValue = v;
-            counter.textContent = String(v);
+        const p = sceneProgress(r, vh);
+        if (r.bottom > 0 && r.top < vh) {
+          lastP.set(el, setCssVar(el, "--p", p.toFixed(4), lastP.get(el)));
+          const name = el.dataset.scene;
+          if (name === "wipe") {
+            lastB.set(el, setCssVar(el, "--b", (1 - Math.abs(2 * p - 1)).toFixed(3), lastB.get(el)));
+          }
+          if (name === "steam" && counter) {
+            const t = Math.min(1, p / 0.45);
+            const count = Math.round((1 - Math.pow(1 - t, 3)) * steamHours);
+            if (count !== countValue) {
+              countValue = count;
+              counter.textContent = String(count);
+            }
           }
         }
         const vis = Math.min(r.bottom, vh) - Math.max(r.top, 0);
@@ -128,13 +150,6 @@ export function useArchiveMotion(
       setPlate(next);
     };
 
-    const reduced =
-      motion === "off" || matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (reduced) {
-      applyStatic();
-      return () => io?.disconnect();
-    }
-
     const onScroll = () => {
       dirty = true;
     };
@@ -147,19 +162,23 @@ export function useArchiveMotion(
     addEventListener("resize", onScroll);
     if (depth) addEventListener("pointermove", onMove, { passive: true });
 
+    let lastMx = "";
+    let lastMy = "";
+    let lastV = "";
+
     const loop = () => {
       raf = requestAnimationFrame(loop);
       if (depth) {
         mouse.x += (mouse.tx - mouse.x) * 0.06;
         mouse.y += (mouse.ty - mouse.y) * 0.06;
-        root.style.setProperty("--mx", mouse.x.toFixed(4));
-        root.style.setProperty("--my", mouse.y.toFixed(4));
+        lastMx = setCssVar(root, "--mx", mouse.x.toFixed(4), lastMx);
+        lastMy = setCssVar(root, "--my", mouse.y.toFixed(4), lastMy);
       }
       const y = scrollY;
-      const raw = Math.min(1, Math.abs(y - (lastY == null ? y : lastY)) / 90);
+      const raw = Math.min(1, Math.abs(y - (lastY ?? y)) / 90);
       lastY = y;
-      velocity = velocity + (raw - velocity) * (raw > velocity ? 0.35 : 0.07);
-      root.style.setProperty("--v", velocity.toFixed(3));
+      velocity += (raw - velocity) * (raw > velocity ? 0.35 : 0.07);
+      lastV = setCssVar(root, "--v", velocity.toFixed(3), lastV);
       if (!dirty) return;
       dirty = false;
       update();

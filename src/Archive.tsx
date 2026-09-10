@@ -46,6 +46,123 @@ const CREDIT_HOURS = [
   "rgba(246,245,243,.66)",
 ];
 
+type Plate = {
+  id: string;
+  opacity: number;
+  fade: number;
+  scale: number;
+  shift?: readonly [number, number];
+  background: string;
+};
+
+const PLATES: Plate[] = [
+  {
+    id: "hero",
+    opacity: 1,
+    fade: 1100,
+    scale: 1.16,
+    shift: [-16, -12],
+    background:
+      "radial-gradient(56% 52% at 36% 42%,#333 0%,rgba(51,51,51,0) 72%),radial-gradient(44% 52% at 76% 68%,rgba(120,120,120,.28) 0%,rgba(120,120,120,0) 70%),#0b0b0b",
+  },
+  {
+    id: "now",
+    opacity: 0,
+    fade: 1100,
+    scale: 1.2,
+    shift: [-24, -16],
+    background:
+      "radial-gradient(54% 56% at 64% 38%,#6e6e6e 0%,rgba(110,110,110,0) 70%),radial-gradient(38% 38% at 22% 76%,rgba(30,30,30,.9) 0%,rgba(30,30,30,0) 72%),#0d0d0d",
+  },
+  {
+    id: "recent0",
+    opacity: 0,
+    fade: 800,
+    scale: 1.2,
+    shift: [-20, -14],
+    background: "radial-gradient(50% 50% at 32% 44%,#5a5a5a 0%,rgba(90,90,90,0) 72%),#0c0c0c",
+  },
+  {
+    id: "recent1",
+    opacity: 0,
+    fade: 800,
+    scale: 1.22,
+    shift: [-20, -14],
+    background: "radial-gradient(60% 46% at 62% 66%,#2b2b2b 0%,rgba(43,43,43,0) 74%),#070707",
+  },
+  {
+    id: "recent2",
+    opacity: 0,
+    fade: 800,
+    scale: 1.18,
+    shift: [-20, -14],
+    background: "radial-gradient(46% 46% at 48% 40%,#8e8e8e 0%,rgba(142,142,142,0) 70%),#101010",
+  },
+  {
+    id: "recent3",
+    opacity: 0,
+    fade: 800,
+    scale: 1.24,
+    shift: [-20, -14],
+    background: "radial-gradient(70% 40% at 50% 18%,#3d3d3d 0%,rgba(61,61,61,0) 76%),#060606",
+  },
+  {
+    id: "recent4",
+    opacity: 0,
+    fade: 800,
+    scale: 1.2,
+    shift: [-20, -14],
+    background:
+      "radial-gradient(48% 54% at 26% 56%,#6a6a6a 0%,rgba(106,106,106,0) 72%),radial-gradient(34% 34% at 78% 30%,rgba(160,160,160,.22) 0%,rgba(160,160,160,0) 72%),#0b0b0b",
+  },
+  {
+    id: "steam",
+    opacity: 0,
+    fade: 1200,
+    scale: 1.12,
+    shift: [-12, -10],
+    background: "linear-gradient(96deg,rgba(120,120,120,.32) 0%,rgba(0,0,0,0) 52%),#0a0a0a",
+  },
+  {
+    id: "psn",
+    opacity: 0,
+    fade: 1200,
+    scale: 1.14,
+    shift: [-14, -10],
+    background: "radial-gradient(58% 54% at 70% 46%,#4c4c4c 0%,rgba(76,76,76,0) 74%),#080808",
+  },
+  {
+    id: "discord",
+    opacity: 0,
+    fade: 1200,
+    scale: 1.08,
+    shift: [-10, -8],
+    background: "radial-gradient(52% 50% at 44% 52%,#9a9a98 0%,rgba(154,154,152,0) 74%),#101010",
+  },
+  {
+    id: "ts",
+    opacity: 0,
+    fade: 1400,
+    scale: 1.08,
+    shift: [-8, -6],
+    background: "radial-gradient(18% 64% at 50% 50%,rgba(255,255,255,.34) 0%,rgba(255,255,255,0) 72%),#050505",
+  },
+  {
+    id: "final",
+    opacity: 0,
+    fade: 1400,
+    scale: 1.06,
+    background: "radial-gradient(72% 56% at 50% 94%,#242424 0%,rgba(36,36,36,0) 76%),#080808",
+  },
+];
+
+function plateStyle(plate: Plate): string {
+  const pan = plate.shift
+    ? ` translate3d(calc(var(--mx,0)*${plate.shift[0]}px),calc(var(--my,0)*${plate.shift[1]}px),0)`
+    : "";
+  return `position:absolute;inset:-18%;opacity:${plate.opacity};transition:opacity ${plate.fade}ms cubic-bezier(.4,0,.2,1);transform:scale(${plate.scale})${pan};background:${plate.background}`;
+}
+
 function CreditRow({ game, index, last }: { game: CreditGame; index: number; last: boolean }) {
   const i = Math.min(index, CREDIT_SHIFT.length - 1);
   return (
@@ -151,29 +268,21 @@ export function Archive({ rootRef, tsLabel, copyTs, live }: ArchiveProps) {
   return (
     <div ref={rootRef} style={css(`position:relative;background:#090909;overflow-x:clip;font-family:'Archivo',system-ui,sans-serif`)}>
 
-  <div aria-hidden="true" style={css(`position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;filter:blur(calc(var(--v,0)*16px)) contrast(calc(1 + var(--v,0)*.3));animation:bgdrift 38s ease-in-out infinite alternate`)}>
-    <div data-plate="hero" style={css(`position:absolute;inset:-18%;opacity:1;transition:opacity 1100ms cubic-bezier(.4,0,.2,1);filter:blur(72px) grayscale(1);transform:scale(1.16) translate3d(calc(var(--mx,0)*-16px),calc(var(--my,0)*-12px),0);background:#0b0b0b`)}><GameStill art={live.nowArt} kind="poster" tone="color" /></div>
-    <div data-plate="now" style={css(`position:absolute;inset:-18%;opacity:0;transition:opacity 1100ms cubic-bezier(.4,0,.2,1);filter:blur(84px) grayscale(1);transform:scale(1.2) translate3d(calc(var(--mx,0)*-24px),calc(var(--my,0)*-16px),0);background:#0d0d0d`)}><GameStill art={live.nowArt} kind="wide" tone="color" /></div>
-    <div data-plate="recent0" style={css(`position:absolute;inset:-18%;opacity:0;transition:opacity 800ms cubic-bezier(.4,0,.2,1);filter:blur(86px) grayscale(1);transform:scale(1.2) translate3d(calc(var(--mx,0)*-20px),calc(var(--my,0)*-14px),0);background:#0c0c0c`)}><GameStill art={live.recents[0]?.art || live.nowArt} kind="wide" tone="color" /></div>
-    <div data-plate="recent1" style={css(`position:absolute;inset:-18%;opacity:0;transition:opacity 800ms cubic-bezier(.4,0,.2,1);filter:blur(90px) grayscale(1);transform:scale(1.22) translate3d(calc(var(--mx,0)*-20px),calc(var(--my,0)*-14px),0);background:#070707`)}><GameStill art={live.recents[1]?.art || live.nowArt} kind="wide" tone="color" /></div>
-    <div data-plate="recent2" style={css(`position:absolute;inset:-18%;opacity:0;transition:opacity 800ms cubic-bezier(.4,0,.2,1);filter:blur(78px) grayscale(1);transform:scale(1.18) translate3d(calc(var(--mx,0)*-20px),calc(var(--my,0)*-14px),0);background:#101010`)}><GameStill art={live.recents[2]?.art || live.nowArt} kind="wide" tone="color" /></div>
-    <div data-plate="recent3" style={css(`position:absolute;inset:-18%;opacity:0;transition:opacity 800ms cubic-bezier(.4,0,.2,1);filter:blur(92px) grayscale(1);transform:scale(1.24) translate3d(calc(var(--mx,0)*-20px),calc(var(--my,0)*-14px),0);background:#060606`)}><GameStill art={live.recents[3]?.art || live.nowArt} kind="wide" tone="color" /></div>
-    <div data-plate="recent4" style={css(`position:absolute;inset:-18%;opacity:0;transition:opacity 800ms cubic-bezier(.4,0,.2,1);filter:blur(84px) grayscale(1);transform:scale(1.2) translate3d(calc(var(--mx,0)*-20px),calc(var(--my,0)*-14px),0);background:#0b0b0b`)}><GameStill art={live.recents[4]?.art || live.nowArt} kind="poster" tone="color" /></div>
-    <div data-plate="steam" style={css(`position:absolute;inset:-18%;opacity:0;transition:opacity 1200ms cubic-bezier(.4,0,.2,1);filter:blur(96px) grayscale(1);transform:scale(1.12) translate3d(calc(var(--mx,0)*-12px),calc(var(--my,0)*-10px),0);background:#0a0a0a`)}><GameStill art={live.topArt} kind="wide" tone="color" /></div>
-    <div data-plate="psn" style={css(`position:absolute;inset:-18%;opacity:0;transition:opacity 1200ms cubic-bezier(.4,0,.2,1);filter:blur(96px) grayscale(1);transform:scale(1.14) translate3d(calc(var(--mx,0)*-14px),calc(var(--my,0)*-10px),0);background:#080808`)}><GameStill art={live.psnStills[0]?.art || live.nowArt} kind="poster" tone="color" /></div>
-    <div data-plate="discord" style={css(`position:absolute;inset:-18%;opacity:0;transition:opacity 1200ms cubic-bezier(.4,0,.2,1);filter:blur(90px) grayscale(1);transform:scale(1.08) translate3d(calc(var(--mx,0)*-10px),calc(var(--my,0)*-8px),0);background:radial-gradient(52% 50% at 44% 52%,#9a9a98 0%,rgba(154,154,152,0) 74%),#101010`)}></div>
-    <div data-plate="ts" style={css(`position:absolute;inset:-18%;opacity:0;transition:opacity 1400ms cubic-bezier(.4,0,.2,1);filter:blur(88px) grayscale(1);transform:scale(1.08) translate3d(calc(var(--mx,0)*-8px),calc(var(--my,0)*-6px),0);background:radial-gradient(18% 64% at 50% 50%,rgba(255,255,255,.34) 0%,rgba(255,255,255,0) 72%),#050505`)}></div>
-    <div data-plate="final" style={css(`position:absolute;inset:-18%;opacity:0;transition:opacity 1400ms cubic-bezier(.4,0,.2,1);filter:blur(90px) grayscale(1);transform:scale(1.06);background:radial-gradient(72% 56% at 50% 94%,#242424 0%,rgba(36,36,36,0) 76%),#080808`)}></div>
+  <div aria-hidden="true" style={css(`position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;animation:bgdrift 38s ease-in-out infinite alternate`)}>
+    {PLATES.map((plate) => (
+      <div key={plate.id} data-plate={plate.id} style={css(plateStyle(plate))}></div>
+    ))}
     <div style={css(`position:absolute;inset:-30%;mix-blend-mode:soft-light;background:linear-gradient(104deg,rgba(255,255,255,0) 32%,rgba(255,255,255,.55) 50%,rgba(255,255,255,0) 68%);animation:haze 27s ease-in-out infinite alternate`)}></div>
     <div style={css(`position:absolute;inset:-20%;mix-blend-mode:soft-light;background:radial-gradient(38% 44% at 68% 34%,rgba(255,255,255,.4) 0%,rgba(255,255,255,0) 72%);animation:breathe 19s ease-in-out infinite alternate`)}></div>
     <div style={css(`position:absolute;inset:0;background:radial-gradient(122% 92% at 50% 50%,rgba(9,9,9,0) 32%,rgba(9,9,9,.78) 100%)`)}></div>
+    <div style={css(`position:absolute;inset:0;background:#000;opacity:calc(var(--v,0)*.28)`)}></div>
     <div data-grain="" style={css(`position:absolute;inset:-50%;opacity:.12;mix-blend-mode:overlay`)}></div>
   </div>
 
   <section data-scene="hero" data-chapter="hero" data-static="0" style={css(`--p:0;--b:0;position:relative;z-index:1;height:260vh`)}>
     <div data-sticky="" style={css(`position:sticky;top:0;height:100vh;overflow:hidden`)}>
       <div style={css(`position:absolute;left:50%;top:50%;width:min(30vw,420px);height:70vh;overflow:hidden;transform:translate3d(-50%,-50%,0) scale(calc(.9 + var(--p)*2.4)) translate3d(calc(var(--mx,0)*10px),calc(var(--my,0)*8px),0);opacity:calc(.2 + var(--p)*.8);background:#141414;box-shadow:inset 0 0 140px rgba(0,0,0,.7)`)}>
-        <GameStill art={live.nowArt} kind="poster" />
+        <GameStill art={live.nowArt} kind="poster" eager />
       </div>
       <div style={css(`position:absolute;left:50%;top:50%;transform:translate3d(calc(-50% - var(--p)*40vw),-50%,0) scale(calc(1 + var(--p)*.7));opacity:calc(1 - var(--p)*.9);font-family:'Bodoni Moda',serif;font-size:clamp(88px,21vw,320px);line-height:.78;letter-spacing:-.035em;color:#f6f5f3;white-space:nowrap;clip-path:inset(0 50% 0 0)`)}>ankuzo</div>
       <div style={css(`position:absolute;left:50%;top:50%;transform:translate3d(calc(-50% + var(--p)*40vw),-50%,0) scale(calc(1 + var(--p)*.7));opacity:calc(1 - var(--p)*.9);font-family:'Bodoni Moda',serif;font-size:clamp(88px,21vw,320px);line-height:.78;letter-spacing:-.035em;color:#f6f5f3;white-space:nowrap;clip-path:inset(0 0 0 50%)`)}>ankuzo</div>
@@ -185,10 +294,12 @@ export function Archive({ rootRef, tsLabel, copyTs, live }: ArchiveProps) {
     </div>
   </section>
 
-  <section data-scene="now" data-chapter="now" data-static="0.6" style={css(`--p:0;--s:0;position:relative;z-index:1;height:250vh`)}>
+  <section data-scene="now" data-chapter="now" data-static="0.6" style={css(`--p:0;position:relative;z-index:1;height:250vh`)}>
     <div data-sticky="" style={css(`position:sticky;top:0;height:100vh;overflow:hidden`)}>
-      <div style={css(`position:absolute;top:9vh;right:0;width:min(64vw,940px);height:82vh;overflow:hidden;clip-path:inset(calc(28% - var(--p)*28%) 0 calc(28% - var(--p)*28%) 0);filter:invert(var(--s,0)) contrast(calc(1 + var(--s,0)*.4));transform:scale(calc(1.16 - var(--p)*.16)) translate3d(calc(var(--mx,0)*12px),calc(var(--my,0)*9px),0);background:#101010;box-shadow:inset 0 0 200px rgba(0,0,0,.62)`)}>
-        <GameStill art={live.nowArt} kind="poster" caption={live.nowCaption} />
+      <div style={css(`position:absolute;top:9vh;right:0;width:min(64vw,940px);height:82vh;overflow:hidden;transform:scale(calc(1.16 - var(--p)*.16)) translate3d(calc(var(--mx,0)*12px),calc(var(--my,0)*9px),0);background:#101010;box-shadow:inset 0 0 200px rgba(0,0,0,.62)`)}>
+        <div style={css(`position:absolute;inset:0;transform:scaleY(calc(.44 + var(--p)*.56));transform-origin:50% 50%`)}>
+          <GameStill art={live.nowArt} kind="poster" caption={live.nowCaption} eager />
+        </div>
       </div>
       <div style={css(`position:absolute;left:clamp(20px,4.5vw,72px);top:22vh;z-index:2;max-width:min(58vw,760px);transform:translate3d(0,calc((1 - var(--p))*9vh),0);opacity:calc(.15 + var(--p)*1.5)`)}>
         <div style={css(`font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:#f6f5f3;display:flex;align-items:center;gap:10px`)}><span style={css(`width:7px;height:7px;border-radius:50%;background:#f6f5f3;display:inline-block`)}></span>{live.nowLabel}</div>
@@ -259,14 +370,14 @@ export function Archive({ rootRef, tsLabel, copyTs, live }: ArchiveProps) {
       <p style={css(`margin:18px 0 0;font-size:13px;line-height:1.7;color:rgba(241,240,238,.52)`)}>Консоль стоит в комнате, где нет рабочего стола. Поэтому здесь другие игры — те, которые я прохожу целиком, а не запускаю на двадцать минут.</p>
     </div>
 
-    <div style={css(`position:relative;width:min(74vw,1080px);height:74vh;overflow:hidden;background:#101010;box-shadow:inset 0 0 190px rgba(0,0,0,.6);filter:contrast(calc(.55 + var(--p)*.8)) brightness(calc(1.35 - var(--p)*.45)) grayscale(.35)`)}>
-      <GameStill art={live.psnStills[0]?.art || live.nowArt} kind="wide" caption={live.psnStills[0]?.caption || "still / playstation"} tone="color" />
+    <div style={css(`position:relative;width:min(74vw,1080px);height:74vh;overflow:hidden;background:#101010;box-shadow:inset 0 0 190px rgba(0,0,0,.6)`)}>
+      <GameStill art={live.psnStills[0]?.art || live.nowArt} kind="wide" caption={live.psnStills[0]?.caption || "still / playstation"} />
     </div>
     <div style={css(`display:flex;justify-content:flex-end;padding:0 clamp(20px,4.5vw,72px);margin-top:26px`)}><div style={css(`text-align:right;max-width:22ch`)}><div style={css(`font-family:'Bodoni Moda',serif;font-style:italic;font-size:clamp(22px,2.6vw,42px);line-height:1.05;color:#f6f5f3`)}>{live.psnStills[0]?.title || "PlayStation"}</div><div style={css(`margin-top:10px;font-size:12px;line-height:1.6;color:rgba(241,240,238,.5)`)}>из библиотеки</div></div></div>
 
     <div style={css(`display:flex;justify-content:flex-end;margin-top:16vh;padding-right:clamp(20px,4.5vw,72px)`)}>
-      <div style={css(`position:relative;width:min(52vw,720px);height:52vh;overflow:hidden;background:#101010;box-shadow:inset 0 0 160px rgba(0,0,0,.6);filter:contrast(calc(.6 + var(--p)*.7)) brightness(calc(1.25 - var(--p)*.35)) grayscale(.35)`)}>
-        <GameStill art={live.psnStills[1]?.art || live.psnStills[0]?.art || live.nowArt} kind="poster" caption={live.psnStills[1]?.caption || "still / playstation"} tone="color" />
+      <div style={css(`position:relative;width:min(52vw,720px);height:52vh;overflow:hidden;background:#101010;box-shadow:inset 0 0 160px rgba(0,0,0,.6)`)}>
+        <GameStill art={live.psnStills[1]?.art || live.psnStills[0]?.art || live.nowArt} kind="poster" caption={live.psnStills[1]?.caption || "still / playstation"} />
         <div style={css(`position:absolute;left:clamp(-140px,-12vw,-32px);top:16%;max-width:16ch;z-index:2`)}><div style={css(`font-family:'Bodoni Moda',serif;font-size:clamp(20px,2.3vw,36px);line-height:1.1;color:#f6f5f3`)}>{live.psnStills[1]?.title || "PlayStation"}</div><div style={css(`margin-top:8px;font-size:12px;color:rgba(241,240,238,.5)`)}>из библиотеки</div></div>
       </div>
     </div>
@@ -280,7 +391,7 @@ export function Archive({ rootRef, tsLabel, copyTs, live }: ArchiveProps) {
 
   <section data-scene="discord" data-chapter="discord" data-static="0.7" style={css(`--p:0;position:relative;z-index:2;height:230vh`)}>
     <div data-sticky="" style={css(`position:sticky;top:0;height:100vh;overflow:hidden`)}>
-      <div style={css(`position:absolute;inset:0;background:#eeedea;clip-path:circle(calc(var(--p)*150%) at 50% 50%)`)}></div>
+      <div style={css(`position:absolute;left:50%;top:50%;width:140vmax;height:140vmax;margin:-70vmax;border-radius:50%;background:#eeedea;transform:scale(var(--p));transform-origin:50% 50%;will-change:transform`)}></div>
       <div style={css(`position:absolute;inset:0;display:flex;align-items:center;padding:0 clamp(20px,4.5vw,72px);opacity:calc(var(--p)*2.6 - .5)`)}>
         <div style={css(`max-width:min(52ch,86vw);margin-left:clamp(0px,8vw,180px)`)}>
           <div style={css(`display:flex;align-items:center;gap:20px`)}>
