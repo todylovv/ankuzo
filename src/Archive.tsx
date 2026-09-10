@@ -19,6 +19,38 @@ function hoursWord(value: number): string {
   return "часов";
 }
 
+function SteamMark({ size = 42 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="#f6f5f3" aria-hidden="true">
+      <path d="M12 2a10 10 0 0 0-9.87 8.21l5.38 2.22a2.9 2.9 0 0 1 1.62-.49c.22 0 .43.03.64.08l2.91-4.22v-.06A3.54 3.54 0 1 1 16.3 12l-4.15 3.04c0 .1-.01.2-.01.3a2.91 2.91 0 0 1-2.9 2.91 2.94 2.94 0 0 1-2.83-2.15L1.3 13.5A10 10 0 1 0 12 2zm-4.4 13.46.92.38a2.18 2.18 0 0 0 2.8-1.24 2.18 2.18 0 0 0-1.24-2.8l-.95-.4 2.36 1.84a1.74 1.74 0 1 1-1.7 2.95l-2.2-.73zM16.3 11.2a2.36 2.36 0 1 0-2.17-3.47 2.36 2.36 0 0 0 2.17 3.47z" />
+    </svg>
+  );
+}
+
+function PsnMark({ size = 42 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="#f6f5f3" aria-hidden="true">
+      <path d="M8.2 15.9c-1.9.57-3.7.39-4.3-.55-.5-.8.2-1.85 2.1-2.5.7-.24 1.52-.4 2.4-.5v2.05c0 .9.04 1.52.12 1.9l-1.32.6zm.9-8.55v8.04c2.12.42 4.03-.04 4.55-.92.18-.3.2-.62.2-1.12V5.8L9.1 7.35zm6.7 10.4c2.28-.05 4.2-.8 4.2-2.05 0-1.12-1.28-1.9-3.55-2.35l-.85-.18v1.92c0 .55.08.9.28 1.12.32.36 1.08.4 1.95.12l.72 1.48c-.8.5-1.78.8-2.75.94z" />
+    </svg>
+  );
+}
+
+function TrophyMark({ tone = "#f6f5f3" }: { tone?: string }) {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill={tone} aria-hidden="true">
+      <path d="M7 3h10v2h3v3.2c0 2.4-1.7 4.4-4 4.9L15 15.4V17h3v2H6v-2h3v-1.6l-1-.3C5.7 12.6 4 10.6 4 8.2V5h3V3zm2 2v1.2H6v2c0 1.3.8 2.5 2 3V5zm7 6.2c1.2-.5 2-1.7 2-3v-2h-3V5h1v6.2z" />
+    </svg>
+  );
+}
+
+function TsMark({ size = 48 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="#f6f5f3" aria-hidden="true">
+      <path d="M12 3.2A7.8 7.8 0 0 0 4.2 11v3.4c0 .9.7 1.6 1.6 1.6H8v-4.4H6.2A5.8 5.8 0 0 1 12 5.8a5.8 5.8 0 0 1 5.8 5.8H16v4.4h2.2c.9 0 1.6-.7 1.6-1.6V11A7.8 7.8 0 0 0 12 3.2zM8 13.2v5.1c0 1 .8 1.8 1.8 1.8h.7V13.2H8zm5.5 0v6.9h.7c1 0 1.8-.8 1.8-1.8v-5.1h-2.5z" />
+    </svg>
+  );
+}
+
 type CreditLook = {
   pad: string;
   size: string;
@@ -91,7 +123,7 @@ function CreditRow({ game, index, last }: CreditRowProps) {
     >
       <span style={css(`display:flex;align-items:center;gap:clamp(12px,2vw,22px);min-width:0`)}>
         <span style={css(`position:relative;display:block;width:52px;height:74px;flex:none;overflow:hidden;background:#141414`)}>
-          <GameStill art={game.art} kind="poster" position="center center" />
+          <GameStill art={game.art} kind="poster" position="center center" fill />
         </span>
         <span style={css(`font-family:'Bodoni Moda',serif;font-size:${look.size};line-height:1;color:${look.name}`)}>{game.name}</span>
       </span>
@@ -101,8 +133,21 @@ function CreditRow({ game, index, last }: CreditRowProps) {
 }
 
 const SLIDE = `position:relative;width:80vw;height:100%;flex:none;display:flex`;
-const STILL = `overflow:hidden;background:#101010`;
 const TITLE = `margin:0;font-family:'Bodoni Moda',serif;font-weight:400;color:#f6f5f3;text-shadow:0 12px 40px rgba(0,0,0,.55)`;
+
+function GhostName({ name }: { name: string }) {
+  return (
+    <div aria-hidden="true" style={css(`position:absolute;inset:0;overflow:hidden;pointer-events:none`)}>
+      <div
+        style={css(
+          `position:absolute;left:-6vw;top:22%;font-family:'Bodoni Moda',serif;font-size:clamp(64px,22vw,360px);line-height:.76;letter-spacing:-.05em;color:rgba(246,245,243,.05);white-space:nowrap;text-transform:lowercase`,
+        )}
+      >
+        {name}
+      </div>
+    </div>
+  );
+}
 
 type RecentSlideProps = {
   game: RecentGame;
@@ -113,11 +158,12 @@ function RecentSlide({ game, index }: RecentSlideProps) {
   switch (index) {
     case 0:
       return (
-        <article style={css(`${SLIDE};align-items:center;justify-content:center`)}>
-          <div style={css(`position:absolute;inset:14vh clamp(16px,3vw,48px);${STILL}`)}>
-            <GameStill art={game.art} kind="wide" caption={game.caption} />
+        <article style={css(`${SLIDE};align-items:flex-end;justify-content:center`)}>
+          <GhostName name={game.name} />
+          <div style={css(`position:absolute;left:50%;top:16vh;width:min(58vw,720px);transform:translateX(-50%)`)}>
+            <GameStill art={game.art} kind="wide" />
           </div>
-          <div style={css(`position:relative;z-index:2;width:100%;padding:0 clamp(24px,5vw,80px);display:flex;justify-content:space-between;align-items:flex-end;gap:32px`)}>
+          <div style={css(`position:relative;z-index:2;width:100%;padding:0 clamp(24px,5vw,80px) clamp(48px,10vh,96px);display:flex;justify-content:space-between;align-items:flex-end;gap:32px`)}>
             <h3 style={css(`${TITLE};font-size:clamp(40px,6.4vw,120px);line-height:.88;letter-spacing:-.02em`)}>{game.name}</h3>
             <div style={css(`text-align:right;flex:none`)}>
               <div style={css(`font-family:'Bodoni Moda',serif;font-size:clamp(30px,3.4vw,58px);line-height:1;color:#f6f5f3`)}>{game.hours}</div>
@@ -128,13 +174,14 @@ function RecentSlide({ game, index }: RecentSlideProps) {
       );
     case 1:
       return (
-        <article style={css(`${SLIDE};align-items:center;justify-content:center`)}>
-          <div style={css(`position:absolute;inset:20vh clamp(16px,3vw,48px) 10vh;${STILL}`)}>
-            <GameStill art={game.art} kind="wide" caption={game.caption} />
+        <article style={css(`${SLIDE};align-items:flex-start;justify-content:flex-end`)}>
+          <GhostName name={game.name} />
+          <div style={css(`position:absolute;left:clamp(24px,5vw,80px);top:22vh;width:min(48vw,640px)`)}>
+            <GameStill art={game.art} kind="wide" />
           </div>
-          <div style={css(`position:relative;z-index:2;width:100%;padding:0 clamp(24px,5vw,80px);display:flex;justify-content:space-between;align-items:flex-start;gap:32px`)}>
+          <div style={css(`position:relative;z-index:2;padding:18vh clamp(24px,5vw,80px) 0;max-width:34vw`)}>
             <div style={css(`max-width:26ch;font-size:13px;line-height:1.6;color:rgba(241,240,238,.5)`)}>{game.meta}</div>
-            <h3 style={css(`${TITLE};text-align:right;font-style:italic;font-size:clamp(40px,6.4vw,120px);line-height:.88`)}>
+            <h3 style={css(`${TITLE};text-align:right;font-style:italic;font-size:clamp(40px,6.4vw,120px);line-height:.88;margin-top:18px`)}>
               {game.name}
               <span style={css(`display:block;font-style:normal;font-family:'Archivo',sans-serif;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:rgba(241,240,238,.42);margin-top:14px`)}>{game.hours}</span>
             </h3>
@@ -144,8 +191,9 @@ function RecentSlide({ game, index }: RecentSlideProps) {
     case 2:
       return (
         <article style={css(`${SLIDE};align-items:flex-end;justify-content:center`)}>
-          <div style={css(`position:absolute;inset:8vh clamp(60px,12vw,220px) 22vh clamp(16px,3vw,48px);${STILL}`)}>
-            <GameStill art={game.art} kind="wide" caption={game.caption} captionDark />
+          <GhostName name={game.name} />
+          <div style={css(`position:absolute;left:clamp(24px,5vw,80px);top:12vh;width:min(52vw,680px)`)}>
+            <GameStill art={game.art} kind="wide" />
           </div>
           <div style={css(`position:relative;z-index:2;width:100%;padding:0 clamp(24px,5vw,80px) clamp(26px,7vh,80px)`)}>
             <h3 style={css(`${TITLE};font-size:clamp(44px,7.2vw,138px);line-height:.86;letter-spacing:-.02em`)}>{game.name}</h3>
@@ -155,11 +203,12 @@ function RecentSlide({ game, index }: RecentSlideProps) {
       );
     case 3:
       return (
-        <article style={css(`${SLIDE};align-items:center;justify-content:center`)}>
-          <div style={css(`position:absolute;inset:16vh clamp(16px,3vw,48px);${STILL}`)}>
-            <GameStill art={game.art} kind="wide" caption={game.caption} />
+        <article style={css(`${SLIDE};align-items:flex-end;justify-content:center`)}>
+          <GhostName name={game.name} />
+          <div style={css(`position:absolute;left:50%;top:14vh;width:min(50vw,660px);transform:translateX(-50%)`)}>
+            <GameStill art={game.art} kind="wide" />
           </div>
-          <div style={css(`position:relative;z-index:2;text-align:center;padding:0 clamp(24px,5vw,80px)`)}>
+          <div style={css(`position:relative;z-index:2;text-align:center;padding:0 clamp(24px,5vw,80px) clamp(48px,10vh,96px)`)}>
             <h3 style={css(`${TITLE};font-size:clamp(42px,6.8vw,128px);line-height:.88`)}>{game.name}</h3>
             <div style={css(`margin-top:16px;font-size:13px;line-height:1.6;color:rgba(241,240,238,.5)`)}>{game.hours} · {game.meta}</div>
           </div>
@@ -171,8 +220,9 @@ function RecentSlide({ game, index }: RecentSlideProps) {
       const second = space === -1 ? "" : game.name.slice(space + 1);
       return (
         <article style={css(`${SLIDE};align-items:center;justify-content:flex-start`)}>
-          <div style={css(`position:absolute;inset:12vh clamp(16px,3vw,48px) 12vh 34vw;${STILL}`)}>
-            <GameStill art={game.art} kind="poster" caption={game.caption} />
+          <GhostName name={game.name} />
+          <div style={css(`position:absolute;right:clamp(24px,5vw,80px);top:16vh;width:min(28vw,380px)`)}>
+            <GameStill art={game.art} kind="poster" />
           </div>
           <div style={css(`position:relative;z-index:2;padding:0 clamp(24px,5vw,80px);max-width:44vw`)}>
             <h3 style={css(`${TITLE};font-size:clamp(38px,5.6vw,104px);line-height:.9`)}>
@@ -205,18 +255,23 @@ export function Archive({ rootRef, tsLabel, copyTs, live }: ArchiveProps) {
 
   <section data-scene="hero" data-chapter="hero" data-static="0" style={css(`--p:0;--b:0;position:relative;z-index:1;height:260vh`)}>
     <div data-sticky="" style={css(`position:sticky;top:0;height:100vh;overflow:hidden`)}>
-      <div style={css(`position:absolute;left:50%;top:50%;width:min(30vw,420px);height:70vh;overflow:hidden;transform:translate3d(-50%,-50%,0) scale(calc(.9 + var(--p)*2.4));opacity:calc(.2 + var(--p)*.8);background:#141414`)}>
+      <div style={css(`position:absolute;left:50%;top:50%;width:min(22vw,300px);transform:translate3d(-50%,-50%,0) scale(calc(.85 + var(--p)*1.8));opacity:calc(.22 + var(--p)*.78)`)}>
         <GameStill art={live.nowArt} kind="poster" eager />
       </div>
-      <div style={css(`position:absolute;left:50%;top:50%;display:flex;width:max-content;transform:translate3d(-50%,-50%,0) scale(calc(1 + var(--p)*.7));opacity:calc(1 - var(--p)*.9);font-family:'Bodoni Moda',serif;font-size:clamp(88px,21vw,320px);line-height:.78;letter-spacing:-.035em;color:#f6f5f3`)}>
-        <div style={css(`width:50%;overflow:hidden;transform:translate3d(calc(var(--p)*-40vw),0,0)`)}>
-          <div style={css(`width:200%;white-space:nowrap`)}>ankuzo</div>
+      <div style={css(`position:absolute;left:50%;top:50%;transform:translate3d(-50%,-50%,0);font-family:'Bodoni Moda',serif;font-size:clamp(56px,min(14vw,calc((100vw - 64px)/4.35)),220px);line-height:.78;letter-spacing:-.035em;color:#f6f5f3`)}>
+        <div style={css(`position:relative;opacity:calc(1 - var(--p)*1.15)`)}>
+          <div aria-hidden="true" style={css(`visibility:hidden;white-space:nowrap`)}>ankuzo</div>
+          <div style={css(`position:absolute;inset:0;display:flex`)}>
+            <div style={css(`width:50%;overflow:hidden;transform:translate3d(calc(var(--p)*-52vw),0,0)`)}>
+              <div style={css(`width:200%;white-space:nowrap`)}>ankuzo</div>
+            </div>
+            <div style={css(`width:50%;overflow:hidden;transform:translate3d(calc(var(--p)*52vw),0,0)`)}>
+              <div style={css(`width:200%;margin-left:-100%;white-space:nowrap`)}>ankuzo</div>
+            </div>
+          </div>
         </div>
-        <div style={css(`width:50%;overflow:hidden;transform:translate3d(calc(var(--p)*40vw),0,0)`)}>
-          <div style={css(`width:200%;margin-left:-100%;white-space:nowrap`)}>ankuzo</div>
-        </div>
+        <p style={css(`margin:.22em 0 0;font-style:italic;font-size:clamp(15px,1.6vw,24px);letter-spacing:0;color:rgba(241,240,238,.6);white-space:nowrap;text-align:center;opacity:calc(1 - var(--p)*2.6);transform:translate3d(0,calc(var(--p)*-3vh),0)`)}>личный игровой архив</p>
       </div>
-      <p style={css(`position:absolute;left:50%;top:calc(50% + clamp(52px,7.4vw,120px));margin:0;transform:translate3d(-50%,calc(var(--p)*-6vh),0);opacity:calc(1 - var(--p)*2.4);font-family:'Bodoni Moda',serif;font-style:italic;font-size:clamp(15px,1.6vw,24px);color:rgba(241,240,238,.6);white-space:nowrap`)}>личный игровой архив</p>
       <div style={css(`position:absolute;left:0;right:0;bottom:0;padding:0 clamp(20px,4vw,56px) clamp(24px,4vh,44px);transform:translate3d(0,calc(var(--p)*8vh),0);opacity:calc(1 - var(--p)*2)`)}>
         <div style={css(`font-size:13px;line-height:1.5;color:rgba(241,240,238,.5);max-width:38ch`)}>Восемнадцать лет в чужих мирах, сведённые на одну страницу.</div>
       </div>
@@ -224,14 +279,13 @@ export function Archive({ rootRef, tsLabel, copyTs, live }: ArchiveProps) {
     </div>
   </section>
 
-  <section data-scene="now" data-chapter="now" data-static="0.6" style={css(`--p:0;position:relative;z-index:1;height:250vh`)}>
+  {live.playing ? <section data-scene="now" data-chapter="now" data-static="0.6" style={css(`--p:0;position:relative;z-index:1;height:250vh`)}>
     <div data-sticky="" style={css(`position:sticky;top:0;height:100vh;overflow:hidden`)}>
-      <div style={css(`position:absolute;top:9vh;right:0;width:min(64vw,940px);height:82vh;overflow:hidden;background:#101010`)}>
-        <div style={css(`position:absolute;inset:0;transform:scaleY(calc(.44 + var(--p)*.56));transform-origin:50% 50%`)}>
-          <GameStill art={live.nowArt} kind="poster" caption={live.nowCaption} eager />
-        </div>
+      <GhostName name={live.nowName} />
+      <div style={css(`position:absolute;top:12vh;right:clamp(24px,5vw,80px);width:min(30vw,400px);z-index:1;transform:translate3d(0,calc((1 - var(--p))*6vh),0)`)}>
+        <GameStill art={live.nowArt} kind="poster" eager />
       </div>
-      <div style={css(`position:absolute;left:clamp(20px,4.5vw,72px);top:22vh;z-index:2;max-width:min(58vw,760px);transform:translate3d(0,calc((1 - var(--p))*9vh),0);opacity:calc(.15 + var(--p)*1.5)`)}>
+      <div style={css(`position:absolute;left:clamp(20px,4.5vw,72px);top:22vh;z-index:2;max-width:min(46vw,640px);transform:translate3d(0,calc((1 - var(--p))*9vh),0);opacity:calc(.15 + var(--p)*1.5)`)}>
         <div style={css(`font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:#f6f5f3;display:flex;align-items:center;gap:10px`)}><span style={css(`width:7px;height:7px;border-radius:50%;background:#f6f5f3;display:inline-block`)}></span>{live.nowLabel}</div>
         <h2 style={css(`margin:14px 0 0;font-family:'Bodoni Moda',serif;font-weight:400;font-size:clamp(46px,7.4vw,138px);line-height:.86;letter-spacing:-.025em;color:#f6f5f3;text-shadow:0 18px 50px rgba(0,0,0,.55)`)}>
           {live.nowName}
@@ -248,7 +302,7 @@ export function Archive({ rootRef, tsLabel, copyTs, live }: ArchiveProps) {
         <div style={css(`font-size:13px;line-height:1.6;color:rgba(241,240,238,.52);max-width:34ch`)}>PC · Steam. Часы за последние две недели по двум аккаунтам.</div>
       </div>
     </div>
-  </section>
+  </section> : null}
 
   <section data-scene="recent" data-chapter="recent0" data-static="0" style={css(`--p:0;position:relative;z-index:1;height:500vh`)}>
     <div data-sticky="" style={css(`position:sticky;top:0;height:100vh;overflow:hidden`)}>
@@ -271,72 +325,132 @@ export function Archive({ rootRef, tsLabel, copyTs, live }: ArchiveProps) {
     </div>
   </section>
 
-  <section data-scene="steam" data-chapter="steam" data-static="0.5" style={css(`--p:0;position:relative;z-index:1;height:270vh`)}>
-    <div data-sticky="" style={css(`position:sticky;top:0;height:100vh;overflow:hidden;display:flex;align-items:center`)}>
-      <div style={css(`position:relative;width:100%;padding:0 clamp(20px,4.5vw,72px)`)}>
-        <div data-count={String(live.steamHours)} style={css(`font-family:'Bodoni Moda',serif;font-size:clamp(120px,27vw,420px);line-height:.74;letter-spacing:-.05em;color:#f6f5f3;font-variant-numeric:tabular-nums;transform:translate3d(calc(var(--p)*-7vw),0,0)`)}>{live.steamHours}</div>
-        <div style={css(`display:flex;flex-wrap:wrap;gap:clamp(20px,5vw,90px);align-items:flex-start;margin-top:clamp(14px,2.4vh,28px);transform:translate3d(calc(var(--p)*9vw),0,0)`)}>
-          <div style={css(`font-family:'Bodoni Moda',serif;font-style:italic;font-size:clamp(26px,3.4vw,60px);line-height:1;color:rgba(246,245,243,.82)`)}>{hoursWord(live.steamHours)} на Steam</div>
-          <div style={css(`max-width:36ch;font-size:13px;line-height:1.65;color:rgba(241,240,238,.5)`)}>Сумма двух аккаунтов. Больше всего времени — в {live.topGame}.</div>
-          <div style={css(`font-size:12px;line-height:2;letter-spacing:.06em;color:rgba(241,240,238,.42)`)}>steam · {live.steamAccounts}<br />{live.steamGames} игр</div>
+  <section data-scene="steam" data-chapter="steam" data-static="0.5" style={css(`--p:0;position:relative;z-index:1;height:220vh`)}>
+    <div data-sticky="" style={css(`position:sticky;top:0;height:100vh;overflow:auto;display:flex;flex-direction:column;justify-content:center;padding:8vh clamp(20px,4.5vw,72px)`)}>
+      <div style={css(`display:flex;align-items:center;gap:14px;opacity:calc(.35 + var(--p)*.8)`)}>
+        <SteamMark size={36} />
+        <span style={css(`font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:rgba(241,240,238,.55)`)}>Steam</span>
+      </div>
+      <div style={css(`display:flex;flex-wrap:wrap;align-items:flex-end;gap:clamp(16px,3vw,48px);margin-top:clamp(10px,2vh,20px)`)}>
+        <div data-count={String(live.steamHours)} style={css(`font-family:'Bodoni Moda',serif;font-size:clamp(72px,14vw,200px);line-height:.74;letter-spacing:-.05em;color:#f6f5f3;font-variant-numeric:tabular-nums`)}>{live.steamHours}</div>
+        <div style={css(`padding-bottom:8px`)}>
+          <div style={css(`font-family:'Bodoni Moda',serif;font-style:italic;font-size:clamp(22px,3vw,48px);line-height:1;color:rgba(246,245,243,.86)`)}>{hoursWord(live.steamHours)} на Steam</div>
+          <div style={css(`margin-top:10px;max-width:42ch;font-size:13px;line-height:1.6;color:rgba(241,240,238,.5)`)}>Сумма двух аккаунтов. Больше всего времени — в {live.topGame}.</div>
+          <div style={css(`margin-top:8px;font-size:12px;letter-spacing:.06em;color:rgba(241,240,238,.42)`)}>{live.steamAccounts} · {live.steamGames} игр</div>
+        </div>
+      </div>
+      <div style={css(`font-family:'Bodoni Moda',serif;font-style:italic;font-size:clamp(15px,1.5vw,22px);color:rgba(241,240,238,.5);margin:clamp(22px,4vh,40px) 0 clamp(8px,1.6vh,16px);opacity:calc(.2 + var(--p)*1.1)`)}>всё, что осталось в часах</div>
+      <div style={css(`display:flex;flex-direction:column;opacity:calc(.15 + var(--p)*1.2)`)}>
+        {live.credits.map((game, index) => (
+          <CreditRow key={game.name} game={game} index={index} last={index === live.credits.length - 1} />
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section data-scene="psn" data-chapter="psn" data-static="0.6" style={css(`--p:0;position:relative;z-index:1;padding:10vh clamp(20px,4.5vw,72px) 14vh`)}>
+    <div style={css(`display:flex;align-items:center;gap:14px;margin-bottom:18px`)}>
+      <PsnMark size={40} />
+      <div>
+        <div style={css(`font-family:'Bodoni Moda',serif;font-size:clamp(34px,5vw,88px);line-height:.94;color:#f6f5f3`)}>PlayStation</div>
+        <div style={css(`margin-top:4px;font-size:12px;letter-spacing:.14em;color:rgba(241,240,238,.45)`)}>psn · {live.psnId} · уровень {live.psnLevel}</div>
+      </div>
+    </div>
+    <p style={css(`margin:0 0 clamp(28px,5vh,48px);font-size:13px;line-height:1.7;color:rgba(241,240,238,.52);max-width:min(46ch,90vw)`)}>Консоль стоит в комнате, где нет рабочего стола. Поэтому здесь другие игры — те, которые я прохожу целиком, а не запускаю на двадцать минут.</p>
+
+    <div style={css(`display:flex;flex-wrap:wrap;gap:clamp(18px,3vw,40px);align-items:flex-end;margin-bottom:clamp(32px,6vh,64px)`)}>
+      <div style={css(`display:flex;align-items:center;gap:10px`)}>
+        <TrophyMark />
+        <div>
+          <div style={css(`font-family:'Bodoni Moda',serif;font-size:clamp(48px,8vw,120px);line-height:.78;letter-spacing:-.03em;color:#f6f5f3`)}>{live.psnTotal}</div>
+          <div style={css(`margin-top:6px;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:rgba(241,240,238,.45)`)}>трофея</div>
+        </div>
+      </div>
+      <div style={css(`display:flex;align-items:center;gap:8px`)}>
+        <TrophyMark tone="rgba(246,245,243,.9)" />
+        <div>
+          <div style={css(`font-family:'Bodoni Moda',serif;font-size:clamp(28px,4vw,56px);line-height:.82;color:rgba(246,245,243,.9)`)}>{live.psnPlatinum}</div>
+          <div style={css(`margin-top:4px;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:rgba(241,240,238,.4)`)}>платин</div>
+        </div>
+      </div>
+      <div style={css(`display:flex;align-items:center;gap:8px`)}>
+        <TrophyMark tone="rgba(212,175,55,.85)" />
+        <div>
+          <div style={css(`font-family:'Bodoni Moda',serif;font-size:clamp(28px,4vw,56px);line-height:.82;color:rgba(246,245,243,.86)`)}>{live.psnGold}</div>
+          <div style={css(`margin-top:4px;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:rgba(241,240,238,.4)`)}>золотых</div>
+        </div>
+      </div>
+      <div style={css(`display:flex;align-items:center;gap:8px`)}>
+        <TrophyMark tone="rgba(196,196,196,.75)" />
+        <div>
+          <div style={css(`font-family:'Bodoni Moda',serif;font-size:clamp(28px,4vw,56px);line-height:.82;color:rgba(246,245,243,.8)`)}>{live.psnSilver}</div>
+          <div style={css(`margin-top:4px;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:rgba(241,240,238,.4)`)}>серебряных</div>
+        </div>
+      </div>
+      <div style={css(`display:flex;align-items:center;gap:8px`)}>
+        <TrophyMark tone="rgba(176,141,87,.8)" />
+        <div>
+          <div style={css(`font-family:'Bodoni Moda',serif;font-size:clamp(28px,4vw,56px);line-height:.82;color:rgba(246,245,243,.76)`)}>{live.psnBronze}</div>
+          <div style={css(`margin-top:4px;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:rgba(241,240,238,.4)`)}>бронзовых</div>
         </div>
       </div>
     </div>
-  </section>
+    {live.psnHighlight ? <div style={css(`margin:-12px 0 28px;font-size:13px;color:rgba(241,240,238,.48)`)}>{live.psnHighlight}</div> : null}
 
-  <section data-scene="credits" data-chapter="steam" data-static="1" style={css(`--p:0;position:relative;z-index:1;padding:14vh clamp(20px,4.5vw,72px) 22vh`)}>
-    <div style={css(`font-family:'Bodoni Moda',serif;font-style:italic;font-size:clamp(16px,1.7vw,26px);color:rgba(241,240,238,.5);margin-bottom:clamp(28px,6vh,72px)`)}>всё, что осталось в часах</div>
-    <div style={css(`display:flex;flex-direction:column`)}>
-      {live.credits.map((game, index) => (
-        <CreditRow key={game.name} game={game} index={index} last={index === live.credits.length - 1} />
+    <div style={css(`display:flex;flex-wrap:wrap;gap:clamp(10px,1.6vw,18px)`)}>
+      {live.psnStills.map((game) => (
+        <div key={game.title} style={css(`width:clamp(72px,9vw,110px)`)}>
+          <div style={css(`position:relative;width:100%;aspect-ratio:1;overflow:hidden;background:#141414`)}>
+            <GameStill art={game.art} kind="poster" position="center center" fill />
+          </div>
+          <div style={css(`margin-top:8px;font-family:'Bodoni Moda',serif;font-size:12px;line-height:1.25;color:rgba(246,245,243,.72)`)}>{game.title}</div>
+        </div>
       ))}
-    </div>
-  </section>
-
-  <section data-scene="psn" data-chapter="psn" data-static="0.6" style={css(`--p:0;position:relative;z-index:1;padding:6vh 0 12vh`)}>
-    <div style={css(`padding:0 clamp(20px,4.5vw,72px);max-width:min(46ch,90vw);margin-bottom:10vh`)}>
-      <div style={css(`font-family:'Bodoni Moda',serif;font-size:clamp(34px,5vw,88px);line-height:.94;color:#f6f5f3`)}>PlayStation</div>
-      <p style={css(`margin:18px 0 0;font-size:13px;line-height:1.7;color:rgba(241,240,238,.52)`)}>Консоль стоит в комнате, где нет рабочего стола. Поэтому здесь другие игры — те, которые я прохожу целиком, а не запускаю на двадцать минут.</p>
-    </div>
-
-    <div style={css(`position:relative;width:min(74vw,1080px);height:74vh;overflow:hidden;background:#101010`)}>
-      <GameStill art={live.psnStills[0]?.art || live.nowArt} kind="wide" caption={live.psnStills[0]?.caption || "still / playstation"} />
-    </div>
-    <div style={css(`display:flex;justify-content:flex-end;padding:0 clamp(20px,4.5vw,72px);margin-top:26px`)}><div style={css(`text-align:right;max-width:22ch`)}><div style={css(`font-family:'Bodoni Moda',serif;font-style:italic;font-size:clamp(22px,2.6vw,42px);line-height:1.05;color:#f6f5f3`)}>{live.psnStills[0]?.title || "PlayStation"}</div><div style={css(`margin-top:10px;font-size:12px;line-height:1.6;color:rgba(241,240,238,.5)`)}>из библиотеки</div></div></div>
-
-    <div style={css(`display:flex;justify-content:flex-end;margin-top:16vh;padding-right:clamp(20px,4.5vw,72px)`)}>
-      <div style={css(`position:relative;width:min(52vw,720px);height:52vh;overflow:hidden;background:#101010`)}>
-        <GameStill art={live.psnStills[1]?.art || live.psnStills[0]?.art || live.nowArt} kind="poster" caption={live.psnStills[1]?.caption || "still / playstation"} />
-        <div style={css(`position:absolute;left:clamp(-140px,-12vw,-32px);top:16%;max-width:16ch;z-index:2`)}><div style={css(`font-family:'Bodoni Moda',serif;font-size:clamp(20px,2.3vw,36px);line-height:1.1;color:#f6f5f3`)}>{live.psnStills[1]?.title || "PlayStation"}</div><div style={css(`margin-top:8px;font-size:12px;color:rgba(241,240,238,.5)`)}>из библиотеки</div></div>
-      </div>
-    </div>
-
-    <div style={css(`display:flex;flex-wrap:wrap;align-items:flex-end;gap:clamp(24px,6vw,110px);padding:16vh clamp(20px,4.5vw,72px) 0`)}>
-      <div><div style={css(`font-family:'Bodoni Moda',serif;font-size:clamp(72px,13vw,220px);line-height:.78;letter-spacing:-.03em;color:#f6f5f3`)}>{live.psnTotal}</div><div style={css(`margin-top:12px;font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:rgba(241,240,238,.45)`)}>трофея</div></div>
-      <div><div style={css(`font-family:'Bodoni Moda',serif;font-size:clamp(40px,6vw,96px);line-height:.82;color:rgba(246,245,243,.86)`)}>{live.psnPlatinum}</div><div style={css(`margin-top:10px;font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:rgba(241,240,238,.4)`)}>платин</div></div>
-      <div style={css(`font-size:12px;line-height:2;letter-spacing:.06em;color:rgba(241,240,238,.42)`)}>psn · {live.psnId}<br />уровень {live.psnLevel}{live.psnHighlight ? <><br />{live.psnHighlight}</> : null}</div>
     </div>
   </section>
 
   <section data-scene="discord" data-chapter="discord" data-static="0.7" style={css(`--p:0;position:relative;z-index:2;height:230vh`)}>
     <div data-sticky="" style={css(`position:sticky;top:0;height:100vh;overflow:hidden`)}>
       <div style={css(`position:absolute;left:50%;top:50%;width:140vmax;height:140vmax;margin:-70vmax;border-radius:50%;background:#eeedea;transform:scale(var(--p));transform-origin:50% 50%`)}></div>
+      {live.discordBanner ? (
+        <div
+          aria-hidden="true"
+          style={css(
+            `position:absolute;left:8%;right:18%;top:12%;height:28vh;opacity:calc(var(--p)*1.4 - .35);overflow:hidden;mask-image:linear-gradient(180deg,#000 0%,transparent 100%)`,
+          )}
+        >
+          <img src={live.discordBanner} alt="" style={{ width: "100%", height: "100%", objectFit: "cover", filter: "grayscale(1) contrast(1.05)", opacity: 0.28 }} />
+        </div>
+      ) : null}
       <div style={css(`position:absolute;inset:0;display:flex;align-items:center;padding:0 clamp(20px,4.5vw,72px);opacity:calc(var(--p)*2.6 - .5)`)}>
-        <div style={css(`max-width:min(52ch,86vw);margin-left:clamp(0px,8vw,180px)`)}>
-          <div style={css(`display:flex;align-items:center;gap:20px`)}>
-            <div style={css(`position:relative;width:76px;height:76px;flex:none`)}>
-              <div style={css(`width:76px;height:76px;border-radius:50%;overflow:hidden;background:repeating-linear-gradient(120deg,rgba(0,0,0,.07) 0 2px,rgba(0,0,0,0) 2px 9px),linear-gradient(150deg,#c9c8c5,#8c8b88)`)}>
+        <div style={css(`max-width:min(58ch,90vw);margin-left:clamp(0px,8vw,180px)`)}>
+          <div style={css(`display:flex;align-items:center;gap:22px`)}>
+            <div style={css(`position:relative;width:96px;height:96px;flex:none`)}>
+              <div style={css(`width:76px;height:76px;margin:10px;border-radius:50%;overflow:hidden;background:repeating-linear-gradient(120deg,rgba(0,0,0,.07) 0 2px,rgba(0,0,0,0) 2px 9px),linear-gradient(150deg,#c9c8c5,#8c8b88)`)}>
                 {live.discordAvatar ? <img src={live.discordAvatar} alt="" width={76} height={76} style={{ width: "100%", height: "100%", objectFit: "cover" }} /> : null}
               </div>
-              <span style={css(`position:absolute;left:0;right:0;bottom:-18px;text-align:center;font-family:ui-monospace,Menlo,monospace;font-size:9px;color:rgba(11,11,11,.4)`)}>avatar</span>
+              {live.discordDecoration ? (
+                <img src={live.discordDecoration} alt="" aria-hidden="true" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "contain", pointerEvents: "none" }} />
+              ) : null}
             </div>
             <div>
-              <div style={css(`font-family:'Bodoni Moda',serif;font-size:clamp(28px,3.4vw,54px);line-height:1;color:#0b0b0b`)}>{live.discordName}</div>
+              <div style={css(`font-family:'Bodoni Moda',serif;font-size:clamp(26px,3.2vw,52px);line-height:1.05;color:#0b0b0b`)}>{live.discordDisplay}</div>
+              <div style={css(`margin-top:6px;font-size:13px;letter-spacing:.04em;color:rgba(11,11,11,.5)`)}>@{live.discordName}</div>
               <div style={css(`margin-top:8px;display:flex;align-items:center;gap:9px;font-size:12px;letter-spacing:.1em;color:rgba(11,11,11,.6)`)}><span style={css(`width:7px;height:7px;border-radius:50%;background:#0b0b0b;display:inline-block`)}></span>{live.discordStatus}</div>
             </div>
           </div>
-          <p style={css(`margin:clamp(28px,6vh,64px) 0 0;font-family:'Bodoni Moda',serif;font-size:clamp(20px,2.4vw,38px);line-height:1.28;color:#0b0b0b`)}>Вопросы есть — пиши сюда.</p>
-          <p style={css(`margin:22px 0 0;font-size:13px;line-height:1.75;color:rgba(11,11,11,.62);max-width:42ch`)}>
+          {live.discordBadges.length > 0 ? (
+            <div style={css(`margin-top:22px;display:flex;flex-wrap:wrap;gap:8px 18px;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:rgba(11,11,11,.42)`)}>
+              {live.discordBadges.map((badge) => (
+                <span key={badge}>{badge}</span>
+              ))}
+            </div>
+          ) : null}
+          {live.discordBio ? (
+            <p style={css(`margin:22px 0 0;font-size:14px;line-height:1.7;color:rgba(11,11,11,.62);max-width:46ch`)}>{live.discordBio}</p>
+          ) : null}
+          <p style={css(`margin:clamp(22px,4vh,40px) 0 0;font-family:'Bodoni Moda',serif;font-size:clamp(20px,2.4vw,38px);line-height:1.28;color:#0b0b0b`)}>Вопросы есть — пиши сюда.</p>
+          <p style={css(`margin:18px 0 0;font-size:13px;line-height:1.75;color:rgba(11,11,11,.62);max-width:46ch`)}>
             Играю один. Голос в TeamSpeak: в поиске{" "}
             <span style={css(`color:#0b0b0b`)}>Ankuzo</span>, или по ссылке{" "}
             <a href="https://tmspk.gg/3Vi7A7Y9" style={css(`color:#0b0b0b;text-decoration:underline;text-underline-offset:3px`)}>tmspk.gg/3Vi7A7Y9</a>.
@@ -348,13 +462,22 @@ export function Archive({ rootRef, tsLabel, copyTs, live }: ArchiveProps) {
 
   <section data-scene="ts" data-chapter="ts" data-static="1" style={css(`--p:0;position:relative;z-index:1;height:250vh`)}>
     <div data-sticky="" style={css(`position:sticky;top:0;height:100vh;overflow:hidden;display:grid;place-items:center`)}>
-      <div style={css(`position:absolute;left:50%;top:50%;width:70vw;height:90vh;transform:translate3d(-50%,-50%,0) scale(calc(.12 + var(--p)*.88));transform-origin:50% 50%;background:linear-gradient(180deg,rgba(255,255,255,.72),rgba(255,255,255,.16) 58%,rgba(255,255,255,0))`)}></div>
-      <div style={css(`position:relative;text-align:center;padding:0 24px;opacity:calc(var(--p)*2.2 - .7);transform:translate3d(0,calc((1 - var(--p))*4vh),0);color:#f6f5f3`)}>
-        <div style={css(`font-family:'Bodoni Moda',serif;font-style:italic;font-size:clamp(18px,2vw,32px)`)}>последняя комната</div>
-        <div style={css(`margin-top:clamp(14px,2.6vh,28px);font-family:'Bodoni Moda',serif;font-size:clamp(28px,5.2vw,86px);line-height:1;letter-spacing:-.02em`)}>Ankuzo</div>
-        <div style={css(`margin-top:14px;font-size:12px;letter-spacing:.2em;text-transform:uppercase`)}>в поиске TeamSpeak</div>
+      <div
+        aria-hidden="true"
+        style={css(
+          `position:absolute;left:50%;top:6vh;height:88vh;width:1px;transform:translateX(-50%) scaleY(calc(.08 + var(--p)*.92));transform-origin:50% 50%;background:linear-gradient(180deg,rgba(246,245,243,0),rgba(246,245,243,.55) 18%,rgba(246,245,243,.55) 82%,rgba(246,245,243,0))`,
+        )}
+      />
+      <div style={css(`position:relative;text-align:center;padding:0 24px;opacity:calc(var(--p)*2.2 - .55);transform:translate3d(0,calc((1 - var(--p))*3vh),0);color:#f6f5f3`)}>
+        <div style={css(`display:flex;align-items:center;justify-content:center;gap:12px`)}>
+          <TsMark size={42} />
+          <span style={css(`font-size:12px;letter-spacing:.28em;text-transform:uppercase;color:rgba(241,240,238,.7)`)}>TeamSpeak</span>
+        </div>
+        <div style={css(`margin-top:clamp(22px,4vh,40px);font-family:'Bodoni Moda',serif;font-style:italic;font-size:clamp(16px,1.8vw,26px);color:rgba(241,240,238,.55)`)}>последняя комната</div>
+        <div style={css(`margin-top:clamp(10px,2vh,18px);font-family:'Bodoni Moda',serif;font-size:clamp(42px,8vw,128px);line-height:.86;letter-spacing:-.03em`)}>Ankuzo</div>
+        <div style={css(`margin-top:16px;font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:rgba(241,240,238,.5)`)}>в поиске сервера</div>
       </div>
-      <div style={css(`position:absolute;left:50%;bottom:clamp(60px,12vh,130px);transform:translateX(-50%);text-align:center;opacity:calc(var(--p)*2.2 - .9)`)}>
+      <div style={css(`position:absolute;left:50%;bottom:clamp(48px,10vh,110px);transform:translateX(-50%);text-align:center;opacity:calc(var(--p)*2.2 - .85)`)}>
         <button type="button" className="copy-btn" onClick={copyTs} style={css(`background:transparent;border:1px solid rgba(241,240,238,.45);color:#f6f5f3;font-family:'Archivo',sans-serif;font-size:12px;letter-spacing:.18em;text-transform:uppercase;padding:14px 30px;cursor:pointer;transition:background 300ms,border-color 300ms`)}>{tsLabel}</button>
         <div style={css(`margin-top:16px;font-size:12px;color:rgba(241,240,238,.42)`)}>
           <a href="https://tmspk.gg/3Vi7A7Y9" style={css(`color:rgba(241,240,238,.55);text-decoration:none;letter-spacing:.04em`)}>tmspk.gg/3Vi7A7Y9</a>
@@ -365,7 +488,16 @@ export function Archive({ rootRef, tsLabel, copyTs, live }: ArchiveProps) {
 
   <section data-scene="final" data-chapter="final" data-static="0.5" style={css(`--p:0;position:relative;z-index:1;height:100vh;overflow:hidden;display:flex;flex-direction:column;justify-content:flex-end`)}>
     <div style={css(`padding:0 clamp(20px,4.5vw,72px);font-family:'Bodoni Moda',serif;font-style:italic;font-size:clamp(17px,2vw,30px);color:rgba(246,245,243,.62);margin-bottom:clamp(20px,4vh,40px)`)}>увидимся в голосовом</div>
-    <div style={css(`font-family:'Bodoni Moda',serif;font-size:clamp(110px,25vw,400px);line-height:.7;letter-spacing:-.045em;color:#f6f5f3;padding:0 clamp(20px,4.5vw,72px) clamp(22px,4vh,44px);margin-bottom:-.02em;transform:translate3d(0,calc(var(--p)*-2vh),0)`)}>ankuzo</div>
+    <div
+      className="glitch"
+      style={css(
+        `position:relative;font-family:'Bodoni Moda',serif;font-size:clamp(110px,25vw,400px);line-height:.7;letter-spacing:-.045em;color:#f6f5f3;padding:0 clamp(20px,4.5vw,72px) clamp(22px,4vh,44px);margin-bottom:-.02em;transform:translate3d(0,calc(var(--p)*-2vh),0)`,
+      )}
+    >
+      <span className="glitch-word">ankuzo</span>
+      <span className="glitch-word glitch-cut glitch-cut-a" aria-hidden="true">ankuzo</span>
+      <span className="glitch-word glitch-cut glitch-cut-b" aria-hidden="true">ankuzo</span>
+    </div>
   </section>
 
 </div>

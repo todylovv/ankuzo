@@ -5,7 +5,6 @@ export type RecentGame = {
   name: string;
   hours: string;
   meta: string;
-  caption: string;
   art: GameArt;
 };
 
@@ -17,15 +16,14 @@ export type CreditGame = {
 
 export type PsnStill = {
   title: string;
-  caption: string;
   art: GameArt;
 };
 
 export type ArchiveLive = {
+  playing: boolean;
   nowLabel: string;
   nowName: string;
   nowSub: string;
-  nowCaption: string;
   nowArt: GameArt;
   monthHours: number;
   recents: RecentGame[];
@@ -38,12 +36,20 @@ export type ArchiveLive = {
   psnId: string;
   psnTotal: number;
   psnPlatinum: number;
+  psnGold: number;
+  psnSilver: number;
+  psnBronze: number;
   psnLevel: number;
   psnHighlight: string;
   psnStills: PsnStill[];
   discordName: string;
+  discordDisplay: string;
+  discordBio: string;
   discordStatus: string;
   discordAvatar: string;
+  discordBanner: string;
+  discordDecoration: string;
+  discordBadges: string[];
 };
 
 type SteamGame = {
@@ -69,14 +75,19 @@ type SteamSnapshot = {
 
 type PsnSnapshot = {
   psnId?: string;
-  trophies?: { total?: number; platinum?: number; level?: number };
+  trophies?: { total?: number; platinum?: number; gold?: number; silver?: number; bronze?: number; level?: number };
   library?: { title?: string; trophyProgress?: number | null; iconUrl?: string }[];
 };
 
 type DiscordSnapshot = {
   username?: string;
+  displayName?: string;
+  bio?: string;
   presence?: string;
   avatarUrl?: string;
+  bannerUrl?: string;
+  decorationUrl?: string;
+  badges?: string[];
 };
 
 const PRESENCE: Record<string, string> = {
@@ -87,18 +98,18 @@ const PRESENCE: Record<string, string> = {
 };
 
 const FALLBACK: ArchiveLive = {
+  playing: false,
   nowLabel: "недавно в игре",
   nowName: "Overwatch",
   nowSub: "",
-  nowCaption: "artwork / overwatch",
   nowArt: { appId: 2357570 },
   monthHours: 29,
   recents: [
-    { name: "Overwatch", hours: "10 ч", meta: "две недели · PC", caption: "artwork / overwatch", art: { appId: 2357570 } },
-    { name: "Arena Breakout: Infinite", hours: "10 ч", meta: "две недели · PC", caption: "artwork / arena breakout", art: { appId: 2073620 } },
-    { name: "Civilization VI", hours: "4 ч", meta: "две недели · PC", caption: "artwork / civilization vi", art: { appId: 289070 } },
-    { name: "Ghost Recon Breakpoint", hours: "3 ч", meta: "две недели · PC", caption: "artwork / ghost recon", art: { appId: 2231380 } },
-    { name: "Cellar Keeper", hours: "2 ч", meta: "две недели · PC", caption: "artwork / cellar keeper", art: { appId: 4935510 } },
+    { name: "Overwatch", hours: "10 ч", meta: "две недели · PC", art: { appId: 2357570 } },
+    { name: "Arena Breakout: Infinite", hours: "10 ч", meta: "две недели · PC", art: { appId: 2073620 } },
+    { name: "Civilization VI", hours: "4 ч", meta: "две недели · PC", art: { appId: 289070 } },
+    { name: "Ghost Recon Breakpoint", hours: "3 ч", meta: "две недели · PC", art: { appId: 2231380 } },
+    { name: "Cellar Keeper", hours: "2 ч", meta: "две недели · PC", art: { appId: 4935510 } },
   ],
   steamHours: 5173,
   steamGames: 207,
@@ -116,21 +127,33 @@ const FALLBACK: ArchiveLive = {
   psnId: "ankkui",
   psnTotal: 187,
   psnPlatinum: 0,
+  psnGold: 8,
+  psnSilver: 25,
+  psnBronze: 154,
   psnLevel: 64,
   psnHighlight: "",
   psnStills: [],
   discordName: "ankuz0",
+  discordDisplay: "Interpretation of Youngness",
+  discordBio: "Discord — основной канал связи.",
   discordStatus: "не в сети",
   discordAvatar: "",
+  discordBanner: "",
+  discordDecoration: "",
+  discordBadges: ["храбрость", "nitro", "табличка"],
 };
 
 function cleanName(value: string) {
   return value.replace(/[®™©]/g, "").replace(/\s+/g, " ").trim();
 }
 
-function captionFor(name: string) {
-  return `artwork / ${cleanName(name).toLowerCase()}`;
-}
+const BADGE_LABEL: Record<string, string> = {
+  HOUSE_BRAVERY: "храбрость",
+  HOUSE_BRILLIANCE: "блеск",
+  HOUSE_BALANCE: "равновесие",
+  NITRO: "nitro",
+  "Discord Nameplate": "табличка",
+};
 
 function formatHours(value: number) {
   return String(Math.round(value));
@@ -229,17 +252,20 @@ function mergeLive(steam: SteamSnapshot | null, psn: PsnSnapshot | null, discord
     const matchedId = steamByName.get(key);
     psnStills.push({
       title: cleanName(item.title),
-      caption: `still / ${cleanName(item.title).toLowerCase()}`,
       art: artFromMap(matchedId, artMap, { image: item.iconUrl || "" }),
     });
-    if (psnStills.length === 2) break;
+    if (psnStills.length === 10) break;
   }
 
+  const badges = (discord?.badges ?? [])
+    .map((badge) => BADGE_LABEL[badge] || badge.toLowerCase().replace(/_/g, " "))
+    .filter(Boolean);
+
   return {
+    playing: Boolean(playing),
     nowLabel: playing ? "сейчас в игре" : "недавно в игре",
     nowName: now.main,
     nowSub: now.sub,
-    nowCaption: captionFor(nowGame),
     nowArt: artFromMap(nowAppId, artMap),
     monthHours: monthHours || FALLBACK.monthHours,
     recents:
@@ -248,7 +274,6 @@ function mergeLive(steam: SteamSnapshot | null, psn: PsnSnapshot | null, discord
             name: cleanName(game.name || ""),
             hours: `${formatHours(game.hours2w || game.hours || 0)} ч`,
             meta: game.hours2w ? "две недели · PC" : "Steam · PC",
-            caption: captionFor(game.name || ""),
             art: artFromMap(game.appId, artMap),
           }))
         : FALLBACK.recents,
@@ -261,12 +286,20 @@ function mergeLive(steam: SteamSnapshot | null, psn: PsnSnapshot | null, discord
     psnId: psn?.psnId || FALLBACK.psnId,
     psnTotal: psn?.trophies?.total ?? FALLBACK.psnTotal,
     psnPlatinum: psn?.trophies?.platinum ?? FALLBACK.psnPlatinum,
+    psnGold: psn?.trophies?.gold ?? FALLBACK.psnGold,
+    psnSilver: psn?.trophies?.silver ?? FALLBACK.psnSilver,
+    psnBronze: psn?.trophies?.bronze ?? FALLBACK.psnBronze,
     psnLevel: psn?.trophies?.level ?? FALLBACK.psnLevel,
     psnHighlight: highlight?.title ? `${highlight.title} — ${highlight.trophyProgress}%` : FALLBACK.psnHighlight,
     psnStills,
     discordName: discord?.username || FALLBACK.discordName,
+    discordDisplay: discord?.displayName || discord?.username || FALLBACK.discordDisplay,
+    discordBio: discord?.bio || FALLBACK.discordBio,
     discordStatus: PRESENCE[discord?.presence || "offline"] || FALLBACK.discordStatus,
     discordAvatar: discord?.avatarUrl || "",
+    discordBanner: discord?.bannerUrl || "",
+    discordDecoration: discord?.decorationUrl || "",
+    discordBadges: badges.length > 0 ? badges : FALLBACK.discordBadges,
   };
 }
 
