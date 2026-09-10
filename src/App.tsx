@@ -6,6 +6,6 @@ import { useArchiveMotion } from "./useArchiveMotion";
 export default function App() {
   const rootRef = useRef<HTMLDivElement>(null);
   const live = useArchiveData();
-  const { tsLabel, copyTs } = useArchiveMotion(rootRef, { steamHours: live.steamHours });
+  const { tsLabel, copyTs } = useArchiveMotion(rootRef);
   return <Archive rootRef={rootRef} tsLabel={tsLabel} copyTs={copyTs} live={live} />;
 }

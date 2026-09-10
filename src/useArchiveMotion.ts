@@ -4,7 +4,6 @@ type Motion = "full" | "off";
 
 type ArchiveMotionOptions = {
   motion?: Motion;
-  steamHours?: number;
 };
 
 type ArchiveMotion = {
@@ -40,7 +39,6 @@ export function useArchiveMotion(
   options: ArchiveMotionOptions = {},
 ): ArchiveMotion {
   const motion = options.motion ?? "full";
-  const steamHours = options.steamHours ?? 0;
   const [copied, setCopied] = useState(false);
   const copyTimer = useRef(0);
 
@@ -48,10 +46,8 @@ export function useArchiveMotion(
     const scope = rootRef.current ?? document;
     const scenes = Array.from(scope.querySelectorAll<HTMLElement>("[data-scene]"));
     const plates = Array.from(scope.querySelectorAll<HTMLElement>("[data-plate]"));
-    const counter = scope.querySelector<HTMLElement>("[data-count]");
     let activeKey: string | undefined;
     let raf = 0;
-    let countValue: number | undefined;
     const lastP = new WeakMap<HTMLElement, string>();
     const lastB = new WeakMap<HTMLElement, string>();
 
@@ -93,7 +89,14 @@ export function useArchiveMotion(
             if (!entry.isIntersecting) continue;
             if (!best || entry.intersectionRatio > best.intersectionRatio) best = entry;
           }
-          if (best) setPlate((best.target as HTMLElement).dataset.chapter);
+          if (best) {
+            const scene = best.target as HTMLElement;
+            setPlate(scene.dataset.chapter);
+            const light = scene.dataset.scene === "wipe" || scene.dataset.scene === "discord" ? "1" : "0";
+            rootRef.current?.style.setProperty("--silk-light", light);
+            rootRef.current?.style.setProperty("--wipe-b", scene.dataset.scene === "wipe" ? "1" : "0");
+            rootRef.current?.style.setProperty("--discord-p", scene.dataset.scene === "discord" ? "1" : "0");
+          }
         },
         { threshold: [0.15, 0.5, 0.85] },
       );
@@ -108,18 +111,21 @@ export function useArchiveMotion(
       return () => observer?.disconnect();
     }
 
+    const lastRoot = new Map<string, string>();
+    const host = rootRef.current;
+
+    function setRoot(name: string, value: string): void {
+      if (!host || lastRoot.get(name) === value) return;
+      lastRoot.set(name, value);
+      host.style.setProperty(name, value);
+    }
+
     function applyScene(el: HTMLElement, p: number): void {
       writeVar(lastP, el, "--p", p.toFixed(4));
       const name = el.dataset.scene;
       if (name === "wipe") {
         writeVar(lastB, el, "--b", (1 - Math.abs(2 * p - 1)).toFixed(3));
       }
-      if (name !== "steam" || !counter) return;
-      const t = Math.min(1, p / 0.45);
-      const count = Math.round((1 - (1 - t) ** 3) * steamHours);
-      if (count === countValue) return;
-      countValue = count;
-      counter.textContent = String(count);
     }
 
     function update(): void {
@@ -127,10 +133,15 @@ export function useArchiveMotion(
       let best = 0;
       let active: HTMLElement | null = null;
       let activeP = 0;
+      let wipeB = 0;
+      let discordP = 0;
       for (const el of scenes) {
         const r = el.getBoundingClientRect();
         const p = sceneProgress(r, vh);
-        if (r.bottom > 0 && r.top < vh) applyScene(el, p);
+        const on = r.bottom > 0 && r.top < vh;
+        if (on) applyScene(el, p);
+        if (on && el.dataset.scene === "wipe") wipeB = 1 - Math.abs(2 * p - 1);
+        if (on && el.dataset.scene === "discord") discordP = p;
         const vis = Math.min(r.bottom, vh) - Math.max(r.top, 0);
         if (vis > best) {
           best = vis;
@@ -138,6 +149,10 @@ export function useArchiveMotion(
           activeP = p;
         }
       }
+      const discordLight = Math.min(1, Math.max(0, (discordP - 0.16) / 0.38));
+      setRoot("--wipe-b", wipeB.toFixed(3));
+      setRoot("--discord-p", discordP.toFixed(4));
+      setRoot("--silk-light", Math.max(wipeB, discordLight).toFixed(3));
       if (!active) return;
       if (active.dataset.scene === "recent") {
         setPlate("recent" + Math.min(4, Math.floor(activeP * 5 + 0.12)));
@@ -163,7 +178,7 @@ export function useArchiveMotion(
       removeEventListener("scroll", onScroll);
       removeEventListener("resize", onScroll);
     };
-  }, [motion, rootRef, steamHours]);
+  }, [motion, rootRef]);
 
   function copyTs(): void {
     function done(): void {

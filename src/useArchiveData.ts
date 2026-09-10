@@ -177,6 +177,60 @@ function nameKey(value: string) {
     .trim();
 }
 
+function psnKey(value: string): string {
+  return nameKey(
+    cleanName(value)
+      .replace(/S\.T\.A\.L\.K\.E\.R\.?/gi, "stalker")
+      .replace(/WATCH[_\s-]*DOGS/gi, "watch dogs")
+      .replace(/\bresynced\b/gi, "")
+      .replace(/assassin['’`s]{0,2}\s*creed(?:\s*(?:iv|4))?\s*black\s*flag/gi, "assassins creed black flag"),
+  );
+}
+
+function displayPsnTitle(value: string): string {
+  return cleanName(value)
+    .replace(/S\.T\.A\.L\.K\.E\.R\.?/gi, "STALKER")
+    .replace(/\bStalker\b/gi, "STALKER")
+    .replace(/\s*Resynced/gi, "")
+    .replace(/WATCH_DOGS/gi, "Watch Dogs")
+    .replace(/Assassin['’]s Creed(?:\s+IV)?\s+Black Flag/i, "Assassin's Creed IV Black Flag")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+const PSN_STILL_LIMIT = 36;
+
+function collectPsnStills(
+  library: PsnSnapshot["library"],
+  steamGames: SteamGame[],
+  artMap: SteamSnapshot["art"],
+): PsnStill[] {
+  const steamByName = new Map<string, number>();
+  for (const game of steamGames) {
+    if (!game.name || !game.appId) continue;
+    for (const key of [nameKey(game.name), psnKey(game.name)]) {
+      if (key && !steamByName.has(key)) steamByName.set(key, game.appId);
+    }
+  }
+
+  const stills: PsnStill[] = [];
+  const seen = new Set<string>();
+  for (const item of library ?? []) {
+    if (!item.title) continue;
+    const key = psnKey(item.title);
+    if (!key || seen.has(key)) continue;
+    seen.add(key);
+    stills.push({
+      title: displayPsnTitle(item.title),
+      art: artFromMap(steamByName.get(key) || steamByName.get(nameKey(item.title)), artMap, {
+        image: item.iconUrl || "",
+      }),
+    });
+    if (stills.length === PSN_STILL_LIMIT) break;
+  }
+  return stills;
+}
+
 function uniqueGames(games: SteamGame[], limit: number) {
   const seen = new Set<string>();
   const out: SteamGame[] = [];
@@ -235,27 +289,8 @@ function mergeLive(steam: SteamSnapshot | null, psn: PsnSnapshot | null, discord
     hours: formatHours(game.hours || 0),
     art: artFromMap(game.appId, artMap),
   }));
-  const highlight = (psn?.library ?? []).find((game) => Number(game.trophyProgress) > 0);
-  const steamByName = new Map<string, number>();
-  for (const game of [...allGames, ...top]) {
-    if (!game.name || !game.appId) continue;
-    const key = nameKey(game.name);
-    if (key && !steamByName.has(key)) steamByName.set(key, game.appId);
-  }
-  const psnStills: PsnStill[] = [];
-  const seenPsn = new Set<string>();
-  for (const item of psn?.library ?? []) {
-    if (!item.title) continue;
-    const key = nameKey(item.title);
-    if (!key || seenPsn.has(key)) continue;
-    seenPsn.add(key);
-    const matchedId = steamByName.get(key);
-    psnStills.push({
-      title: cleanName(item.title),
-      art: artFromMap(matchedId, artMap, { image: item.iconUrl || "" }),
-    });
-    if (psnStills.length === 10) break;
-  }
+  const highlight = (psn?.library ?? []).find((game) => Number(game.trophyProgress) >= 40);
+  const psnStills = collectPsnStills(psn?.library, [...allGames, ...top], artMap);
 
   const badges = (discord?.badges ?? [])
     .map((badge) => BADGE_LABEL[badge] || badge.toLowerCase().replace(/_/g, " "))
