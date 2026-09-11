@@ -5,7 +5,7 @@ const STRANDS = 160;
 const SCALE = 0.00118;
 const SPEED = 2.15;
 const SWIRL = 0.14;
-const TAIL = 10;
+const TAIL = 14;
 const MAX_EDDIES = 2;
 
 type Strand = {
@@ -29,15 +29,15 @@ type Eddy = {
   life: number;
 };
 
-function fade(t: number) {
+function fade(t: number): number {
   return t * t * t * (t * (t * 6 - 15) + 10);
 }
 
-function mix(a: number, b: number, t: number) {
+function mix(a: number, b: number, t: number): number {
   return a + (b - a) * t;
 }
 
-function makeNoise(seed: number) {
+function makeNoise(seed: number): (x: number, y: number, z: number) => number {
   const perm = new Uint8Array(512);
   const source = new Uint8Array(256);
   for (let i = 0; i < 256; i += 1) source[i] = i;
@@ -54,14 +54,16 @@ function makeNoise(seed: number) {
     perm[i + 256] = source[i];
   }
 
-  function grad(hash: number, x: number, y: number, z: number) {
+  function grad(hash: number, x: number, y: number, z: number): number {
     const h = hash & 15;
     const u = h < 8 ? x : y;
-    const v = h < 4 ? y : h === 12 || h === 14 ? x : z;
+    let v = z;
+    if (h < 4) v = y;
+    else if (h === 12 || h === 14) v = x;
     return ((h & 1) === 0 ? u : -u) + ((h & 2) === 0 ? v : -v);
   }
 
-  return function noise(x: number, y: number, z: number) {
+  return function noise(x: number, y: number, z: number): number {
     const X = Math.floor(x) & 255;
     const Y = Math.floor(y) & 255;
     const Z = Math.floor(z) & 255;
@@ -86,12 +88,12 @@ function makeNoise(seed: number) {
   };
 }
 
-function strokeColor(light: number, warm: boolean) {
+function strokeColor(light: number, warm: boolean): string {
   const t = Math.min(1, Math.max(0, light));
   const r = mix(warm ? 232 : 246, warm ? 72 : 11, t);
   const g = mix(warm ? 214 : 245, warm ? 58 : 11, t);
   const b = mix(warm ? 170 : 243, warm ? 32 : 11, t);
-  const a = mix(0.11, 0.09, t);
+  const a = mix(0.28, 0.2, t);
   return `rgba(${r | 0},${g | 0},${b | 0},${a})`;
 }
 
@@ -124,18 +126,20 @@ export function SilkField() {
     let last = 0;
     const strands: Strand[] = [];
 
-    function live() {
+    function live(): boolean {
       return pageVisible && !reduced;
     }
 
-    function spawn(): Strand {
-      const edge = Math.random();
+    function spawn(inside = false): Strand {
       let x = Math.random() * width;
       let y = Math.random() * height;
-      if (edge < 0.25) x = -20;
-      else if (edge < 0.5) x = width + 20;
-      else if (edge < 0.75) y = -20;
-      else y = height + 20;
+      if (!inside) {
+        const edge = Math.random();
+        if (edge < 0.25) x = -20;
+        else if (edge < 0.5) x = width + 20;
+        else if (edge < 0.75) y = -20;
+        else y = height + 20;
+      }
       return {
         x,
         y,
@@ -144,12 +148,12 @@ export function SilkField() {
         trail: [x, y],
         life: 0,
         max: 286 + Math.random() * 416,
-        width: Math.random() < 0.16 ? 1.1 : 0.52,
+        width: Math.random() < 0.22 ? 1.55 : 0.95,
         warm: Math.random() < 0.1,
       };
     }
 
-    function resize() {
+    function resize(): void {
       width = window.innerWidth;
       height = window.innerHeight;
       const dpr = Math.min(window.devicePixelRatio || 1, 1.25);
@@ -161,16 +165,10 @@ export function SilkField() {
       draw.lineCap = "round";
       draw.lineJoin = "round";
       strands.length = 0;
-      for (let i = 0; i < STRANDS; i += 1) {
-        const strand = spawn();
-        strand.x = Math.random() * width;
-        strand.y = Math.random() * height;
-        strand.trail = [strand.x, strand.y];
-        strands.push(strand);
-      }
+      for (let i = 0; i < STRANDS; i += 1) strands.push(spawn(true));
     }
 
-    function curlAt(x: number, y: number, z: number, scale: number) {
+    function curlAt(x: number, y: number, z: number, scale: number): { x: number; y: number } {
       const e = 0.55;
       const nx = x * scale;
       const ny = y * scale;
@@ -181,11 +179,7 @@ export function SilkField() {
       return { x: (n1 - n2) / (2 * e), y: -(n3 - n4) / (2 * e) };
     }
 
-    function curl(x: number, y: number, t: number) {
-      return curlAt(x, y, t * 0.022, SCALE);
-    }
-
-    function tendEddies(t: number) {
+    function tendEddies(t: number): void {
       for (let i = eddies.length - 1; i >= 0; i -= 1) {
         const eddy = eddies[i];
         eddy.x += Math.sin(t * 0.13 + eddy.spin) * 0.12;
@@ -206,7 +200,7 @@ export function SilkField() {
       }
     }
 
-    function eddyForce(x: number, y: number, t: number) {
+    function eddyForce(x: number, y: number, t: number): { x: number; y: number } {
       let vx = 0;
       let vy = 0;
       for (const eddy of eddies) {
@@ -228,7 +222,7 @@ export function SilkField() {
       return Math.min(1, Math.max(0, Number(raw) || 0));
     }
 
-    function drawTrail(pts: number[]) {
+    function drawTrail(pts: number[]): void {
       const n = pts.length;
       if (n < 4) return;
       const start = Math.max(0, n - TAIL);
@@ -247,9 +241,9 @@ export function SilkField() {
       draw.stroke();
     }
 
-    function step(t: number, dt: number) {
+    function step(t: number, dt: number): void {
       draw.globalCompositeOperation = "destination-out";
-        draw.fillStyle = "rgba(0,0,0,0.042)";
+      draw.fillStyle = "rgba(0,0,0,0.026)";
       draw.fillRect(0, 0, width, height);
       draw.globalCompositeOperation = "source-over";
       tendEddies(t);
@@ -264,7 +258,7 @@ export function SilkField() {
       const stepScale = dt * 60;
 
       for (const strand of strands) {
-        const field = curl(strand.x, strand.y, t);
+        const field = curlAt(strand.x, strand.y, t * 0.022, SCALE);
         const eddy = eddies.length ? eddyForce(strand.x, strand.y, t) : { x: 0, y: 0 };
         let ax = field.x * SPEED + eddy.x;
         let ay = field.y * SPEED + eddy.y;
@@ -299,16 +293,7 @@ export function SilkField() {
           strand.y > height + 50 ||
           strand.life > strand.max;
         if (out) {
-          const next = spawn();
-          strand.x = next.x;
-          strand.y = next.y;
-          strand.vx = 0;
-          strand.vy = 0;
-          strand.trail = next.trail;
-          strand.life = 0;
-          strand.max = next.max;
-          strand.width = next.width;
-          strand.warm = next.warm;
+          Object.assign(strand, spawn());
           continue;
         }
 
@@ -318,7 +303,7 @@ export function SilkField() {
       }
     }
 
-    function frame(now: number) {
+    function frame(now: number): void {
       if (!running) return;
       if (live()) {
         const dt = last ? Math.min(0.033, (now - last) / 1000) : 0.016;
@@ -329,26 +314,21 @@ export function SilkField() {
       }
     }
 
-    function kick() {
+    function kick(): void {
       window.cancelAnimationFrame(raf);
       last = 0;
       if (live()) raf = window.requestAnimationFrame(frame);
     }
 
-    draw.lineCap = "round";
-    draw.lineJoin = "round";
     resize();
 
-    const onResize = () => {
-      resize();
-    };
     const onMove = (event: PointerEvent) => {
       hasMouse = true;
       aimX = event.clientX / Math.max(1, window.innerWidth);
       aimY = event.clientY / Math.max(1, window.innerHeight);
     };
 
-    window.addEventListener("resize", onResize);
+    window.addEventListener("resize", resize);
     window.addEventListener("pointermove", onMove, { passive: true });
 
     const onVis = () => {
@@ -361,7 +341,7 @@ export function SilkField() {
     return () => {
       running = false;
       window.cancelAnimationFrame(raf);
-      window.removeEventListener("resize", onResize);
+      window.removeEventListener("resize", resize);
       window.removeEventListener("pointermove", onMove);
       document.removeEventListener("visibilitychange", onVis);
     };

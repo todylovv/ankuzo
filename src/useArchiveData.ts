@@ -23,6 +23,8 @@ export type SteamPerson = {
   nick: string;
   avatar: string;
   url: string;
+  status: string;
+  online: boolean;
 };
 
 export type ArchiveLive = {
@@ -70,6 +72,7 @@ type SteamProfile = {
   avatarUrl?: string;
   profileUrl?: string;
   steamId?: string;
+  online?: boolean;
   currentGame?: string;
   currentGameId?: string | number;
   games?: SteamGame[];
@@ -127,11 +130,15 @@ const FALLBACK: ArchiveLive = {
       nick: "b1",
       avatar: "https://avatars.steamstatic.com/6a30a26c019394587a828b964f6156b6a17e36a2_full.jpg",
       url: "https://steamcommunity.com/profiles/76561199770575251/",
+      status: "не в сети",
+      online: false,
     },
     {
       nick: "b2",
       avatar: "https://avatars.steamstatic.com/719bc8ea7c3e382348fd1909400257c0d49497f3_full.jpg",
       url: "https://steamcommunity.com/profiles/76561198165374024/",
+      status: "не в сети",
+      online: false,
     },
   ],
   topGame: "Counter-Strike 2",
@@ -248,6 +255,25 @@ function collectPsnStills(
   return stills;
 }
 
+function toSteamPerson(profile: SteamProfile): SteamPerson {
+  const game = cleanName(profile.currentGame || "");
+  let url = "";
+  if (profile.profileUrl) url = profile.profileUrl;
+  else if (profile.steamId) url = `https://steamcommunity.com/profiles/${profile.steamId}/`;
+
+  let status = "не в сети";
+  if (game) status = `в игре · ${game}`;
+  else if (profile.online) status = "в сети";
+
+  return {
+    nick: profile.nickname || "",
+    avatar: profile.avatarUrl || "",
+    url,
+    status,
+    online: Boolean(profile.online || game),
+  };
+}
+
 function uniqueGames(games: SteamGame[], limit: number) {
   const seen = new Set<string>();
   const out: SteamGame[] = [];
@@ -312,13 +338,7 @@ function mergeLive(steam: SteamSnapshot | null, psn: PsnSnapshot | null, discord
   const badges = (discord?.badges ?? [])
     .map((badge) => BADGE_LABEL[badge] || badge.toLowerCase().replace(/_/g, " "))
     .filter(Boolean);
-  const steamPeople = profiles
-    .map((profile) => ({
-      nick: profile.nickname || "",
-      avatar: profile.avatarUrl || "",
-      url: profile.profileUrl || (profile.steamId ? `https://steamcommunity.com/profiles/${profile.steamId}/` : ""),
-    }))
-    .filter((person) => person.nick && person.url);
+  const steamPeople = profiles.map(toSteamPerson).filter((person) => person.nick && person.url);
 
   return {
     playing: Boolean(playing),
