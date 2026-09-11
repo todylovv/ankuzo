@@ -1,11 +1,11 @@
 import { useEffect, useRef } from "react";
 import { css } from "./css";
 
-const STRANDS = 220;
+const STRANDS = 160;
 const SCALE = 0.00118;
 const SPEED = 2.15;
 const SWIRL = 0.14;
-const TAIL = 42;
+const TAIL = 10;
 const MAX_EDDIES = 2;
 
 type Strand = {
@@ -102,7 +102,7 @@ export function SilkField() {
     const canvas = canvasRef.current;
     if (!canvas) return;
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const ctx = canvas.getContext("2d", { alpha: true });
+    const ctx = canvas.getContext("2d", { alpha: true, desynchronized: true });
     if (!ctx) return;
     const view = canvas;
     const draw = ctx;
@@ -143,7 +143,7 @@ export function SilkField() {
         vy: 0,
         trail: [x, y],
         life: 0,
-        max: 220 + Math.random() * 320,
+        max: 286 + Math.random() * 416,
         width: Math.random() < 0.16 ? 1.1 : 0.52,
         warm: Math.random() < 0.1,
       };
@@ -152,12 +152,14 @@ export function SilkField() {
     function resize() {
       width = window.innerWidth;
       height = window.innerHeight;
-      const dpr = Math.min(window.devicePixelRatio || 1, 1.75);
+      const dpr = Math.min(window.devicePixelRatio || 1, 1.25);
       view.width = Math.max(1, Math.floor(width * dpr));
       view.height = Math.max(1, Math.floor(height * dpr));
       view.style.width = `${width}px`;
       view.style.height = `${height}px`;
       draw.setTransform(dpr, 0, 0, dpr, 0, 0);
+      draw.lineCap = "round";
+      draw.lineJoin = "round";
       strands.length = 0;
       for (let i = 0; i < STRANDS; i += 1) {
         const strand = spawn();
@@ -180,13 +182,7 @@ export function SilkField() {
     }
 
     function curl(x: number, y: number, t: number) {
-      const z = t * 0.022;
-      const large = curlAt(x, y, z, SCALE);
-      const mid = curlAt(x, y, z * 1.25 + 4.2, SCALE * 1.85);
-      return {
-        x: large.x * 0.78 + mid.x * 0.22,
-        y: large.y * 0.78 + mid.y * 0.22,
-      };
+      return curlAt(x, y, t * 0.022, SCALE);
     }
 
     function tendEddies(t: number) {
@@ -233,31 +229,33 @@ export function SilkField() {
     }
 
     function drawTrail(pts: number[]) {
-      if (pts.length < 4) return;
+      const n = pts.length;
+      if (n < 4) return;
+      const start = Math.max(0, n - TAIL);
       draw.beginPath();
-      draw.moveTo(pts[0], pts[1]);
-      if (pts.length === 4) {
-        draw.lineTo(pts[2], pts[3]);
+      draw.moveTo(pts[start], pts[start + 1]);
+      if (n - start === 4) {
+        draw.lineTo(pts[start + 2], pts[start + 3]);
       } else {
-        for (let i = 2; i < pts.length - 2; i += 2) {
+        for (let i = start + 2; i < n - 2; i += 2) {
           const mx = (pts[i] + pts[i + 2]) * 0.5;
           const my = (pts[i + 1] + pts[i + 3]) * 0.5;
           draw.quadraticCurveTo(pts[i], pts[i + 1], mx, my);
         }
-        draw.lineTo(pts[pts.length - 2], pts[pts.length - 1]);
+        draw.lineTo(pts[n - 2], pts[n - 1]);
       }
       draw.stroke();
     }
 
     function step(t: number, dt: number) {
       draw.globalCompositeOperation = "destination-out";
-      draw.fillStyle = "rgba(0,0,0,0.055)";
+        draw.fillStyle = "rgba(0,0,0,0.042)";
       draw.fillRect(0, 0, width, height);
       draw.globalCompositeOperation = "source-over";
-      draw.lineCap = "round";
-      draw.lineJoin = "round";
       tendEddies(t);
       const tone = light();
+      const cool = strokeColor(tone, false);
+      const warmInk = strokeColor(tone, true);
       mouseX += (aimX - mouseX) * (1 - Math.exp(-dt * 5));
       mouseY += (aimY - mouseY) * (1 - Math.exp(-dt * 5));
       const mx = mouseX * width;
@@ -267,7 +265,7 @@ export function SilkField() {
 
       for (const strand of strands) {
         const field = curl(strand.x, strand.y, t);
-        const eddy = eddyForce(strand.x, strand.y, t);
+        const eddy = eddies.length ? eddyForce(strand.x, strand.y, t) : { x: 0, y: 0 };
         let ax = field.x * SPEED + eddy.x;
         let ay = field.y * SPEED + eddy.y;
 
@@ -314,7 +312,7 @@ export function SilkField() {
           continue;
         }
 
-        draw.strokeStyle = strokeColor(tone, strand.warm);
+        draw.strokeStyle = strand.warm ? warmInk : cool;
         draw.lineWidth = strand.width;
         drawTrail(strand.trail);
       }
@@ -337,17 +335,12 @@ export function SilkField() {
       if (live()) raf = window.requestAnimationFrame(frame);
     }
 
+    draw.lineCap = "round";
+    draw.lineJoin = "round";
     resize();
-    for (let i = 0; i < 90; i += 1) step(i * 0.016, 0.016);
-    time = 90 * 0.016;
 
     const onResize = () => {
       resize();
-      time = 0;
-      nextEddy = 1.6;
-      eddies.length = 0;
-      for (let i = 0; i < 90; i += 1) step(i * 0.016, 0.016);
-      time = 90 * 0.016;
     };
     const onMove = (event: PointerEvent) => {
       hasMouse = true;
@@ -363,7 +356,7 @@ export function SilkField() {
       kick();
     };
     document.addEventListener("visibilitychange", onVis);
-    kick();
+    raf = window.requestAnimationFrame(kick);
 
     return () => {
       running = false;

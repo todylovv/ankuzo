@@ -19,6 +19,12 @@ export type PsnStill = {
   art: GameArt;
 };
 
+export type SteamPerson = {
+  nick: string;
+  avatar: string;
+  url: string;
+};
+
 export type ArchiveLive = {
   playing: boolean;
   nowLabel: string;
@@ -29,7 +35,7 @@ export type ArchiveLive = {
   recents: RecentGame[];
   steamHours: number;
   steamGames: number;
-  steamAccounts: string;
+  steamPeople: SteamPerson[];
   topGame: string;
   topArt: GameArt;
   credits: CreditGame[];
@@ -61,6 +67,9 @@ type SteamGame = {
 
 type SteamProfile = {
   nickname?: string;
+  avatarUrl?: string;
+  profileUrl?: string;
+  steamId?: string;
   currentGame?: string;
   currentGameId?: string | number;
   games?: SteamGame[];
@@ -113,7 +122,18 @@ const FALLBACK: ArchiveLive = {
   ],
   steamHours: 5173,
   steamGames: 207,
-  steamAccounts: "b1 · b2",
+  steamPeople: [
+    {
+      nick: "b1",
+      avatar: "https://avatars.steamstatic.com/6a30a26c019394587a828b964f6156b6a17e36a2_full.jpg",
+      url: "https://steamcommunity.com/profiles/76561199770575251/",
+    },
+    {
+      nick: "b2",
+      avatar: "https://avatars.steamstatic.com/719bc8ea7c3e382348fd1909400257c0d49497f3_full.jpg",
+      url: "https://steamcommunity.com/profiles/76561198165374024/",
+    },
+  ],
   topGame: "Counter-Strike 2",
   topArt: { appId: 730 },
   credits: [
@@ -198,8 +218,6 @@ function displayPsnTitle(value: string): string {
     .trim();
 }
 
-const PSN_STILL_LIMIT = 36;
-
 function collectPsnStills(
   library: PsnSnapshot["library"],
   steamGames: SteamGame[],
@@ -226,7 +244,6 @@ function collectPsnStills(
         image: item.iconUrl || "",
       }),
     });
-    if (stills.length === PSN_STILL_LIMIT) break;
   }
   return stills;
 }
@@ -295,6 +312,13 @@ function mergeLive(steam: SteamSnapshot | null, psn: PsnSnapshot | null, discord
   const badges = (discord?.badges ?? [])
     .map((badge) => BADGE_LABEL[badge] || badge.toLowerCase().replace(/_/g, " "))
     .filter(Boolean);
+  const steamPeople = profiles
+    .map((profile) => ({
+      nick: profile.nickname || "",
+      avatar: profile.avatarUrl || "",
+      url: profile.profileUrl || (profile.steamId ? `https://steamcommunity.com/profiles/${profile.steamId}/` : ""),
+    }))
+    .filter((person) => person.nick && person.url);
 
   return {
     playing: Boolean(playing),
@@ -314,7 +338,7 @@ function mergeLive(steam: SteamSnapshot | null, psn: PsnSnapshot | null, discord
         : FALLBACK.recents,
     steamHours: Math.round(steam?.stats?.totalHours || FALLBACK.steamHours),
     steamGames: steam?.stats?.totalGames || FALLBACK.steamGames,
-    steamAccounts: profiles.map((profile) => profile.nickname).filter(Boolean).join(" · ") || FALLBACK.steamAccounts,
+    steamPeople: steamPeople.length > 0 ? steamPeople : FALLBACK.steamPeople,
     topGame: cleanName(top[0]?.name || FALLBACK.topGame),
     topArt: artFromMap(top[0]?.appId || FALLBACK.topArt.appId, artMap),
     credits: credits.length > 0 ? credits : FALLBACK.credits,

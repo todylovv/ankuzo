@@ -2,7 +2,7 @@ import { useState, type Ref } from "react";
 import { css } from "./css";
 import { GameStill } from "./GameStill";
 import { SilkField } from "./SilkField";
-import type { ArchiveLive, CreditGame, PsnStill, RecentGame } from "./useArchiveData";
+import type { ArchiveLive, CreditGame, PsnStill, RecentGame, SteamPerson } from "./useArchiveData";
 
 type ArchiveProps = {
   rootRef: Ref<HTMLDivElement>;
@@ -27,6 +27,33 @@ function hoursWord(value: number): string {
   if (last === 1) return "час";
   if (last >= 2 && last <= 4) return "часа";
   return "часов";
+}
+
+function SteamPeople({ people }: { people: SteamPerson[] }) {
+  if (people.length === 0) return null;
+  return (
+    <div style={css(`display:flex;flex-wrap:wrap;align-items:center;gap:18px 28px`)}>
+      {people.map((person) => (
+        <a
+          key={person.url}
+          className="steam-face"
+          href={person.url}
+          target="_blank"
+          rel="noreferrer"
+          aria-label={`${person.nick} в Steam`}
+        >
+          <span className="steam-face-photo">
+            {person.avatar ? (
+              <img src={person.avatar} alt="" width={48} height={48} decoding="async" />
+            ) : (
+              <span>{person.nick.slice(0, 1)}</span>
+            )}
+          </span>
+          <span className="steam-face-nick">{person.nick}</span>
+        </a>
+      ))}
+    </div>
+  );
 }
 
 function SteamMark({ size = 42 }: { size?: number }) {
@@ -102,8 +129,7 @@ const PLATES: Plate[] = [
   { id: "steam", background: "linear-gradient(96deg,rgba(120,120,120,.32) 0%,rgba(0,0,0,0) 52%),#0a0a0a" },
   { id: "psn", background: "radial-gradient(58% 54% at 70% 46%,#4c4c4c 0%,rgba(76,76,76,0) 74%),#080808" },
   { id: "discord", background: "radial-gradient(52% 50% at 44% 52%,#9a9a98 0%,rgba(154,154,152,0) 74%),#101010" },
-  { id: "ts", background: "radial-gradient(18% 64% at 50% 50%,rgba(255,255,255,.34) 0%,rgba(255,255,255,0) 72%),#050505" },
-  { id: "final", background: "radial-gradient(72% 56% at 50% 94%,#242424 0%,rgba(36,36,36,0) 76%),#080808" },
+  { id: "ts", background: "radial-gradient(18% 64% at 50% 50%,rgba(255,255,255,.34) 0%,rgba(255,255,255,0) 72%),radial-gradient(72% 40% at 50% 100%,#1a1a1a 0%,rgba(26,26,26,0) 70%),#050505" },
 ];
 
 function plateStyle(plate: Plate): string {
@@ -245,16 +271,42 @@ function RecentSlide({ game, index }: RecentSlideProps) {
   }
 }
 
+type TrophyKind = "platinum" | "gold" | "silver" | "bronze";
+
+const TROPHY_FILL: Record<TrophyKind, string> = {
+  platinum: "#e8e8ea",
+  gold: "#d4b15a",
+  silver: "#c4c4c6",
+  bronze: "#c0844a",
+};
+
+function TrophyMark({ kind, size = 22 }: { kind: TrophyKind; size?: number }) {
+  const fill = TROPHY_FILL[kind];
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      {kind === "platinum" ? (
+        <path d="M12 1.6 12.85 4.1 15.4 3.4 14.2 5.7 16.6 7.1 14 7.2 13.6 9.8 12 7.8 10.4 9.8 10 7.2 7.4 7.1 9.8 5.7 8.6 3.4 11.15 4.1 12 1.6Z" fill={fill} />
+      ) : null}
+      <path
+        d="M7.2 5.2h9.6v1.1h1.7V7c0 2.35-1.55 4.35-3.75 5.05l-.55.18V14.4h2.3V16H7.5v-1.6h2.3v-2.07l-.55-.18C7.05 11.35 5.5 9.35 5.5 7V6.3h1.7V5.2Zm1.6 1.2V7.6H7.1c.25 1.35 1.15 2.5 2.4 3.05V6.4H8.8Zm6.5 0v4.25c1.25-.55 2.15-1.7 2.4-3.05h-1.7V6.4h-.7Z"
+        fill={fill}
+      />
+      <path d="M9.2 17.2h5.6V18.8H9.2z" fill={fill} opacity="0.85" />
+    </svg>
+  );
+}
+
 type PsnStatProps = {
   value: number;
   label: string;
-  tone?: string;
+  kind: TrophyKind;
 };
 
-function PsnStat({ value, label, tone = "#f6f5f3" }: PsnStatProps) {
+function PsnStat({ value, label, kind }: PsnStatProps) {
   return (
     <div>
-      <div style={css(`font-family:'Bodoni Moda',serif;font-size:clamp(22px,3.2vw,40px);line-height:.86;letter-spacing:-.03em;color:${tone};font-variant-numeric:tabular-nums`)}>{value}</div>
+      <TrophyMark kind={kind} />
+      <div style={css(`margin-top:8px;font-family:'Bodoni Moda',serif;font-size:clamp(22px,3.2vw,40px);line-height:.86;letter-spacing:-.03em;color:${TROPHY_FILL[kind]};font-variant-numeric:tabular-nums`)}>{value}</div>
       <div style={css(`margin-top:8px;font-size:11px;letter-spacing:.04em;color:rgba(241,240,238,.38)`)}>{label}</div>
     </div>
   );
@@ -319,7 +371,7 @@ export function Archive({ rootRef, tsLabel, copyTs, live }: ArchiveProps) {
   <SilkField />
 
   <section data-scene="hero" data-chapter="hero" data-static="0" style={css(`--p:0;--b:0;position:relative;z-index:2;height:260vh`)}>
-    <div data-sticky="" style={css(`position:sticky;top:0;height:100vh;overflow:hidden;perspective:1100px`)}>
+    <div data-sticky="" style={css(`position:sticky;top:0;height:100vh;overflow:hidden`)}>
       <div className="hero-title">
         <div style={css(`position:relative;opacity:calc(1 - var(--p)*1.15)`)}>
           <div aria-hidden="true" style={css(`visibility:hidden;white-space:nowrap`)}>ankuzo</div>
@@ -393,12 +445,19 @@ export function Archive({ rootRef, tsLabel, copyTs, live }: ArchiveProps) {
       <SteamMark size={36} />
       <span style={css(`font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:rgba(241,240,238,.55)`)}>Steam</span>
     </div>
-    <div style={css(`display:flex;flex-wrap:wrap;align-items:flex-end;gap:clamp(16px,3vw,48px);margin-top:clamp(14px,2.4vh,28px)`)}>
+    <div style={css(`margin-top:22px`)}>
+      <SteamPeople people={live.steamPeople} />
+    </div>
+    <div style={css(`display:flex;flex-wrap:wrap;align-items:flex-end;gap:clamp(16px,3vw,48px);margin-top:clamp(18px,3vh,32px)`)}>
       <div style={css(`font-family:'Bodoni Moda',serif;font-size:clamp(72px,14vw,200px);line-height:.74;letter-spacing:-.05em;color:#f6f5f3;font-variant-numeric:tabular-nums`)}>{live.steamHours}</div>
       <div style={css(`padding-bottom:8px`)}>
         <div style={css(`font-family:'Bodoni Moda',serif;font-style:italic;font-size:clamp(22px,3vw,48px);line-height:1;color:rgba(246,245,243,.86)`)}>{hoursWord(live.steamHours)} на Steam</div>
-        <div style={css(`margin-top:10px;max-width:42ch;font-size:13px;line-height:1.6;color:rgba(241,240,238,.5)`)}>Сумма двух аккаунтов. Больше всего времени — в {live.topGame}.</div>
-        <div style={css(`margin-top:8px;font-size:12px;letter-spacing:.06em;color:rgba(241,240,238,.42)`)}>{live.steamAccounts} · {live.steamGames} игр</div>
+        <div style={css(`margin-top:10px;max-width:42ch;font-size:13px;line-height:1.6;color:rgba(241,240,238,.5)`)}>
+          {live.steamPeople.length > 1
+            ? `${live.steamPeople.length === 2 ? "Сумма двух аккаунтов" : "Сумма аккаунтов"}. Больше всего времени — в ${live.topGame}.`
+            : `Больше всего времени — в ${live.topGame}.`}
+        </div>
+        <div style={css(`margin-top:8px;font-size:12px;letter-spacing:.06em;color:rgba(241,240,238,.42)`)}>{live.steamGames} игр</div>
       </div>
     </div>
     <div style={css(`font-family:'Bodoni Moda',serif;font-style:italic;font-size:clamp(15px,1.5vw,22px);color:rgba(241,240,238,.5);margin:clamp(28px,5vh,52px) 0 clamp(8px,1.6vh,16px)`)}>всё, что осталось в часах</div>
@@ -423,29 +482,29 @@ export function Archive({ rootRef, tsLabel, copyTs, live }: ArchiveProps) {
         <div style={css(`margin-top:10px;font-family:'Bodoni Moda',serif;font-style:italic;font-size:clamp(18px,2.2vw,32px);color:rgba(246,245,243,.72)`)}>{trophiesWord(live.psnTotal)}</div>
       </div>
       <div style={css(`display:flex;flex-wrap:wrap;gap:clamp(16px,2.6vw,36px);padding-bottom:6px`)}>
-        <PsnStat value={live.psnPlatinum} label="платин" />
-        <PsnStat value={live.psnGold} label="золотых" tone="rgba(232,214,170,.92)" />
-        <PsnStat value={live.psnSilver} label="серебряных" tone="rgba(196,196,196,.88)" />
-        <PsnStat value={live.psnBronze} label="бронзовых" tone="rgba(176,141,87,.88)" />
+        <PsnStat value={live.psnPlatinum} label="платин" kind="platinum" />
+        <PsnStat value={live.psnGold} label="золотых" kind="gold" />
+        <PsnStat value={live.psnSilver} label="серебряных" kind="silver" />
+        <PsnStat value={live.psnBronze} label="бронзовых" kind="bronze" />
       </div>
     </div>
 
     {live.psnStills.length > 0 ? <PsnLibrary games={live.psnStills} /> : null}
   </section>
 
-  <section data-scene="discord" data-chapter="discord" data-static="0.7" style={css(`--p:0;position:relative;z-index:2;height:230vh`)}>
+  <section data-scene="discord" data-chapter="discord" data-static="0.7" style={css(`--p:0;--b:1;position:relative;z-index:2;height:230vh`)}>
     <div data-sticky="" style={css(`position:sticky;top:0;height:100vh;overflow:hidden`)}>
       {live.discordBanner ? (
         <div
           aria-hidden="true"
           style={css(
-            `position:absolute;left:8%;right:18%;top:12%;height:28vh;opacity:calc(var(--p)*1.4 - .35);overflow:hidden;mask-image:linear-gradient(180deg,#000 0%,transparent 100%)`,
+            `position:absolute;left:8%;right:18%;top:12%;height:28vh;opacity:calc(var(--b,0)*1.4 - .35);overflow:hidden;mask-image:linear-gradient(180deg,#000 0%,transparent 100%)`,
           )}
         >
           <img src={live.discordBanner} alt="" style={{ width: "100%", height: "100%", objectFit: "cover", filter: "grayscale(1) contrast(1.05)", opacity: 0.28 }} />
         </div>
       ) : null}
-      <div style={css(`position:absolute;inset:0;display:flex;align-items:center;padding:0 clamp(20px,4.5vw,72px);opacity:calc(var(--p)*2.6 - .5)`)}>
+      <div style={css(`position:absolute;inset:0;display:flex;align-items:center;padding:0 clamp(20px,4.5vw,72px);opacity:calc(var(--b,0)*1.85 - .4)`)}>
         <div style={css(`max-width:min(58ch,90vw);margin-left:clamp(0px,8vw,180px)`)}>
           <div style={css(`display:flex;align-items:center;gap:22px`)}>
             <div style={css(`position:relative;width:96px;height:96px;flex:none`)}>
@@ -483,43 +542,42 @@ export function Archive({ rootRef, tsLabel, copyTs, live }: ArchiveProps) {
     </div>
   </section>
 
-  <section data-scene="ts" data-chapter="ts" data-static="1" style={css(`--p:0;position:relative;z-index:2;height:250vh`)}>
-    <div data-sticky="" style={css(`position:sticky;top:0;height:100vh;overflow:hidden;display:grid;place-items:center`)}>
+  <section data-scene="ts" data-chapter="ts" data-static="1" style={css(`--p:0;position:relative;z-index:2;height:140vh`)}>
+    <div data-sticky="" style={css(`position:sticky;top:0;height:100vh;overflow:hidden`)}>
       <div
         aria-hidden="true"
         style={css(
-          `position:absolute;left:50%;top:6vh;height:88vh;width:1px;transform:translateX(-50%) scaleY(calc(.08 + var(--p)*.92));transform-origin:50% 50%;background:linear-gradient(180deg,rgba(246,245,243,0),rgba(246,245,243,.55) 18%,rgba(246,245,243,.55) 82%,rgba(246,245,243,0))`,
+          `position:absolute;left:50%;top:8vh;bottom:28vh;width:1px;transform:translateX(-50%) scaleY(calc(.2 + var(--p)*.8));transform-origin:50% 0;background:linear-gradient(180deg,rgba(246,245,243,0),rgba(246,245,243,.5) 12%,rgba(246,245,243,.22) 100%)`,
         )}
       />
-      <div style={css(`position:relative;text-align:center;padding:0 24px;opacity:calc(var(--p)*2.2 - .55);transform:translate3d(0,calc((1 - var(--p))*3vh),0);color:#f6f5f3`)}>
+      <div style={css(`position:relative;z-index:2;padding:clamp(28px,8vh,72px) 24px 0;text-align:center;color:#f6f5f3;opacity:calc(.45 + var(--p)*.55)`)}>
         <div style={css(`display:flex;align-items:center;justify-content:center;gap:12px`)}>
-          <TsMark size={42} />
+          <TsMark size={36} />
           <span style={css(`font-size:12px;letter-spacing:.28em;text-transform:uppercase;color:rgba(241,240,238,.7)`)}>TeamSpeak</span>
         </div>
-        <div style={css(`margin-top:clamp(22px,4vh,40px);font-family:'Bodoni Moda',serif;font-style:italic;font-size:clamp(16px,1.8vw,26px);color:rgba(241,240,238,.55)`)}>последняя комната</div>
-        <div style={css(`margin-top:clamp(10px,2vh,18px);font-family:'Bodoni Moda',serif;font-size:clamp(42px,8vw,128px);line-height:.86;letter-spacing:-.03em`)}>Ankuzo</div>
-        <div style={css(`margin-top:16px;font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:rgba(241,240,238,.5)`)}>в поиске сервера</div>
-      </div>
-      <div style={css(`position:absolute;left:50%;bottom:clamp(48px,10vh,110px);transform:translateX(-50%);text-align:center;opacity:calc(var(--p)*2.2 - .85)`)}>
-        <button type="button" className="copy-btn" onClick={copyTs} style={css(`background:transparent;border:1px solid rgba(241,240,238,.45);color:#f6f5f3;font-family:'Archivo',sans-serif;font-size:12px;letter-spacing:.18em;text-transform:uppercase;padding:14px 30px;cursor:pointer;transition:background 300ms,border-color 300ms`)}>{tsLabel}</button>
-        <div style={css(`margin-top:16px;font-size:12px;color:rgba(241,240,238,.42)`)}>
-          <a href="https://tmspk.gg/3Vi7A7Y9" style={css(`color:rgba(241,240,238,.55);text-decoration:none;letter-spacing:.04em`)}>tmspk.gg/3Vi7A7Y9</a>
+        <div style={css(`margin-top:clamp(14px,2.4vh,22px);font-family:'Bodoni Moda',serif;font-style:italic;font-size:clamp(16px,1.8vw,24px);color:rgba(241,240,238,.55)`)}>последняя комната</div>
+        <div style={css(`margin-top:8px;font-family:'Bodoni Moda',serif;font-size:clamp(36px,6vw,72px);line-height:.9;letter-spacing:-.03em`)}>Ankuzo</div>
+        <div style={css(`margin-top:10px;font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:rgba(241,240,238,.48)`)}>в поиске сервера</div>
+        <div style={css(`margin-top:clamp(22px,4vh,36px)`)}>
+          <button type="button" className="copy-btn" onClick={copyTs} style={css(`background:transparent;border:1px solid rgba(241,240,238,.45);color:#f6f5f3;font-family:'Archivo',sans-serif;font-size:12px;letter-spacing:.18em;text-transform:uppercase;padding:12px 26px;cursor:pointer;transition:background 300ms,border-color 300ms`)}>{tsLabel}</button>
+          <div style={css(`margin-top:12px;font-size:12px;color:rgba(241,240,238,.42)`)}>
+            <a href="https://tmspk.gg/3Vi7A7Y9" style={css(`color:rgba(241,240,238,.55);text-decoration:none;letter-spacing:.04em`)}>tmspk.gg/3Vi7A7Y9</a>
+          </div>
         </div>
       </div>
-    </div>
-  </section>
-
-  <section data-scene="final" data-chapter="final" data-static="0.5" style={css(`--p:0;position:relative;z-index:2;height:100vh;overflow:hidden;display:flex;flex-direction:column;justify-content:flex-end`)}>
-    <div style={css(`padding:0 clamp(20px,4.5vw,72px);font-family:'Bodoni Moda',serif;font-style:italic;font-size:clamp(17px,2vw,30px);color:rgba(246,245,243,.62);margin-bottom:clamp(20px,4vh,40px)`)}>увидимся в голосовом</div>
-    <div
-      className="glitch"
-      style={css(
-        `position:relative;font-family:'Bodoni Moda',serif;font-size:clamp(110px,25vw,400px);line-height:.7;letter-spacing:-.045em;color:#f6f5f3;padding:0 clamp(20px,4.5vw,72px) clamp(22px,4vh,44px);margin-bottom:-.02em;transform:translate3d(0,calc(var(--p)*-2vh),0)`,
-      )}
-    >
-      <span className="glitch-word">ankuzo</span>
-      <span className="glitch-word glitch-cut glitch-cut-a" aria-hidden="true">ankuzo</span>
-      <span className="glitch-word glitch-cut glitch-cut-b" aria-hidden="true">ankuzo</span>
+      <div style={css(`position:absolute;left:0;right:0;bottom:0;z-index:2;transform:translate3d(0,calc((1 - var(--p))*6vh),0)`)}>
+        <div style={css(`padding:0 clamp(20px,4.5vw,72px);font-family:'Bodoni Moda',serif;font-style:italic;font-size:clamp(17px,2vw,30px);color:rgba(246,245,243,.62);margin-bottom:clamp(12px,2.2vh,22px)`)}>увидимся в голосовом</div>
+        <div
+          className="glitch"
+          style={css(
+            `position:relative;font-family:'Bodoni Moda',serif;font-size:clamp(92px,22vw,340px);line-height:.72;letter-spacing:-.045em;color:#f6f5f3;padding:0 clamp(20px,4.5vw,72px) clamp(10px,1.6vh,22px);margin-bottom:-.04em`,
+          )}
+        >
+          <span className="glitch-word">ankuzo</span>
+          <span className="glitch-word glitch-cut glitch-cut-a" aria-hidden="true">ankuzo</span>
+          <span className="glitch-word glitch-cut glitch-cut-b" aria-hidden="true">ankuzo</span>
+        </div>
+      </div>
     </div>
   </section>
 

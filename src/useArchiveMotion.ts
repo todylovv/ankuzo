@@ -18,6 +18,13 @@ function sceneProgress(rect: DOMRect, vh: number): number {
   return 0;
 }
 
+function peakHold(p: number, edge = 0.28): number {
+  const t = Math.min(1, Math.max(0, p));
+  if (t < edge) return t / edge;
+  if (t > 1 - edge) return (1 - t) / edge;
+  return 1;
+}
+
 function writeVar(
   cache: WeakMap<HTMLElement, string>,
   el: HTMLElement,
@@ -126,6 +133,9 @@ export function useArchiveMotion(
       if (name === "wipe") {
         writeVar(lastB, el, "--b", (1 - Math.abs(2 * p - 1)).toFixed(3));
       }
+      if (name === "discord") {
+        writeVar(lastB, el, "--b", peakHold(p).toFixed(3));
+      }
     }
 
     function update(): void {
@@ -141,7 +151,7 @@ export function useArchiveMotion(
         const on = r.bottom > 0 && r.top < vh;
         if (on) applyScene(el, p);
         if (on && el.dataset.scene === "wipe") wipeB = 1 - Math.abs(2 * p - 1);
-        if (on && el.dataset.scene === "discord") discordP = p;
+        if (on && el.dataset.scene === "discord") discordP = peakHold(p);
         const vis = Math.min(r.bottom, vh) - Math.max(r.top, 0);
         if (vis > best) {
           best = vis;
