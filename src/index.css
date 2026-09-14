@@ -180,6 +180,37 @@ a:hover {
   background: #f6f5f3;
 }
 
+.faceit-mix {
+  transition: opacity 280ms ease;
+}
+.faceit-mix.is-out {
+  opacity: 0;
+}
+.faceit-season {
+  background: transparent;
+  border: 0;
+  padding: 0 0 7px;
+  color: rgba(241, 240, 238, .38);
+  font-size: 13px;
+  letter-spacing: .04em;
+  cursor: pointer;
+  border-bottom: 1px solid transparent;
+}
+.faceit-season:hover,
+.faceit-season:focus-visible {
+  color: rgba(246, 245, 243, .82);
+  outline: none;
+}
+.faceit-season.is-on {
+  color: #f6f5f3;
+  border-bottom-color: rgba(246, 245, 243, .72);
+}
+@media (prefers-reduced-motion: reduce) {
+  .faceit-mix {
+    transition: none;
+  }
+}
+
 .glitch-word {
   display: block;
 }

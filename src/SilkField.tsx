@@ -1,12 +1,11 @@
 import { useEffect, useRef } from "react";
 import { css } from "./css";
 
-const STRANDS = 160;
+const STRANDS = 90;
 const SCALE = 0.00118;
 const SPEED = 2.15;
 const SWIRL = 0.14;
 const TAIL = 14;
-const MAX_EDDIES = 2;
 
 type Strand = {
   x: number;
@@ -18,15 +17,6 @@ type Strand = {
   max: number;
   width: number;
   warm: boolean;
-};
-
-type Eddy = {
-  x: number;
-  y: number;
-  spin: number;
-  radius: number;
-  born: number;
-  life: number;
 };
 
 function fade(t: number): number {
@@ -90,10 +80,10 @@ function makeNoise(seed: number): (x: number, y: number, z: number) => number {
 
 function strokeColor(light: number, warm: boolean): string {
   const t = Math.min(1, Math.max(0, light));
-  const r = mix(warm ? 232 : 246, warm ? 72 : 11, t);
-  const g = mix(warm ? 214 : 245, warm ? 58 : 11, t);
-  const b = mix(warm ? 170 : 243, warm ? 32 : 11, t);
-  const a = mix(0.28, 0.2, t);
+  const r = mix(warm ? 42 : 36, warm ? 48 : 14, t);
+  const g = mix(warm ? 38 : 36, warm ? 38 : 14, t);
+  const b = mix(warm ? 32 : 34, warm ? 22 : 14, t);
+  const a = mix(0.055, 0.1, t);
   return `rgba(${r | 0},${g | 0},${b | 0},${a})`;
 }
 
@@ -110,8 +100,6 @@ export function SilkField() {
     const draw = ctx;
     const noise = makeNoise((Math.random() * 10000) | 0);
     const root = view.closest("[data-archive]") as HTMLElement | null;
-    const eddies: Eddy[] = [];
-    let nextEddy = 1.6;
     let running = true;
     let pageVisible = document.visibilityState === "visible";
     let raf = 0;
@@ -148,8 +136,8 @@ export function SilkField() {
         trail: [x, y],
         life: 0,
         max: 286 + Math.random() * 416,
-        width: Math.random() < 0.22 ? 1.55 : 0.95,
-        warm: Math.random() < 0.1,
+        width: Math.random() < 0.18 ? 0.9 : 0.55,
+        warm: false,
       };
     }
 
@@ -162,8 +150,8 @@ export function SilkField() {
       view.style.width = `${width}px`;
       view.style.height = `${height}px`;
       draw.setTransform(dpr, 0, 0, dpr, 0, 0);
-      draw.lineCap = "round";
-      draw.lineJoin = "round";
+      draw.lineCap = "butt";
+      draw.lineJoin = "miter";
       strands.length = 0;
       for (let i = 0; i < STRANDS; i += 1) strands.push(spawn(true));
     }
@@ -177,44 +165,6 @@ export function SilkField() {
       const n3 = noise(nx + e, ny, z);
       const n4 = noise(nx - e, ny, z);
       return { x: (n1 - n2) / (2 * e), y: -(n3 - n4) / (2 * e) };
-    }
-
-    function tendEddies(t: number): void {
-      for (let i = eddies.length - 1; i >= 0; i -= 1) {
-        const eddy = eddies[i];
-        eddy.x += Math.sin(t * 0.13 + eddy.spin) * 0.12;
-        eddy.y += Math.cos(t * 0.11 + eddy.radius) * 0.09;
-        if ((t - eddy.born) / eddy.life >= 1) eddies.splice(i, 1);
-      }
-      if (eddies.length < MAX_EDDIES && t >= nextEddy) {
-        const left = Math.random() < 0.5;
-        eddies.push({
-          x: width * (left ? 0.14 + Math.random() * 0.28 : 0.58 + Math.random() * 0.28),
-          y: height * (0.2 + Math.random() * 0.6),
-          spin: (Math.random() < 0.5 ? -1 : 1) * (0.7 + Math.random() * 0.55),
-          radius: 140 + Math.random() * 160,
-          born: t,
-          life: 9 + Math.random() * 8,
-        });
-        nextEddy = t + 6 + Math.random() * 7;
-      }
-    }
-
-    function eddyForce(x: number, y: number, t: number): { x: number; y: number } {
-      let vx = 0;
-      let vy = 0;
-      for (const eddy of eddies) {
-        const age = Math.min(1, Math.max(0, (t - eddy.born) / eddy.life));
-        const envelope = fade(Math.sin(age * Math.PI));
-        const dx = x - eddy.x;
-        const dy = y - eddy.y;
-        const dist = Math.hypot(dx, dy) + 1;
-        const pull = eddy.radius / (dist + eddy.radius * 0.55);
-        const speed = eddy.spin * envelope * pull * 2.6;
-        vx += (-dy / dist) * speed;
-        vy += (dx / dist) * speed;
-      }
-      return { x: vx, y: vy };
     }
 
     function light(): number {
@@ -243,10 +193,9 @@ export function SilkField() {
 
     function step(t: number, dt: number): void {
       draw.globalCompositeOperation = "destination-out";
-      draw.fillStyle = "rgba(0,0,0,0.026)";
+      draw.fillStyle = "rgba(0,0,0,0.07)";
       draw.fillRect(0, 0, width, height);
       draw.globalCompositeOperation = "source-over";
-      tendEddies(t);
       const tone = light();
       const cool = strokeColor(tone, false);
       const warmInk = strokeColor(tone, true);
@@ -259,9 +208,8 @@ export function SilkField() {
 
       for (const strand of strands) {
         const field = curlAt(strand.x, strand.y, t * 0.022, SCALE);
-        const eddy = eddies.length ? eddyForce(strand.x, strand.y, t) : { x: 0, y: 0 };
-        let ax = field.x * SPEED + eddy.x;
-        let ay = field.y * SPEED + eddy.y;
+        let ax = field.x * SPEED;
+        let ay = field.y * SPEED;
 
         if (hasMouse) {
           const dx = strand.x - mx;

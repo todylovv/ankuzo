@@ -1,8 +1,9 @@
-import { useState, type Ref } from "react";
+import { useEffect, useRef, useState, type Ref } from "react";
 import { css } from "./css";
 import { GameStill } from "./GameStill";
 import { SilkField } from "./SilkField";
-import type { ArchiveLive, CreditGame, PsnStill, RecentGame, SteamPerson } from "./useArchiveData";
+import { clampLevel, colorForElo, colorForLevel, levelFromElo, seasonMaxElo } from "./faceitLevel";
+import type { ArchiveLive, CreditGame, FaceitProfile, FaceitSeason, PsnStill, RecentGame, SteamPerson } from "./useArchiveData";
 
 type ArchiveProps = {
   rootRef: Ref<HTMLDivElement>;
@@ -127,26 +128,27 @@ const PLATES: Plate[] = [
     id: "hero",
     on: true,
     background:
-      "radial-gradient(56% 52% at 36% 42%,#333 0%,rgba(51,51,51,0) 72%),radial-gradient(44% 52% at 76% 68%,rgba(120,120,120,.28) 0%,rgba(120,120,120,0) 70%),#0b0b0b",
+      "radial-gradient(56% 52% at 36% 42%,#1a1a1a 0%,rgba(26,26,26,0) 72%),radial-gradient(44% 52% at 76% 68%,rgba(28,28,28,.5) 0%,rgba(28,28,28,0) 70%),#090909",
   },
   {
     id: "now",
     background:
-      "radial-gradient(54% 56% at 64% 38%,#6e6e6e 0%,rgba(110,110,110,0) 70%),radial-gradient(38% 38% at 22% 76%,rgba(30,30,30,.9) 0%,rgba(30,30,30,0) 72%),#0d0d0d",
+      "radial-gradient(54% 56% at 64% 38%,#161616 0%,rgba(22,22,22,0) 70%),radial-gradient(38% 38% at 22% 76%,rgba(18,18,18,.9) 0%,rgba(18,18,18,0) 72%),#090909",
   },
-  { id: "recent0", background: "radial-gradient(50% 50% at 32% 44%,#5a5a5a 0%,rgba(90,90,90,0) 72%),#0c0c0c" },
-  { id: "recent1", background: "radial-gradient(60% 46% at 62% 66%,#2b2b2b 0%,rgba(43,43,43,0) 74%),#070707" },
-  { id: "recent2", background: "radial-gradient(46% 46% at 48% 40%,#8e8e8e 0%,rgba(142,142,142,0) 70%),#101010" },
-  { id: "recent3", background: "radial-gradient(70% 40% at 50% 18%,#3d3d3d 0%,rgba(61,61,61,0) 76%),#060606" },
+  { id: "recent0", background: "radial-gradient(50% 50% at 32% 44%,#161616 0%,rgba(22,22,22,0) 72%),#090909" },
+  { id: "recent1", background: "radial-gradient(60% 46% at 62% 66%,#121212 0%,rgba(18,18,18,0) 74%),#080808" },
+  { id: "recent2", background: "radial-gradient(46% 46% at 48% 40%,#171717 0%,rgba(23,23,23,0) 70%),#090909" },
+  { id: "recent3", background: "radial-gradient(70% 40% at 50% 18%,#141414 0%,rgba(20,20,20,0) 76%),#080808" },
   {
     id: "recent4",
     background:
-      "radial-gradient(48% 54% at 26% 56%,#6a6a6a 0%,rgba(106,106,106,0) 72%),radial-gradient(34% 34% at 78% 30%,rgba(160,160,160,.22) 0%,rgba(160,160,160,0) 72%),#0b0b0b",
+      "radial-gradient(48% 54% at 26% 56%,#161616 0%,rgba(22,22,22,0) 72%),radial-gradient(34% 34% at 78% 30%,rgba(24,24,24,.4) 0%,rgba(24,24,24,0) 72%),#090909",
   },
-  { id: "steam", background: "linear-gradient(96deg,rgba(120,120,120,.32) 0%,rgba(0,0,0,0) 52%),#0a0a0a" },
-  { id: "psn", background: "radial-gradient(58% 54% at 70% 46%,#4c4c4c 0%,rgba(76,76,76,0) 74%),#080808" },
-  { id: "discord", background: "radial-gradient(52% 50% at 44% 52%,#9a9a98 0%,rgba(154,154,152,0) 74%),#101010" },
-  { id: "ts", background: "radial-gradient(18% 64% at 50% 50%,rgba(255,255,255,.34) 0%,rgba(255,255,255,0) 72%),radial-gradient(72% 40% at 50% 100%,#1a1a1a 0%,rgba(26,26,26,0) 70%),#050505" },
+  { id: "steam", background: "linear-gradient(96deg,rgba(22,22,22,.55) 0%,rgba(0,0,0,0) 52%),#090909" },
+  { id: "faceit", background: "radial-gradient(52% 48% at 28% 38%,#141414 0%,rgba(20,20,20,0) 72%),#090909" },
+  { id: "psn", background: "radial-gradient(58% 54% at 70% 46%,#131313 0%,rgba(19,19,19,0) 74%),#080808" },
+  { id: "discord", background: "radial-gradient(52% 50% at 44% 52%,#121212 0%,rgba(18,18,18,0) 74%),#090909" },
+  { id: "ts", background: "radial-gradient(72% 40% at 50% 100%,#121212 0%,rgba(18,18,18,0) 70%),#080808" },
 ];
 
 function plateStyle(plate: Plate): string {
@@ -377,6 +379,199 @@ function PsnLibrary({ games }: PsnLibraryProps) {
   );
 }
 
+function matchesWord(value: number): string {
+  const abs = Math.abs(value) % 100;
+  const last = abs % 10;
+  if (abs > 10 && abs < 20) return "матчей";
+  if (last === 1) return "матч";
+  if (last >= 2 && last <= 4) return "матча";
+  return "матчей";
+}
+
+function FaceitMark({ size = 36 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="#FF5500" aria-hidden="true">
+      <path d="M23.999 2.68v18.638h-3.204V5.872h-4.414l8.618-3.192zm-8.608 0v18.639H9.18v-8.37H6.973v8.37H3.204V2.68H0v-.004L11.392 0v13.633h2.392V2.68h1.607z" />
+    </svg>
+  );
+}
+
+function FaceitLevelBadge({ level, size = 24 }: { level: number; size?: number }) {
+  const n = clampLevel(level);
+  const fill = colorForLevel(n);
+  const ink = n >= 4 && n <= 7 ? "#141414" : "#f6f5f3";
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" aria-hidden="true">
+      <polygon points="12,1.55 22.18,9.04 18.29,21.01 5.71,21.01 1.82,9.04" fill={fill} />
+      <text
+        x="12"
+        y="13.35"
+        textAnchor="middle"
+        dominantBaseline="middle"
+        fill={ink}
+        fontSize={n === 10 ? 8 : 9.4}
+        fontWeight={700}
+        fontFamily="Onest,system-ui,sans-serif"
+      >
+        {n}
+      </text>
+    </svg>
+  );
+}
+
+function FaceitStat({
+  value,
+  label,
+  color,
+  badge,
+}: {
+  value: string;
+  label: string;
+  color?: string;
+  badge?: number;
+}) {
+  const tone = color || "#f6f5f3";
+  return (
+    <div>
+      <div style={css(`display:flex;align-items:center;gap:8px`)}>
+        {badge != null ? <FaceitLevelBadge level={badge} size={22} /> : null}
+        <div style={css(`font-weight:500;font-size:clamp(22px,3.2vw,40px);line-height:.86;letter-spacing:-.03em;color:${tone};font-variant-numeric:tabular-nums`)}>{value}</div>
+      </div>
+      <div style={css(`margin-top:8px;font-size:11px;letter-spacing:.04em;color:rgba(241,240,238,.38)`)}>{label}</div>
+    </div>
+  );
+}
+
+function FaceitChapter({ profile, topGame }: { profile: FaceitProfile; topGame: string }) {
+  const start = profile.seasons.find((season) => season.current) || profile.seasons[profile.seasons.length - 1];
+  const [activeId, setActiveId] = useState(start.id);
+  const [shown, setShown] = useState<FaceitSeason>(start);
+  const [fading, setFading] = useState(false);
+  const fadeTimer = useRef(0);
+  const season = profile.seasons.find((item) => item.id === activeId) || start;
+  const peak = seasonMaxElo(shown);
+  const eloColor = colorForLevel(profile.level);
+  const csName = /counter-strike/i.test(topGame) ? topGame : "Counter-Strike";
+
+  useEffect(() => {
+    if (season.id === shown.id) return;
+    const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduced) {
+      setShown(season);
+      return;
+    }
+    setFading(true);
+    window.clearTimeout(fadeTimer.current);
+    fadeTimer.current = window.setTimeout(() => {
+      setShown(season);
+      setFading(false);
+    }, 180);
+    return () => window.clearTimeout(fadeTimer.current);
+  }, [season, shown.id]);
+
+  function move(delta: number) {
+    const index = profile.seasons.findIndex((item) => item.id === activeId);
+    const next = profile.seasons[index + delta];
+    if (next) setActiveId(next.id);
+  }
+
+  return (
+    <section data-scene="faceit" data-chapter="faceit" data-static="0.7" style={css(`--p:0;position:relative;z-index:2;padding:10vh clamp(20px,4.5vw,72px) 14vh`)}>
+      <div style={css(`display:flex;align-items:center;gap:14px`)}>
+        <FaceitMark size={34} />
+        <span style={css(`font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:rgba(241,240,238,.55)`)}>Faceit</span>
+      </div>
+
+      <a className="steam-face" href={profile.url} target="_blank" rel="noreferrer" aria-label={`${profile.nick} на Faceit`} style={css(`margin-top:clamp(22px,3.2vh,36px)`)}>
+        <span className="steam-face-photo">
+          {profile.avatar ? (
+            <img src={profile.avatar} alt="" width={96} height={96} decoding="async" referrerPolicy="no-referrer" />
+          ) : (
+            <span>{profile.nick.slice(0, 1)}</span>
+          )}
+        </span>
+        <span>
+          <span style={css(`display:flex;align-items:center;gap:10px`)}>
+            <span className="steam-face-nick">{profile.nick}</span>
+            <FaceitLevelBadge level={profile.level} size={28} />
+          </span>
+          <span className="steam-face-status is-on">
+            <span className="steam-face-dot" />
+            уровень {profile.level}
+            {profile.region ? ` · ${profile.region}` : ""}
+          </span>
+        </span>
+      </a>
+
+      <div style={css(`display:flex;flex-wrap:wrap;align-items:flex-end;gap:clamp(20px,3.4vw,48px);margin-top:clamp(28px,5vh,52px);padding-bottom:clamp(28px,5vh,48px);border-bottom:1px solid rgba(241,240,238,.14)`)}>
+        <div>
+          <div style={css(`font-weight:500;font-size:clamp(64px,11vw,168px);line-height:.74;letter-spacing:-.05em;color:${eloColor};font-variant-numeric:tabular-nums`)}>{profile.elo}</div>
+          <div style={css(`margin-top:10px;font-size:clamp(18px,2.2vw,32px);color:rgba(246,245,243,.72)`)}>elo · {profile.game}</div>
+        </div>
+        <div className={fading ? "faceit-mix is-out" : "faceit-mix"} style={css(`padding-bottom:6px;min-width:min(100%,280px)`)}>
+          <div style={css(`font-size:13px;color:rgba(241,240,238,.5);margin-bottom:18px`)}>
+            {shown.label}
+            {shown.current ? " · сейчас" : ""}
+          </div>
+          <div style={css(`display:flex;flex-wrap:wrap;gap:clamp(16px,2.6vw,36px)`)}>
+            <FaceitStat value={String(shown.matches)} label={matchesWord(shown.matches)} />
+            <FaceitStat value={`${shown.winRate}%`} label="побед" />
+            <FaceitStat value={shown.kd.toFixed(1)} label="k/d" />
+            <FaceitStat value={String(shown.adr)} label="adr" />
+            {peak ? (
+              <FaceitStat
+                value={String(peak)}
+                label="макс. elo"
+                color={colorForElo(peak)}
+                badge={levelFromElo(peak)}
+              />
+            ) : null}
+          </div>
+          <div style={css(`margin-top:16px;font-size:12px;color:rgba(241,240,238,.42)`)}>{shown.hs}% в голову</div>
+        </div>
+      </div>
+
+      <p style={css(`margin:clamp(22px,3.6vh,36px) 0 0;font-size:13px;line-height:1.75;color:rgba(241,240,238,.5);max-width:min(44ch,90vw)`)}>
+        Часы в {csName} здесь читаются как рейтинг. Он живёт один сезон.
+      </p>
+
+      {profile.seasons.length > 1 ? (
+        <div
+          role="tablist"
+          aria-label="Сезоны Faceit"
+          onKeyDown={(event) => {
+            if (event.key === "ArrowRight") {
+              event.preventDefault();
+              move(1);
+            }
+            if (event.key === "ArrowLeft") {
+              event.preventDefault();
+              move(-1);
+            }
+          }}
+          style={css(`margin-top:clamp(28px,5vh,48px);display:flex;flex-wrap:wrap;gap:10px 28px`)}
+        >
+          {profile.seasons.map((item) => {
+            const on = item.id === activeId;
+            return (
+              <button
+                key={item.id}
+                type="button"
+                role="tab"
+                aria-selected={on}
+                className={on ? "faceit-season is-on" : "faceit-season"}
+                onClick={() => setActiveId(item.id)}
+              >
+                {item.label}
+              </button>
+            );
+          })}
+        </div>
+      ) : null}
+    </section>
+  );
+}
+
 export function Archive({ rootRef, tsLabel, copyTs, live }: ArchiveProps) {
   return (
     <div ref={rootRef} data-archive="" style={css(`--silk-light:0;--wipe-b:0;--discord-p:0;position:relative;background:#090909;overflow-x:clip;font-family:'Onest',system-ui,sans-serif`)}>
@@ -486,6 +681,8 @@ export function Archive({ rootRef, tsLabel, copyTs, live }: ArchiveProps) {
       ))}
     </div>
   </section>
+
+  {live.faceit ? <FaceitChapter profile={live.faceit} topGame={live.topGame} /> : null}
 
   <section data-scene="psn" data-chapter="psn" data-static="0.6" style={css(`--p:0;position:relative;z-index:2;padding:10vh clamp(20px,4.5vw,72px) 14vh`)}>
     <div style={css(`margin-bottom:8px`)}>

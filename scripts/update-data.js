@@ -2,6 +2,7 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import { createRequire } from "node:module";
 import { fileURLToPath } from "node:url";
+import { aggregateSeasons, assignEloValues } from "./faceit-seasons.js";
 
 const require = createRequire(import.meta.url);
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
@@ -350,10 +351,191 @@ async function updateDiscord() {
   });
 }
 
+const FACEIT_API = "https://open.faceit.com/data/v4";
+
+function faceitHeaders(key) {
+  return { Authorization: `Bearer ${key}`, Accept: "application/json" };
+}
+
+function toMs(value) {
+  const n = Number(value);
+  if (!Number.isFinite(n) || n <= 0) return 0;
+  return n > 1e12 ? n : n * 1000;
+}
+
+function num(value) {
+  const n = Number.parseFloat(value);
+  return Number.isFinite(n) ? n : 0;
+}
+
+function gameWithElo(games) {
+  return Object.entries(games || {})
+    .map(([id, game]) => ({
+      id,
+      elo: Number(game?.faceit_elo) || 0,
+      level: Number(game?.skill_level) || 0,
+      region: game?.region || "",
+      name: game?.game_player_name || ""
+    }))
+    .filter((game) => game.elo > 0)
+    .sort((a, b) => {
+      if (a.id === "cs2") return -1;
+      if (b.id === "cs2") return 1;
+      return b.elo - a.elo;
+    })[0] || null;
+}
+
+async function lookupFaceitPlayer(key, nickname) {
+  if (nickname) {
+    return requestJson(`${FACEIT_API}/players?nickname=${encodeURIComponent(nickname)}`, {
+      headers: faceitHeaders(key)
+    });
+  }
+
+  for (const steamId of steamIds) {
+    try {
+      const player = await requestJson(
+        `${FACEIT_API}/players?game=cs2&game_player_id=${encodeURIComponent(steamId)}`,
+        { headers: faceitHeaders(key) }
+      );
+      if (player?.player_id) return player;
+    } catch {
+      // This Steam account may not have a Faceit profile.
+    }
+  }
+
+  throw new Error("Faceit player not found");
+}
+
+async function fetchFaceitPages(url, key) {
+  const items = [];
+  for (let offset = 0; offset < 2000; offset += 100) {
+    const joiner = url.includes("?") ? "&" : "?";
+    const page = await requestJson(`${url}${joiner}offset=${offset}&limit=100`, {
+      headers: faceitHeaders(key)
+    });
+    const batch = page.items || [];
+    items.push(...batch);
+    if (batch.length < 100) break;
+  }
+  return items;
+}
+
+async function fetchEloHistory(playerId, gameId) {
+  const urls = [
+    `https://api.faceit.com/stats/v1/stats/time/users/${playerId}/games/${gameId}?page=0&size=2000`,
+    `https://www.faceit.com/api/stats/v1/stats/time/users/${playerId}/games/${gameId}?page=0&size=2000`
+  ];
+  for (const url of urls) {
+    try {
+      const data = await requestJson(url, {
+        headers: { "User-Agent": "Mozilla/5.0", Accept: "application/json" }
+      });
+      const items = Array.isArray(data) ? data : data.items || data.payload || [];
+      return items
+        .map((item) => ({
+          matchId: item.matchId || item.match_id || "",
+          elo: num(item.elo ?? item.elo_after),
+          at: toMs(item.date || item.timestamp || item.created_at)
+        }))
+        .filter((item) => item.elo > 0);
+    } catch {
+      // Unofficial graph endpoints are optional.
+    }
+  }
+  return [];
+}
+
+async function updateFaceit() {
+  const fallback = await readFallback("faceit.json", {
+    nickname: "nuBac",
+    elo: 0,
+    seasons: []
+  });
+  const key = (process.env.FACEIT_API_KEY || "").trim();
+  if (!key) return writeJson("faceit.json", unavailable(fallback));
+
+  const player = await lookupFaceitPlayer(key, (process.env.FACEIT_NICKNAME || "").trim());
+  const game = gameWithElo(player.games);
+  if (!game) {
+    return writeJson("faceit.json", unavailable({ ...fallback, nickname: player.nickname || fallback.nickname }));
+  }
+
+  const lifetimeRaw = await requestJson(
+    `${FACEIT_API}/players/${player.player_id}/stats/${game.id}`,
+    { headers: faceitHeaders(key) }
+  ).catch(() => ({ lifetime: {} }));
+  const life = lifetimeRaw.lifetime || {};
+
+  const history = await fetchFaceitPages(
+    `${FACEIT_API}/players/${player.player_id}/history?game=${encodeURIComponent(game.id)}`,
+    key
+  );
+  const matchmakingIds = new Set(
+    history.filter((match) => match.competition_type === "matchmaking").map((match) => match.match_id)
+  );
+  const matchStats = await fetchFaceitPages(
+    `${FACEIT_API}/players/${player.player_id}/games/${game.id}/stats`,
+    key
+  );
+  const eloHistory = await fetchEloHistory(player.player_id, game.id);
+  const seasons = aggregateSeasons(
+    assignEloValues(
+      matchStats.map((item) => {
+        const stats = item.stats || {};
+        const matchId = stats["Match Id"];
+        return {
+          matchId,
+          finishedAt: toMs(stats["Match Finished At"]),
+          elo: matchmakingIds.has(matchId),
+          won: String(stats.Result) === "1",
+          kd: num(stats["K/D Ratio"]),
+          adr: num(stats.ADR),
+          hs: num(stats["Headshots %"])
+        };
+      }),
+      eloHistory
+    ),
+    Date.now(),
+    undefined,
+    game.elo
+  );
+
+  const profileUrl = String(player.faceit_url || `https://www.faceit.com/{lang}/players/${player.nickname || ""}`)
+    .replace("{lang}", "ru");
+
+  return writeJson("faceit.json", {
+    updatedAt: attemptedAt,
+    lastSuccessfulAt: attemptedAt,
+    lastAttemptAt: attemptedAt,
+    source: "api",
+    status: "available",
+    playerId: player.player_id,
+    nickname: player.nickname || game.name || fallback.nickname,
+    avatarUrl: player.avatar || "",
+    profileUrl,
+    game: game.id,
+    gameLabel: game.id === "cs2" ? "CS2" : game.id.toUpperCase(),
+    region: game.region,
+    elo: game.elo,
+    level: game.level,
+    lifetime: {
+      matches: Math.round(num(life.Matches || life["Total Matches"])),
+      wins: Math.round(num(life.Wins)),
+      winRate: Math.round(num(life["Win Rate %"])),
+      kd: num(life["Average K/D Ratio"]),
+      adr: Math.round(num(life.ADR)),
+      hs: Math.round(num(life["Average Headshots %"]))
+    },
+    seasons
+  });
+}
+
 const sources = [
   { label: "Steam", file: "steam.json", update: updateSteam },
   { label: "PlayStation", file: "psn.json", update: updatePsn },
-  { label: "Discord", file: "discord.json", update: updateDiscord }
+  { label: "Discord", file: "discord.json", update: updateDiscord },
+  { label: "Faceit", file: "faceit.json", update: updateFaceit }
 ];
 
 if (process.argv.includes("--art-only")) {
@@ -364,8 +546,18 @@ if (process.argv.includes("--art-only")) {
   process.exit(0);
 }
 
+const onlyIndex = process.argv.indexOf("--only");
+const only = onlyIndex === -1 ? "" : String(process.argv[onlyIndex + 1] || "").toLowerCase();
+const selected = only
+  ? sources.filter((source) => source.label.toLowerCase() === only || source.file.startsWith(only))
+  : sources;
+if (only && selected.length === 0) {
+  console.error(`Unknown source: ${only}`);
+  process.exit(1);
+}
+
 let unavailableCount = 0;
-for (const source of sources) {
+for (const source of selected) {
   try {
     await source.update();
     console.log(`${source.label}: safe snapshot prepared`);

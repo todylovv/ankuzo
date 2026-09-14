@@ -13,6 +13,8 @@
 #   PSN_ONLINE_ID=ankkui
 #   DISCORD_USER_ID=514852654552186880
 #   DISCORD_BIO=...
+#   FACEIT_API_KEY=...   # server-side key from https://developers.faceit.com/
+#   FACEIT_NICKNAME=     # optional; otherwise resolved from STEAM_IDS
 #
 # Discord needs none of those — it resolves from the public id alone — so the
 # file may hold only what is available and the rest simply stays as it was.

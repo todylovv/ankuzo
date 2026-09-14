@@ -1,0 +1,86 @@
+{
+  "updatedAt": "2026-09-14T13:41:41.023Z",
+  "lastSuccessfulAt": "2026-09-14T13:41:41.023Z",
+  "lastAttemptAt": "2026-09-14T13:41:41.023Z",
+  "source": "api",
+  "status": "available",
+  "playerId": "d1486d2f-5417-4ff4-8ed1-d8d0765e4c3d",
+  "nickname": "nuBac",
+  "avatarUrl": "https://distribution.faceit-cdn.net/images/18659905-6cae-448f-a25a-e74a73fcf4bd.jpg",
+  "profileUrl": "https://www.faceit.com/ru/players/nuBac",
+  "game": "cs2",
+  "gameLabel": "CS2",
+  "region": "EU",
+  "elo": 2508,
+  "level": 10,
+  "lifetime": {
+    "matches": 231,
+    "wins": 136,
+    "winRate": 59,
+    "kd": 1.3,
+    "adr": 95,
+    "hs": 55
+  },
+  "seasons": [
+    {
+      "id": 4,
+      "label": "сезон 4",
+      "current": false,
+      "matches": 56,
+      "wins": 38,
+      "winRate": 68,
+      "kd": 1.6,
+      "adr": 106,
+      "hs": 55,
+      "maxElo": 0
+    },
+    {
+      "id": 5,
+      "label": "сезон 5",
+      "current": false,
+      "matches": 20,
+      "wins": 10,
+      "winRate": 50,
+      "kd": 1.3,
+      "adr": 93,
+      "hs": 46,
+      "maxElo": 0
+    },
+    {
+      "id": 6,
+      "label": "сезон 6",
+      "current": false,
+      "matches": 69,
+      "wins": 35,
+      "winRate": 51,
+      "kd": 1.1,
+      "adr": 91,
+      "hs": 57,
+      "maxElo": 0
+    },
+    {
+      "id": 7,
+      "label": "сезон 7",
+      "current": false,
+      "matches": 77,
+      "wins": 48,
+      "winRate": 62,
+      "kd": 1.1,
+      "adr": 87,
+      "hs": 55,
+      "maxElo": 0
+    },
+    {
+      "id": 9,
+      "label": "сезон 9",
+      "current": true,
+      "matches": 4,
+      "wins": 3,
+      "winRate": 75,
+      "kd": 1.6,
+      "adr": 118,
+      "hs": 61,
+      "maxElo": 2508
+    }
+  ]
+}

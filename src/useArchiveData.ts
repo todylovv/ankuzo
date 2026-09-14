@@ -27,6 +27,30 @@ export type SteamPerson = {
   online: boolean;
 };
 
+export type FaceitSeason = {
+  id: number;
+  label: string;
+  current?: boolean;
+  matches: number;
+  wins: number;
+  winRate: number;
+  kd: number;
+  adr: number;
+  hs: number;
+  maxElo: number;
+};
+
+export type FaceitProfile = {
+  nick: string;
+  avatar: string;
+  url: string;
+  game: string;
+  elo: number;
+  level: number;
+  region: string;
+  seasons: FaceitSeason[];
+};
+
 export type ArchiveLive = {
   playing: boolean;
   nowLabel: string;
@@ -58,6 +82,7 @@ export type ArchiveLive = {
   discordBanner: string;
   discordDecoration: string;
   discordBadges: string[];
+  faceit: FaceitProfile | null;
 };
 
 type SteamGame = {
@@ -100,6 +125,19 @@ type DiscordSnapshot = {
   bannerUrl?: string;
   decorationUrl?: string;
   badges?: string[];
+};
+
+type FaceitSnapshot = {
+  nickname?: string;
+  avatarUrl?: string;
+  profileUrl?: string;
+  game?: string;
+  gameLabel?: string;
+  elo?: number;
+  level?: number;
+  region?: string;
+  lifetime?: { matches?: number; wins?: number; winRate?: number; kd?: number; adr?: number; hs?: number };
+  seasons?: FaceitSeason[];
 };
 
 const PRESENCE: Record<string, string> = {
@@ -168,6 +206,22 @@ const FALLBACK: ArchiveLive = {
   discordBanner: "",
   discordDecoration: "",
   discordBadges: ["храбрость", "nitro", "табличка"],
+  faceit: {
+    nick: "nuBac",
+    avatar: "https://distribution.faceit-cdn.net/images/18659905-6cae-448f-a25a-e74a73fcf4bd.jpg",
+    url: "https://www.faceit.com/ru/players/nuBac",
+    game: "CS2",
+    elo: 2508,
+    level: 10,
+    region: "EU",
+    seasons: [
+      { id: 4, label: "сезон 4", matches: 56, wins: 38, winRate: 68, kd: 1.6, adr: 106, hs: 55, maxElo: 0 },
+      { id: 5, label: "сезон 5", matches: 20, wins: 10, winRate: 50, kd: 1.3, adr: 93, hs: 46, maxElo: 0 },
+      { id: 6, label: "сезон 6", matches: 69, wins: 35, winRate: 51, kd: 1.1, adr: 91, hs: 57, maxElo: 0 },
+      { id: 7, label: "сезон 7", matches: 77, wins: 48, winRate: 62, kd: 1.1, adr: 87, hs: 55, maxElo: 0 },
+      { id: 9, label: "сезон 9", current: true, matches: 4, wins: 3, winRate: 75, kd: 1.6, adr: 118, hs: 61, maxElo: 2508 },
+    ],
+  },
 };
 
 function cleanName(value: string) {
@@ -288,8 +342,45 @@ function uniqueGames(games: SteamGame[], limit: number) {
   return out;
 }
 
-function mergeLive(steam: SteamSnapshot | null, psn: PsnSnapshot | null, discord: DiscordSnapshot | null): ArchiveLive {
-  if (!steam && !psn && !discord) return FALLBACK;
+function toFaceit(snapshot: FaceitSnapshot | null): FaceitProfile | null {
+  const elo = Number(snapshot?.elo) || 0;
+  const nick = snapshot?.nickname || "";
+  if (!elo || !nick) return null;
+  const life = snapshot?.lifetime;
+  let seasons = (snapshot?.seasons || [])
+    .filter((season) => season.matches > 0)
+    .map((season) => ({ ...season, maxElo: Number(season.maxElo) || 0 }));
+  if (seasons.length === 0 && life?.matches) {
+    seasons = [
+      {
+        id: 0,
+        label: "сейчас",
+        current: true,
+        matches: life.matches || 0,
+        wins: life.wins || 0,
+        winRate: life.winRate || 0,
+        kd: life.kd || 0,
+        adr: life.adr || 0,
+        hs: life.hs || 0,
+        maxElo: elo,
+      },
+    ];
+  }
+  if (seasons.length === 0) return null;
+  return {
+    nick,
+    avatar: snapshot?.avatarUrl || "",
+    url: snapshot?.profileUrl || "",
+    game: snapshot?.gameLabel || snapshot?.game || "CS2",
+    elo,
+    level: snapshot?.level || 0,
+    region: snapshot?.region || "",
+    seasons,
+  };
+}
+
+function mergeLive(steam: SteamSnapshot | null, psn: PsnSnapshot | null, discord: DiscordSnapshot | null, faceit: FaceitSnapshot | null): ArchiveLive {
+  if (!steam && !psn && !discord && !faceit) return FALLBACK;
 
   const profiles = steam?.profiles ?? [];
   const artMap = steam?.art;
@@ -379,6 +470,7 @@ function mergeLive(steam: SteamSnapshot | null, psn: PsnSnapshot | null, discord
     discordBanner: discord?.bannerUrl || "",
     discordDecoration: discord?.decorationUrl || "",
     discordBadges: badges.length > 0 ? badges : FALLBACK.discordBadges,
+    faceit: faceit ? toFaceit(faceit) : FALLBACK.faceit,
   };
 }
 
@@ -401,8 +493,9 @@ export function useArchiveData(): ArchiveLive {
       loadJson<SteamSnapshot>("steam.json"),
       loadJson<PsnSnapshot>("psn.json"),
       loadJson<DiscordSnapshot>("discord.json"),
-    ]).then(([steam, psn, discord]) => {
-      if (!cancelled) setLive(mergeLive(steam, psn, discord));
+      loadJson<FaceitSnapshot>("faceit.json"),
+    ]).then(([steam, psn, discord, faceit]) => {
+      if (!cancelled) setLive(mergeLive(steam, psn, discord, faceit));
     });
     return () => {
       cancelled = true;
