@@ -19,11 +19,11 @@ export function levelFromElo(elo: number): number {
 
 export function colorForLevel(level: number): string {
   const n = clampLevel(level);
-  if (n <= 1) return "#9b9b9b";
-  if (n <= 3) return "#1ce400";
-  if (n <= 7) return "#ffc800";
-  if (n <= 9) return "#fe6300";
-  return "#ee2946";
+  if (n <= 1) return "#EEEEEE";
+  if (n <= 3) return "#1CE400";
+  if (n <= 7) return "#FFC800";
+  if (n <= 9) return "#FF6309";
+  return "#FE1F00";
 }
 
 export function colorForElo(elo: number): string {

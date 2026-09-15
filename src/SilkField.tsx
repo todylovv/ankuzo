@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
 import { css } from "./css";
 
-const STRANDS = 90;
+const STRANDS = 160;
 const SCALE = 0.00118;
 const SPEED = 2.15;
 const SWIRL = 0.14;
@@ -80,10 +80,10 @@ function makeNoise(seed: number): (x: number, y: number, z: number) => number {
 
 function strokeColor(light: number, warm: boolean): string {
   const t = Math.min(1, Math.max(0, light));
-  const r = mix(warm ? 42 : 36, warm ? 48 : 14, t);
-  const g = mix(warm ? 38 : 36, warm ? 38 : 14, t);
-  const b = mix(warm ? 32 : 34, warm ? 22 : 14, t);
-  const a = mix(0.055, 0.1, t);
+  const r = mix(warm ? 232 : 246, warm ? 72 : 11, t);
+  const g = mix(warm ? 214 : 245, warm ? 58 : 11, t);
+  const b = mix(warm ? 170 : 243, warm ? 32 : 11, t);
+  const a = mix(0.28, 0.2, t);
   return `rgba(${r | 0},${g | 0},${b | 0},${a})`;
 }
 

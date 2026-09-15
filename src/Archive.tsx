@@ -2,7 +2,8 @@ import { useEffect, useRef, useState, type Ref } from "react";
 import { css } from "./css";
 import { GameStill } from "./GameStill";
 import { SilkField } from "./SilkField";
-import { clampLevel, colorForElo, colorForLevel, levelFromElo, seasonMaxElo } from "./faceitLevel";
+import { FaceitLevelBadge, FaceitMark } from "./FaceitMarks";
+import { colorForElo, colorForLevel, levelFromElo, seasonMaxElo } from "./faceitLevel";
 import type { ArchiveLive, CreditGame, FaceitProfile, FaceitSeason, PsnStill, RecentGame, SteamPerson } from "./useArchiveData";
 
 type ArchiveProps = {
@@ -388,37 +389,6 @@ function matchesWord(value: number): string {
   return "матчей";
 }
 
-function FaceitMark({ size = 36 }: { size?: number }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="#FF5500" aria-hidden="true">
-      <path d="M23.999 2.68v18.638h-3.204V5.872h-4.414l8.618-3.192zm-8.608 0v18.639H9.18v-8.37H6.973v8.37H3.204V2.68H0v-.004L11.392 0v13.633h2.392V2.68h1.607z" />
-    </svg>
-  );
-}
-
-function FaceitLevelBadge({ level, size = 24 }: { level: number; size?: number }) {
-  const n = clampLevel(level);
-  const fill = colorForLevel(n);
-  const ink = n >= 4 && n <= 7 ? "#141414" : "#f6f5f3";
-  return (
-    <svg width={size} height={size} viewBox="0 0 24 24" aria-hidden="true">
-      <polygon points="12,1.55 22.18,9.04 18.29,21.01 5.71,21.01 1.82,9.04" fill={fill} />
-      <text
-        x="12"
-        y="13.35"
-        textAnchor="middle"
-        dominantBaseline="middle"
-        fill={ink}
-        fontSize={n === 10 ? 8 : 9.4}
-        fontWeight={700}
-        fontFamily="Onest,system-ui,sans-serif"
-      >
-        {n}
-      </text>
-    </svg>
-  );
-}
-
 function FaceitStat({
   value,
   label,
@@ -478,8 +448,7 @@ function FaceitChapter({ profile, topGame }: { profile: FaceitProfile; topGame: 
   return (
     <section data-scene="faceit" data-chapter="faceit" data-static="0.7" style={css(`--p:0;position:relative;z-index:2;padding:10vh clamp(20px,4.5vw,72px) 14vh`)}>
       <div style={css(`display:flex;align-items:center;gap:14px`)}>
-        <FaceitMark size={34} />
-        <span style={css(`font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:rgba(241,240,238,.55)`)}>Faceit</span>
+        <FaceitMark height={22} />
       </div>
 
       <a className="steam-face" href={profile.url} target="_blank" rel="noreferrer" aria-label={`${profile.nick} на Faceit`} style={css(`margin-top:clamp(22px,3.2vh,36px)`)}>
