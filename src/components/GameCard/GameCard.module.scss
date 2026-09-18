@@ -1,0 +1,134 @@
+.card {
+  position: relative;
+  flex: 1 1 0;
+  min-width: 0;
+  height: var(--game-card-h);
+  border-radius: var(--radius-card-sm);
+  overflow: hidden;
+  isolation: isolate;
+  box-shadow: var(--shadow-card);
+}
+
+.art,
+.shade {
+  position: absolute;
+  inset: 0;
+}
+
+.art {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.shade {
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.05) 28%, rgba(0, 0, 0, 0.82) 100%);
+}
+
+.badge {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 2;
+  padding: 4px 8px;
+  border-radius: 999px;
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+}
+
+.playing {
+  background: #b6f34a;
+  color: #163000;
+}
+
+.favorite {
+  background: rgba(255, 255, 255, 0.86);
+  color: #222;
+}
+
+.meta {
+  position: absolute;
+  left: 12px;
+  right: 12px;
+  bottom: 10px;
+  z-index: 2;
+  color: #fff;
+}
+
+.title {
+  margin: 0 0 6px;
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  line-height: 1.1;
+}
+
+.stats {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.86);
+}
+
+.stats span {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.stats svg {
+  font-size: 10px;
+  opacity: 0.9;
+}
+
+.cs2 .art {
+  background-color: #1a1f18;
+  background-image:
+    radial-gradient(circle at 62% 28%, #c6f155 0 8px, transparent 9px),
+    radial-gradient(circle at 50% 18%, #2c3328 0 46px, transparent 47px),
+    linear-gradient(180deg, #3b4334 0%, #12140f 100%);
+}
+
+.apex .art {
+  background-color: #2a1b24;
+  background-image:
+    radial-gradient(circle at 48% 36%, #e7b08a 0 28px, transparent 29px),
+    radial-gradient(circle at 50% 18%, #1b1216 0 42px, transparent 43px),
+    linear-gradient(160deg, #5a3148 0%, #1a1018 100%);
+}
+
+.arenaBreakout .art {
+  background-color: #1b1c1a;
+  background-image:
+    radial-gradient(circle at 50% 30%, #6a6d63 0 34px, transparent 35px),
+    linear-gradient(180deg, #3e4038 0%, #121311 100%);
+}
+
+.valorant .art {
+  background-color: #1a1520;
+  background-image:
+    radial-gradient(circle at 52% 34%, #d7a58c 0 26px, transparent 27px),
+    radial-gradient(circle at 70% 20%, #ff4b6b 0 18px, transparent 40px),
+    linear-gradient(180deg, #2a2038 0%, #120e18 100%);
+}
+
+.helldivers2 .art {
+  background-color: #1b170c;
+  background-image:
+    radial-gradient(circle at 50% 32%, #f0d36a 0 22px, transparent 23px),
+    radial-gradient(circle at 50% 22%, #30343c 0 46px, transparent 47px),
+    linear-gradient(180deg, #4a4630 0%, #12100a 100%);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .card {
+    transition: transform 0.28s var(--ease-out), box-shadow 0.28s var(--ease-out);
+  }
+
+  .card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 14px 28px rgba(20, 30, 40, 0.14);
+  }
+}

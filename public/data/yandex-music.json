@@ -1,0 +1,9 @@
+{
+  "playing": false,
+  "title": "",
+  "artist": "",
+  "cover": "",
+  "progressMs": 0,
+  "durationMs": 0,
+  "trackUrl": ""
+}

@@ -1,0 +1,50 @@
+:root {
+  --page-bg: #f3f4f6;
+  --page-padding: clamp(14px, 2vw, 28px);
+  --content-max: 1920px;
+  --header-max: 1920px;
+
+  --sky-deep: #4ea6e0;
+  --sky-mid: #74c0ee;
+  --sky-light: #b7def6;
+  --sky-mist: #e7f1f7;
+
+  --text-primary: #161616;
+  --text-secondary: #3a3a3a;
+  --text-muted: #5f6871;
+  --text-soft: #68727d;
+  --text-on-dark: #f6f6f6;
+  --text-sky-kicker: rgba(25, 39, 52, 0.72);
+
+  --focus-ring: #006ba6;
+  --focus-halo: rgba(255, 255, 255, 0.92);
+  --layer-header: 5;
+  --layer-dialog: 30;
+
+  --glass-bg: rgba(255, 255, 255, 0.28);
+  --glass-bg-strong: rgba(255, 255, 255, 0.55);
+  --glass-border: rgba(255, 255, 255, 0.58);
+  --glass-highlight: rgba(255, 255, 255, 0.72);
+  --glass-shadow: 0 10px 28px rgba(80, 130, 170, 0.12);
+
+  --radius-card: 20px;
+  --radius-card-sm: 16px;
+  --radius-pill: 999px;
+  --radius-nav: 999px;
+
+  --shadow-card: 0 10px 24px rgba(20, 30, 40, 0.08);
+  --shadow-soft: 0 8px 18px rgba(20, 30, 40, 0.06);
+
+  --gap-cards: 9px;
+  --header-height: 46px;
+  --game-card-h: 115px;
+  --bottom-row-h: 115px;
+
+  --font-ui: "Ankuzo UI", "Segoe UI", "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
+  --font-display: "Ankuzo Display", "Segoe UI", "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
+  --font-serif: "Ankuzo Serif", "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+  --font-script: "Ankuzo Script", "Segoe Script", "Apple Chancery", "Snell Roundhand", cursive;
+  --font-balloon: "Arial Rounded MT Bold", "Segoe UI Black", "Arial Black", Impact, sans-serif;
+
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+}
