@@ -12,8 +12,13 @@ services:
     restart: unless-stopped
     environment:
       TZ: ${TZ:-UTC}
+    # Mount only the server-refreshed snapshots so bundled static sources
+    # (for example yandex-music.json) remain available from the image.
     volumes:
-      - ${ANKUZO_DATA:-/opt/ankuzo-data}:/usr/share/nginx/html/data:ro
+      - ${ANKUZO_DATA:-/opt/ankuzo-data}/steam.json:/usr/share/nginx/html/data/steam.json:ro
+      - ${ANKUZO_DATA:-/opt/ankuzo-data}/faceit.json:/usr/share/nginx/html/data/faceit.json:ro
+      - ${ANKUZO_DATA:-/opt/ankuzo-data}/discord.json:/usr/share/nginx/html/data/discord.json:ro
+      - ${ANKUZO_DATA:-/opt/ankuzo-data}/psn.json:/usr/share/nginx/html/data/psn.json:ro
     networks: [edge]
     logging:
       driver: json-file
