@@ -2,9 +2,9 @@ import { useEffect, useState } from "react";
 
 export type PageId = "home" | "games" | "stats" | "about";
 
-function readPage(): PageId {
-  const hash = window.location.hash.replace(/^#/, "").split("/")[0];
-  return hash === "games" || hash === "stats" || hash === "about" ? hash : "home";
+function readPage(locationHash: string): PageId {
+  const page = locationHash.replace(/^#/, "").split("/")[0];
+  return page === "games" || page === "stats" || page === "about" ? page : "home";
 }
 
 function readHashParts() {
@@ -12,10 +12,11 @@ function readHashParts() {
 }
 
 export function useHashPage(): PageId {
-  const [page, setPage] = useState<PageId>(readPage);
+  const [hash, setHash] = useState(() => window.location.hash);
+  const page = readPage(hash);
 
   useEffect(() => {
-    const onHash = () => setPage(readPage());
+    const onHash = () => setHash(window.location.hash);
     window.addEventListener("hashchange", onHash);
     return () => window.removeEventListener("hashchange", onHash);
   }, []);
@@ -42,7 +43,7 @@ export function useHashPage(): PageId {
     }
 
     window.scrollTo({ top: 0, behavior: "instant" });
-  }, [page]);
+  }, [page, hash]);
 
   return page;
 }

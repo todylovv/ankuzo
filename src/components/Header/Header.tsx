@@ -27,7 +27,7 @@ function SocialButton({ item }: { item: SocialLink }) {
   );
 }
 
-export function Header() {
+export function Header({ variant = "default" }: { variant?: "default" | "about" }) {
   const { headerSocials } = useLiveData();
   const hashId = useHashId();
   const activeId = navItems.some((item) => item.id === hashId) ? hashId : "home";
@@ -46,7 +46,7 @@ export function Header() {
   const closeMenu = () => setMenuOpen(false);
 
   return (
-    <header className={styles.header}>
+    <header className={cx(styles.header, variant === "about" && styles.about)}>
       <a className={styles.logo} href="#home" aria-label="Главная Ankuzo">
         22
       </a>

@@ -235,3 +235,17 @@
     background: rgba(255, 255, 255, 0.72);
   }
 }
+
+.about {
+  width: min(calc(100% - 80px), 1440px);
+  margin: 0 auto;
+}
+
+.about .navItem { min-height: 36px; padding-inline: 16px; font-size: 11px; color: #16344e; }
+.about .active { color: #111; }
+.about .social { width: 36px; height: 36px; font-size: 16px; }
+
+@media (max-width: 760px) {
+  .about { width: calc(100% - 40px); }
+  .about .menu { width: 44px; height: 44px; }
+}

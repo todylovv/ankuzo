@@ -26,9 +26,17 @@
 }
 
 .aboutPage {
-  background:
-    linear-gradient(180deg, rgba(126, 186, 230, 0.12) 0%, rgba(243, 244, 246, 0.2) 72%, var(--page-bg) 100%),
-    var(--page-bg);
+  background: #8fc5ef;
+}
+
+.aboutPage .frame {
+  padding: 16px 0 22px;
+}
+
+.aboutPage .frame > footer {
+  width: min(calc(100% - 80px), 1440px);
+  margin: auto auto 0;
+  color: #253c54;
 }
 
 @media (max-width: 1180px) {

@@ -25,7 +25,7 @@
 }
 
 .photoAbout {
-  object-position: left center;
+  object-position: left top;
 }
 
 .fade {
@@ -44,10 +44,15 @@
 }
 
 .fadeAbout {
-  height: 24%;
-  background: linear-gradient(
-    180deg,
-    rgba(180, 214, 240, 0) 0%,
-    rgba(214, 232, 244, 0.18) 100%
-  );
+  display: none;
+}
+
+@media (max-width: 760px) {
+  .skyAbout { height: 640px; min-height: 0; }
+  .photoAbout { object-position: 20% top; }
+  .fadeAbout {
+    display: block;
+    height: 180px;
+    background: linear-gradient(180deg, transparent, #8fc5ef);
+  }
 }

@@ -45,7 +45,7 @@ export default function App() {
     <div className={cx(styles.page, page !== "home" && styles.subpage, page === "about" && styles.aboutPage)} ref={pageRef}>
       <HeroSky variant={page === "about" ? "about" : "default"} />
       <div className={styles.frame}>
-        <Header />
+        <Header variant={page === "about" ? "about" : "default"} />
         <h1 className="sr-only">{PAGE_NAMES[page]} — личный игровой архив ANKUZO</h1>
         {page === "games" && <GamesPage />}
         {page === "stats" && <StatsPage />}

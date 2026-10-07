@@ -1,33 +1,13 @@
 export const aboutIntro = {
-  index: "/ 01",
-  title: "ОБО МНЕ",
-  caption: "ЧЕЛОВЕК, КОТОРЫЙ ЛЮБИТ ИГРЫ, ТЕХНОЛОГИИ И ДЕЛАТЬ ЧТО-ТО СВОЁ",
-  bio: "Привет, я Александр — ANKUZO. Занимаюсь кибербезопасностью, анализом больших данных и ИИ, делаю свои проекты. Здесь я собираю всё, что мне интересно: игры, код, идеи и личный прогресс.",
+  title: "Обо мне",
+  bio: "Занимаюсь кибербезопасностью, анализом больших данных и ИИ. Делаю свои проекты и собираю здесь игры, код, идеи и личный прогресс.",
 };
 
 export const aboutFacts = [
-  {
-    id: "age",
-    icon: "person" as const,
-    value: "25",
-    unit: "ЛЕТ",
-    detail: "",
-  },
-  {
-    id: "work",
-    icon: "work" as const,
-    value: "Кибер",
-    unit: "Данные / ИИ",
-    detail: "Анализ и свои проекты",
-  },
-  {
-    id: "goals",
-    icon: "goals" as const,
-    value: "Цели",
-    unit: "",
-    detail: "Развитие, свобода, сильное окружение",
-  },
-];
+  { id: "age", text: "25 лет" },
+  { id: "work", text: "Данные / ИИ" },
+  { id: "goals", text: "Развитие и свобода" },
+] as const;
 
 export const aboutInterests = [
   {
@@ -78,15 +58,4 @@ export const aboutPlatforms: Array<{
   { id: "faceit", title: "FACEIT", handle: "nußac", href: "https://www.faceit.com/ru/players/nuBac" },
   { id: "discord", title: "Discord", handle: "ankuz0", href: "#discord" },
   { id: "twitch", title: "Twitch", handle: "ankuzo", href: "https://www.twitch.tv/ankuzo" },
-];
-
-export const aboutHardware = [
-  { id: "cpu", label: "CPU", value: "Ryzen 5 5600" },
-  { id: "gpu", label: "GPU", value: "RTX 3070 Ti" },
-  { id: "ram", label: "RAM", value: "32 GB 3200 MHz" },
-  { id: "monitor", label: "Мониторы", value: "2× 165 Hz" },
-  { id: "mouse", label: "Мышь", value: "Superlight" },
-  { id: "keyboard", label: "Клавиатура", value: "Магнитная" },
-  { id: "peripherals", label: "Периферия", value: "HyperX Cloud 3 / FIFINE SC3 / AMBT" },
-  { id: "console", label: "Консоль", value: "PlayStation 5" },
 ];
