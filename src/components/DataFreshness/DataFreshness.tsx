@@ -17,14 +17,14 @@ function formatDate(value?: string) {
   return new Intl.DateTimeFormat("ru-RU", { day: "2-digit", month: "short", year: "numeric" }).format(date);
 }
 
-export function DataFreshness({ sources }: { sources: DataSourceStatus[] }) {
+export function DataFreshness({ sources, loading = false }: { sources: DataSourceStatus[]; loading?: boolean }) {
   const attention = sources.filter((source) => source.state !== "fresh").length;
 
   return (
     <details className={styles.root}>
       <summary>
         <FiDatabase aria-hidden="true" />
-        <span>{attention ? `Источники данных: ${attention} требуют внимания` : "Источники данных актуальны"}</span>
+        <span>{loading ? "Загрузка источников данных…" : attention ? `Источники данных: ${attention} требуют внимания` : "Источники данных актуальны"}</span>
       </summary>
       <ul>
         {sources.map((source) => (

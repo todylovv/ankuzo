@@ -20,10 +20,12 @@ const platformIcon = {
 const factIcon = { age: LuCake, work: FiBarChart2, goals: FiSend } as const;
 
 export function AboutPage() {
-  const { profileCards, nowPlaying } = useLiveData();
+  const { profileCards, nowPlaying, playerStats } = useLiveData();
   const platforms = aboutPlatforms.map((item) => {
     const live = profileCards.find((card) => card.id === item.id);
-    return { ...item, href: live?.href || item.href };
+    const handle = item.id === "steam" ? live?.subtitle || item.handle
+      : item.id === "faceit" ? playerStats.faceit.nickname : item.handle;
+    return { ...item, handle, href: live?.href.startsWith("http") ? live.href : item.href };
   });
 
   return (

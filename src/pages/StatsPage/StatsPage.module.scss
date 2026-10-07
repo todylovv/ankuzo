@@ -25,7 +25,7 @@
   align-items: center;
   gap: 14px;
   margin: 0 0 2px 10px;
-  font-size: 9px;
+  font-size: 11px;
   font-weight: 600;
   letter-spacing: 0.34em;
   color: var(--text-sky-kicker);
@@ -77,7 +77,7 @@
 
 .crumb {
   margin: 4px 0 0 12px;
-  font-size: 9px;
+  font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.18em;
   color: rgba(20, 28, 36, 0.62);
@@ -119,10 +119,10 @@
   display: grid;
   grid-template-columns: 216px minmax(0, 1fr) 252px;
   grid-template-areas:
-    "profile kpis moon"
-    "profile favorites platforms"
-    "profile recents genres"
-    "goals board sky";
+    "profile kpis kpis"
+    "favorites favorites platforms"
+    "recents recents genres"
+    "board board board";
   gap: 10px;
   align-items: stretch;
 }
@@ -152,7 +152,7 @@
 .genres,
 .faceit,
 .activity {
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.58) 0%, rgba(236, 246, 252, 0.4) 100%);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.88) 0%, rgba(236, 246, 252, 0.8) 100%);
   border: 1px solid rgba(255, 255, 255, 0.72);
   box-shadow:
     0 10px 24px rgba(80, 130, 170, 0.1),
@@ -272,7 +272,7 @@
 
 .kpiLabel {
   margin-top: auto;
-  font-size: 8px;
+  font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.16em;
   line-height: 1.35;
@@ -283,7 +283,7 @@
   display: block;
   font-weight: 600;
   letter-spacing: 0.12em;
-  color: rgba(40, 50, 60, 0.38);
+  color: #50606f;
 }
 
 .moonCard {
@@ -353,7 +353,7 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 800;
   letter-spacing: 0.12em;
   color: var(--text-primary);
@@ -372,7 +372,7 @@
   border: 0;
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.72);
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 600;
   color: rgba(28, 36, 44, 0.7);
 }
@@ -443,12 +443,11 @@
 
 .favTitle {
   margin: 0 2px;
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 600;
-  color: rgba(40, 50, 60, 0.7);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  color: #50606f;
+  overflow-wrap: anywhere;
+  line-height: 1.35;
 }
 
 .platforms,
@@ -492,7 +491,7 @@
 
 .recentGrid {
   display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 8px;
 }
 
@@ -525,16 +524,15 @@
 
 .recentCopy h3 {
   margin: 0;
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 700;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  overflow-wrap: anywhere;
+  line-height: 1.35;
 }
 
 .recentCopy p {
   margin: 3px 0 6px;
-  font-size: 9px;
+  font-size: 11px;
   color: rgba(255, 255, 255, 0.5);
 }
 
@@ -542,7 +540,7 @@
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 700;
 }
 
@@ -574,7 +572,7 @@
   align-items: center;
   gap: 8px;
   margin-top: 4px;
-  font-size: 10px;
+  font-size: 11px;
 }
 
 .genres i {
@@ -638,7 +636,7 @@
   border-radius: 8px;
   background: #1c7ed6;
   color: #fff;
-  font-size: 9px;
+  font-size: 11px;
   font-weight: 800;
   letter-spacing: 0.04em;
 }
@@ -652,10 +650,10 @@
 
 .faceitHead p {
   margin: 2px 0 0;
-  font-size: 9px;
+  font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.16em;
-  color: rgba(40, 50, 60, 0.45);
+  color: #50606f;
 }
 
 .faceitBody {
@@ -682,10 +680,10 @@
 .level p,
 .level span {
   margin: 6px 0 0;
-  font-size: 8px;
+  font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.16em;
-  color: rgba(40, 50, 60, 0.45);
+  color: #50606f;
 }
 
 .level b {
@@ -719,10 +717,10 @@
 .faceitStats span {
   display: block;
   margin-top: 4px;
-  font-size: 8px;
+  font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.14em;
-  color: rgba(40, 50, 60, 0.45);
+  color: #50606f;
 }
 
 .chart {
@@ -761,7 +759,7 @@
 
 .chartMonth {
   fill: rgba(40, 50, 60, 0.42);
-  font-size: 8px;
+  font-size: 11px;
   font-weight: 600;
   font-family: var(--font-ui);
 }
@@ -814,8 +812,8 @@
 .activity span {
   display: block;
   margin-top: 2px;
-  font-size: 9px;
-  color: rgba(40, 50, 60, 0.48);
+  font-size: 11px;
+  color: #50606f;
 }
 
 .activity b {
@@ -892,8 +890,6 @@
       "favorites favorites"
       "recents recents"
       "platforms genres"
-      "moon goals"
-      "sky sky"
       "board board";
   }
 
@@ -923,13 +919,8 @@
   }
 
   .layout,
-  .kpis,
-  .favGrid,
   .recentGrid,
-  .board,
-  .faceitBody,
-  .genreBody,
-  .faceitStats {
+  .board {
     grid-template-columns: 1fr;
   }
 
@@ -941,13 +932,52 @@
       "recents"
       "platforms"
       "genres"
-      "board"
-      "moon"
-      "goals"
-      "sky";
+      "board";
   }
 
   .profile {
     min-height: 260px;
   }
+}
+
+.dataNote { margin: 8px 0; font-size: 12px; line-height: 1.5; color: #50606f; }
+.sort select { min-height: 36px; }
+.favTitle { font-size: 12px; }
+.recent { min-height: 96px; }
+.recentCopy p { color: #bdc9d5; line-height: 1.4; }
+.recentCopy span { line-height: 1.4; }
+.profile {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  min-height: 110px;
+  border-radius: 22px;
+}
+.portrait {
+  position: relative;
+  inset: auto;
+  flex: 0 0 64px;
+  width: 64px;
+  height: 64px;
+  aspect-ratio: 1;
+  object-fit: cover;
+  object-position: center;
+  border-radius: 50%;
+}
+.profileShade { display: none; }
+.profileCopy { position: static; min-width: 0; padding: 0; }
+.profileCopy h2 { font-size: 23px; line-height: 1.1; overflow-wrap: anywhere; }
+.handle { margin: 4px 0 8px; }
+.profileBtn { font-size: 11px; }
+@media (max-width: 760px) {
+  .page { gap: 16px; }
+  .layout { gap: 16px; }
+  .profile { min-height: 110px; }
+  .kpis, .favGrid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .faceitStats { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px 8px; }
+  .genreBody { grid-template-columns: 84px minmax(0, 1fr); }
+  .faceitBody { grid-template-columns: 72px minmax(0, 1fr); gap: 10px; }
+  .sort select { min-height: 44px; }
+  .panelHead { flex-wrap: wrap; gap: 8px; }
 }

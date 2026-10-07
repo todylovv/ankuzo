@@ -54,8 +54,8 @@ export const aboutPlatforms: Array<{
   href: string;
 }> = [
   { id: "steam", title: "Steam", handle: "nußac", href: "https://steamcommunity.com/profiles/76561199770575251/" },
-  { id: "playstation", title: "PlayStation", handle: "nußac", href: "https://www.playstation.com/" },
-  { id: "faceit", title: "FACEIT", handle: "nußac", href: "https://www.faceit.com/ru/players/nuBac" },
+  { id: "playstation", title: "PlayStation", handle: "ankkui", href: "" },
+  { id: "faceit", title: "FACEIT", handle: "nuBac", href: "https://www.faceit.com/ru/players/nuBac" },
   { id: "discord", title: "Discord", handle: "ankuz0", href: "#discord" },
   { id: "twitch", title: "Twitch", handle: "ankuzo", href: "https://www.twitch.tv/ankuzo" },
 ];

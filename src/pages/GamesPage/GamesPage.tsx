@@ -19,21 +19,19 @@ function padRank(rank: number) {
 }
 
 function GameTile({ game, kind, rank }: { game: Game; kind: TileKind; rank?: number }) {
+  const hours = kind === "recent" ? game.hours2w ?? 0 : game.hours;
   return (
     <article className={cx(styles.tile, styles[kind])}>
       <GameArtwork className={styles.art} src={game.image} title={game.title} />
       <div className={styles.shade} />
       {kind === "ranked" && rank != null && <span className={styles.rank}>{padRank(rank)}</span>}
-      {kind === "recent" && game.lastPlayedLabel && (
-        <span className={styles.when}>{game.lastPlayedLabel}</span>
-      )}
       <span className={styles.platform}>{game.platform}</span>
       <div className={styles.meta}>
         <h3 className={styles.gameTitle}>{game.title}</h3>
-        {game.hours > 0 && (
+        {hours > 0 && (
           <p className={styles.hours}>
             <FiClock />
-            {game.hours} ч
+            {Math.round(hours)} ч{kind === "recent" ? " / 2 нед." : ""}
           </p>
         )}
       </div>
@@ -46,14 +44,14 @@ function GameRow({ game }: { game: Game }) {
     <article className={styles.row}>
       <GameArtwork className={styles.rowArt} src={game.image} title={game.title} />
       <h3 className={styles.rowTitle}>{game.title}</h3>
-      <p className={styles.rowHours}>{game.hours > 0 ? `${game.hours} ч` : game.platform}</p>
+      <p className={styles.rowHours}>{game.hours > 0 ? `${game.hours} ч` : game.platform === "PC" ? "0 ч" : "Время недоступно"}</p>
       <span className={styles.rowPlatform}>{game.platform}</span>
     </article>
   );
 }
 
 export function GamesPage() {
-  const { mostPlayed, recentlyPlayed, archiveGames, archiveStats, sources } = useLiveData();
+  const { mostPlayed, recentlyPlayed, archiveGames, archiveStats, sources, loading } = useLiveData();
   const [filter, setFilter] = useState<FilterId>("all");
   const [sort, setSort] = useState<SortId>("hours");
   const [view, setView] = useState<ViewId>("grid");
@@ -92,7 +90,7 @@ export function GamesPage() {
             <p className={styles.statLabel}>
               ВСЕГО ИГР
               <span>МОЯ КОЛЛЕКЦИЯ</span>
-              <span>С 2018 ГОДА</span>
+              <span>PC + PS5</span>
             </p>
           </article>
           <article className={styles.stat}>
@@ -144,7 +142,7 @@ export function GamesPage() {
         </div>
       </section>
 
-      <DataFreshness sources={sources} />
+      <DataFreshness sources={sources} loading={loading} />
 
       <section className={styles.mostSection}>
         <div className={styles.copy}>
@@ -162,6 +160,7 @@ export function GamesPage() {
             ВРЕМЕНИ.
           </p>
         </div>
+        {mostPlayed.length === 0 && <p className={styles.empty}>Пока нет данных о времени в играх.</p>}
         <div className={styles.mostGrid}>
           {mostPlayed.map((game, index) => (
             <GameTile key={game.id} game={game} kind="ranked" rank={index + 1} />
@@ -178,32 +177,23 @@ export function GamesPage() {
             ИГРАЛ
           </h2>
           <p className={styles.caption}>
-            ПОСЛЕДНИЕ ИГРЫ
-            <br />
-            В МОЕМ АРХИВЕ.
+            {recentlyPlayed[0]?.lastPlayedLabel || "За 2 недели по снимку Steam"}
           </p>
         </div>
         <div className={styles.recentRow}>
+          {recentlyPlayed.length === 0 && <p className={styles.empty}>В снимке Steam нет игр за последние 2 недели.</p>}
           {recentlyPlayed.map((game) => (
             <GameTile key={game.id} game={game} kind="recent" />
           ))}
           <a
             className={styles.seeAll}
-            href="#games"
-            onClick={(event) => {
-              event.preventDefault();
-              document.getElementById("archive")?.scrollIntoView({ behavior: "smooth", block: "start" });
-            }}
+            href="#games/archive"
           >
             <span className={styles.seeAllBtn} aria-hidden>
               <IoChevronForward />
             </span>
             <span className={styles.seeAllLabel}>
-              СМОТРЕТЬ
-              <br />
-              ВСЕ НЕДАВНИЕ
-              <br />
-              ИГРЫ
+              ВЕСЬ АРХИВ
             </span>
           </a>
         </div>

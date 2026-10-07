@@ -45,10 +45,10 @@
   align-items: center;
   justify-content: center;
   min-width: 54px;
-  height: 24px;
+  height: 36px;
   padding: 0 11px;
   border-radius: var(--radius-pill);
-  font-size: 9px;
+  font-size: 11px;
   font-weight: 600;
   letter-spacing: 0.06em;
   color: rgba(28, 32, 38, 0.62);
@@ -74,8 +74,8 @@
 }
 
 .social {
-  width: 24px;
-  height: 24px;
+  width: 36px;
+  height: 36px;
   display: grid;
   place-items: center;
   color: #111;
@@ -84,8 +84,8 @@
 
 .steam,
 .github {
-  width: 26px;
-  height: 26px;
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
   background: #111;
   color: #fff;
@@ -98,8 +98,8 @@
 
 .menu {
   display: none;
-  width: 30px;
-  height: 30px;
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
   place-content: center;
   gap: 3px;
@@ -173,7 +173,7 @@
 }
 
 .drawerNav a span {
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.08em;
   color: var(--text-muted);
@@ -249,3 +249,5 @@
   .about { width: calc(100% - 40px); }
   .about .menu { width: 44px; height: 44px; }
 }
+
+@media (max-width: 760px) { .social, .steam, .github { width: 44px; height: 44px; } }

@@ -22,7 +22,7 @@ export function GameCard({ game }: Props) {
         <div className={styles.stats}>
           <span>
             <FiClock />
-            {game.hours} ч
+            {Math.round(game.hours2w ?? game.hours)} ч{game.hours2w != null ? " / 2 нед." : ""}
           </span>
           {game.rating != null && (
             <span>

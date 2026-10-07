@@ -4,6 +4,7 @@ import styles from "./GameArtwork.module.scss";
 
 type Props = {
   src?: string;
+  fallbackSrc?: string;
   title: string;
   className?: string;
 };
@@ -18,11 +19,11 @@ function initials(title: string) {
     .toUpperCase();
 }
 
-export function GameArtwork({ src, title, className }: Props) {
-  const [failedSrc, setFailedSrc] = useState("");
-  const failed = Boolean(src && failedSrc === src);
+export function GameArtwork({ src, fallbackSrc, title, className }: Props) {
+  const [failedSources, setFailedSources] = useState<string[]>([]);
+  const image = [src, fallbackSrc].find((url) => url && !failedSources.includes(url));
 
-  if (!src || failed) {
+  if (!image) {
     return (
       <div className={cx(styles.fallback, className)} aria-hidden="true">
         <span>{initials(title)}</span>
@@ -33,12 +34,12 @@ export function GameArtwork({ src, title, className }: Props) {
   return (
     <img
       className={className}
-      src={src}
+      src={image}
       alt=""
       loading="lazy"
       decoding="async"
       referrerPolicy="no-referrer"
-      onError={() => setFailedSrc(src ?? "")}
+      onError={() => setFailedSources((previous) => [...previous, image])}
     />
   );
 }

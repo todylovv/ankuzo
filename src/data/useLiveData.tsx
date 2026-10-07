@@ -1,9 +1,7 @@
-﻿import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
+import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
+import { recentSteamGames, seasonPeaks, isCurrentSnapshot } from "./snapshotFacts";
 import { artFromMap, steamCdn, type GameArt } from "./gameArt";
 import {
-  fallbackArchive,
-  fallbackStats,
-  games as fallbackGames,
   type ArchiveStats,
   type Game,
 } from "./games";
@@ -100,6 +98,7 @@ export type FaceitLive = {
   adr: number;
   hs: number;
   gameLabel: string;
+  seasonPeaks: { label: string; elo: number }[];
 };
 
 export type PlayerStats = {
@@ -148,6 +147,7 @@ export type ActivityItem = {
 };
 
 export type DataSourceStatus = {
+  hasData?: boolean;
   id: "steam" | "faceit" | "psn" | "discord" | "yandex";
   label: string;
   updatedAt?: string;
@@ -155,6 +155,7 @@ export type DataSourceStatus = {
 };
 
 export type LiveData = {
+  loading: boolean;
   games: Game[];
   mostPlayed: Game[];
   recentlyPlayed: Game[];
@@ -169,35 +170,19 @@ export type LiveData = {
 };
 
 const GITHUB_URL = "https://github.com/todylovv";
-const DAY_HINTS = [0, 3, 8, 12, 20];
 
 const LiveDataContext = createContext<LiveData | null>(null);
 
 const fallbackFaceit: FaceitLive = {
-  nickname: "nuBac",
-  profileUrl: "https://www.faceit.com/ru/players/nuBac",
-  elo: 2434,
-  level: 10,
-  matches: 220,
-  winRate: 59,
-  kd: 1.3,
-  adr: 94.4,
-  hs: 55,
-  gameLabel: "CS2",
+  nickname: "nuBac", profileUrl: "https://www.faceit.com/ru/players/nuBac",
+  elo: 0, level: 0, matches: 0, winRate: 0, kd: 0, adr: 0, hs: 0,
+  gameLabel: "CS2", seasonPeaks: [],
 };
 
 const fallbackPlayerStats: PlayerStats = {
-  nickname: "nuГџac",
-  avatarUrl: "",
-  profileUrl: fallbackFaceit.profileUrl,
-  libraryGames: 12,
-  totalHours: 2450,
-  activeGames: 6,
-  achievements: 28,
-  pcHours: 1650,
-  psHours: 620,
-  psGames: 10,
-  faceit: fallbackFaceit,
+  nickname: "nuBac", avatarUrl: "", profileUrl: fallbackFaceit.profileUrl,
+  libraryGames: 0, totalHours: 0, activeGames: 0, achievements: 0,
+  pcHours: 0, psHours: 0, psGames: 0, faceit: fallbackFaceit,
 };
 
 const fallbackNowPlaying: NowPlaying = {
@@ -211,30 +196,16 @@ const fallbackNowPlaying: NowPlaying = {
 };
 
 const fallbackLive: LiveData = {
-  games: fallbackGames,
-  mostPlayed: [...fallbackArchive].sort((a, b) => b.hours - a.hours).slice(0, 5),
-  recentlyPlayed: fallbackArchive.filter((game) => game.lastPlayedLabel).slice(0, 5),
-  archiveGames: fallbackArchive,
-  archiveStats: fallbackStats,
+  loading: true,
+  games: [],
+  mostPlayed: [],
+  recentlyPlayed: [],
+  archiveGames: [],
+  archiveStats: { totalGames: 0, totalHours: 0, pcCount: 0, ps5Count: 0 },
   profileCards: fallbackCards,
   headerSocials: fallbackSocials,
   playerStats: fallbackPlayerStats,
-  activity: [
-    {
-      id: "faceit-season",
-      tone: "win",
-      title: "FACEIT · сезон 9",
-      when: "Недавно",
-      extra: "3/4 побед",
-    },
-    {
-      id: "faceit-elo",
-      tone: "rank",
-      title: "Уровень 10 в CS2",
-      when: "Недавно",
-      extra: "2 434 ELO",
-    },
-  ],
+  activity: [],
   nowPlaying: fallbackNowPlaying,
   sources: [
     { id: "steam", label: "Steam", state: "unknown" },
@@ -269,7 +240,7 @@ function toNowPlaying(yandex: YandexMusicSnapshot | null): NowPlaying {
   const progressMs = Math.max(0, Math.min(durationMs || yandex?.progressMs || 0, yandex?.progressMs ?? 0));
 
   return {
-    playing: Boolean(yandex?.playing),
+    playing: Boolean(yandex?.playing) && isCurrentSnapshot(yandex?.updatedAt),
     title,
     artist: yandex?.artist?.trim() || "Яндекс Музыка",
     cover: yandex?.cover ?? "",
@@ -282,7 +253,7 @@ function toNowPlaying(yandex: YandexMusicSnapshot | null): NowPlaying {
 
 async function loadJson<T>(file: string): Promise<T | null> {
   try {
-    const response = await fetch(`${import.meta.env.BASE_URL}data/${file}`, { cache: "no-store" });
+    const response = await fetch(`${import.meta.env.BASE_URL}data/${file}`, { cache: "no-store", signal: AbortSignal.timeout(10_000) });
     if (!response.ok) return null;
     return (await response.json()) as T;
   } catch {
@@ -293,23 +264,9 @@ async function loadJson<T>(file: string): Promise<T | null> {
 function normalizeTitle(title: string) {
   return title
     .toLowerCase()
-    .replace(/[в„ўВ®В©:]/g, "")
+    .replace(/[™®©:]/g, "")
     .replace(/\s+/g, " ")
     .trim();
-}
-
-function uniqueGames(list: SteamGame[], limit: number) {
-  const seen = new Set<string>();
-  const out: SteamGame[] = [];
-  for (const game of list) {
-    if (!game.name) continue;
-    const key = String(game.appId ?? game.name);
-    if (seen.has(key)) continue;
-    seen.add(key);
-    out.push(game);
-    if (out.length === limit) break;
-  }
-  return out;
 }
 
 function daysAgoLabel(days: number): string {
@@ -339,6 +296,11 @@ function hoursAgoLabel(hours: number): string {
   return `${n} ${word} назад`;
 }
 
+function snapshotDate(iso?: string) {
+  const date = new Date(iso ?? "");
+  return Number.isNaN(date.getTime()) ? "дата неизвестна" : date.toLocaleDateString("ru-RU", { day: "2-digit", month: "2-digit", year: "numeric" });
+}
+
 function relativeWhen(iso?: string) {
   if (!iso) return "";
   const delta = Date.now() - Date.parse(iso);
@@ -362,7 +324,7 @@ function buildActivity(
 ): ActivityItem[] {
   const items: ActivityItem[] = [];
   const faceitWhen = relativeWhen(faceit?.updatedAt);
-  const steamWhen = relativeWhen(steam?.updatedAt) || "За 2 недели";
+  const steamWhen = `За 2 недели · снимок ${snapshotDate(steam?.updatedAt)}`;
 
   const season = faceit?.seasons?.find((entry) => entry.current) ?? faceit?.seasons?.at(-1);
   if (season && (season.matches ?? 0) > 0) {
@@ -544,29 +506,23 @@ export function LiveDataProvider({ children }: { children: ReactNode }) {
       loadJson<YandexMusicSnapshot>("yandex-music.json"),
     ])
       .then(([steam, faceit, discord, psn, yandex]) => {
-        if (cancelled || (!steam && !faceit && !discord && !psn && !yandex)) return;
+        if (cancelled) return;
 
         const profiles = steam?.profiles ?? [];
         const top = (steam?.top ?? []).filter((game) => game.name);
         const art = steam?.art;
-        const playing = profiles.find((profile) => profile.currentGame)?.currentGame ?? "";
-        const twoWeek = profiles
-          .flatMap((profile) => profile.games ?? [])
-          .filter((game) => game.name && (game.hours2w ?? 0) > 0)
-          .sort((a, b) => (b.hours2w ?? 0) - (a.hours2w ?? 0));
-        const recents = uniqueGames([...twoWeek, ...top], 5);
+        const playing = isCurrentSnapshot(steam?.updatedAt)
+          ? profiles.find((profile) => profile.currentGame)?.currentGame ?? "" : "";
+        const recents = recentSteamGames(profiles.flatMap((profile) => profile.games ?? []));
         const favoriteName = top[0]?.name ?? "";
-        const games = recents.length > 0 ? recents.map((game) => toCard(game, playing, favoriteName, art)) : fallbackGames;
+        const games = recents.map((game) => toCard(game, playing, favoriteName, art));
 
         const steamGames = steam ? collectSteamGames(steam) : [];
         const pcGames = steamGames
-          .filter((game) => Math.round(game.hours ?? 0) > 0)
           .sort((a, b) => (b.hours ?? 0) - (a.hours ?? 0))
           .map((game) => toCard(game, playing, favoriteName, art));
 
-        const steamNames = new Set(pcGames.map((game) => normalizeTitle(game.title)));
         const ps5Games = uniquePsn(psn?.library ?? [])
-          .filter((item) => item.title && !steamNames.has(normalizeTitle(item.title)))
           .map((item) => ({
             id: `ps5-${normalizeTitle(item.title ?? "")}`,
             title: item.title ?? "Unknown",
@@ -576,20 +532,20 @@ export function LiveDataProvider({ children }: { children: ReactNode }) {
           }));
 
         const archiveGames = [...pcGames, ...ps5Games];
-        const mostPlayed = (pcGames.length > 0 ? pcGames : fallbackArchive).slice(0, 5);
-        const recentlyPlayed = recents.map((game, index) => ({
+        const mostPlayed = pcGames.filter((game) => game.hours > 0).slice(0, 5);
+        const recentlyPlayed = recents.map((game) => ({
           ...toCard(game, playing, favoriteName, art),
-          lastPlayedLabel: daysAgoLabel(DAY_HINTS[index] ?? 14),
+          lastPlayedLabel: `За 2 недели · ${snapshotDate(steam?.updatedAt)}`,
         }));
 
         const totalHours = Math.round(
-          steam?.stats?.totalHours ?? (pcGames.reduce((sum, game) => sum + game.hours, 0) || fallbackStats.totalHours),
+          steam?.stats?.totalHours ?? pcGames.reduce((sum, game) => sum + game.hours, 0),
         );
         const archiveStats: ArchiveStats = {
-          totalGames: archiveGames.length || fallbackStats.totalGames,
+          totalGames: archiveGames.length,
           totalHours,
-          pcCount: pcGames.length || fallbackStats.pcCount,
-          ps5Count: ps5Games.length || fallbackStats.ps5Count,
+          pcCount: pcGames.length,
+          ps5Count: ps5Games.length,
         };
         const activeGames = steamGames.filter((game) => (game.hours2w ?? 0) > 0).length;
 
@@ -618,7 +574,7 @@ export function LiveDataProvider({ children }: { children: ReactNode }) {
           {
             id: "discord",
             title: "Discord",
-            subtitle: discord?.displayName || discord?.username || fallbackCards[2].subtitle,
+            subtitle: discord?.username || discord?.displayName || fallbackCards[2].subtitle,
             icon: "discord",
             href: "#discord",
           },
@@ -648,6 +604,7 @@ export function LiveDataProvider({ children }: { children: ReactNode }) {
           adr: faceit?.lifetime?.adr ?? fallbackFaceit.adr,
           hs: faceit?.lifetime?.hs ?? fallbackFaceit.hs,
           gameLabel: faceit?.gameLabel || fallbackFaceit.gameLabel,
+          seasonPeaks: seasonPeaks(faceit?.seasons),
         };
 
         const playerStats: PlayerStats = {
@@ -667,27 +624,29 @@ export function LiveDataProvider({ children }: { children: ReactNode }) {
         const activity = buildActivity(steam, faceit, psn, steamGames, playing);
 
         setLive({
+          loading: false,
           games,
           mostPlayed,
-          recentlyPlayed: recentlyPlayed.length > 0 ? recentlyPlayed : fallbackLive.recentlyPlayed,
-          archiveGames: archiveGames.length > 0 ? archiveGames : fallbackArchive,
+          recentlyPlayed,
+          archiveGames,
           archiveStats,
           profileCards,
           headerSocials,
           playerStats,
-          activity: activity.length > 0 ? activity : fallbackLive.activity,
+          activity,
           nowPlaying: toNowPlaying(yandex),
           sources: [
-            { id: "steam", label: "Steam", updatedAt: steam?.updatedAt, state: sourceState(steam?.status, steam?.updatedAt) },
-            { id: "faceit", label: "FACEIT", updatedAt: faceit?.updatedAt, state: sourceState(faceit?.status, faceit?.updatedAt) },
-            { id: "psn", label: "PlayStation", updatedAt: psn?.updatedAt, state: sourceState(psn?.status, psn?.updatedAt) },
-            { id: "discord", label: "Discord", updatedAt: discord?.updatedAt, state: sourceState(discord?.status, discord?.updatedAt) },
-            { id: "yandex", label: "Яндекс Музыка", updatedAt: yandex?.updatedAt, state: sourceState(yandex?.status, yandex?.updatedAt) },
+            { id: "steam", label: "Steam", updatedAt: steam?.updatedAt, hasData: Boolean(steam), state: sourceState(steam ? steam.status : "unavailable", steam?.updatedAt) },
+            { id: "faceit", label: "FACEIT", updatedAt: faceit?.updatedAt, hasData: Boolean(faceit), state: sourceState(faceit ? faceit.status : "unavailable", faceit?.updatedAt) },
+            { id: "psn", label: "PlayStation", updatedAt: psn?.updatedAt, hasData: Boolean(psn), state: sourceState(psn ? psn.status : "unavailable", psn?.updatedAt) },
+            { id: "discord", label: "Discord", updatedAt: discord?.updatedAt, hasData: Boolean(discord), state: sourceState(discord ? discord.status : "unavailable", discord?.updatedAt) },
+            { id: "yandex", label: "Яндекс Музыка", updatedAt: yandex?.updatedAt, hasData: Boolean(yandex), state: sourceState(yandex ? yandex.status : "unavailable", yandex?.updatedAt) },
           ],
         });
       })
       .catch(() => {
-        /* keep fallback */
+        if (cancelled) return;
+        setLive({ ...fallbackLive, loading: false, sources: fallbackLive.sources.map((source) => ({ ...source, state: "unavailable" })) });
       });
 
     return () => {
