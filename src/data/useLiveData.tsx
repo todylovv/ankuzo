@@ -286,7 +286,7 @@ function prettyWhen(label: string) {
 }
 
 function hoursAgoLabel(hours: number): string {
-  if (hours <= 0) return "Только что";
+  if (hours < 1) return "Меньше часа назад";
   const n = Math.round(hours);
   const mod10 = n % 10;
   const mod100 = n % 100;
