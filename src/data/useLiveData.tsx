@@ -81,6 +81,7 @@ type PsnEntry = {
 };
 
 type PsnSnapshot = {
+  psnId?: string;
   updatedAt?: string;
   status?: string;
   library?: PsnEntry[];
@@ -102,6 +103,7 @@ export type FaceitLive = {
 };
 
 export type PlayerStats = {
+  psnId: string;
   nickname: string;
   avatarUrl: string;
   profileUrl: string;
@@ -180,6 +182,7 @@ const fallbackFaceit: FaceitLive = {
 };
 
 const fallbackPlayerStats: PlayerStats = {
+  psnId: "ankkui",
   nickname: "nuBac", avatarUrl: "", profileUrl: fallbackFaceit.profileUrl,
   libraryGames: 0, totalHours: 0, activeGames: 0, achievements: 0,
   pcHours: 0, psHours: 0, psGames: 0, faceit: fallbackFaceit,
@@ -608,6 +611,7 @@ export function LiveDataProvider({ children }: { children: ReactNode }) {
         };
 
         const playerStats: PlayerStats = {
+          psnId: psn?.psnId || "ankkui",
           nickname: faceitLive.nickname || steamProfile?.nickname || fallbackPlayerStats.nickname,
           avatarUrl: faceit?.avatarUrl || steamProfile?.avatarUrl || "",
           profileUrl: faceitLive.profileUrl,
