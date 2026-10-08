@@ -3,6 +3,7 @@ import { LiveDataProvider, useLiveData } from '../data/useLiveData';
 import { filterArchive, formatMetric, safeExternalUrl, selectDeck } from '../data/artFacts';
 import { mountArtMotion } from './motion.js';
 import { mountSilk } from './silk.js';
+import { mountAtmosphere } from './atmosphere.js';
 import './art.css';
 
 const ranks = ['A', 'K', 'Q', 'J', '10'];
@@ -25,16 +26,29 @@ function ArtArchive() {
   const available = (id: string) => !live.loading && Boolean(live.sources.find(source => source.id === id)?.hasData);
   const metric = (value: number, id: string) => formatMetric(value, available(id));
   const steam = live.profileCards.find(card => card.id === 'steam');
-  const discord = live.profileCards.find(card => card.id === 'discord');
+  const discord = live.discordProfile;
   const library = filterArchive(live.archiveGames, query, platform);
   const recent = live.recentlyPlayed.length > 0;
+
+  const faceitCard = <article className="faceit faceit-on-card" aria-label="Профиль FACEIT">
+          <p className="faceit-edition">FACEIT <span>·</span> PLAYER CARD</p>
+          <a className="faceit-player" href={safeExternalUrl(faceit.profileUrl)} target="_blank" rel="noopener noreferrer">
+            <span className="faceit-avatar"><span aria-hidden="true">{faceit.nickname.slice(0,1)}</span>{faceit.avatarUrl ? <img src={safeExternalUrl(faceit.avatarUrl)} alt={`Аватар ${faceit.nickname} в FACEIT`} width="64" height="64" onError={event => { event.currentTarget.style.visibility = 'hidden'; }} /> : null}</span>
+            <span><strong>{faceit.nickname}</strong><small>FACEIT · {faceit.gameLabel} ↗</small></span>
+          </a>
+          <div className="faceit-rank">{available('faceit') && faceit.level === 10 ? <img src="/art/faceit-level-10.png" alt="FACEIT, уровень 10" width="38" height="38" /> : <span className="rank-number">{metric(faceit.level,'faceit')}</span>}<span><strong>{metric(faceit.elo,'faceit')} <small>ELO</small></strong><small>Уровень {metric(faceit.level,'faceit')}</small></span></div>
+          <div className="faceit-seal" aria-hidden="true"><i /><span>♠</span><b>{available('faceit') ? faceit.level : '—'}</b><i /></div>
+          <dl><div><dt>winrate</dt><dd>{metric(faceit.winRate,'faceit')}{available('faceit') ? '%' : ''}</dd></div><div><dt>K/D</dt><dd>{available('faceit') ? faceit.kd.toFixed(2) : '—'}</dd></div><div><dt>матчей</dt><dd>{metric(faceit.matches,'faceit')}</dd></div></dl>
+          <p className="faceit-imprint" aria-hidden="true">COMPETITIVE RECORD <span>◆</span> 22</p>
+        </article>;
 
   useEffect(() => {
     const el = root.current;
     if (!el) return;
     const silk = mountSilk(el);
+    const stopAtmosphere = mountAtmosphere(el);
     const stop = mountArtMotion(el, silk.draw);
-    return () => { stop(); silk.dispose(); };
+    return () => { stop(); silk.dispose(); stopAtmosphere(); };
   }, []);
 
   useEffect(() => {
@@ -56,7 +70,7 @@ function ArtArchive() {
       <button className="motion-button" type="button" aria-pressed="true">Анимация: вкл<span aria-hidden="true"> ◉</span></button>
     </header>
     <main className="stage" aria-label="Ankuzo">
-      <div className="ambient" aria-hidden="true" /><div className="ghost" aria-hidden="true">22</div>
+      <canvas className="velvet-field" aria-hidden="true" /><div className="ambient" aria-hidden="true" /><div className="ghost" aria-hidden="true">22</div>
       <section className="scene entrance" id="view-home" aria-labelledby="home-title">
         <div className="hero-copy"><h1 id="home-title">Ankuzo<span>.</span></h1><p className="subtle">цифровой архив / игры / я</p><a className="outline" href="#games" data-jump="1">Смотреть архив <span>↗</span></a></div>
         <img className="character" src="/art/character.png" alt="Ankuzo в белой маске: левый рог целый, правый сломан" width="1024" height="1536" fetchPriority="high" />
@@ -76,14 +90,24 @@ function ArtArchive() {
           <dl className="numbers"><div><dt>игр PC / PS5</dt><dd>{metric(stats.libraryGames, 'steam')}</dd></div><div><dt>трофеев PlayStation</dt><dd>{metric(stats.achievements, 'psn')}</dd></div><div><dt>ELO FACEIT</dt><dd>{metric(faceit.elo, 'faceit')}</dd></div></dl>
           <button className="data-details" onClick={() => setPanel('stats')}>Статистика и обновления <span>↗</span></button>
         </div>
-        <div className="faceit"><p>{faceit.nickname}<br /><span>FACEIT · {faceit.gameLabel}</span></p><dl><div><dt>уровень</dt><dd>{metric(faceit.level, 'faceit')}</dd></div><div><dt>winrate</dt><dd>{metric(faceit.winRate, 'faceit')}{available('faceit') ? '%' : ''}</dd></div><div><dt>K/D</dt><dd>{available('faceit') ? faceit.kd.toFixed(2) : '—'}</dd></div></dl></div>
+        <div className="static-faceit">{faceitCard}</div>
       </section>
       <section className="scene identity" id="view-about" aria-labelledby="about-title">
         <div className="about-copy"><h2 id="about-title">Обо мне<span>.</span></h2><p className="bio">25. Кибербезопасность, анализ больших данных и ИИ. Всегда становлюсь лучше.</p>
+          <article className="discord-profile" aria-label="Мой профиль Discord">
+            <div className="discord-banner">{discord.bannerUrl && <img src={safeExternalUrl(discord.bannerUrl)} alt="Баннер моего профиля Discord" width="600" height="210" onError={event => { event.currentTarget.style.visibility = 'hidden'; }} />}</div>
+            <div className="discord-body">
+              <div className="discord-avatar"><span aria-hidden="true">{discord.displayName.slice(0,1)}</span>{discord.avatarUrl && <img className="avatar-image" src={safeExternalUrl(discord.avatarUrl)} alt={`Аватар ${discord.username}`} width="80" height="80" onError={event => { event.currentTarget.style.visibility = 'hidden'; }} />}{discord.decorationUrl && <img className="avatar-decoration" src={safeExternalUrl(discord.decorationUrl)} alt="Декорация аватара Discord" width="96" height="96" onError={event => { event.currentTarget.style.visibility = 'hidden'; }} />}</div>
+              <div className="discord-heading"><span className="discord-service">Discord</span><h3>{discord.displayName}</h3><p>@{discord.username}</p></div>
+              <button className="discord-copy" onClick={() => copyName(discord.username,'Discord')} aria-label={`Скопировать Discord ${discord.username}`}>Скопировать имя <span>↗</span></button>
+              {discord.bio && <p className="discord-bio">{discord.bio}</p>}
+              {discord.badges.length > 0 && <ul className="discord-badges" aria-label="Значки профиля">{discord.badges.filter(badge => badge !== 'Discord Nameplate').map(badge => <li key={badge}>{badge === 'NITRO' ? 'Nitro' : badge === 'HOUSE_BRAVERY' ? 'HypeSquad · Bravery' : badge.replaceAll('_',' ')}</li>)}</ul>}
+            </div>
+          </article>
           <div className="platforms">
             <a href={safeExternalUrl(steam?.href ?? '', steamUrl)} target="_blank" rel="noopener noreferrer"><strong>Steam</strong><span>{steam?.subtitle} ↗</span></a>
             <a href={safeExternalUrl(faceit.profileUrl, 'https://www.faceit.com/ru/players/nuBac')} target="_blank" rel="noopener noreferrer"><strong>FACEIT</strong><span>{available('faceit') ? `${faceit.level} уровень` : faceit.nickname} ↗</span></a>
-            <button className="discord" onClick={() => copyName(discord?.subtitle || 'ankuz0', 'Discord')}><strong>Discord</strong><span>{discord?.subtitle || 'ankuz0'} <small>скопировать</small></span></button>
+
             <button onClick={() => copyName(stats.psnId, 'PlayStation')}><strong>PlayStation</strong><span>{stats.psnId} <small>скопировать</small></span></button>
             <a href="https://tmspk.gg/3Vi7A7Y9" target="_blank" rel="noopener noreferrer"><strong>TeamSpeak</strong><span>Ankuzo ↗</span></a>
           </div>
@@ -92,7 +116,7 @@ function ArtArchive() {
           <p className="copy-status" aria-live="polite">{copyStatus}</p>
         </div>
       </section>
-      <div className="traveller" aria-hidden="true"><div className="flipper"><div className="traveller-front"><span>22<br />♠</span><b>♠</b><span>22<br />♠</span><div className="traveller-game">{selected?.image && <img src={safeExternalUrl(selected.image)} alt="" onError={event => { event.currentTarget.style.visibility = 'hidden'; }} />}<strong>{selected?.title}</strong></div></div><div className="traveller-back"><img src="/art/card-back.png" alt="" width="1024" height="1536" /></div></div></div>
+      <div className="traveller" inert aria-hidden="true"><div className="flipper"><div className="traveller-front"><span>22<br />♠</span><b aria-hidden="true">♠</b><span>22<br />♠</span>{faceitCard}<div className="traveller-game" aria-hidden="true">{selected?.image && <img src={safeExternalUrl(selected.image)} alt="" onError={event => { event.currentTarget.style.visibility = 'hidden'; }} />}<strong>{selected?.title}</strong></div></div><div className="traveller-back"><img src="/art/card-back.png" alt="" width="1024" height="1536" /></div></div></div>
       <svg className="thread" viewBox="0 0 1000 1000" preserveAspectRatio="none" aria-hidden="true"><defs><filter id="glow"><feGaussianBlur stdDeviation="3" /></filter></defs><path className="thread-glow" /><path className="thread-main" /><path className="thread-light" /></svg><div className="thread-bead" aria-hidden="true" /><canvas className="silk" aria-hidden="true" />
     </main>
     <div className="scroll-track" aria-hidden="true"><div id="home" /><div id="games" /><div id="stats" /><div id="about" /></div>

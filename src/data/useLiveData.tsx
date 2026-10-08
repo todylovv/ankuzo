@@ -1,3 +1,4 @@
+import { toDiscordProfile, type DiscordProfile } from './discordProfile';
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 import { recentSteamGames, seasonPeaks, isCurrentSnapshot } from "./snapshotFacts";
 import { artFromMap, steamCdn, type GameArt } from "./gameArt";
@@ -65,7 +66,7 @@ type FaceitSnapshot = {
   seasons?: FaceitSeason[];
 };
 
-type DiscordSnapshot = {
+type DiscordSnapshot = Partial<DiscordProfile> & {
   updatedAt?: string;
   status?: string;
   username?: string;
@@ -89,6 +90,7 @@ type PsnSnapshot = {
 };
 
 export type FaceitLive = {
+  avatarUrl: string;
   nickname: string;
   profileUrl: string;
   elo: number;
@@ -157,6 +159,7 @@ export type DataSourceStatus = {
 };
 
 export type LiveData = {
+  discordProfile: DiscordProfile;
   loading: boolean;
   games: Game[];
   mostPlayed: Game[];
@@ -176,6 +179,7 @@ const GITHUB_URL = "https://github.com/todylovv";
 const LiveDataContext = createContext<LiveData | null>(null);
 
 const fallbackFaceit: FaceitLive = {
+  avatarUrl: "",
   nickname: "nuBac", profileUrl: "https://www.faceit.com/ru/players/nuBac",
   elo: 0, level: 0, matches: 0, winRate: 0, kd: 0, adr: 0, hs: 0,
   gameLabel: "CS2", seasonPeaks: [],
@@ -199,6 +203,7 @@ const fallbackNowPlaying: NowPlaying = {
 };
 
 const fallbackLive: LiveData = {
+  discordProfile: toDiscordProfile(null),
   loading: true,
   games: [],
   mostPlayed: [],
@@ -597,6 +602,7 @@ export function LiveDataProvider({ children }: { children: ReactNode }) {
         ];
 
         const faceitLive: FaceitLive = {
+          avatarUrl: faceit?.avatarUrl || "",
           nickname: faceit?.nickname || fallbackFaceit.nickname,
           profileUrl: faceitUrl.startsWith("http") ? faceitUrl : fallbackFaceit.profileUrl,
           elo: faceit?.elo ?? fallbackFaceit.elo,
@@ -628,6 +634,7 @@ export function LiveDataProvider({ children }: { children: ReactNode }) {
         const activity = buildActivity(steam, faceit, psn, steamGames, playing);
 
         setLive({
+          discordProfile: toDiscordProfile(discord),
           loading: false,
           games,
           mostPlayed,
