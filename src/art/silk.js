@@ -44,41 +44,17 @@ export function mountSilk(root) {
   }
   function rope(points,alpha,mobile,fadeHead=0,paint=ctx){
     if(alpha<.003)return;
-    const c=paint, width=mobile?2.8:3.8;
-    const samples=[];let arc=0;
+    const ctx=paint;ctx.save();
+    ctx.globalAlpha=alpha*.22*(1-fadeHead*.65);ctx.lineCap='round';ctx.lineJoin='round';
+    ctx.beginPath();points.forEach((p,i)=>i?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1]));
+    ctx.strokeStyle='#ff1738';ctx.lineWidth=mobile?3:4;ctx.shadowColor='#ff1738';ctx.shadowBlur=8;ctx.stroke();ctx.shadowBlur=0;
     for(let i=1;i<points.length;i++){
-      const a=points[i-1],b=points[i],dx=b[0]-a[0],dy=b[1]-a[1],length=Math.hypot(dx,dy);
-      if(length<.01)continue;
-      const steps=Math.max(1,Math.ceil(length/1.4));
-      for(let n=0;n<steps;n++){const t=n/steps;samples.push({x:a[0]+dx*t,y:a[1]+dy*t,nx:-dy/length,ny:dx/length,s:arc+length*t});}
-      arc+=length;
+      const a=points[i-1],b=points[i],t=i/(points.length-1);
+      ctx.globalAlpha=alpha*(1-fadeHead*(1-range(t,0,.22)));
+      ctx.beginPath();ctx.moveTo(a[0],a[1]);ctx.lineTo(b[0],b[1]);ctx.lineWidth=mobile?1.6:2.15;ctx.strokeStyle='#dc2547';ctx.stroke();
+      ctx.beginPath();ctx.moveTo(a[0],a[1]-.3);ctx.lineTo(b[0],b[1]-.3);ctx.lineWidth=mobile?.45:.6;ctx.strokeStyle='#f3a7c3';ctx.stroke();
     }
-    if(!samples.length)return;
-    c.save();c.lineCap='round';c.lineJoin='round';
-    const trace=()=>{c.beginPath();points.forEach((p,i)=>i?c.lineTo(...p):c.moveTo(...p));};
-    c.globalAlpha=alpha*.65;c.strokeStyle='#000';c.lineWidth=width+2.2;c.translate(.7,1.5);trace();c.stroke();c.translate(-.7,-1.5);
-    c.globalAlpha=alpha;c.strokeStyle='#210c14';c.lineWidth=width;trace();c.stroke();
-    const metal=c.createLinearGradient(0,0,cw,ch);
-    metal.addColorStop(0,'#5e1d35');metal.addColorStop(.26,'#c2869d');metal.addColorStop(.42,'#6c233e');metal.addColorStop(.67,'#dbbfca');metal.addColorStop(1,'#59182e');
-    c.strokeStyle=metal;c.lineWidth=width*.64;trace();c.stroke();
-    // Three fine fibres wind around a shared centre, measured in screen pixels.
-    const colours=['#f1dce4','#b66b87','#631d37'];
-    for(let strand=0;strand<3;strand++){
-      c.beginPath();
-      samples.forEach((p,i)=>{const twist=p.s*.64+strand*Math.PI*2/3,offset=Math.sin(twist)*width*.29;const x=p.x+p.nx*offset,y=p.y+p.ny*offset;if(i)c.lineTo(x,y);else c.moveTo(x,y);});
-      c.globalAlpha=alpha*(strand===0?.8:.9)*(1-fadeHead*.35);c.strokeStyle=colours[strand];c.lineWidth=mobile?.45:.62;c.stroke();
-    }
-    // Sparse crossing stitches and pinpoint reflections make the tension legible.
-    c.lineWidth=.45;
-    for(const p of samples){
-      if(Math.floor(p.s/8)===Math.floor((p.s-1.4)/8))continue;
-      c.globalAlpha=alpha*.65;c.strokeStyle='#e3b5c6';c.beginPath();c.moveTo(p.x-p.nx*width*.32-1,p.y-p.ny*width*.32);c.lineTo(p.x+p.nx*width*.32+1,p.y+p.ny*width*.32);c.stroke();
-    }
-    for(const fraction of [.28,.76]){
-      const p=samples[Math.floor((samples.length-1)*fraction)];
-      c.globalAlpha=alpha*.75;c.strokeStyle='#fff0f5';c.lineWidth=.65;c.beginPath();c.moveTo(p.x-4,p.y-1);c.lineTo(p.x+4,p.y+1);c.moveTo(p.x,p.y-2.5);c.lineTo(p.x,p.y+2.5);c.stroke();
-    }
-    c.restore();
+    ctx.restore();
   }
   const draw=(g,w,h)=>{
     const dpr=Math.min(devicePixelRatio||1,2),mobile=w<=760;
