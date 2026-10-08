@@ -22,6 +22,9 @@ export function mountArtMotion(root, drawSilk) {
   const menu=root.querySelector('.menu-button');
   const next=root.querySelector('.next');
   const counter=root.querySelector('.chapter-count>span');
+  const aboutCopy=root.querySelector('.about-copy');
+  const heroCopy=root.querySelector('.hero-copy'),archiveCopy=root.querySelector('.archive-copy');
+  const travellerFront=traveller.querySelector('.traveller-front'),travellerBack=traveller.querySelector('.traveller-back');
   const names=['home','games','stats','about'];
   const clamp=(n,a=0,b=1)=>Math.min(b,Math.max(a,n));
   const mix=(a,b,t)=>a+(b-a)*t;
@@ -70,7 +73,6 @@ export function mountArtMotion(root, drawSilk) {
     if(Math.abs(shown-target)<.0002)shown=target;
     const g=shown;
     const tail=mobile?Math.max(0,scrollY-3*h*CHAPTER_SPAN):0;
-    const aboutCopy=root.querySelector('.about-copy');
     aboutCopy.style.transform=`translateY(${-tail}px)`;
     setActive(clamp(Math.round(g),0,3));
     body.dataset.phase=g.toFixed(3);
@@ -80,11 +82,11 @@ export function mountArtMotion(root, drawSilk) {
       if(i===1)opacity=interval(g,.15,.73)*(1-interval(g,1.22,1.73));
       el.style.opacity=opacity.toFixed(4);
       el.style.transform=`translate3d(0,${offset}px,0)`;
-      el.inert=Math.round(g)!==i||opacity<.75;
-      el.setAttribute('aria-hidden',String(el.inert));
+      const inert=Math.round(g)!==i||opacity<.75;
+      if(el.inert!==inert){el.inert=inert;el.setAttribute('aria-hidden',String(inert));}
     });
-    root.querySelector('.hero-copy').style.opacity=visibility(g,0).toFixed(4);
-    root.querySelector('.archive-copy').style.opacity=visibility(g,1).toFixed(4);
+    heroCopy.style.opacity=visibility(g,0).toFixed(4);
+    archiveCopy.style.opacity=visibility(g,1).toFixed(4);
     const enter=interval(g,0,1),leave=interval(g,1,2);
     const fanX=mobile?[-.29,-.145,0,.145,.29]:[-.24,-.09,.06,.20,.33];
     const fanY=mobile?[.025,-.025,-.045,-.025,.025]:[.055,-.025,-.005,.025,.06];
@@ -103,17 +105,18 @@ export function mountArtMotion(root, drawSilk) {
     traveller.style.opacity=travelIn.toFixed(4);
     const statX=mobile?mix(.355,h<=680?.70:.56,travel):mix(.445,.74,travel);
     const statY=mobile?mix(.585,h<=680?.77:.75,travel):mix(.545,.53,travel);
-    traveller.style.width=`${mix(mobile?Math.min(w*.31,150):Math.min(380,Math.max(190,w*.23)),mobile?Math.min(240,w*.62):Math.min(380,Math.max(300,w*.26)),travel)*(1-flip)+flip*(mobile?Math.min(w*.31,150):Math.min(380,Math.max(190,w*.23)))}px`;
+    const travellerWidth=mix(mobile?Math.min(w*.31,150):Math.min(380,Math.max(190,w*.23)),mobile?Math.min(240,w*.62):Math.min(380,Math.max(300,w*.26)),travel)*(1-flip)+flip*(mobile?Math.min(w*.31,150):Math.min(380,Math.max(190,w*.23)));
+    traveller.style.width=`${travellerWidth}px`;
     const tx=mix(statX,mobile?.84:.27,flip);
     const ty=mix(statY,mobile?.16:.50,flip);
     traveller.style.left=`${tx*100}%`;traveller.style.top=`${ty*100}%`;
     const zoom=Math.pow(Math.sin(Math.PI*flip),2)*interval(flip,.25,.65)*.72;
-    const fit=Math.min(mobile?1.8:1.65,h*.78/traveller.offsetHeight);
+    const fit=Math.min(mobile?1.8:1.65,h*.78/(travellerWidth*1.5));
     const scale=Math.min(fit,mix(mix(mobile?1.17:.70,mobile?(h<=680?.69:.78):1,travel),mobile?.56:1.03,flip)+zoom);
     traveller.style.transform=`translate(-50%,-50%) rotate(${mix(mix(mobile?-10:-6,mobile?2:4,travel),-8,flip)}deg) scale(${scale})`;
     flipper.style.transform=`rotateY(${mix(0,180,flip)}deg)`;
-    traveller.querySelector('.traveller-front').style.visibility=flip<.5?'visible':'hidden';
-    traveller.querySelector('.traveller-back').style.visibility=flip>.5?'visible':'hidden';
+    travellerFront.style.visibility=flip<.5?'visible':'hidden';
+    travellerBack.style.visibility=flip>.5?'visible':'hidden';
     travellerGame.style.opacity=(1-interval(g,1.35,1.98)).toFixed(3);
     playerCard.style.opacity=interval(g,1.55,1.98).toFixed(3);
     const cardHidden=Math.abs(g-2)>.15;traveller.inert=cardHidden;traveller.setAttribute('aria-hidden',String(cardHidden));

@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { energyFrame } from './energyFacts.js';
+import { frameDue, renderBudget, nextRenderScale } from './renderPolicy.js';
 
 const vertex = `varying vec2 vUv; void main(){vUv=uv;gl_Position=vec4(position.xy,0.,1.);}`;
 // A continuous, soft density field has no ribbon edges or low-resolution silhouette sampling.
@@ -43,12 +44,13 @@ void main(){
  gl_FragColor=vec4(color*alpha,alpha);
 }`;
 
+// Blur at the small foreground-buffer size, rather than nine samples per display pixel.
 const blurFragment = `varying vec2 vUv;uniform sampler2D uTexture;uniform vec2 uPixel;
-void main(){vec4 c=texture2D(uTexture,vUv)*.2;
-c+=texture2D(uTexture,vUv+uPixel*vec2(1.,0.))*.12;c+=texture2D(uTexture,vUv-uPixel*vec2(1.,0.))*.12;
-c+=texture2D(uTexture,vUv+uPixel*vec2(0.,1.))*.12;c+=texture2D(uTexture,vUv-uPixel*vec2(0.,1.))*.12;
-c+=texture2D(uTexture,vUv+uPixel*vec2(1.,1.))*.08;c+=texture2D(uTexture,vUv-uPixel*vec2(1.,1.))*.08;
-c+=texture2D(uTexture,vUv+uPixel*vec2(1.,-1.))*.08;c+=texture2D(uTexture,vUv-uPixel*vec2(1.,-1.))*.08;gl_FragColor=c;}`;
+void main(){gl_FragColor=texture2D(uTexture,vUv)*.227027;
+gl_FragColor+=(texture2D(uTexture,vUv+uPixel*1.384615)+texture2D(uTexture,vUv-uPixel*1.384615))*.316216;
+gl_FragColor+=(texture2D(uTexture,vUv+uPixel*3.230769)+texture2D(uTexture,vUv-uPixel*3.230769))*.070270;}`;
+const compositeFragment = `varying vec2 vUv;uniform sampler2D uTexture;
+void main(){gl_FragColor=texture2D(uTexture,vUv);}`;
 
 /** A single disposable renderer, lazy loaded only for full graphics. DOM content stays accessible. */
 export async function mountFullScene(root: HTMLElement, onFailure: () => void, signal?: AbortSignal): Promise<() => void> {
@@ -64,11 +66,17 @@ export async function mountFullScene(root: HTMLElement, onFailure: () => void, s
   const textures: THREE.Texture[] = [];
   let disposed = false, raf = 0, w = 0, h = 0, previous = 0, elapsed = 0;
   const target = new THREE.WebGLRenderTarget(1, 1, { depthBuffer: true });
+  const auraTarget = new THREE.WebGLRenderTarget(1,1,{depthBuffer:false,minFilter:THREE.LinearFilter,magFilter:THREE.LinearFilter});
+  const blurX = new THREE.WebGLRenderTarget(1,1,{depthBuffer:false});
+  const blurY = new THREE.WebGLRenderTarget(1,1,{depthBuffer:false});
+  let renderScale=1,paintAt=0,auraAt=0,warmAt=0,personPhase=-1;
+  let personRect:DOMRect | null=null;
+  const pressure:number[]=[];
   const cleanup = () => {
     if (disposed) return; disposed = true; cancelAnimationFrame(raf); life.abort();
     geometries.forEach(g => g.dispose()); materials.forEach(m => m.dispose()); textures.forEach(t => t.dispose());
     signal?.removeEventListener('abort', cleanup);
-    target.dispose(); renderer.dispose(); renderer.forceContextLoss(); canvas.remove();
+    target.dispose(); auraTarget.dispose(); blurX.dispose(); blurY.dispose(); renderer.dispose(); renderer.forceContextLoss(); canvas.remove();
   };
   signal?.addEventListener('abort', cleanup, { once: true });
   if (signal?.aborted) { cleanup(); throw new DOMException('Cancelled', 'AbortError'); }
@@ -98,10 +106,14 @@ export async function mountFullScene(root: HTMLElement, onFailure: () => void, s
         uResolution: { value: new THREE.Vector2() }, uRect: { value: new THREE.Vector4() } } });
     materials.push(auraMaterial);
     const auraScene = new THREE.Scene(); auraScene.add(new THREE.Mesh(plane, auraMaterial));
-    const compositeMaterial = new THREE.ShaderMaterial({ vertexShader: vertex, fragmentShader: blurFragment, transparent: true, depthTest: false, depthWrite: false,
-      uniforms: { uTexture: { value: target.texture }, uPixel: { value: new THREE.Vector2() } } });
+    const blurMaterial = new THREE.ShaderMaterial({vertexShader:vertex,fragmentShader:blurFragment,depthTest:false,depthWrite:false,
+      uniforms:{uTexture:{value:target.texture},uPixel:{value:new THREE.Vector2()}}});
+    materials.push(blurMaterial);
+    const blurScene=new THREE.Scene();blurScene.add(new THREE.Mesh(plane,blurMaterial));
+    const compositeMaterial = new THREE.ShaderMaterial({ vertexShader:vertex,fragmentShader:compositeFragment,transparent:true,premultipliedAlpha:true,depthTest:false,depthWrite:false,
+      uniforms:{uTexture:{value:auraTarget.texture}} });
     materials.push(compositeMaterial);
-    const compositeScene = new THREE.Scene(); compositeScene.add(new THREE.Mesh(plane, compositeMaterial));
+    const compositeScene=new THREE.Scene();compositeScene.add(new THREE.Mesh(plane,compositeMaterial));
     const scene = new THREE.Scene(), foreground = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(35, 1, 1, 5000);
     for (const s of [scene, foreground]) {
@@ -164,21 +176,38 @@ export async function mountFullScene(root: HTMLElement, onFailure: () => void, s
     root.addEventListener('pointerleave', () => { tx = 0; ty = 0; }, { signal: life.signal });
     function resize() {
       w = innerWidth; h = innerHeight;
-      renderer.setPixelRatio(Math.min(devicePixelRatio || 1, 1.5)); renderer.setSize(w, h, false);
+      const budget=renderBudget(w,h,devicePixelRatio || 1,renderScale);
+      renderer.setPixelRatio(budget.ratio); renderer.setSize(w,h,false);
+      auraTarget.setSize(budget.auraWidth,budget.auraHeight);auraAt=0;personPhase=-1;
+      blurX.setSize(Math.ceil(w/3),Math.ceil(h/3));blurY.setSize(Math.ceil(w/3),Math.ceil(h/3));
+      root.dataset.auraBuffer=`${budget.auraWidth}x${budget.auraHeight}`;
+      root.dataset.graphicsScale=renderScale.toFixed(2);
       camera.aspect = w / h; camera.position.z = h / (2 * Math.tan(THREE.MathUtils.degToRad(17.5))); camera.updateProjectionMatrix();
       target.setSize(Math.ceil(w / 3), Math.ceil(h / 3));
-      compositeMaterial.uniforms.uPixel.value.set(9 / w, 9 / h);
+
       auraMaterial.uniforms.uResolution.value.set(w, h);
       root.dataset.auraResolution = `${canvas.width}x${canvas.height}`;
     }
-    const start = () => { cancelAnimationFrame(raf); previous = 0; if (!disposed && !document.hidden) raf = requestAnimationFrame(draw); };
+    const attachment=new THREE.Vector3(),anchor=new THREE.Vector3();
+    const start = () => { cancelAnimationFrame(raf); previous = 0;paintAt=0;auraAt=0;pressure.length=0;warmAt=0; if (!disposed && !document.hidden) raf = requestAnimationFrame(draw); };
+    let measureAt=0, measureFrames=0, measureCpu=0, measureMax=0; const intervals:number[]=[];
     function draw(now: number) {
-      raf = 0; if (disposed || document.hidden) return;
+      raf=0;if(disposed || document.hidden)return;
+      if(!frameDue(now,paintAt,60)){raf=requestAnimationFrame(draw);return;}
+      paintAt=paintAt ? Math.max(paintAt+1000/60,now-1000/60) : now;
+      const measureStart=performance.now();
+      if(previous && now-previous<1000)intervals.push(now-previous);
+      if(!warmAt)warmAt=now;
+      if(previous && now-warmAt>3000)pressure.push(now-previous);
+      if(pressure.length>=90){const next=nextRenderScale(renderScale,pressure);pressure.length=0;if(next!==renderScale){renderScale=next;resize();}}
+
       const delta = previous ? Math.min((now - previous) / 1000, .05) : 0; previous = now; elapsed += delta;
       if (w !== innerWidth || h !== innerHeight) resize();
       const phase = Number(root.dataset.phase) || 0, mobile = w <= 760;
       // Screen-space expansion continues as the character fades, including reverse scroll and resize.
-      const energy = energyFrame(phase, character.getBoundingClientRect(), {width:w,height:h});
+      // The silhouette is static while idle: do not force a DOM geometry read every rendered frame.
+      if(!personRect || personPhase!==phase){personRect=character.getBoundingClientRect();personPhase=phase;}
+      const energy=energyFrame(phase,personRect,{width:w,height:h});
       const { rect, strength: fade } = energy;
       auraMaterial.uniforms.uTime.value = elapsed;
       auraMaterial.uniforms.uAttached.value = energy.attached;
@@ -199,13 +228,13 @@ export async function mountFullScene(root: HTMLElement, onFailure: () => void, s
         group.updateMatrixWorld();
         strings.forEach((line, side) => {
           line.visible = group.visible;
-          const attachment = group.localToWorld(new THREE.Vector3(side ? .50 : -.50,.36,.025));
-          const anchor = new THREE.Vector3(attachment.x - Math.sin(elapsed * .23 + i) * width * .11, h * .8 * projection, z - 1);
+          group.localToWorld(attachment.set(side ? .50 : -.50,.36,.025));
+          anchor.set(attachment.x - Math.sin(elapsed * .23 + i) * width * .11, h * .8 * projection, z - 1);
           const points = line.geometry.getAttribute('position');
           for (let j = 0; j < points.count; j++) {
             const f = j / (points.count - 1); points.setXYZ(j, THREE.MathUtils.lerp(anchor.x, attachment.x, f) + Math.sin(Math.PI * f) * Math.sin(elapsed * .4 + i) * width * .025, THREE.MathUtils.lerp(anchor.y, attachment.y, f), z + .03);
           }
-          points.needsUpdate = true; line.geometry.computeBoundingSphere();
+          points.needsUpdate = true; line.frustumCulled=false;
         });
       });
       const emberPositions = emberGeometry.getAttribute('position');
@@ -217,12 +246,31 @@ export async function mountFullScene(root: HTMLElement, onFailure: () => void, s
       }
       emberPositions.needsUpdate = true; emberMaterial.opacity = energy.attached * .46 + energy.diffuse * .28;
       try {
-        renderer.setRenderTarget(null); renderer.clear();
-        if (fade > .001) renderer.render(auraScene, screenCamera);
-        renderer.clearDepth(); renderer.render(scene, camera);
-        renderer.setRenderTarget(target); renderer.clear(); renderer.render(foreground, camera);
-        renderer.setRenderTarget(null); renderer.render(compositeScene, screenCamera);
+        // Slow, translucent energy is cached at 30 Hz; cards and scroll keep their own 60 Hz cadence.
+        if(frameDue(now,auraAt,30)){
+          auraAt=now;renderer.setRenderTarget(auraTarget);renderer.clear();
+          if(fade>.001)renderer.render(auraScene,screenCamera);
+        }
+        renderer.setRenderTarget(target);renderer.clear();renderer.render(foreground,camera);
+        blurMaterial.uniforms.uTexture.value=target.texture;blurMaterial.uniforms.uPixel.value.set(2/target.width,0);
+        renderer.setRenderTarget(blurX);renderer.render(blurScene,screenCamera);
+        blurMaterial.uniforms.uTexture.value=blurX.texture;blurMaterial.uniforms.uPixel.value.set(0,2/target.height);
+        renderer.setRenderTarget(blurY);renderer.render(blurScene,screenCamera);
+        renderer.setRenderTarget(null);renderer.clear();
+        compositeMaterial.uniforms.uTexture.value=auraTarget.texture;renderer.render(compositeScene,screenCamera);
+        renderer.clearDepth();renderer.render(scene,camera);
+        compositeMaterial.uniforms.uTexture.value=blurY.texture;renderer.render(compositeScene,screenCamera);
       } catch { onFailure(); return; }
+      const cost=performance.now()-measureStart;measureCpu+=cost;measureMax=Math.max(measureMax,cost);measureFrames++;
+      if(now-measureAt>=1500 && intervals.length>20){
+        const ordered=intervals.sort((a,b)=>a-b);
+        root.dataset.graphicsFps=(1000/ordered[Math.floor(ordered.length*.5)]).toFixed(1);
+        root.dataset.graphicsP95=ordered[Math.floor(ordered.length*.95)].toFixed(1);
+        root.dataset.graphicsCpu=(measureCpu/measureFrames).toFixed(2);
+        root.dataset.graphicsCpuMax=measureMax.toFixed(2);
+        root.dataset.graphicsDrawCalls=String(renderer.info.render.calls);
+        intervals.length=0;measureCpu=0;measureFrames=0;measureMax=0;measureAt=now;
+      }
       root.dataset.graphicsTime = elapsed.toFixed(2);
       root.dataset.auraTarget = energy.target;
       root.dataset.auraSpread = energy.spread.toFixed(3);

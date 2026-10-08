@@ -10,6 +10,9 @@ export function mountSilk(root) {
   energyCanvas.className='silk silk-energy';energyLead.className='silk silk-energy silk-energy-lead';
   for(const layer of [energyCanvas,energyLead]){layer.setAttribute('aria-hidden','true');leadCanvas.after(layer)}
   const energyCtx=energyCanvas.getContext('2d'),energyLeadCtx=energyLead.getContext('2d');
+  const glowCache=document.createElement('canvas'),leadGlowCache=document.createElement('canvas');
+  const glowCtx=glowCache.getContext('2d'),leadGlowCtx=leadGlowCache.getContext('2d');
+  let glowDirty=true;
   const energyLife=new AbortController();
   let energyPaths=[],energyRaf=0,energyDisposed=false,energyLast=0,energyTime=0,energyPaint=0,ew=0,eh=0;
   const energyEnabled=()=>!energyDisposed&&root.dataset.quality==='full'&&!document.hidden&&!document.body.classList.contains('intro-pending');
@@ -18,21 +21,39 @@ export function mountSilk(root) {
     energyPaths.push({points,lengths,length:lengths.at(-1),alpha,mobile,fadeHead,lead});
   }
   function paintEnergy(now){
+    const measureStart=performance.now();
     energyRaf=0;if(!energyEnabled()||!energyCtx||!energyLeadCtx)return;
     if(now-energyPaint<32){energyRaf=requestAnimationFrame(paintEnergy);return;}energyPaint=now;
     energyTime+=energyLast?Math.min((now-energyLast)/1000,.08):0;energyLast=now;
     const w=innerWidth,h=innerHeight,dpr=Math.min(devicePixelRatio||1,w<=760?1:1.25);
-    if(ew!==w||eh!==h){ew=w;eh=h;for(const layer of [energyCanvas,energyLead]){layer.width=Math.round(w*dpr);layer.height=Math.round(h*dpr);layer.style.width=w+'px';layer.style.height=h+'px'}}
+    if(ew!==w||eh!==h){ew=w;eh=h;for(const layer of [energyCanvas,energyLead,glowCache,leadGlowCache]){layer.width=Math.round(w*dpr);layer.height=Math.round(h*dpr);layer.style.width=w+'px';layer.style.height=h+'px'}glowDirty=true;}
     for(const paint of [energyCtx,energyLeadCtx]){paint.setTransform(dpr,0,0,dpr,0,0);paint.clearRect(0,0,w,h);paint.lineCap='round';paint.lineJoin='round'}
+    // The broad glow is static between scroll updates. Rasterize it once, then reuse it.
+    if(glowDirty && glowCtx && leadGlowCtx){
+      for(const paint of [glowCtx,leadGlowCtx]){paint.setTransform(dpr,0,0,dpr,0,0);paint.clearRect(0,0,w,h);paint.lineCap='round';paint.lineJoin='round';}
+      for(const path of energyPaths){
+        const {points,alpha,mobile,fadeHead,lead}=path,paint=lead?leadGlowCtx:glowCtx;
+        paint.beginPath();points.forEach((point,i)=>i?paint.lineTo(...point):paint.moveTo(...point));
+        paint.lineWidth=mobile?4:6;paint.strokeStyle='#c51a43';paint.globalAlpha=alpha*.16*(1-fadeHead*.65);
+        paint.shadowColor='#f5224b';paint.shadowBlur=mobile?10:17;paint.stroke();paint.shadowBlur=0;
+      }
+      glowDirty=false;
+    }
+    energyCtx.drawImage(glowCache,0,0,w,h);energyLeadCtx.drawImage(leadGlowCache,0,0,w,h);
     energyPaths.forEach((path,index)=>{
       const {points,lengths,length,alpha,mobile,fadeHead,lead}=path;if(length<1)return;
       const paint=lead?energyLeadCtx:energyCtx;
       paint.save();paint.globalCompositeOperation='screen';
-      // A soft envelope follows the exact sampled route, with no new bends in the thread itself.
-      paint.beginPath();points.forEach((point,i)=>i?paint.lineTo(...point):paint.moveTo(...point));
-      paint.lineWidth=mobile?4:6;paint.strokeStyle='#c51a43';paint.globalAlpha=alpha*.16*(1-fadeHead*.65);
-      paint.shadowColor='#f5224b';paint.shadowBlur=mobile?10:17;paint.stroke();paint.shadowBlur=0;
       const head=(energyTime*74+index*113)%length;
+      // Blur the pulse once per route, not once for every tiny line segment.
+      paint.beginPath();
+      for(let i=1;i<points.length;i++){
+        const gap=Math.abs(((lengths[i]-head+length*1.5)%length)-length*.5);
+        if(gap>Math.sqrt((mobile?2200:4000)*2.5))continue;
+        paint.moveTo(...points[i-1]);paint.lineTo(...points[i]);
+      }
+      paint.lineWidth=mobile?1.1:1.4;paint.strokeStyle='#ff2857';paint.globalAlpha=alpha*.22;
+      paint.shadowColor='#ff2857';paint.shadowBlur=mobile?7:11;paint.stroke();paint.shadowBlur=0;
       for(let i=1;i<points.length;i++){
         const a=points[i-1],b=points[i],distance=lengths[i];
         const gap=Math.abs(((distance-head+length*1.5)%length)-length*.5);
@@ -40,7 +61,7 @@ export function mountSilk(root) {
         const fade=1-fadeHead*(1-range(i/(points.length-1),0,.22));
         paint.beginPath();paint.moveTo(...a);paint.lineTo(...b);
         paint.lineWidth=mobile?1.1:1.4;paint.strokeStyle='#ffa0b8';paint.globalAlpha=alpha*pulse*fade*.64;
-        paint.shadowColor='#ff2857';paint.shadowBlur=mobile?7:11;paint.stroke();
+        paint.stroke();
       }
       paint.shadowBlur=0;
       // Fine energy fibres drift beside the core and remain attached through every transition.
@@ -57,7 +78,7 @@ export function mountSilk(root) {
       }
       paint.restore();
     });
-    root.dataset.threadEnergyTime=energyTime.toFixed(2);energyRaf=requestAnimationFrame(paintEnergy);
+    root.dataset.threadCpuMs=(performance.now()-measureStart).toFixed(2);root.dataset.threadEnergyTime=energyTime.toFixed(2);energyRaf=requestAnimationFrame(paintEnergy);
   }
   function resumeEnergy(){cancelAnimationFrame(energyRaf);energyLast=0;if(energyEnabled())energyRaf=requestAnimationFrame(paintEnergy);}
   root.addEventListener('ankuzo:quality-change',resumeEnergy,{signal:energyLife.signal});
@@ -116,9 +137,9 @@ export function mountSilk(root) {
     ctx.restore();
   }
   const draw=(g,w,h)=>{
-    energyPaths=[];
+    energyPaths=[];glowDirty=true;
     const dpr=Math.min(devicePixelRatio||1,2),mobile=w<=760;
-    if(cw!==w||ch!==h){cw=w;ch=h;for(const layer of [canvas,leadCanvas]){layer.width=Math.round(w*dpr);layer.height=Math.round(h*dpr);layer.style.width=w+'px';layer.style.height=h+'px'}}
+    if(cw!==w||ch!==h){cw=w;ch=h;for(const layer of [canvas,leadCanvas]){layer.width=Math.round(w*dpr);layer.height=Math.round(h*dpr);layer.style.width=w+'px';layer.style.height=h+'px'}glowDirty=true;}
     ctx.setTransform(dpr,0,0,dpr,0,0);ctx.clearRect(0,0,w,h);
     leadCtx.setTransform(dpr,0,0,dpr,0,0);leadCtx.clearRect(0,0,w,h);
     if(g<1.35){
@@ -159,5 +180,5 @@ export function mountSilk(root) {
       rope(curve(last),reveal,mobile);
     }
   };
-  return { draw, dispose() { energyDisposed=true;cancelAnimationFrame(energyRaf);energyLife.abort();energyCanvas.remove();energyLead.remove();energyPaths=[];leadCanvas.remove(); root.querySelectorAll('.card-band,.tie-anchor').forEach(el=>el.remove()); root.classList.remove('has-silk'); } };
+  return { draw, dispose() { energyDisposed=true;cancelAnimationFrame(energyRaf);energyLife.abort();energyCanvas.remove();energyLead.remove();glowCache.width=1;leadGlowCache.width=1;energyPaths=[];leadCanvas.remove(); root.querySelectorAll('.card-band,.tie-anchor').forEach(el=>el.remove()); root.classList.remove('has-silk'); } };
 }
