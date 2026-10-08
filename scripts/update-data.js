@@ -1,4 +1,5 @@
 import fs from "node:fs/promises";
+import { discordSnapshot } from "./discord-profile.js";
 import path from "node:path";
 import { createRequire } from "node:module";
 import { fileURLToPath } from "node:url";
@@ -300,8 +301,8 @@ async function updateDiscord() {
   const fallback = await readFallback("discord.json", {
     username: "ankuz0",
     displayName: "ankuz0",
-    bio: "Discord — основной канал связи.",
-    presence: "offline",
+    bio: "",
+    presence: "unknown",
     avatarUrl: "",
     bannerUrl: "",
     decorationUrl: "",
@@ -316,38 +317,16 @@ async function updateDiscord() {
   const [lanyard, profile] = await Promise.all([
     requestJson(`https://api.lanyard.rest/v1/users/${encodeURIComponent(userId)}`)
       .catch(() => ({})),
-    requestJson(`https://japi.rest/discord/v1/user/${encodeURIComponent(userId)}`)
+    requestJson(`https://japi.rest/discord/v1/user/${encodeURIComponent(userId)}`).catch(() => ({}))
   ]);
-  const user = profile.data || lanyard.data?.discord_user || {};
-  const presence = lanyard.data?.discord_status || "offline";
-  const avatarUrl = user.avatar
-    ? `https://cdn.discordapp.com/avatars/${userId}/${user.avatar}.webp?size=256`
-    : "";
-  const bannerUrl = user.banner
-    ? `https://cdn.discordapp.com/banners/${userId}/${user.banner}.webp?size=1024`
-    : "";
-  const decorationUrl = user.avatar_decoration_data?.asset
-    ? `https://cdn.discordapp.com/avatar-decoration-presets/${user.avatar_decoration_data.asset}.png?size=512&passthrough=true`
-    : "";
-
+  if (!profile.data?.username && !lanyard.data?.discord_user?.username) throw new Error("Discord profile unavailable");
   return writeJson("discord.json", {
     updatedAt: attemptedAt,
     lastSuccessfulAt: attemptedAt,
     lastAttemptAt: attemptedAt,
     source: "api",
     status: "available",
-    username: user.username || fallback.username,
-    displayName: user.global_name || user.username || fallback.displayName,
-    bio: (process.env.DISCORD_BIO || "").trim() || "Discord — основной канал связи.",
-    presence,
-    avatarUrl,
-    bannerUrl,
-    decorationUrl,
-    accentColor: user.accent_color || "#6f7bf7",
-    badges: [
-      ...(user.public_flags_array || []),
-      ...(user.collectibles?.nameplate ? ["Discord Nameplate"] : [])
-    ]
+    ...discordSnapshot(profile, lanyard, fallback, process.env.DISCORD_BIO)
   });
 }
 

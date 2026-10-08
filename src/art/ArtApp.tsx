@@ -6,6 +6,7 @@ import { mountSilk } from './silk.js';
 import { mountAtmosphere } from './atmosphere.js';
 import { mountQuality } from './quality.js';
 import './art.css';
+import { DiscordCard } from './DiscordCard';
 
 const ranks = ['A', 'K', 'Q', 'J', '10'];
 const suits = ['♥', '♠', '♦', '♣', '♥'];
@@ -121,16 +122,7 @@ function ArtArchive() {
       </section>
       <section className="scene identity" id="view-about" aria-labelledby="about-title">
         <div className="about-copy"><h2 id="about-title">Обо мне<span>.</span></h2><p className="bio">25. Кибербезопасность, анализ больших данных и ИИ. Всегда становлюсь лучше.</p>
-          <article className="discord-profile" aria-label="Мой профиль Discord">
-            <div className="discord-banner">{discord.bannerUrl && <img src={safeExternalUrl(discord.bannerUrl)} alt="Баннер моего профиля Discord" width="600" height="210" onError={event => { event.currentTarget.style.visibility = 'hidden'; }} />}</div>
-            <div className="discord-body">
-              <div className="discord-avatar"><span aria-hidden="true">{discord.displayName.slice(0,1)}</span>{discord.avatarUrl && <img className="avatar-image" src={safeExternalUrl(discord.avatarUrl)} alt={`Аватар ${discord.username}`} width="80" height="80" onError={event => { event.currentTarget.style.visibility = 'hidden'; }} />}{discord.decorationUrl && <img className="avatar-decoration" src={safeExternalUrl(discord.decorationUrl)} alt="Декорация аватара Discord" width="96" height="96" onError={event => { event.currentTarget.style.visibility = 'hidden'; }} />}</div>
-              <div className="discord-heading"><span className="discord-service">Discord</span><h3>{discord.displayName}</h3><p>@{discord.username}</p></div>
-              <button className="discord-copy" onClick={() => copyName(discord.username,'Discord')} aria-label={`Скопировать Discord ${discord.username}`}>Скопировать имя <span>↗</span></button>
-              {discord.bio && <p className="discord-bio">{discord.bio}</p>}
-              {discord.badges.length > 0 && <ul className="discord-badges" aria-label="Значки профиля">{discord.badges.filter(badge => badge !== 'Discord Nameplate').map(badge => <li key={badge}>{badge === 'NITRO' ? 'Nitro' : badge === 'HOUSE_BRAVERY' ? 'HypeSquad · Bravery' : badge.replaceAll('_',' ')}</li>)}</ul>}
-            </div>
-          </article>
+          <DiscordCard profile={discord} copy={() => void copyName(discord.username,'Discord')} />
           <div className="platforms">
             <a href={safeExternalUrl(steam?.href ?? '', steamUrl)} target="_blank" rel="noopener noreferrer"><strong>Steam</strong><span>{steam?.subtitle} ↗</span></a>
             <a href={safeExternalUrl(faceit.profileUrl, 'https://www.faceit.com/ru/players/nuBac')} target="_blank" rel="noopener noreferrer"><strong>FACEIT</strong><span>{available('faceit') ? `${faceit.level} уровень` : faceit.nickname} ↗</span></a>

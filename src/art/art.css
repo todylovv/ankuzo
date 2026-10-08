@@ -103,3 +103,19 @@
 .art-root[data-quality=full] .card-band{filter:drop-shadow(0 0 5px #ff28577a) drop-shadow(0 0 12px #d7194547)}
 .motion-off .silk-energy{display:none!important}
 @media(max-width:760px){.art-root[data-quality=full] .silk-energy-lead{display:block;z-index:3}}
+
+/* Preserve the actual Discord nameplate and name colors inside the existing card. */
+.discord-heading{position:relative;padding-top:7px;padding-bottom:9px;isolation:isolate;min-height:75px}
+.discord-heading.has-nameplate{padding-right:10px}.discord-heading>*:not(.discord-nameplate){position:relative;z-index:1}
+.discord-nameplate{position:absolute;inset:0 0 0 73px;overflow:hidden;border-radius:6px;z-index:0;background:#211923}
+.discord-nameplate img,.discord-nameplate video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:right center;pointer-events:none}
+.discord-nameplate:after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,#130e18e8,#130e18b3 65%,#130e1844)}
+.discord-heading .discord-styled-name{color:var(--discord-name-1);background:linear-gradient(110deg,var(--discord-name-1),var(--discord-name-2),var(--discord-name-1));background-size:200% 100%;background-clip:text;-webkit-text-fill-color:transparent;filter:drop-shadow(0 1px 2px #000a)}
+.discord-styled-name[data-effect="2"]{animation:discord-name-shimmer 7s ease-in-out infinite}
+@keyframes discord-name-shimmer{0%,100%{background-position:0 50%}50%{background-position:100% 50%}}
+.discord-badges{flex-wrap:wrap;gap:8px 14px;margin-top:14px}.discord-badges li{display:flex;align-items:center;gap:6px;min-height:22px}.discord-badges li+li:before{content:none}.discord-badges svg{width:19px;height:19px;flex:none}
+.discord-joined{font:10px/1.5 Onest;color:#ab9fb1;margin-top:10px}.discord-custom-status{font:12px/1.5 Onest;color:#e7d5ea;margin-top:12px;white-space:pre-wrap}.discord-bio{white-space:pre-wrap;overflow-wrap:anywhere}
+.discord-presence{position:absolute;right:-5px;bottom:-4px;width:17px;height:17px;border:4px solid #110d15;border-radius:50%;background:#85848f}.discord-presence.online{background:#43b581}.discord-presence.idle{background:#f5c34e}.discord-presence.dnd{background:#ed4245}
+.art-root[data-quality=off] .discord-styled-name{animation:none}
+@media(prefers-reduced-motion:reduce){.discord-styled-name{animation:none!important}}
+@media(max-width:760px){.discord-heading{padding-left:76px;min-height:91px}.discord-nameplate{left:69px}.discord-heading h3{font-size:16px}.discord-joined{font-size:10px}.discord-badges{font-size:10px;margin-top:12px}.discord-body{padding-bottom:17px}.discord-nameplate:after{background:linear-gradient(90deg,#130e18ed,#130e18c9 70%,#130e1877)}}
