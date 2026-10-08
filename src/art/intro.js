@@ -1,3 +1,4 @@
+import { mountIntroScene } from './introScene.js';
 import { waitForIntro } from './introGate.js';
 import { initialQuality, parsePreference } from './qualityPolicy.js';
 
@@ -45,7 +46,8 @@ export function startIntro() {
   let preference = 'auto';
   try { preference = parsePreference(localStorage.getItem('ankuzo.graphics.v1')); } catch { /* Optional storage. */ }
   staticGraphics ||= preference === 'off' || (preference === 'auto' && initialQuality({ cores: navigator.hardwareConcurrency, memory: navigator.deviceMemory }) === 'off');
-  if (staticGraphics) overlay.querySelectorAll('*').forEach(el => { el.style.animation = 'none'; });
+  if (staticGraphics) overlay.classList.add('intro-static');
+  const scene = mountIntroScene(overlay, { staticGraphics });
   const life = new AbortController();
   const skip = overlay.querySelector('button');
   const bar = overlay.querySelector('.intro-progress i');
@@ -67,10 +69,10 @@ export function startIntro() {
     if (event.key === 'Escape') life.abort();
   }, { signal: life.signal });
   waitForIntro([
-    app, data, document.fonts?.ready ?? Promise.resolve(),
+    app, data, scene.ready, document.fonts?.ready ?? Promise.resolve(),
     preload('/art/character.png'), preload('/art/card-back.png'), visibleImages,
   ], {
-    minMs: staticGraphics ? 0 : 3000,
+    minMs: staticGraphics ? 0 : 4600,
     timeoutMs: 12000,
     signal: life.signal,
     onProgress: (done, total) => { bar.style.transform = `scaleX(${done / total})`; },
@@ -78,8 +80,10 @@ export function startIntro() {
     const restoreFocus = overlay.contains(document.activeElement);
     status.textContent = aborted ? 'Вход' : 'Готово';
     life.abort();
+    scene.exit();
     overlay.classList.add('intro-exit');
     const close = () => {
+      scene.dispose();
       overlay.remove();
       document.body.classList.remove('intro-pending');
       root.inert = false;
@@ -88,6 +92,6 @@ export function startIntro() {
       if (restoreFocus) (root.querySelector('.brand') ?? root.querySelector('a, button'))?.focus({ preventScroll: true });
     };
     // A timer also works when a background tab suppresses transition events.
-    setTimeout(close, staticGraphics ? 50 : 450);
+    setTimeout(close, staticGraphics ? 50 : aborted ? 180 : 850);
   });
 }

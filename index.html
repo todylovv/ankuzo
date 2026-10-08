@@ -6,6 +6,7 @@
     <link rel="icon" type="image/png" sizes="64x64" href="/favicon-head-64.png" />
     <link rel="apple-touch-icon" sizes="180x180" href="/favicon-head-180.png" />
     <link rel="stylesheet" href="/art/bodoni.css" />
+    <link rel="preload" as="fetch" href="/art/intro-portrait.json" crossorigin="anonymous" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content="Личный игровой архив ANKUZO: коллекция, статистика и игровые профили." />
     <meta name="referrer" content="no-referrer" />
@@ -39,6 +40,26 @@
       @keyframes intro-hair-sway{from{transform:rotate(-.65deg) translate(-1px,1px)}to{transform:rotate(.65deg) translate(1px,-1px)}}
       @media(max-width:600px){.intro-number{top:20px;left:24px}.intro-skip{bottom:20px;right:24px}.intro-portrait{width:min(91vw,440px,65svh);margin-bottom:8px}.intro-content{transform:translateY(-12px)}}
       @media(max-height:600px){.intro-portrait{width:min(70vh,70vw);margin-bottom:0}.intro-loading{margin-top:15px}.intro-name{font-size:26px}}
+      .site-intro{transition:opacity .8s cubic-bezier(.22,.61,.36,1),visibility .8s}
+      .site-intro:before{background:radial-gradient(ellipse at 50% 42%,#5a0d241a,transparent 56%)}
+      .intro-content{transform:none;gap:0}
+      .intro-portrait{width:min(570px,92vw,70svh);aspect-ratio:1;margin-bottom:0;transition:transform .85s cubic-bezier(.22,.61,.36,1),opacity .65s}
+      .intro-art{position:absolute;inset:0;width:100%;height:100%;display:block}
+      .intro-art-ready .intro-portrait>svg{visibility:hidden}
+      .intro-art-ready .intro-portrait{filter:drop-shadow(0 0 16px #bf1b3820)}
+      .intro-name{font-family:"Bodoni Moda",Georgia,serif;font-size:clamp(34px,4.5vw,46px);letter-spacing:.015em;transition:transform .75s ease,opacity .5s ease}
+      .intro-loading{margin-top:18px;gap:20px;font-size:10px;letter-spacing:.22em;transition:opacity .4s}
+      .intro-progress{width:140px;background:#40202b;height:2px}
+      .intro-progress i{background:linear-gradient(90deg,#7b1236,#ed376d);box-shadow:0 0 10px #c81d50}
+      .intro-skip{right:32px;bottom:22px;padding:12px 16px;color:#c7bcc1}
+      .intro-number{color:#b23b5b;font-size:26px;opacity:.72}
+      .intro-exit .intro-portrait{transform:scale(1.075) translateY(-6px);opacity:0}
+      .intro-exit .intro-name{transform:translateY(10px);opacity:0}
+      .intro-exit .intro-loading{opacity:0}
+      .intro-static *{animation:none!important;transition:none!important}
+      .intro-static{transition:opacity .05s}
+      @media(max-width:600px){.intro-portrait{width:min(98vw,68svh);margin-bottom:0}.intro-content{transform:translateY(-12px)}.intro-number{left:24px;top:22px}.intro-name{font-size:38px}.intro-skip{right:12px;bottom:12px}}
+      @media(max-height:600px){.intro-portrait{width:min(70vh,65vw)}.intro-name{font-size:28px}.intro-loading{margin-top:10px}.intro-skip{bottom:8px}}
       @media(prefers-reduced-motion:reduce){.intro-hair{animation:none}.site-intro{transition:opacity .05s}.intro-progress i{transition:none}}
     </style>
   </head>
