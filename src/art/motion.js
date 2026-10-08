@@ -29,7 +29,7 @@ export function mountArtMotion(root, drawSilk) {
   const mix=(a,b,t)=>a+(b-a)*t;
   const ease=t=>{t=clamp(t);return t*t*t*(t*(t*6-15)+10)};
   const interval=(v,a,b)=>ease((v-a)/(b-a));
-  let reduced=media.matches, manual=false, active=-1, raf=0, shown=0, previous=0, navigationUntil=0, viewportHeight=innerHeight;
+  let reduced=media.matches, manual=false, active=-1, raf=0, shown=0, previous=0, navigationUntil=0, viewportPosition=scrollY/(innerHeight*CHAPTER_SPAN);
   root.style.setProperty('--chapter-span', `${CHAPTER_SPAN*100}vh`);
   // Four paths have the same cubic topology. Their interpolation is pure in scroll position.
   const threadShapes=[
@@ -64,6 +64,7 @@ export function mountArtMotion(root, drawSilk) {
       setActive(closest.index);return;
     }
     const w=innerWidth,h=innerHeight,mobile=w<=760;
+    viewportPosition=scrollY/(h*CHAPTER_SPAN);
     const q=phaseAt(scrollY,h);
     const target=q;
     const dt=previous?Math.min(40,timestamp-previous):16;previous=timestamp;
@@ -130,7 +131,7 @@ export function mountArtMotion(root, drawSilk) {
   }
   function queue(){if(!disposed&&!raf)raf=requestAnimationFrame(render)}
   function setMode(off,preserve=true){
-    const current=Math.max(0,active);viewportHeight=innerHeight;reduced=off;body.classList.toggle('motion-off',off);
+    const current=Math.max(0,active);reduced=off;body.classList.toggle('motion-off',off);
     motionButton.setAttribute('aria-pressed',String(!off));
     motionButton.innerHTML=off?'Без движения<span> ○</span>':'Анимация: вкл<span> ◉</span>';
     navLinks.forEach((a,i)=>a.href=`#${off?'view-':''}${names[i]}`);
@@ -153,7 +154,7 @@ export function mountArtMotion(root, drawSilk) {
   listen(nav,'click',e=>{if(e.target.closest('a')){menu.setAttribute('aria-expanded','false');nav.classList.remove('open')}});
   listen(document,'keydown',e=>{if(e.key==='Escape'){menu.setAttribute('aria-expanded','false');nav.classList.remove('open')}});
 
-  listen(window,'scroll',queue,{passive:true});listen(window,'resize',()=>{if(reduced)setMode(true,false);else {const position=scrollY/(viewportHeight*CHAPTER_SPAN);viewportHeight=innerHeight;window.scrollTo({top:position*innerHeight*CHAPTER_SPAN,behavior:'instant'});queue();}});
+  listen(window,'scroll',queue,{passive:true});listen(window,'resize',()=>{if(reduced)setMode(true,false);else {window.scrollTo({top:viewportPosition*innerHeight*CHAPTER_SPAN,behavior:'instant'});queue();}});
   listen(window,'pageshow',queue);document.fonts.ready.then(queue);
   listen(root.querySelector('.skip'),'click',()=>{if(!reduced)setMode(true,false);root.querySelector('#view-games').focus()});
   setMode(reduced,false);
