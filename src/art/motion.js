@@ -114,6 +114,8 @@ export function mountArtMotion(root, drawSilk) {
     const scale=Math.min(fit,mix(mix(mobile?1.17:.70,mobile?(h<=680?.69:.78):1,travel),mobile?.56:1.03,flip)+zoom);
     traveller.style.transform=`translate(-50%,-50%) rotate(${mix(mix(mobile?-10:-6,mobile?2:4,travel),-8,flip)}deg) scale(${scale})`;
     flipper.style.transform=`rotateY(${mix(0,180,flip)}deg)`;
+    traveller.querySelector('.traveller-front').style.visibility=flip<.5?'visible':'hidden';
+    traveller.querySelector('.traveller-back').style.visibility=flip>.5?'visible':'hidden';
     travellerGame.style.opacity=(1-interval(g,1.35,1.98)).toFixed(3);
     playerCard.style.opacity=interval(g,1.55,1.98).toFixed(3);
     const cardHidden=Math.abs(g-2)>.15;traveller.inert=cardHidden;traveller.setAttribute('aria-hidden',String(cardHidden));

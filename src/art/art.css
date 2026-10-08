@@ -75,3 +75,6 @@
 
 /* Restore the smooth crimson thread, with a restrained red halo. */
 .band-shadow{stroke:#0c0509;stroke-width:4}.band-body{stroke:#dc2547;stroke-width:2.15}.band-shine{stroke:#f3a7b7;stroke-width:.6;stroke-dasharray:none}.band-knot{stroke:#d66a80;stroke-width:1}.card-band{filter:drop-shadow(0 0 4px #ff17383d)}
+
+/* Decorative energy and cards stay below every content scene and stop in static mode. */
+.motion-off .velvet-field{display:none}

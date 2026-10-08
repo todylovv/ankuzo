@@ -48,12 +48,26 @@ function ArtArchive() {
     const silk = mountSilk(el);
     const stopAtmosphere = mountAtmosphere(el);
     const stop = mountArtMotion(el, silk.draw);
+    document.dispatchEvent(new Event('ankuzo:app-ready'));
     return () => { stop(); silk.dispose(); stopAtmosphere(); };
   }, []);
 
   useEffect(() => {
-    if (panel && !dialog.current?.open) { dialog.current?.showModal(); if (dialog.current) dialog.current.scrollTop = 0; }
+    if (!panel) return;
+    const open = () => {
+      if (!dialog.current?.open) { dialog.current?.showModal(); if (dialog.current) dialog.current.scrollTop = 0; }
+    };
+    // Modal dialogs live above fixed overlays; defer direct archive links until entry.
+    if (document.body.classList.contains('intro-pending')) {
+      document.addEventListener('ankuzo:intro-complete', open, { once: true });
+      return () => document.removeEventListener('ankuzo:intro-complete', open);
+    }
+    open();
   }, [panel]);
+
+  useEffect(() => {
+    if (!live.loading) document.dispatchEvent(new Event('ankuzo:data-ready'));
+  }, [live.loading]);
 
   function openArchive(search = '') { setQuery(search); setPlatform('all'); setPanel('archive'); }
   async function copyName(name: string, service: string) {
