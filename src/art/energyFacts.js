@@ -1,14 +1,16 @@
-const smooth = (x, a, b) => { const t=Math.max(0,Math.min(1,(x-a)/(b-a)));return t*t*(3-2*t); };
-const mix = (a,b,t) => a+(b-a)*t;
+const smooth=(x,a,b)=>{const t=Math.max(0,Math.min(1,(x-a)/(b-a)));return t*t*(3-2*t);};
+const mix=(a,b,t)=>a+(b-a)*t;
 
-/** Scroll owns the handoff; time only animates the energy within it. */
-export function energyFrame(phase, person, deck, moving) {
-  const handoff=smooth(phase,.22,.94),travel=smooth(phase,1.08,1.40);
-  const bounds=key=>mix(mix(person[key],deck[key],handoff),moving[key],travel);
+/** Energy leaves the silhouette, expands in screen space, then dissipates. Scroll is reversible. */
+export function energyFrame(phase,person,viewport) {
+  const spread=smooth(phase,.08,.92),attached=1-smooth(phase,.08,.72);
+  const diffuse=smooth(phase,.10,.60)*(1-.94*smooth(phase,.82,2.8));
+  const screen={x:-viewport.width*.16,y:-viewport.height*.15,width:viewport.width*1.32,height:viewport.height*1.30};
+  const bounds=key=>mix(person[key],screen[key],spread);
   return {
     rect:{x:bounds('x'),y:bounds('y'),width:Math.max(1,bounds('width')),height:Math.max(1,bounds('height'))},
-    mask:handoff,
-    strength:mix(1,.58,smooth(phase,.15,1.05)),
-    target:phase<.22?'character':phase<1.08?'deck':'traveller',
+    attached,spread,diffuse,
+    strength:Math.max(attached,diffuse),
+    target:phase<.10?'character':phase<.92?'dispersing':'ambient',
   };
 }
