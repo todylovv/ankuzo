@@ -6,6 +6,64 @@ export function mountSilk(root) {
   const leadCanvas=document.createElement('canvas');leadCanvas.className='silk silk-lead';leadCanvas.setAttribute('aria-hidden','true');canvas.after(leadCanvas);
   const leadCtx=leadCanvas.getContext('2d',{alpha:true});
   if(!leadCtx){leadCanvas.remove();return {draw:undefined,dispose(){}};}
+  const energyCanvas=document.createElement('canvas'),energyLead=document.createElement('canvas');
+  energyCanvas.className='silk silk-energy';energyLead.className='silk silk-energy silk-energy-lead';
+  for(const layer of [energyCanvas,energyLead]){layer.setAttribute('aria-hidden','true');leadCanvas.after(layer)}
+  const energyCtx=energyCanvas.getContext('2d'),energyLeadCtx=energyLead.getContext('2d');
+  const energyLife=new AbortController();
+  let energyPaths=[],energyRaf=0,energyDisposed=false,energyLast=0,energyTime=0,energyPaint=0,ew=0,eh=0;
+  const energyEnabled=()=>!energyDisposed&&root.dataset.quality==='full'&&!document.hidden&&!document.body.classList.contains('intro-pending');
+  function recordEnergy(points,alpha,mobile,fadeHead,lead){
+    const lengths=[0];for(let i=1;i<points.length;i++)lengths.push(lengths[i-1]+Math.hypot(points[i][0]-points[i-1][0],points[i][1]-points[i-1][1]));
+    energyPaths.push({points,lengths,length:lengths.at(-1),alpha,mobile,fadeHead,lead});
+  }
+  function paintEnergy(now){
+    energyRaf=0;if(!energyEnabled()||!energyCtx||!energyLeadCtx)return;
+    if(now-energyPaint<32){energyRaf=requestAnimationFrame(paintEnergy);return;}energyPaint=now;
+    energyTime+=energyLast?Math.min((now-energyLast)/1000,.08):0;energyLast=now;
+    const w=innerWidth,h=innerHeight,dpr=Math.min(devicePixelRatio||1,w<=760?1:1.25);
+    if(ew!==w||eh!==h){ew=w;eh=h;for(const layer of [energyCanvas,energyLead]){layer.width=Math.round(w*dpr);layer.height=Math.round(h*dpr);layer.style.width=w+'px';layer.style.height=h+'px'}}
+    for(const paint of [energyCtx,energyLeadCtx]){paint.setTransform(dpr,0,0,dpr,0,0);paint.clearRect(0,0,w,h);paint.lineCap='round';paint.lineJoin='round'}
+    energyPaths.forEach((path,index)=>{
+      const {points,lengths,length,alpha,mobile,fadeHead,lead}=path;if(length<1)return;
+      const paint=lead?energyLeadCtx:energyCtx;
+      paint.save();paint.globalCompositeOperation='screen';
+      // A soft envelope follows the exact sampled route, with no new bends in the thread itself.
+      paint.beginPath();points.forEach((point,i)=>i?paint.lineTo(...point):paint.moveTo(...point));
+      paint.lineWidth=mobile?4:6;paint.strokeStyle='#c51a43';paint.globalAlpha=alpha*.16*(1-fadeHead*.65);
+      paint.shadowColor='#f5224b';paint.shadowBlur=mobile?10:17;paint.stroke();paint.shadowBlur=0;
+      const head=(energyTime*74+index*113)%length;
+      for(let i=1;i<points.length;i++){
+        const a=points[i-1],b=points[i],distance=lengths[i];
+        const gap=Math.abs(((distance-head+length*1.5)%length)-length*.5);
+        const pulse=Math.exp(-gap*gap/(mobile?2200:4000));if(pulse<.025)continue;
+        const fade=1-fadeHead*(1-range(i/(points.length-1),0,.22));
+        paint.beginPath();paint.moveTo(...a);paint.lineTo(...b);
+        paint.lineWidth=mobile?1.1:1.4;paint.strokeStyle='#ffa0b8';paint.globalAlpha=alpha*pulse*fade*.64;
+        paint.shadowColor='#ff2857';paint.shadowBlur=mobile?7:11;paint.stroke();
+      }
+      paint.shadowBlur=0;
+      // Fine energy fibres drift beside the core and remain attached through every transition.
+      for(const side of [-1,1]){
+        paint.beginPath();
+        points.forEach((point,i)=>{
+          const previous=points[Math.max(0,i-1)],next=points[Math.min(points.length-1,i+1)];
+          const dx=next[0]-previous[0],dy=next[1]-previous[1],size=Math.hypot(dx,dy)||1;
+          const wave=side*(2.4+Math.sin(lengths[i]*.024-energyTime*.8+index)*1.6);
+          const x=point[0]-dy/size*wave,y=point[1]+dx/size*wave;
+          if(i)paint.lineTo(x,y);else paint.moveTo(x,y);
+        });
+        paint.strokeStyle='#e72a56';paint.lineWidth=.6;paint.globalAlpha=alpha*.14*(1-fadeHead*.65);paint.stroke();
+      }
+      paint.restore();
+    });
+    root.dataset.threadEnergyTime=energyTime.toFixed(2);energyRaf=requestAnimationFrame(paintEnergy);
+  }
+  function resumeEnergy(){cancelAnimationFrame(energyRaf);energyLast=0;if(energyEnabled())energyRaf=requestAnimationFrame(paintEnergy);}
+  root.addEventListener('ankuzo:quality-change',resumeEnergy,{signal:energyLife.signal});
+  document.addEventListener('visibilitychange',resumeEnergy,{signal:energyLife.signal});
+  document.addEventListener('ankuzo:intro-complete',resumeEnergy,{signal:energyLife.signal});
+  resumeEnergy();
   root.classList.add('has-silk');
   root.querySelectorAll('.eyelet').forEach(el=>el.remove());
   const cards=[...root.querySelectorAll('.game-card')];
@@ -44,6 +102,7 @@ export function mountSilk(root) {
   }
   function rope(points,alpha,mobile,fadeHead=0,paint=ctx){
     if(alpha<.003)return;
+    recordEnergy(points,alpha,mobile,fadeHead,paint===leadCtx);
     const ctx=paint;ctx.save();
     ctx.globalAlpha=alpha*.22*(1-fadeHead*.65);ctx.lineCap='round';ctx.lineJoin='round';
     ctx.beginPath();points.forEach((p,i)=>i?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1]));
@@ -57,6 +116,7 @@ export function mountSilk(root) {
     ctx.restore();
   }
   const draw=(g,w,h)=>{
+    energyPaths=[];
     const dpr=Math.min(devicePixelRatio||1,2),mobile=w<=760;
     if(cw!==w||ch!==h){cw=w;ch=h;for(const layer of [canvas,leadCanvas]){layer.width=Math.round(w*dpr);layer.height=Math.round(h*dpr);layer.style.width=w+'px';layer.style.height=h+'px'}}
     ctx.setTransform(dpr,0,0,dpr,0,0);ctx.clearRect(0,0,w,h);
@@ -99,5 +159,5 @@ export function mountSilk(root) {
       rope(curve(last),reveal,mobile);
     }
   };
-  return { draw, dispose() { leadCanvas.remove(); root.querySelectorAll('.card-band,.tie-anchor').forEach(el=>el.remove()); root.classList.remove('has-silk'); } };
+  return { draw, dispose() { energyDisposed=true;cancelAnimationFrame(energyRaf);energyLife.abort();energyCanvas.remove();energyLead.remove();energyPaths=[];leadCanvas.remove(); root.querySelectorAll('.card-band,.tie-anchor').forEach(el=>el.remove()); root.classList.remove('has-silk'); } };
 }

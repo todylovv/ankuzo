@@ -78,3 +78,28 @@
 
 /* Decorative energy and cards stay below every content scene and stop in static mode. */
 .motion-off .velvet-field{display:none}
+
+/* Three quality levels share the accepted composition; the expensive scene is lazy. */
+.webgl-field{position:absolute;inset:0;width:100%;height:100%;z-index:0;pointer-events:none}
+.webgl-ready .velvet-field,.motion-off .webgl-field{display:none}
+.quality-control{position:relative;color:#c5bdc2;font-size:11px;flex-shrink:0}
+.quality-control summary{cursor:pointer;list-style:none;min-height:44px;display:flex;align-items:center;gap:5px}
+.quality-control summary::-webkit-details-marker{display:none}.quality-dot{color:var(--red)}
+.quality-control summary:focus-visible{outline:2px solid #f3a6c0;outline-offset:5px}
+.quality-popover{position:absolute;right:0;top:100%;width:290px;padding:22px;background:#0c090df7;border:1px solid #633047;box-shadow:0 22px 70px #000c;color:var(--white)}
+.quality-popover fieldset{border:0;padding:0;margin:0}.quality-popover legend{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#bfa8b3;margin-bottom:14px}
+.quality-popover label{display:flex;gap:12px;align-items:center;min-height:59px;cursor:pointer;border-bottom:1px solid #ffffff0d}
+.quality-popover input{accent-color:var(--red);width:16px;height:16px;flex-shrink:0;margin:0}.quality-popover label:has(input:disabled){opacity:.4;cursor:default}
+.quality-popover label>span{font-size:13px;line-height:1.5}.quality-popover small{display:block;font-size:10px;color:#b8a6b1}
+.quality-popover button{display:flex;width:100%;justify-content:space-between;align-items:center;min-height:44px;padding:10px 0;font-size:12px;margin-top:6px}
+.quality-popover button[aria-pressed=true]{color:#ef91af}.quality-popover p{font-size:10px;line-height:1.7;color:#b8a6b1;margin-top:8px}
+.motion-off *{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+@media(max-width:760px){.quality-control{order:2;font-size:9px;margin-left:auto}.quality-popover{right:-47px;width:min(290px,calc(100vw - 44px));padding:19px}.quality-control summary{gap:3px}.brand span{width:20px}.header{gap:12px}}
+
+@media(max-width:360px){.quality-control summary{font-size:9px}.quality-label{max-width:104px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.brand span{display:none}.header{gap:9px}}
+
+/* Energy belongs to the full tier; the original thread remains the core. */
+.silk-energy{display:none;z-index:1}.art-root[data-quality=full] .silk-energy{display:block}.art-root[data-quality=full] .silk-energy-lead{display:none}
+.art-root[data-quality=full] .card-band{filter:drop-shadow(0 0 5px #ff28577a) drop-shadow(0 0 12px #d7194547)}
+.motion-off .silk-energy{display:none!important}
+@media(max-width:760px){.art-root[data-quality=full] .silk-energy-lead{display:block;z-index:3}}

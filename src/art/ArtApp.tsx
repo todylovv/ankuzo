@@ -4,6 +4,7 @@ import { filterArchive, formatMetric, safeExternalUrl, selectDeck } from '../dat
 import { mountArtMotion } from './motion.js';
 import { mountSilk } from './silk.js';
 import { mountAtmosphere } from './atmosphere.js';
+import { mountQuality } from './quality.js';
 import './art.css';
 
 const ranks = ['A', 'K', 'Q', 'J', '10'];
@@ -45,11 +46,12 @@ function ArtArchive() {
   useEffect(() => {
     const el = root.current;
     if (!el) return;
+    const stopQuality = mountQuality(el);
     const silk = mountSilk(el);
     const stopAtmosphere = mountAtmosphere(el);
     const stop = mountArtMotion(el, silk.draw);
     document.dispatchEvent(new Event('ankuzo:app-ready'));
-    return () => { stop(); silk.dispose(); stopAtmosphere(); };
+    return () => { stop(); silk.dispose(); stopAtmosphere(); stopQuality(); };
   }, []);
 
   useEffect(() => {
@@ -81,7 +83,18 @@ function ArtArchive() {
       <a className="brand" href="#home" aria-label="Ankuzo, начало">22<span /></a>
       <button className="menu-button" aria-controls="chapter-nav" aria-expanded="false">Меню <span>☰</span></button>
       <nav id="chapter-nav" aria-label="Главы"><a href="#home" aria-current="page">Начало</a><a href="#games">Игры</a><a href="#stats">Статы</a><a href="#about">Обо мне</a></nav>
-      <button className="motion-button" type="button" aria-pressed="true">Анимация: вкл<span aria-hidden="true"> ◉</span></button>
+      <details className="quality-control">
+        <summary>Графика: <span className="quality-label">Авто</span><span className="quality-dot" aria-hidden="true"> ◉</span></summary>
+        <div className="quality-popover">
+          <fieldset><legend>Качество графики</legend>
+            <label><input type="radio" name="graphics" value="off" aria-label="Без анимаций" /><span>Без анимаций<small>Обычная прокрутка, без движения</small></span></label>
+            <label><input type="radio" name="graphics" value="motion" aria-label="Анимации" /><span>Анимации<small>Переходы, нить и движение карт</small></span></label>
+            <label><input type="radio" name="graphics" value="full" aria-label="Полные эффекты" /><span>Полные эффекты<small>Объёмные карты, глубина и аура</small></span></label>
+          </fieldset>
+          <button type="button" data-quality-auto aria-pressed="true">Автовыбор <span aria-hidden="true">↗</span></button>
+          <p role="status" />
+        </div>
+      </details>
     </header>
     <main className="stage" aria-label="Ankuzo">
       <canvas className="velvet-field" aria-hidden="true" /><div className="ambient" aria-hidden="true" /><div className="ghost" aria-hidden="true">22</div>

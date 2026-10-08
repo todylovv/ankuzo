@@ -1,4 +1,5 @@
 import { waitForIntro } from './introGate.js';
+import { initialQuality, parsePreference } from './qualityPolicy.js';
 
 function eventReady(name, signal) {
   return new Promise(resolve => {
@@ -40,6 +41,11 @@ export function startIntro() {
   const overlay = document.getElementById('site-intro');
   const root = document.getElementById('root');
   if (!overlay || !root) return;
+  let staticGraphics = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let preference = 'auto';
+  try { preference = parsePreference(localStorage.getItem('ankuzo.graphics.v1')); } catch { /* Optional storage. */ }
+  staticGraphics ||= preference === 'off' || (preference === 'auto' && initialQuality({ cores: navigator.hardwareConcurrency, memory: navigator.deviceMemory }) === 'off');
+  if (staticGraphics) overlay.querySelectorAll('*').forEach(el => { el.style.animation = 'none'; });
   const life = new AbortController();
   const skip = overlay.querySelector('button');
   const bar = overlay.querySelector('.intro-progress i');
@@ -64,7 +70,7 @@ export function startIntro() {
     app, data, document.fonts?.ready ?? Promise.resolve(),
     preload('/art/character.png'), preload('/art/card-back.png'), visibleImages,
   ], {
-    minMs: matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 3000,
+    minMs: staticGraphics ? 0 : 3000,
     timeoutMs: 12000,
     signal: life.signal,
     onProgress: (done, total) => { bar.style.transform = `scaleX(${done / total})`; },
@@ -82,6 +88,6 @@ export function startIntro() {
       if (restoreFocus) (root.querySelector('.brand') ?? root.querySelector('a, button'))?.focus({ preventScroll: true });
     };
     // A timer also works when a background tab suppresses transition events.
-    setTimeout(close, matchMedia('(prefers-reduced-motion: reduce)').matches ? 50 : 450);
+    setTimeout(close, staticGraphics ? 50 : 450);
   });
 }

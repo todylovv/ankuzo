@@ -20,16 +20,14 @@ export function mountArtMotion(root, drawSilk) {
   const nav=root.querySelector('#chapter-nav');
   const navLinks=[...nav.querySelectorAll('a')];
   const menu=root.querySelector('.menu-button');
-  const motionButton=root.querySelector('.motion-button');
   const next=root.querySelector('.next');
   const counter=root.querySelector('.chapter-count>span');
-  const media=matchMedia('(prefers-reduced-motion: reduce)');
   const names=['home','games','stats','about'];
   const clamp=(n,a=0,b=1)=>Math.min(b,Math.max(a,n));
   const mix=(a,b,t)=>a+(b-a)*t;
   const ease=t=>{t=clamp(t);return t*t*t*(t*(t*6-15)+10)};
   const interval=(v,a,b)=>ease((v-a)/(b-a));
-  let reduced=media.matches, manual=false, active=-1, raf=0, shown=0, previous=0, navigationUntil=0, viewportPosition=scrollY/(innerHeight*CHAPTER_SPAN);
+  let reduced=root.dataset.quality==='off', active=-1, raf=0, shown=0, previous=0, navigationUntil=0, viewportPosition=scrollY/(innerHeight*CHAPTER_SPAN);
   root.style.setProperty('--chapter-span', `${CHAPTER_SPAN*100}vh`);
   // Four paths have the same cubic topology. Their interpolation is pure in scroll position.
   const threadShapes=[
@@ -134,8 +132,6 @@ export function mountArtMotion(root, drawSilk) {
   function queue(){if(!disposed&&!raf)raf=requestAnimationFrame(render)}
   function setMode(off,preserve=true){
     const current=Math.max(0,active);reduced=off;body.classList.toggle('motion-off',off);
-    motionButton.setAttribute('aria-pressed',String(!off));
-    motionButton.innerHTML=off?'Без движения<span> ○</span>':'Анимация: вкл<span> ◉</span>';
     navLinks.forEach((a,i)=>a.href=`#${off?'view-':''}${names[i]}`);
     root.querySelector('.brand').href=off?'#view-home':'#home';
     root.querySelector('[data-jump]').href=off?'#view-games':'#games';
@@ -150,15 +146,14 @@ export function mountArtMotion(root, drawSilk) {
     queue();
   }
   listen(root,'click',e=>{const link=e.target.closest('a[href^="#"]');if(link&&names.some(name=>link.hash===`#${name}`))navigationUntil=performance.now()+2500;});
-  listen(motionButton,'click',()=>{manual=true;setMode(!reduced)});
-  listen(media,'change',e=>{if(!manual)setMode(e.matches)});
+  listen(root,'ankuzo:quality-change',e=>{const off=e.detail==='off';if(off!==reduced)setMode(off)});
   listen(menu,'click',()=>{const open=menu.getAttribute('aria-expanded')!=='true';menu.setAttribute('aria-expanded',String(open));nav.classList.toggle('open',open)});
   listen(nav,'click',e=>{if(e.target.closest('a')){menu.setAttribute('aria-expanded','false');nav.classList.remove('open')}});
   listen(document,'keydown',e=>{if(e.key==='Escape'){menu.setAttribute('aria-expanded','false');nav.classList.remove('open')}});
 
   listen(window,'scroll',queue,{passive:true});listen(window,'resize',()=>{if(reduced)setMode(true,false);else {window.scrollTo({top:viewportPosition*innerHeight*CHAPTER_SPAN,behavior:'instant'});queue();}});
   listen(window,'pageshow',queue);document.fonts.ready.then(queue);
-  listen(root.querySelector('.skip'),'click',()=>{if(!reduced)setMode(true,false);root.querySelector('#view-games').focus()});
+  listen(root.querySelector('.skip'),'click',()=>{if(!reduced)root.dispatchEvent(new Event('ankuzo:static-request'));root.querySelector('#view-games').focus()});
   setMode(reduced,false);
   // Keep links from the previous archive usable after the redesign.
   const initialName=location.hash.slice(1).replace(/^view-/, '').split('/')[0];
