@@ -22,7 +22,7 @@ export function mountQuality(root) {
     control.querySelector('.quality-label').textContent = `${preference === 'auto' ? 'Авто · ' : ''}${labels[mode]}`;
     control.querySelectorAll('input').forEach(input => { input.checked = input.value === mode; });
     control.querySelector('[data-quality-auto]').setAttribute('aria-pressed', String(preference === 'auto'));
-    status.textContent = reason || (preference === 'auto' ? 'Подбирается по устройству и плавности. Данные остаются в браузере.' : 'Твой выбор сохранён на этом устройстве.');
+    status.textContent = reason || (preference === 'auto' ? 'Подбирается по устройству и плавности. Данные остаются в браузере.' : 'Твой выбор сохранён на этом устройстве. Ручной режим не снижается автоматически.');
     root.dispatchEvent(new CustomEvent('ankuzo:quality-change', { detail: mode }));
   }
   async function loadFull() {

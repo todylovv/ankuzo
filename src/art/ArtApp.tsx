@@ -89,7 +89,7 @@ function ArtArchive() {
           <fieldset><legend>Качество графики</legend>
             <label><input type="radio" name="graphics" value="off" aria-label="Без анимаций" /><span>Без анимаций<small>Обычная прокрутка, без движения</small></span></label>
             <label><input type="radio" name="graphics" value="motion" aria-label="Анимации" /><span>Анимации<small>Переходы, нить и движение карт</small></span></label>
-            <label><input type="radio" name="graphics" value="full" aria-label="Полные эффекты" /><span>Полные эффекты<small>Объёмные карты, глубина и аура</small></span></label>
+            <label><input type="radio" name="graphics" value="full" aria-label="Полные эффекты" /><span>Полные эффекты<small>Все карты, глубина и аура — и на телефоне</small></span></label>
           </fieldset>
           <button type="button" data-quality-auto aria-pressed="true">Автовыбор <span aria-hidden="true">↗</span></button>
           <p role="status" />

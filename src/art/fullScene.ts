@@ -164,7 +164,7 @@ export async function mountFullScene(root: HTMLElement, onFailure: () => void, s
     root.addEventListener('pointerleave', () => { tx = 0; ty = 0; }, { signal: life.signal });
     function resize() {
       w = innerWidth; h = innerHeight;
-      renderer.setPixelRatio(Math.min(devicePixelRatio || 1, w <= 760 ? 1.25 : 1.5)); renderer.setSize(w, h, false);
+      renderer.setPixelRatio(Math.min(devicePixelRatio || 1, 1.5)); renderer.setSize(w, h, false);
       camera.aspect = w / h; camera.position.z = h / (2 * Math.tan(THREE.MathUtils.degToRad(17.5))); camera.updateProjectionMatrix();
       target.setSize(Math.ceil(w / 3), Math.ceil(h / 3));
       compositeMaterial.uniforms.uPixel.value.set(9 / w, 9 / h);
@@ -181,16 +181,15 @@ export async function mountFullScene(root: HTMLElement, onFailure: () => void, s
       const energy = energyFrame(phase, character.getBoundingClientRect(), {width:w,height:h});
       const { rect, strength: fade } = energy;
       auraMaterial.uniforms.uTime.value = elapsed;
-      auraMaterial.uniforms.uAttached.value = energy.attached * (mobile ? .85 : 1);
+      auraMaterial.uniforms.uAttached.value = energy.attached;
       auraMaterial.uniforms.uSpread.value = energy.spread;
-      auraMaterial.uniforms.uDiffuse.value = energy.diffuse * (mobile ? .88 : 1);
+      auraMaterial.uniforms.uDiffuse.value = energy.diffuse;
       auraMaterial.uniforms.uRect.value.set(rect.x, rect.y, rect.width, rect.height);
       const response = 1 - Math.exp(-delta * 2.6); px += (tx - px) * response; py += (ty - py) * response;
       cards.forEach(card => {
         const { group, sx, sy, size, angle, z, i, strings } = card;
         const quiet = THREE.MathUtils.lerp(1,.28,THREE.MathUtils.smoothstep(phase,.45,1.6));
         card.face.color.setScalar(card.opacity * quiet * quiet);
-        group.visible = !mobile || [1,4,5,7].includes(i);
         const projection = (camera.position.z - z) / camera.position.z;
         const width = w * size * projection * (mobile ? 1.55 : 1);
         group.scale.setScalar(width);
