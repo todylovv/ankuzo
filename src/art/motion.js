@@ -157,7 +157,8 @@ export function mountArtMotion(root, drawSilk) {
   listen(root.querySelector('.skip'),'click',()=>{if(!reduced)root.dispatchEvent(new Event('ankuzo:static-request'));root.querySelector('#view-games').focus()});
   setMode(reduced,false);
   // Keep links from the previous archive usable after the redesign.
-  const initialName=location.hash.slice(1).replace(/^view-/, '').split('/')[0];
+  const psnDirect=/\/playstation\/?$/.test(location.pathname)||new URLSearchParams(location.search).has('playstation');
+  const initialName=psnDirect?'playstation':location.hash.slice(1).replace(/^view-/, '').split('/')[0];
   if(names.includes(initialName)){
     root.querySelector(`#${reduced?'view-':''}${initialName}`).scrollIntoView({behavior:'instant'});
     if(location.hash.includes('/'))history.replaceState(null,'',`#${reduced?'view-':''}${initialName}`);
