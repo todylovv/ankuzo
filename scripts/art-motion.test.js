@@ -5,7 +5,7 @@ test('a former full chapter scroll now leaves time to see the transition',()=>{
   assert.ok(phaseAt(2050,1000)<.65);
   assert.equal(phaseAt(CHAPTER_SPAN*1000,1000),1);
   assert.equal(phaseAt(-100,1000),0);
-  assert.equal(phaseAt(99999,1000),3);
+  assert.equal(phaseAt(99999,1000),4);
 });
 test('a fast fling cannot skip the card animation in one frame',()=>{
   assert.ok(advancePhase(0,3,16)<=.7*.016+.00001);

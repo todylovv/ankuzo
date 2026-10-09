@@ -169,13 +169,13 @@ export function mountSilk(root) {
       // The visible edges exchange sides at 90°. Route each tail to its
       // screen-side edge so it cannot cross behind the card and emerge detached.
       const edges=[center(moving.left),center(moving.right)].sort((a,b)=>a[0]-b[0]);
-      const [a,b]=edges,reveal=range(g,1.04,1.35),loosen=range(g,2.06,2.95);
-      const y=mix(mobile?.51:.635,mobile?.14:.73,loosen)*h;
+      const [a,b]=edges,reveal=range(g,1.04,1.35),loosen=range(g,2.12,3.94),ps=range(g,2.12,2.96)*(1-range(g,3.14,3.94));
+      const y=mix(mix(mobile?.51:.635,mobile?.14:.73,loosen),mobile?.40:.13,ps)*h;
       const side=mobile?w*.12:w*.20;
-      const shelf=(1-loosen)*range(g,1.35,1.98),ledgeY=mix(y,h*.71,shelf),ledgeX=mix(a[0]*.48,w*.40,shelf);
-      const first=[[-w*.10,ledgeY],[w*.04,ledgeY],[ledgeX*.78,ledgeY],[ledgeX,ledgeY],[mix(a[0]*.64,w*.49,shelf),ledgeY],[a[0]*.88,a[1]+h*.06],a];
+      const shelf=(1-loosen)*(1-ps)*range(g,1.35,1.98),ledgeY=mix(y,h*.71,shelf),ledgeX=mix(a[0]*.48,w*.40,shelf);
+      const first=[[-w*.10,ledgeY],[w*.04,ledgeY],[ledgeX*.78,ledgeY],[ledgeX,ledgeY],[mix(a[0]*.64,w*.49,shelf),ledgeY],[a[0]*.88,mix(a[1]+h*.06,mobile?a[1]+h*.01:h*.10,ps)],a];
       rope(curve(first),reveal,mobile);
-      const endY=mix(mobile?.64:.58,mobile?.37:.94,loosen)*h;
+      const endY=mix(mix(mobile?.64:.58,mobile?.37:.94,loosen),mobile?.49:.42,ps)*h;
       const last=[b,[b[0]+side*(mobile?.55:mix(.55,.12,loosen)),b[1]+h*(mobile?.045:mix(.045,.30,loosen))],[w*.87,endY+h*.04],[w*1.1,endY]];
       rope(curve(last),reveal,mobile);
     }

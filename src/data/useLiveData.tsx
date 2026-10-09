@@ -1,3 +1,4 @@
+import { buildPsnSnapshot, type PsnProfile } from '../art/psnFacts.js';
 import { toDiscordProfile, type DiscordProfile } from './discordProfile';
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 import { recentSteamGames, seasonPeaks, isCurrentSnapshot } from "./snapshotFacts";
@@ -159,6 +160,7 @@ export type DataSourceStatus = {
 };
 
 export type LiveData = {
+  psnProfile: PsnProfile;
   discordProfile: DiscordProfile;
   loading: boolean;
   games: Game[];
@@ -203,6 +205,7 @@ const fallbackNowPlaying: NowPlaying = {
 };
 
 const fallbackLive: LiveData = {
+  psnProfile: buildPsnSnapshot(null),
   discordProfile: toDiscordProfile(null),
   loading: true,
   games: [],
@@ -634,6 +637,7 @@ export function LiveDataProvider({ children }: { children: ReactNode }) {
         const activity = buildActivity(steam, faceit, psn, steamGames, playing);
 
         setLive({
+          psnProfile: buildPsnSnapshot(psn),
           discordProfile: toDiscordProfile(discord),
           loading: false,
           games,

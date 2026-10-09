@@ -1,4 +1,4 @@
-import { CHAPTER_SPAN, phaseAt, advancePhase } from './motionFacts.js';
+import { CHAPTER_SPAN, CHAPTERS, phaseAt, advancePhase, travellerPose } from './motionFacts.js';
 
 export function mountArtMotion(root, drawSilk) {
   'use strict';
@@ -25,7 +25,7 @@ export function mountArtMotion(root, drawSilk) {
   const aboutCopy=root.querySelector('.about-copy');
   const heroCopy=root.querySelector('.hero-copy'),archiveCopy=root.querySelector('.archive-copy');
   const travellerFront=traveller.querySelector('.traveller-front'),travellerBack=traveller.querySelector('.traveller-back');
-  const names=['home','games','stats','about'];
+  const names=CHAPTERS, last=names.length-1;
   const clamp=(n,a=0,b=1)=>Math.min(b,Math.max(a,n));
   const mix=(a,b,t)=>a+(b-a)*t;
   const ease=t=>{t=clamp(t);return t*t*t*(t*(t*6-15)+10)};
@@ -45,21 +45,24 @@ export function mountArtMotion(root, drawSilk) {
     [-100,490, 140,450,300,550,450,500, 620,440,500,340,430,410, 350,480,620,500,750,570, 850,590,1000,580,1100,560],
     [-100,250, 100,280,230,350,400,320, 580,300,500,170,400,200, 220,240,290,360,520,370, 700,390,860,450,1100,420]
   ];
+  threadShapes.splice(3,0,[-100,200, 130,180,340,180,500,220, 550,240,560,280,620,260, 700,260,850,500,980,480, 1030,480,1050,510,1100,500]);
+  mobileShapes.splice(3,0,[-100,400, 100,390,150,350,240,360, 300,370,350,400,400,420, 520,440,700,550,940,570, 1030,580,1050,600,1100,610]);
   function pathString(points){let d=`M ${points[0]} ${points[1]}`;for(let i=2;i<points.length;i+=6)d+=` C ${points.slice(i,i+6).join(' ')}`;return d}
   function visibility(g,i){return 1-interval(Math.abs(g-i),.08,.40)}
   function setActive(index){
     if(active===index)return;
-    active=index;
+    active=index;body.dataset.chapter=names[index];
     navLinks.forEach((a,i)=>i===index?a.setAttribute('aria-current','page'):a.removeAttribute('aria-current'));
     counter.textContent=String(index+1).padStart(2,'0');
-    next.href=`#${reduced?'view-':''}${names[Math.min(index+1,3)]}`;
-    next.innerHTML=index===3?'К началу <span>↑</span>':'Листай дальше <span>↓</span>';
-    if(index===3)next.href=reduced?'#view-home':'#home';
+    next.href=`#${reduced?'view-':''}${names[Math.min(index+1,last)]}`;
+    next.innerHTML=index===last?'К началу <span>↑</span>':'Листай дальше <span>↓</span>';
+    if(index===last)next.href=reduced?'#view-home':'#home';
   }
   function render(timestamp=performance.now()){
     const started=performance.now();
     raf=0;
     if(disposed)return;
+    if(root.querySelector('dialog[open]')){previous=0;return;}
     if(reduced){
       const closest=scenes.reduce((best,el,i)=>Math.abs(el.getBoundingClientRect().top)<best.distance?{index:i,distance:Math.abs(el.getBoundingClientRect().top)}:best,{index:0,distance:Infinity});
       setActive(closest.index);return;
@@ -72,14 +75,15 @@ export function mountArtMotion(root, drawSilk) {
     shown=advancePhase(shown,target,dt,timestamp<navigationUntil?2.2:.7);
     if(Math.abs(shown-target)<.0002)shown=target;
     const g=shown;
-    const tail=mobile?Math.max(0,scrollY-3*h*CHAPTER_SPAN):0;
+    const tail=mobile?Math.max(0,scrollY-last*h*CHAPTER_SPAN):0;
     aboutCopy.style.transform=`translateY(${-tail}px)`;
-    setActive(clamp(Math.round(g),0,3));
+    setActive(clamp(Math.round(g),0,last));
     body.dataset.phase=g.toFixed(3);
     scenes.forEach((el,i)=>{
       let opacity=visibility(g,i);const offset=i===1?0:(i-g)*(mobile?34:65);
       if(i===0)opacity=1-interval(g,.12,.59);
       if(i===1)opacity=interval(g,.15,.73)*(1-interval(g,1.22,1.73));
+      if(i===3)opacity=interval(g,2.24,2.86)*(1-interval(g,3.20,3.76));
       el.style.opacity=opacity.toFixed(4);
       el.style.transform=`translate3d(0,${offset}px,0)`;
       const inert=Math.round(g)!==i||opacity<.75;
@@ -101,33 +105,26 @@ export function mountArtMotion(root, drawSilk) {
       el.style.zIndex=String([2,6,5,4,3][i]);
       el.style.opacity=i===1?(1-interval(g,1.05,1.30)).toFixed(3):'1';
     });
-    const travelIn=interval(g,1.05,1.30),travel=interval(g,1.32,1.98),flip=interval(g,2.1,2.92);
+    const travelIn=interval(g,1.05,1.30);
     traveller.style.opacity=travelIn.toFixed(4);
-    const statX=mobile?mix(.355,h<=680?.70:.56,travel):mix(.445,.74,travel);
-    const statY=mobile?mix(.585,h<=680?.77:.75,travel):mix(.545,.53,travel);
-    const travellerWidth=mix(mobile?Math.min(w*.31,150):Math.min(380,Math.max(190,w*.23)),mobile?Math.min(240,w*.62):Math.min(380,Math.max(300,w*.26)),travel)*(1-flip)+flip*(mobile?Math.min(w*.31,150):Math.min(380,Math.max(190,w*.23)));
-    traveller.style.width=`${travellerWidth}px`;
-    const tx=mix(statX,mobile?.84:.27,flip);
-    const ty=mix(statY,mobile?.16:.50,flip);
-    traveller.style.left=`${tx*100}%`;traveller.style.top=`${ty*100}%`;
-    const zoom=Math.pow(Math.sin(Math.PI*flip),2)*interval(flip,.25,.65)*.72;
-    const fit=Math.min(mobile?1.8:1.65,h*.78/(travellerWidth*1.5));
-    const scale=Math.min(fit,mix(mix(mobile?1.17:.70,mobile?(h<=680?.69:.78):1,travel),mobile?.56:1.03,flip)+zoom);
-    traveller.style.transform=`translate(-50%,-50%) rotate(${mix(mix(mobile?-10:-6,mobile?2:4,travel),-8,flip)}deg) scale(${scale})`;
-    flipper.style.transform=`rotateY(${mix(0,180,flip)}deg)`;
-    travellerFront.style.visibility=flip<.5?'visible':'hidden';
-    travellerBack.style.visibility=flip>.5?'visible':'hidden';
+    const pose=travellerPose(g,w,h);
+    traveller.style.width=`${pose.width}px`;
+    traveller.style.left=`${pose.x*100}%`;traveller.style.top=`${pose.y*100}%`;
+    traveller.style.transform=`translate(-50%,-50%) rotate(${pose.rotate}deg) scale(${pose.scale})`;
+    flipper.style.transform=`rotateY(${pose.flip}deg)`;
+    travellerFront.style.visibility=pose.flip<90?'visible':'hidden';
+    travellerBack.style.visibility=pose.flip>90?'visible':'hidden';
     travellerGame.style.opacity=(1-interval(g,1.35,1.98)).toFixed(3);
     playerCard.style.opacity=interval(g,1.55,1.98).toFixed(3);
     const cardHidden=Math.abs(g-2)>.15;traveller.inert=cardHidden;traveller.setAttribute('aria-hidden',String(cardHidden));
     if(!drawSilk){
-      const shapes=mobile?mobileShapes:threadShapes,a=Math.min(2,Math.floor(g)),t=g-a;
+      const shapes=mobile?mobileShapes:threadShapes,a=Math.min(threadShapes.length-2,Math.floor(g)),t=g-a;
       const d=pathString(shapes[a].map((n,i)=>mix(n,shapes[a+1][i],t)));paths.forEach(p=>p.setAttribute('d',d));
     }
     ghost.style.transform=`translate3d(${-g*20}px,${g*15}px,0) rotate(${-g*2}deg)`;
     ghost.style.opacity=(1-interval(g,2,3)).toFixed(3);
-    ambient.style.transform=`translateX(${mix(0,-15,g/3)}%)`;
-    progressBar.style.transform=`scaleX(${q/3})`;
+    ambient.style.transform=`translateX(${mix(0,-15,g/last)}%)`;
+    progressBar.style.transform=`scaleX(${q/last})`;
     drawSilk?.(g,w,h);
     body.dataset.frameMs=(performance.now()-started).toFixed(2);
     if(Math.abs(shown-target)>.0001)queue();
@@ -154,6 +151,7 @@ export function mountArtMotion(root, drawSilk) {
   listen(nav,'click',e=>{if(e.target.closest('a')){menu.setAttribute('aria-expanded','false');nav.classList.remove('open')}});
   listen(document,'keydown',e=>{if(e.key==='Escape'){menu.setAttribute('aria-expanded','false');nav.classList.remove('open')}});
 
+  listen(root.querySelector('dialog'),'close',queue);
   listen(window,'scroll',queue,{passive:true});listen(window,'resize',()=>{if(reduced)setMode(true,false);else {window.scrollTo({top:viewportPosition*innerHeight*CHAPTER_SPAN,behavior:'instant'});queue();}});
   listen(window,'pageshow',queue);document.fonts.ready.then(queue);
   listen(root.querySelector('.skip'),'click',()=>{if(!reduced)root.dispatchEvent(new Event('ankuzo:static-request'));root.querySelector('#view-games').focus()});

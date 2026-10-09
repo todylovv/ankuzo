@@ -7,6 +7,9 @@ import { mountAtmosphere } from './atmosphere.js';
 import { mountQuality } from './quality.js';
 import './art.css';
 import { DiscordCard } from './DiscordCard';
+import { PlayStationScene, PlayStationCatalog } from './PlayStation';
+
+const isPsnRoute = () => /\/playstation\/?$/.test(location.pathname) || new URLSearchParams(location.search).has('playstation');
 
 const ranks = ['A', 'K', 'Q', 'J', '10'];
 const suits = ['♥', '♠', '♦', '♣', '♥'];
@@ -17,7 +20,9 @@ function ArtArchive() {
   const live = useLiveData();
   const root = useRef<HTMLDivElement>(null);
   const dialog = useRef<HTMLDialogElement>(null);
-  const [panel, setPanel] = useState<'archive' | 'stats' | null>(() => location.hash === '#games/archive' ? 'archive' : null);
+  const [panel, setPanel] = useState<'archive' | 'stats' | 'playstation' | null>(() => isPsnRoute() ? 'playstation' : location.hash === '#games/archive' ? 'archive' : null);
+  const [psGame, setPsGame] = useState('');
+  const psReturnUrl = useRef('');
   const [query, setQuery] = useState('');
   const [platform, setPlatform] = useState('all');
   const [copyStatus, setCopyStatus] = useState('');
@@ -72,6 +77,36 @@ function ArtArchive() {
     if (!live.loading) document.dispatchEvent(new Event('ankuzo:data-ready'));
   }, [live.loading]);
 
+  useEffect(() => {
+    const onPop = () => {
+      if (isPsnRoute()) { setPsGame(''); setPanel('playstation'); }
+      else if (panel === 'playstation') { psReturnUrl.current = location.pathname + location.search + location.hash; dialog.current?.close(); }
+    };
+    window.addEventListener('popstate', onPop);
+    const originalTitle = document.title;
+    if (panel === 'playstation') document.title = 'PlayStation — Ankuzo';
+    return () => { window.removeEventListener('popstate', onPop); document.title = originalTitle; };
+  }, [panel]);
+
+  function openPsn(id = '') {
+    setPsGame(id);
+    if (!isPsnRoute()) {
+      psReturnUrl.current = location.pathname + location.search + location.hash;
+      const base = import.meta.env.BASE_URL;
+      history.pushState(null, '', base === '/' ? '/playstation' : `${base}index.html?playstation=1`);
+    }
+    setPanel('playstation');
+  }
+  function closePanel() {
+    if (panel === 'playstation') {
+      const direct = !psReturnUrl.current;
+      history.replaceState(null, '', psReturnUrl.current || `${import.meta.env.BASE_URL}#playstation`);
+      if (direct) requestAnimationFrame(() => root.current?.querySelector(root.current.classList.contains('motion-off') ? '#view-playstation' : '#playstation')?.scrollIntoView({ behavior: 'instant' }));
+      psReturnUrl.current = '';
+    }
+    setPanel(null);
+  }
+
   function openArchive(search = '') { setQuery(search); setPlatform('all'); setPanel('archive'); }
   async function copyName(name: string, service: string) {
     try { await navigator.clipboard.writeText(name); setCopyStatus(`${service}: ${name} — скопировано`); }
@@ -83,7 +118,7 @@ function ArtArchive() {
     <header className="header">
       <a className="brand" href="#home" aria-label="Ankuzo, начало">22<span /></a>
       <button className="menu-button" aria-controls="chapter-nav" aria-expanded="false">Меню <span>☰</span></button>
-      <nav id="chapter-nav" aria-label="Главы"><a href="#home" aria-current="page">Начало</a><a href="#games">Игры</a><a href="#stats">Статы</a><a href="#about">Обо мне</a></nav>
+      <nav id="chapter-nav" aria-label="Главы"><a href="#home" aria-current="page">Начало</a><a href="#games">Игры</a><a href="#stats">Статы</a><a href="#playstation">PlayStation</a><a href="#about">Обо мне</a></nav>
       <details className="quality-control">
         <summary>Графика: <span className="quality-label">Авто</span><span className="quality-dot" aria-hidden="true"> ◉</span></summary>
         <div className="quality-popover">
@@ -120,6 +155,7 @@ function ArtArchive() {
         </div>
         <div className="static-faceit">{faceitCard}</div>
       </section>
+      <PlayStationScene open={openPsn} />
       <section className="scene identity" id="view-about" aria-labelledby="about-title">
         <div className="about-copy"><h2 id="about-title">Обо мне<span>.</span></h2><p className="bio">25. Кибербезопасность, анализ больших данных и ИИ. Всегда становлюсь лучше.</p>
           <DiscordCard profile={discord} copy={() => void copyName(discord.username,'Discord')} />
@@ -127,7 +163,7 @@ function ArtArchive() {
             <a href={safeExternalUrl(steam?.href ?? '', steamUrl)} target="_blank" rel="noopener noreferrer"><strong>Steam</strong><span>{steam?.subtitle} ↗</span></a>
             <a href={safeExternalUrl(faceit.profileUrl, 'https://www.faceit.com/ru/players/nuBac')} target="_blank" rel="noopener noreferrer"><strong>FACEIT</strong><span>{available('faceit') ? `${faceit.level} уровень` : faceit.nickname} ↗</span></a>
 
-            <button onClick={() => copyName(stats.psnId, 'PlayStation')}><strong>PlayStation</strong><span>{stats.psnId} <small>скопировать</small></span></button>
+            <button onClick={() => openPsn()}><strong>PlayStation</strong><span>{stats.psnId} ↗</span></button>
             <a href="https://tmspk.gg/3Vi7A7Y9" target="_blank" rel="noopener noreferrer"><strong>TeamSpeak</strong><span>Ankuzo ↗</span></a>
           </div>
           <div className="more-links"><a href="https://github.com/todylovv" target="_blank" rel="noopener noreferrer">GitHub ↗</a><a href="https://www.twitch.tv/ankuzo" target="_blank" rel="noopener noreferrer">Twitch ↗</a><a href="https://story.ankuzo.online/" target="_blank" rel="noopener noreferrer">Вне роли ↗</a></div>
@@ -138,11 +174,11 @@ function ArtArchive() {
       <div className="traveller" inert aria-hidden="true"><div className="flipper"><div className="traveller-front"><span>22<br />♠</span><b aria-hidden="true">♠</b><span>22<br />♠</span>{faceitCard}<div className="traveller-game" aria-hidden="true">{selected?.image && <img src={safeExternalUrl(selected.image)} alt="" onError={event => { event.currentTarget.style.visibility = 'hidden'; }} />}<strong>{selected?.title}</strong></div></div><div className="traveller-back"><img src="/art/card-back.png" alt="" width="1024" height="1536" /></div></div></div>
       <svg className="thread" viewBox="0 0 1000 1000" preserveAspectRatio="none" aria-hidden="true"><defs><filter id="glow"><feGaussianBlur stdDeviation="3" /></filter></defs><path className="thread-glow" /><path className="thread-main" /><path className="thread-light" /></svg><div className="thread-bead" aria-hidden="true" /><canvas className="silk" aria-hidden="true" />
     </main>
-    <div className="scroll-track" aria-hidden="true"><div id="home" /><div id="games" /><div id="stats" /><div id="about" /></div>
-    <footer className="chapter-footer"><a className="next" href="#games">Листай дальше <span>↓</span></a><div className="chapter-count"><span>01</span><i />04</div></footer><div className="progress" aria-hidden="true"><i /></div>
-    <dialog className="archive-dialog" ref={dialog} onClose={() => setPanel(null)} aria-labelledby="panel-title">
-      <div className="panel-heading"><h2 id="panel-title">{panel === 'archive' ? 'Весь архив' : 'За цифрами'}<span>.</span></h2><button className="close-panel" aria-label="Закрыть" onClick={() => dialog.current?.close()}>×</button></div>
-      {panel === 'archive' ? <>
+    <div className="scroll-track" aria-hidden="true"><div id="home" /><div id="games" /><div id="stats" /><div id="playstation" /><div id="about" /></div>
+    <footer className="chapter-footer"><a className="next" href="#games">Листай дальше <span>↓</span></a><div className="chapter-count"><span>01</span><i />05</div></footer><div className="progress" aria-hidden="true"><i /></div>
+    <dialog className={`archive-dialog${panel === 'playstation' ? ' ps-dialog' : ''}`} ref={dialog} onClose={closePanel} aria-labelledby="panel-title">
+      <div className="panel-heading"><h2 id="panel-title">{panel === 'playstation' ? 'PlayStation' : panel === 'archive' ? 'Весь архив' : 'За цифрами'}<span>.</span></h2><button className="close-panel" aria-label="Закрыть" onClick={() => dialog.current?.close()}>×</button></div>
+      {panel === 'playstation' ? <PlayStationCatalog initialGame={psGame} key={psGame} /> : panel === 'archive' ? <>
         <div className="archive-controls"><label>Найти игру<input value={query} onChange={event => setQuery(event.target.value)} placeholder="Название" type="search" /></label><label>Платформа<select value={platform} onChange={event => setPlatform(event.target.value)}><option value="all">Все платформы</option><option value="PC">PC · Steam</option><option value="PS5">PlayStation 5</option></select></label></div>
         <p className="archive-summary" aria-live="polite">{live.loading ? 'Загружаю библиотеку…' : `Найдено: ${library.length} · PC ${live.archiveStats.pcCount} / PS5 ${live.archiveStats.ps5Count}`}</p>
         <div className="library-grid">{library.map(game => <article className="library-game" key={`${game.platform}-${game.id}`}>
