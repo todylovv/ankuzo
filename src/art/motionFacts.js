@@ -18,7 +18,7 @@ export function travellerPose(g,w,h){
   const initial={x:mobile?mix(.355,h<=680?.70:.56,travel):mix(.445,.74,travel),y:mobile?mix(.585,h<=680?.77:.75,travel):mix(.545,.53,travel),width:mix(startWidth,statWidth,travel),rotate:mix(mobile?-10:-6,mobile?2:4,travel),scale:mix(mobile?1.17:.70,mobile?(h<=680?.69:.78):1,travel),flip:0};
   if(g<=2)return initial;
   const toPlay=range(g,2.12,2.96),toAbout=range(g,3.14,3.94);
-  const play={x:mobile?.18:.595,y:mobile?.40:.245,width:mobile?Math.min(w*.19,90):clamp(w*.105,125,170),rotate:-14,scale:1,flip:180};
+  const play={x:mobile?.18:.595,y:mobile?(h<=700?.44:.40):.245,width:mobile?Math.min(w*.19,90):clamp(w*.105,125,170),rotate:-14,scale:1,flip:180};
   const about={x:mobile?.84:.27,y:mobile?.16:.50,width:startWidth,rotate:-8,scale:mobile?.56:1.03,flip:180};
   const pose={};for(const key of Object.keys(initial))pose[key]=mix(mix(initial[key],play[key],toPlay),about[key],toAbout);
   pose.scale=Math.min(pose.scale,h*.78/(pose.width*1.5));
