@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="ru">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Ankuzo · Наброски нити</title><link rel="stylesheet" href="./thread.css"></head>
+<body>
+<main>
+  <header><a href="/">22 <span>Вернуться на сайт ↗</span></a><span>ANKUZO / МАТЕРИАЛ НИТИ</span></header>
+  <div class="intro"><h1>Материал нити<span>.</span></h1><p>Три работающих наброска на одной карте.<br>Сравни блики, фактуру и крепления в движении.</p></div>
+  <section class="controls" aria-label="Управление набросками">
+    <button id="play" type="button" aria-pressed="false">Включить движение</button>
+    <label>Поворот <input id="rotation" type="range" min="-180" max="180" step="1" value="-18"><output id="angle">−18°</output></label>
+    <label>Толщина <input id="thickness" type="range" min="1" max="5" step="0.1" value="2.4"><output id="size">2,4 px</output></label>
+    <button id="zoom" type="button" aria-pressed="false">Приблизить ×2</button>
+  </section>
+  <div class="studies">
+    <article><h2>Шёлк</h2><p>Мягкий свет · тонкое волокно</p><div class="view" data-material="silk" role="img" aria-label="Шёлковая нить вокруг карты"></div></article>
+    <article><h2>Эластичная</h2><p>Глубокий красный · яркий блик</p><div class="view" data-material="elastic" role="img" aria-label="Глянцевая эластичная нить вокруг карты"></div></article>
+    <article><h2>Микроплетение</h2><p>Матовый объём · витая фактура</p><div class="view" data-material="braid" role="img" aria-label="Плетёная нить вокруг карты"></div></article>
+  </div>
+  <p id="status" role="status">Загружаю материалы…</p>
+  <footer><span>Нить и карта — геометрия в реальном времени.</span><span>Масштаб 1× · без увеличения</span></footer>
+</main>
+<canvas id="render" aria-hidden="true"></canvas>
+<script type="module" src="./thread.js"></script>
+</body></html>

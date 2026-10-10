@@ -147,8 +147,11 @@ export async function mountFullScene(root: HTMLElement, onFailure: () => void, s
       const strings: THREE.Line[] = [];
       if (tied) {
         // Wrap around the upper third, with real thickness and no drilled holes.
-        for (const dy of [0,.025]) {
-          const band = new THREE.Mesh(threadGeometry, red); band.rotation.z = Math.PI / 2; band.position.set(0,.34 + dy,.024); group.add(band);
+        for (const depth of [-.008,.024]) {
+          const band = new THREE.Mesh(threadGeometry, red); band.rotation.z = Math.PI / 2; band.position.set(0,.34,depth); group.add(band);
+        }
+        for (const side of [-.5,.5]) {
+          const turn=new THREE.Mesh(threadGeometry,red);turn.rotation.x=Math.PI/2;turn.scale.y=.032;turn.position.set(side,.34,.008);group.add(turn);
         }
         const lineMaterial = new THREE.LineBasicMaterial({ color: 0xc72c50, transparent: true, opacity: .68 }); materials.push(lineMaterial);
         for (let side = 0; side < 2; side++) {
@@ -188,7 +191,7 @@ export async function mountFullScene(root: HTMLElement, onFailure: () => void, s
       auraMaterial.uniforms.uResolution.value.set(w, h);
       root.dataset.auraResolution = `${canvas.width}x${canvas.height}`;
     }
-    const attachment=new THREE.Vector3(),anchor=new THREE.Vector3();
+    const attachment=new THREE.Vector3(),anchor=new THREE.Vector3(),tangent=new THREE.Vector3(),near=new THREE.Vector3(),far=new THREE.Vector3();
     const start = () => { cancelAnimationFrame(raf); previous = 0;paintAt=0;auraAt=0;pressure.length=0;warmAt=0; if (!disposed && !document.hidden) raf = requestAnimationFrame(draw); };
     let measureAt=0, measureFrames=0, measureCpu=0, measureMax=0; const intervals:number[]=[];
     function draw(now: number) {
@@ -228,11 +231,17 @@ export async function mountFullScene(root: HTMLElement, onFailure: () => void, s
         group.updateMatrixWorld();
         strings.forEach((line, side) => {
           line.visible = group.visible;
-          group.localToWorld(attachment.set(side ? .50 : -.50,.36,.025));
-          anchor.set(attachment.x - Math.sin(elapsed * .23 + i) * width * .11, h * .8 * projection, z - 1);
+          group.localToWorld(attachment.set(side ? .50 : -.50,.34,.024));
+          // The wrap and tail endpoints must share all three transformed coordinates.
+          tangent.set(side?1:-1,0,0).transformDirection(group.matrixWorld);
+          anchor.copy(attachment).addScaledVector(tangent,width*.25);
+          anchor.y=h*.8*projection;
           const points = line.geometry.getAttribute('position');
+          near.copy(attachment).addScaledVector(tangent,width*.22);
+          far.copy(anchor);far.y-=width*.4;
           for (let j = 0; j < points.count; j++) {
-            const f = j / (points.count - 1); points.setXYZ(j, THREE.MathUtils.lerp(anchor.x, attachment.x, f) + Math.sin(Math.PI * f) * Math.sin(elapsed * .4 + i) * width * .025, THREE.MathUtils.lerp(anchor.y, attachment.y, f), z + .03);
+            const f=j/(points.count-1),u=1-f;
+            points.setXYZ(j,...[0,1,2].map(k=>u*u*u*anchor.getComponent(k)+3*u*u*f*far.getComponent(k)+3*u*f*f*near.getComponent(k)+f*f*f*attachment.getComponent(k)) as [number,number,number]);
           }
           points.needsUpdate = true; line.frustumCulled=false;
         });

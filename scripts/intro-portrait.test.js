@@ -25,7 +25,7 @@ test('all symbols settle and stay settled while a resource is still loading',()=
 });
 
 import { mountIntroScene } from '../src/art/introScene.js';
-test('a browser without Canvas can exit and dispose the SVG fallback',async()=>{
+test('a browser without Canvas can exit and dispose the portrait scene',async()=>{
   const previous=global.document;
   try{
     for(const failAt of [1,2]){

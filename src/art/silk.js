@@ -1,4 +1,6 @@
-/* Two continuous tails and a band fixed in each card's local 3D space. */
+import { travellerPose } from './motionFacts.js';
+import { connectThread, fibreOffset } from './silkGeometry.js';
+/* Tails and wraps share physical edge anchors on the currently visible card face. */
 export function mountSilk(root) {
   'use strict';
   const canvas=root.querySelector('.silk'),ctx=canvas.getContext('2d',{alpha:true});
@@ -70,7 +72,7 @@ export function mountSilk(root) {
         points.forEach((point,i)=>{
           const previous=points[Math.max(0,i-1)],next=points[Math.min(points.length-1,i+1)];
           const dx=next[0]-previous[0],dy=next[1]-previous[1],size=Math.hypot(dx,dy)||1;
-          const wave=side*(2.4+Math.sin(lengths[i]*.024-energyTime*.8+index)*1.6);
+          const wave=fibreOffset(lengths[i],length,energyTime,side);
           const x=point[0]-dy/size*wave,y=point[1]+dx/size*wave;
           if(i)paint.lineTo(x,y);else paint.moveTo(x,y);
         });
@@ -90,22 +92,27 @@ export function mountSilk(root) {
   const cards=[...root.querySelectorAll('.game-card')];
   const flipper=root.querySelector('.flipper');
   function bindCard(el,back=false){
-    const band=`<svg class="card-band${back?' band-back':''}" viewBox="0 0 100 150" preserveAspectRatio="none" aria-hidden="true"><path class="band-shadow" d="M -2 90 C 28 94 72 86 102 90"/><path class="band-body" d="M -2 90 C 28 94 72 86 102 90"/><path class="band-shine" d="M -2 89.5 C 28 93.5 72 85.5 102 89.5"/>${back?'':'<path class="band-knot" d="M 91 90 c 4 -4 6 -2 3 1 c -3 3 -5 0 -2 -2 M 94 91 l 3 4"/>'}</svg>`;
+    const band=`<svg class="card-band" viewBox="0 0 100 150" preserveAspectRatio="none" aria-hidden="true"><path class="band-shadow" d="M 0 90 C 33 91 67 89 100 90"/><path class="band-body" d="M 0 90 C 33 91 67 89 100 90"/><path class="band-shine" d="M 0 90 C 33 91 67 89 100 90"/>${back?'':'<path class="band-knot" d="M 91 90 c 4 -4 6 -2 3 1 c -3 3 -5 0 -2 -2 M 94 91 l 3 4"/>'}</svg>`;
     el.insertAdjacentHTML('beforeend',band);
   }
   function attach(el){
-    for(const side of ['left','right']){const pin=document.createElement('i');pin.className=`tie-anchor tie-${side}`;pin.setAttribute('aria-hidden','true');el.append(pin)}
-    return {left:el.querySelector('.tie-left'),right:el.querySelector('.tie-right')};
+    for(const side of ['left','right','left-inner','right-inner']){const pin=document.createElement('i');pin.className=`tie-anchor tie-${side}`;pin.setAttribute('aria-hidden','true');el.append(pin)}
+    return {left:el.querySelector('.tie-left'),right:el.querySelector('.tie-right'),leftInner:el.querySelector('.tie-left-inner'),rightInner:el.querySelector('.tie-right-inner')};
   }
   const anchors=cards.map(el=>{bindCard(el);return attach(el)});
-  bindCard(flipper);bindCard(flipper,true);
-  const moving=attach(flipper),character=root.querySelector('.character');
+  const front=flipper.querySelector('.traveller-front'),back=flipper.querySelector('.traveller-back');
+  bindCard(front);bindCard(back,true);
+  const movingFront=attach(front),movingBack=attach(back),character=root.querySelector('.character');
   let cw=0,ch=0;
   const mix=(a,b,t)=>a+(b-a)*t;
   const clamp=n=>Math.max(0,Math.min(1,n));
   const ease=n=>{n=clamp(n);return n*n*(3-2*n)};
   const range=(n,a,b)=>ease((n-a)/(b-a));
   const center=el=>{const r=el.getBoundingClientRect();return [r.left+r.width/2,r.top+r.height/2]};
+  const edges=pins=>['left','right'].map(side=>{
+    const point=center(pins[side]),inner=center(pins[side+'Inner']);
+    return {point,out:point.map((v,k)=>v-inner[k])};
+  }).sort((a,b)=>a.point[0]-b.point[0]);
   function curve(nodes,n=45){
     const out=[];
     for(let j=0;j<nodes.length-1;j+=3){
@@ -114,11 +121,11 @@ export function mountSilk(root) {
     }
     return out;
   }
-  function subdivideCubic(p){
+  function subdivideCubic(p,parts=3){
     const at=t=>{const u=1-t;return [0,1].map(k=>u*u*u*p[0][k]+3*u*u*t*p[1][k]+3*u*t*t*p[2][k]+t*t*t*p[3][k])};
     const tangent=t=>{const u=1-t;return [0,1].map(k=>3*u*u*(p[1][k]-p[0][k])+6*u*t*(p[2][k]-p[1][k])+3*t*t*(p[3][k]-p[2][k]))};
     const nodes=[p[0]];
-    for(let i=0;i<3;i++){const a=at(i/3),b=at((i+1)/3),da=tangent(i/3),db=tangent((i+1)/3);nodes.push(a.map((v,k)=>v+da[k]/9),b.map((v,k)=>v-db[k]/9),b)}
+    for(let i=0;i<parts;i++){const a=at(i/parts),b=at((i+1)/parts),da=tangent(i/parts),db=tangent((i+1)/parts);nodes.push(a.map((v,k)=>v+da[k]/(parts*3)),b.map((v,k)=>v-db[k]/(parts*3)),b)}
     return nodes;
   }
   function rope(points,alpha,mobile,fadeHead=0,paint=ctx){
@@ -142,43 +149,52 @@ export function mountSilk(root) {
     if(cw!==w||ch!==h){cw=w;ch=h;for(const layer of [canvas,leadCanvas]){layer.width=Math.round(w*dpr);layer.height=Math.round(h*dpr);layer.style.width=w+'px';layer.style.height=h+'px'}glowDirty=true;}
     ctx.setTransform(dpr,0,0,dpr,0,0);ctx.clearRect(0,0,w,h);
     leadCtx.setTransform(dpr,0,0,dpr,0,0);leadCtx.clearRect(0,0,w,h);
-    if(g<1.35){
-      const ends=anchors.map(a=>({left:center(a.left),right:center(a.right)}));
+    const deckEdges=g<1.70?anchors.map(edges):[];
+    const transfer=range(g,1.04,1.20),depart=range(g,1.18,1.70);
+    const face=travellerPose(g,w,h).flip<=90?movingFront:movingBack;
+    const movingEdges=edges(face);
+    const selected=transfer===1?movingEdges:deckEdges[1].map((edge,i)=>({
+      point:edge.point.map((v,k)=>mix(v,movingEdges[i].point[k],transfer)),
+      out:edge.out.map((v,k)=>mix(v,movingEdges[i].out[k],transfer)),
+    }));
+    deckEdges[1]=selected;
+    const link=(a,b)=>connectThread(a.point,b.point,a.out,b.out);
+    const fadeDeck=1-range(g,1.25,1.70);
+    if(g<1.70){
       const image=character.getBoundingClientRect(),hand=[image.left+image.width*.245,image.top+image.height*.282];
-      const first=ends[0].left;
-      const alpha=1-range(g,1.05,1.35);
-      // One gesture: the loop held by his fingers uncoils into the deck.
-      // Identical cubic topology keeps the loop continuous in both directions.
-      const loop=mobile?
-        [hand,[hand[0]-w*.08,hand[1]+h*.17],[w*.18,h*.54],[w*.20,h*.68],[w*.23,h*.84],[w*.78,h*.86],[w*.78,h*.69],[w*.78,h*.54],[w*.46,h*.66],first]:
-        [hand,[hand[0]-w*.06,hand[1]+h*.19],[w*.42,h*.40],[w*.38,h*.64],[w*.33,h*.88],[w*.68,h*.90],[w*.67,h*.69],[w*.66,h*.49],[w*.46,h*.65],first];
-      const settled=subdivideCubic([[-w*.1,h*.72],[w*.02,h*.82],[first[0]-w*.08,first[1]+h*.12],first]);
-      const uncoil=range(g,.12,.96);
-      const release=range(g,.59,.96);
-      rope(curve(loop.map((p,i)=>p.map((v,k)=>mix(v,settled[i][k],i<2?release:uncoil))),36),alpha,mobile,range(g,.15,.59),mobile?leadCtx:ctx);
-      const links=range(g,.25,.90)*alpha;
-      for(let i=0;i<ends.length-1;i++){
-        const a=ends[i].right,b=ends[i+1].left;
-        const reach=Math.min(w*.025,Math.abs(b[0]-a[0])*.38);
-        rope(curve([a,[a[0]+reach,a[1]+h*.008],[b[0]-reach,b[1]+h*.008],b],24),links,mobile);
+      const first=deckEdges[0][0];
+      const loop=subdivideCubic([hand,[hand[0]-w*(mobile?.42:.40),hand[1]+h*(mobile?.32:.04)],[first.point[0]-w*(mobile?.24:.30),first.point[1]+h*.16],first.point]);
+      const settled=subdivideCubic([[-w*.1,h*.72],[w*.02,h*.82],[first.point[0]-w*.08,first.point[1]+h*.12],first.point]);
+      const uncoil=range(g,.12,.96),release=range(g,.59,.96);
+      const lead=loop.map((p,i)=>p.map((v,k)=>mix(v,settled[i][k],i<2?release:uncoil)));
+      // The final handle follows the actual band tangent in the card's rotated plane.
+      const direction=first.out,length=Math.hypot(...direction)||1,reach=Math.min(w*.1,100);
+      lead[8]=first.point.map((v,k)=>v+direction[k]/length*reach);
+      rope(curve(lead,36),fadeDeck,mobile,range(g,.38,.59),mobile?leadCtx:ctx);
+      const links=range(g,.25,.90);
+      for(let i=0;i<deckEdges.length-1;i++){
+        if(i===0||i===1)continue;
+        rope(curve(link(deckEdges[i][1],deckEdges[i+1][0]),24),links*fadeDeck,mobile);
       }
-      const a=ends.at(-1).right;
-      rope(curve([a,[a[0]+w*.12,a[1]+h*.03],[w*1.03,h*.56],[w*1.1,h*.57]]),links,mobile);
+      const last=deckEdges.at(-1)[1];
+      rope(curve(connectThread(last.point,[w*1.1,h*.57],last.out,[-1,0])),links*fadeDeck,mobile);
     }
-    if(g>1.04){
-      // The visible edges exchange sides at 90°. Route each tail to its
-      // screen-side edge so it cannot cross behind the card and emerge detached.
-      const edges=[center(moving.left),center(moving.right)].sort((a,b)=>a[0]-b[0]);
-      const [a,b]=edges,reveal=range(g,1.04,1.35),loosen=range(g,2.12,3.94),ps=range(g,2.12,2.96)*(1-range(g,3.14,3.94));
-      const y=mix(mix(mobile?.51:.635,mobile?.14:.73,loosen),mobile?.40:.13,ps)*h;
-      const side=mobile?w*.12:w*.20;
-      const shelf=(1-loosen)*(1-ps)*range(g,1.35,1.98),ledgeY=mix(y,h*.71,shelf),ledgeX=mix(a[0]*.48,w*.40,shelf);
-      const first=[[-w*.10,ledgeY],[w*.04,ledgeY],[ledgeX*.78,ledgeY],[ledgeX,ledgeY],[mix(a[0]*.64,w*.49,shelf),ledgeY],[a[0]*.88,mix(a[1]+h*.06,mobile?a[1]+h*.01:h*.10,ps)],a];
-      rope(curve(first),reveal,mobile);
-      const endY=mix(mix(mobile?.64:.58,mobile?.37:.94,loosen),mobile?.49:.42,ps)*h;
-      const last=[b,[b[0]+side*(mobile?.55:mix(.55,.12,loosen)),b[1]+h*(mobile?.045:mix(.045,.30,loosen))],[w*.87,endY+h*.04],[w*1.1,endY]];
-      rope(curve(last),reveal,mobile);
-    }
+    // Adjacent cards move away to their respective sides. Each connecting segment
+    // becomes a free tail; there is never a second rope crossfading over the first.
+    const reveal=range(g,.25,.90),[left,right]=selected;
+    const loosen=range(g,2.12,3.94),ps=range(g,2.12,2.96)*(1-range(g,3.14,3.94));
+    const leftY=mix(mix(mobile?.51:.635,mobile?.14:.73,loosen),mobile?.40:.13,ps)*h;
+    const rightY=mix(mix(mobile?.64:.58,mobile?.37:.94,loosen),mobile?.49:.42,ps)*h;
+    const shelf=mobile?0:(1-loosen)*(1-ps)*range(g,1.35,1.98);
+    const middle=[w*.40,h*.71];
+    const baselineLeft=subdivideCubic(connectThread([-w*.1,leftY],left.point,[w*.01,0],left.out),2);
+    const shelfLeft=[[-w*.1,h*.71],[w*.06,h*.71],[w*.28,h*.71],...connectThread(middle,left.point,[w*.01,0],left.out)];
+    const freeLeft=baselineLeft.map((point,i)=>point.map((v,k)=>mix(v,shelfLeft[i][k],shelf)));
+    const freeRight=connectThread(right.point,[w*1.1,rightY],right.out,[-w*.01,0]);
+    const fromLeft=depart===1?freeLeft:subdivideCubic(link(deckEdges[0][1],left),2),fromRight=depart===1?freeRight:link(right,deckEdges[2][0]);
+    const morph=(from,to)=>from.map((point,i)=>point.map((v,k)=>mix(v,to[i][k],depart)));
+    rope(curve(morph(fromLeft,freeLeft)),reveal,mobile);
+    rope(curve(morph(fromRight,freeRight)),reveal,mobile);
   };
   return { draw, dispose() { energyDisposed=true;cancelAnimationFrame(energyRaf);energyLife.abort();energyCanvas.remove();energyLead.remove();glowCache.width=1;leadGlowCache.width=1;energyPaths=[];leadCanvas.remove(); root.querySelectorAll('.card-band,.tie-anchor').forEach(el=>el.remove()); root.classList.remove('has-silk'); } };
 }

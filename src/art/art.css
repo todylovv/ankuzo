@@ -119,3 +119,15 @@
 .art-root[data-quality=off] .discord-styled-name{animation:none}
 @media(prefers-reduced-motion:reduce){.discord-styled-name{animation:none!important}}
 @media(max-width:760px){.discord-heading{padding-left:76px;min-height:91px}.discord-nameplate{left:69px}.discord-heading h3{font-size:16px}.discord-joined{font-size:10px}.discord-badges{font-size:10px;margin-top:12px}.discord-body{padding-bottom:17px}.discord-nameplate:after{background:linear-gradient(90deg,#130e18ed,#130e18c9 70%,#130e1877)}}
+
+/* One physical card surface and one wrap plane throughout the handoff and flip. */
+.game-card{aspect-ratio:2/3;transform-origin:50% 50%}
+.traveller-back{inset:0;overflow:hidden;border-radius:13px;border:1px solid #b481969c;background:#0b090b url('/art/card-back.png') center/115% 112%;box-shadow:0 2px 0 #a6979d,10px 25px 55px #0008}
+.traveller-back img{visibility:hidden}
+.card-band,.tie-anchor{transform:translateZ(.65px)}
+.tie-left-inner{left:1%;top:60.02%}.tie-right-inner{right:1%;top:59.98%}
+.traveller-game img{inset:12% 7% auto;height:54%;filter:saturate(.77);mask-image:linear-gradient(#000 72%,transparent)}
+.traveller-game{z-index:4}.traveller-game .game-copy{bottom:14%}.traveller-game .game-copy strong{position:static;font-size:clamp(13px,1vw,17px)}
+@media(max-width:760px){.traveller-game .game-copy strong{font-size:11px}.band-body{stroke-width:1.6}.band-shine{stroke-width:.45}}
+
+.traveller-edge{position:absolute;top:0;width:2px;height:100%;background:#a36a80;transform:rotateY(90deg);pointer-events:none}.edge-left{left:-1px}.edge-right{right:-1px}

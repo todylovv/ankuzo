@@ -57,6 +57,14 @@ function optionalAssetsPlugin(): Plugin {
 
 export default defineConfig({
   plugins: [react(), optionalAssetsPlugin()],
+  build: {
+    rolldownOptions: {
+      input: {
+        main: path.join(rootDir, "index.html"),
+        thread: path.join(rootDir, "prototypes/thread/index.html"),
+      },
+    },
+  },
   server: {
     host: "127.0.0.1",
     port: 5173,

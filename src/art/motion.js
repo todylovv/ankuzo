@@ -1,4 +1,4 @@
-import { CHAPTER_SPAN, CHAPTERS, phaseAt, advancePhase, travellerPose } from './motionFacts.js';
+import { CHAPTER_SPAN, CHAPTERS, phaseAt, advancePhase, travellerPose, deckCardPose } from './motionFacts.js';
 
 export function mountArtMotion(root, drawSilk) {
   'use strict';
@@ -31,6 +31,16 @@ export function mountArtMotion(root, drawSilk) {
   const ease=t=>{t=clamp(t);return t*t*t*(t*(t*6-15)+10)};
   const interval=(v,a,b)=>ease((v-a)/(b-a));
   let reduced=root.dataset.quality==='off', active=-1, raf=0, shown=0, previous=0, navigationUntil=0, viewportPosition=scrollY/(innerHeight*CHAPTER_SPAN);
+  // A deterministic development-only timeline makes individual transition frames inspectable.
+  let reviewPhase=null, reviewPanel=null;
+  if(import.meta.env.DEV && new URLSearchParams(location.search).has('motion-review')){
+    reviewPhase=Number(new URLSearchParams(location.search).get('motion-review'))||0;
+    reviewPanel=document.createElement('div');reviewPanel.className='motion-review';
+    reviewPanel.style.cssText='position:fixed;bottom:6px;left:44%;z-index:300;background:#100c12;padding:6px;font:12px Arial;color:white';
+    reviewPanel.innerHTML='<label>Кадр <input aria-label="Фаза анимации" type="number" min="0" max="4" step="0.01" style="width:70px"></label>';
+    reviewPanel.querySelector('input').value=String(reviewPhase);root.append(reviewPanel);
+    listen(reviewPanel.querySelector('input'),'input',event=>{reviewPhase=clamp(Number(event.target.value),0,last);cancelAnimationFrame(raf);render();});
+  }
   root.style.setProperty('--chapter-span', `${CHAPTER_SPAN*100}vh`);
   // Four paths have the same cubic topology. Their interpolation is pure in scroll position.
   const threadShapes=[
@@ -70,9 +80,9 @@ export function mountArtMotion(root, drawSilk) {
     const w=innerWidth,h=innerHeight,mobile=w<=760;
     viewportPosition=scrollY/(h*CHAPTER_SPAN);
     const q=phaseAt(scrollY,h);
-    const target=q;
+    const target=reviewPhase??q;
     const dt=previous?Math.min(40,timestamp-previous):16;previous=timestamp;
-    shown=advancePhase(shown,target,dt,timestamp<navigationUntil?2.2:.7);
+    shown=reviewPhase===null?advancePhase(shown,target,dt,timestamp<navigationUntil?2.2:.7):target;
     if(Math.abs(shown-target)<.0002)shown=target;
     const g=shown;
     const tail=mobile?Math.max(0,scrollY-last*h*CHAPTER_SPAN):0;
@@ -91,21 +101,14 @@ export function mountArtMotion(root, drawSilk) {
     });
     heroCopy.style.opacity=visibility(g,0).toFixed(4);
     archiveCopy.style.opacity=visibility(g,1).toFixed(4);
-    const enter=interval(g,0,1),leave=interval(g,1,2);
-    const fanX=mobile?[-.29,-.145,0,.145,.29]:[-.24,-.09,.06,.20,.33];
-    const fanY=mobile?[.025,-.025,-.045,-.025,.025]:[.055,-.025,-.005,.025,.06];
-    const angles=mobile?[-19,-10,0,10,19]:[-17,-6,2,10,18];
-    const fan=interval(g,.08,.9)*(1-leave);
+    const travelIn=interval(g,1.04,1.20);
     cards.forEach((el,i)=>{
-      const cardLeave=i===1?0:leave,cardFan=i===1?interval(g,.08,.9):fan;
-      const x=fanX[i]*w*cardFan+(mobile?0:w*.035)-cardLeave*w*(.75+i*.06);
-      const y=fanY[i]*h*cardFan+(1-enter)*h*.45-cardLeave*h*.11;
-      const z=(i===1?90:20-Math.abs(i-2)*20)*cardFan;
-      el.style.transform=`translate3d(calc(-50% + ${x.toFixed(2)}px),calc(-50% + ${y.toFixed(2)}px),${z.toFixed(2)}px) rotate(${(angles[i]*cardFan-35*cardLeave).toFixed(2)}deg) rotateY(${((i-2)*-5*cardFan).toFixed(2)}deg)`;
+      const pose=deckCardPose(g,w,h,i);
+      el.style.left=`${pose.x*100}%`;el.style.top=`${pose.y*100}%`;el.style.width=`${pose.width}px`;
+      el.style.transform=`translate(-50%,-50%) rotate(${pose.rotate}deg) rotateY(${i===1?0:(i-2)*-4*interval(g,.08,.9)}deg)`;
       el.style.zIndex=String([2,6,5,4,3][i]);
-      el.style.opacity=i===1?(1-interval(g,1.05,1.30)).toFixed(3):'1';
+      el.style.opacity=i===1&&travelIn===1?'0':'1';
     });
-    const travelIn=interval(g,1.05,1.30);
     traveller.style.opacity=travelIn.toFixed(4);
     const pose=travellerPose(g,w,h);
     traveller.style.width=`${pose.width}px`;
@@ -139,6 +142,7 @@ export function mountArtMotion(root, drawSilk) {
     root.querySelector('.about-copy').style.transform='';
     if(off)cards.forEach((el,i)=>{
       const mobile=innerWidth<=760;
+      el.style.left='50%';el.style.top=mobile?'61%':'57%';el.style.width='';el.style.opacity='1';
       el.style.transform=`translate(calc(-50% + ${(i-2)*(mobile?innerWidth*.145:innerWidth*.15)}px),-50%) rotate(${(i-2)*8}deg)`;
     });
     active=-1;
@@ -165,5 +169,5 @@ export function mountArtMotion(root, drawSilk) {
   }
   shown=phaseAt(scrollY,innerHeight);
   render();
-  return ()=>{disposed=true;life.abort();cancelAnimationFrame(raf);root.classList.remove('motion-off');history.scrollRestoration=restoration;};
+  return ()=>{disposed=true;life.abort();cancelAnimationFrame(raf);reviewPanel?.remove();root.classList.remove('motion-off');history.scrollRestoration=restoration;};
 }
