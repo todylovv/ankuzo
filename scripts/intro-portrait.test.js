@@ -30,7 +30,7 @@ test('a browser without Canvas can exit and dispose the portrait scene',async()=
   try{
     for(const failAt of [1,2]){
       let contexts=0;
-      global.document={createElement:()=>({setAttribute(){},remove(){},getContext(){return ++contexts===failAt?null:{};}})};
+      global.document={createElement:()=>({setAttribute(){},remove(){},getContext(){return ++contexts===failAt?null:{setTransform(){}};}})};
       const scene=mountIntroScene({querySelector:()=>({append(){}})});
       await scene.ready;
       assert.doesNotThrow(()=>scene.exit());

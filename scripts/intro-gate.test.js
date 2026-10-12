@@ -25,3 +25,12 @@ test('skipping aborts the wait and cancels minimum display time',async()=>{
   const ready=waitForIntro([new Promise(()=>{})],{minMs:200,timeoutMs:300,signal:controller.signal});
   controller.abort();assert.equal((await ready).aborted,true);assert.ok(performance.now()-start<100);
 });
+
+test('failed resources are reported separately from completed loading',async()=>{
+  const events=[];
+  const result=await waitForIntro([Promise.reject(new Error('offline')),Promise.resolve()],{
+    minMs:20,timeoutMs:100,onProgress:(done,total,failed)=>events.push([done,total,failed]),
+  });
+  assert.equal(result.failed,1);
+  assert.deepEqual(events,[[1,2,1],[2,2,1]]);
+});

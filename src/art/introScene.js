@@ -1,6 +1,7 @@
 import { assemble } from './introPortraitFacts.js';
 
-const SIZE=640, STEP=5;
+const SIZE=640, COLS=168, ROWS=84, STEP=560/COLS;
+const FONT=`600 ${STEP*2}px "DejaVu Sans Mono","Cascadia Mono","Segoe UI Symbol",monospace`;
 const clamp=x=>Math.max(0,Math.min(1,x));
 const smooth=x=>{const t=clamp(x);return t*t*(3-2*t);};
 const random=n=>{const x=Math.sin(n*127.1+311.7)*43758.5453;return x-Math.floor(x);};
@@ -9,33 +10,35 @@ const random=n=>{const x=Math.sin(n*127.1+311.7)*43758.5453;return x-Math.floor(
 export function mountIntroScene(overlay,{staticGraphics=false}={}) {
   const portrait=overlay.querySelector('.intro-portrait');
   const canvas=document.createElement('canvas');canvas.className='intro-art';canvas.setAttribute('aria-hidden','true');
-  canvas.width=canvas.height=SIZE;portrait.append(canvas);
+  const scale=Math.min(2,Math.max(1,(portrait.getBoundingClientRect?.().width || SIZE)*(globalThis.devicePixelRatio || 1)/SIZE));
+  canvas.width=canvas.height=Math.round(SIZE*scale);portrait.append(canvas);
   const ctx=canvas.getContext('2d',{alpha:true});
   if(!ctx){canvas.remove();return {ready:Promise.resolve(),exit(){},dispose(){}};}
+  ctx.setTransform(scale,0,0,scale,0,0);
   const mask=document.createElement('canvas'),hair=document.createElement('canvas');
-  for(const layer of [mask,hair])layer.width=layer.height=SIZE;
+  for(const layer of [mask,hair])layer.width=layer.height=canvas.width;
   const maskCtx=mask.getContext('2d'),hairCtx=hair.getContext('2d');
   if(!maskCtx||!hairCtx){canvas.remove();return {ready:Promise.resolve(),exit(){},dispose(){}};}
   const life=new AbortController();
   let disposed=false,raf=0,last=0,clock=0,painted=0,cells=[],loaded=false,exiting=false;
-  let resolveReady;const ready=new Promise(resolve=>{resolveReady=resolve;});
-  fetch('/art/intro-portrait.json',{signal:life.signal}).then(response=>{
+  let resolveReady,rejectReady;const ready=new Promise((resolve,reject)=>{resolveReady=resolve;rejectReady=reject;});
+  fetch('/art/intro-portrait-v2.json',{signal:life.signal}).then(response=>{
     if(!response.ok)throw new Error('Portrait unavailable');return response.json();
   }).then(rows=>{
     if(disposed)return;
-    if(!Array.isArray(rows)||rows.length>6272)throw new Error('Invalid portrait');
-    for(const paint of [maskCtx,hairCtx]){paint.font='10px "DejaVu Sans Mono","Cascadia Mono","Segoe UI Symbol",monospace';paint.textBaseline='top';}
+    if(!Array.isArray(rows)||rows.length>COLS*ROWS)throw new Error('Invalid portrait');
+    for(const paint of [maskCtx,hairCtx]){paint.setTransform(scale,0,0,scale,0,0);paint.font=FONT;paint.textBaseline='top';paint.shadowColor=paint===hairCtx?'#f43b6c':'#f5eff2';paint.shadowBlur=.65;}
     for(const [col,row,code,isHair,light] of rows){
-      if(![col,row,code,isHair,light].every(Number.isFinite)||col<0||col>=112||row<0||row>=56||code<1||code>255)throw new Error('Invalid portrait cell');
-      const brightness=light/255,seed=random(row*112+col),x=40+col*STEP,y=40+row*STEP*2;
-      const ink=isHair?`rgb(${Math.round(210+brightness*45)},${Math.round(29+brightness*46)},${Math.round(68+brightness*64)})`:`rgb(${Math.round(176+brightness*74)},${Math.round(171+brightness*72)},${Math.round(176+brightness*68)})`;
+      if(![col,row,code,isHair,light].every(Number.isFinite)||col<0||col>=COLS||row<0||row>=ROWS||code<1||code>255)throw new Error('Invalid portrait cell');
+      const brightness=light/255,seed=random(row*COLS+col),x=40+col*STEP,y=40+row*STEP*2;
+      const ink=isHair?`rgb(${Math.round(230+brightness*25)},${Math.round(42+brightness*58)},${Math.round(76+brightness*74)})`:`rgb(${Math.round(205+brightness*50)},${Math.round(200+brightness*53)},${Math.round(205+brightness*50)})`;
       const paint=isHair?hairCtx:maskCtx;paint.fillStyle=ink;
       const glyph=String.fromCharCode(0x2800+code);paint.fillText(glyph,x,y,STEP);
-      cells.push({row,x,y,seed,ink,glyph,hair:isHair});
+      cells.push({row:row*64/ROWS,x,y,seed,ink,glyph,hair:isHair});
     }
     loaded=true;overlay.classList.add('intro-art-ready');draw(staticGraphics?3:clock);
     overlay.dataset.portraitCells=String(cells.length);resolveReady();
-  }).catch(()=>{if(!disposed)canvas.remove();resolveReady();});
+  }).catch(error=>{if(!disposed){canvas.remove();rejectReady(error);}else resolveReady();});
   function filaments(t){
     const reveal=smooth(t/1.3);if(!reveal)return;
     ctx.save();ctx.globalCompositeOperation='screen';
@@ -68,7 +71,7 @@ export function mountIntroScene(overlay,{staticGraphics=false}={}) {
     }
     if(!loaded)return;
     if(t<2.7&&!staticGraphics){
-      ctx.font='10px "DejaVu Sans Mono","Cascadia Mono","Segoe UI Symbol",monospace';ctx.textBaseline='top';
+      ctx.font=FONT;ctx.textBaseline='top';
       for(const cell of cells){
         const amount=assemble(t,cell.row,cell.seed);if(amount<=.01)continue;
         const drift=1-amount,angle=cell.seed*Math.PI*2;
@@ -81,14 +84,14 @@ export function mountIntroScene(overlay,{staticGraphics=false}={}) {
       for(let y=0;y<SIZE;y+=2){
         const top=clamp((365-y)/280);
         const dx=staticGraphics?0:Math.sin(t*.8+y*.012)*2.4*top;
-        ctx.drawImage(hair,0,y,SIZE,2,dx,y,SIZE,2);
+        ctx.drawImage(hair,0,y*scale,canvas.width,2*scale,dx,y,SIZE,2);
       }
-      if(!staticGraphics){ctx.save();ctx.globalAlpha=.22;ctx.shadowColor='#f52860';ctx.shadowBlur=10;ctx.drawImage(hair,0,0);ctx.restore();}
-      ctx.drawImage(mask,0,0);
+      if(!staticGraphics){ctx.save();ctx.globalAlpha=.22;ctx.shadowColor='#f52860';ctx.shadowBlur=10;ctx.drawImage(hair,0,0,SIZE,SIZE);ctx.restore();}
+      ctx.drawImage(mask,0,0,SIZE,SIZE);
       if(!staticGraphics){
         // A sparse sheen moves across existing glyphs; it never fills the eye openings.
         const sheen=clamp(1-Math.abs((t%7)-3.3)/1.6)*.13;
-        ctx.globalCompositeOperation='screen';ctx.globalAlpha=sheen;ctx.drawImage(mask,0,0);ctx.globalAlpha=1;ctx.globalCompositeOperation='source-over';
+        ctx.globalCompositeOperation='screen';ctx.globalAlpha=sheen;ctx.drawImage(mask,0,0,SIZE,SIZE);ctx.globalAlpha=1;ctx.globalCompositeOperation='source-over';
       }
     }
     overlay.dataset.introTime=t.toFixed(2);

@@ -16,24 +16,27 @@ function eventReady(name, signal) {
 }
 
 function imageReady(image, signal) {
-  return new Promise(resolve => {
+  return new Promise((resolve, reject) => {
     let settled = false;
-    const settle = () => {
+    const settle = error => {
       if (settled) return;
       settled = true;
       image.removeEventListener('load', loaded);
-      image.removeEventListener('error', settle);
-      signal.removeEventListener('abort', settle);
-      resolve();
+      image.removeEventListener('error', failed);
+      signal.removeEventListener('abort', cancelled);
+      if (error) reject(error); else resolve();
     };
+    const failed = () => settle(new Error('Image unavailable'));
+    const cancelled = () => settle();
     const loaded = () => {
-      if (image.decode) image.decode().then(settle, settle);
+      if (!image.naturalWidth) return failed();
+      if (image.decode) image.decode().then(() => settle(), failed);
       else settle();
     };
     image.addEventListener('load', loaded, { once: true });
-    image.addEventListener('error', settle, { once: true });
-    signal.addEventListener('abort', settle, { once: true });
-    if (signal.aborted) settle();
+    image.addEventListener('error', failed, { once: true });
+    signal.addEventListener('abort', cancelled, { once: true });
+    if (signal.aborted) cancelled();
     else if (image.complete) loaded();
   });
 }
@@ -53,32 +56,34 @@ export function startIntro() {
   const bar = overlay.querySelector('.intro-progress i');
   const status = overlay.querySelector('[role="status"]');
   const app = eventReady('ankuzo:app-ready', life.signal);
-  const data = eventReady('ankuzo:data-ready', life.signal);
   const preload = src => {
     const image = new Image(); image.src = src;
     return imageReady(image, life.signal);
   };
-  const visibleImages = Promise.all([app, data]).then(() => {
-    if (life.signal.aborted) return;
-    const images = [...root.querySelectorAll('.scene:not([inert]) img, .traveller:not([inert]) img')];
-    return Promise.all(images.map(image => imageReady(image, life.signal)));
-  });
   skip.addEventListener('click', () => life.abort(), { signal: life.signal });
   // Escape gives keyboard users the same immediate way into the page.
   document.addEventListener('keydown', event => {
     if (event.key === 'Escape') life.abort();
   }, { signal: life.signal });
   waitForIntro([
-    app, data, scene.ready, document.fonts?.ready ?? Promise.resolve(),
-    preload('/art/character.png'), preload('/art/card-back.png'), visibleImages,
+    app, scene.ready, document.fonts?.ready ?? Promise.resolve(),
+    preload('/art/character.png'), preload('/art/card-back.png'),
   ], {
     minMs: staticGraphics ? 0 : 4600,
     timeoutMs: 12000,
     signal: life.signal,
-    onProgress: (done, total) => { bar.style.transform = `scaleX(${done / total})`; },
-  }).then(({ aborted }) => {
+    onProgress: (done, total, failed) => {
+      // Completed checkpoints, not a simulated byte percentage or animation timer.
+      bar.style.transform = `scaleX(${(done - failed) / total})`;
+      status.textContent = done === total
+        ? failed ? 'Часть ресурсов недоступна' : 'Страница готова'
+        : `Ресурсы · ${done} / ${total}`;
+      overlay.dataset.resourcesReady = String(done);
+      overlay.dataset.resourcesFailed = String(failed);
+    },
+  }).then(({ aborted, timedOut, failed }) => {
     const restoreFocus = overlay.contains(document.activeElement);
-    status.textContent = aborted ? 'Вход' : 'Готово';
+    status.textContent = aborted ? 'Вход' : timedOut || failed ? 'Открываем страницу' : 'Страница готова';
     life.abort();
     scene.exit();
     overlay.classList.add('intro-exit');
