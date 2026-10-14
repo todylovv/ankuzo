@@ -4,3 +4,4 @@ export type PsnProfile={psnId:string;games:PsnGame[];trophies:Record<'total'|'le
 export function buildPsnSnapshot(input:unknown):PsnProfile;
 export function filterPsnGames(games:PsnGame[],query?:string,platform?:string):PsnGame[];
 export function featuredPsnGames(games:PsnGame[]):PsnGame[];
+export function snapshotAgeLabel(value:string|null,now?:number):string;

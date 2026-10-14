@@ -1,7 +1,7 @@
 import { useDeferredValue, useMemo, useState, useId } from 'react';
 import { useLiveData } from '../data/useLiveData';
 import { safeExternalUrl } from '../data/artFacts';
-import { featuredPsnGames, filterPsnGames, type PsnGame, type PsnProfile, type PsnVersion } from './psnFacts.js';
+import { featuredPsnGames, filterPsnGames, snapshotAgeLabel, type PsnGame, type PsnProfile, type PsnVersion } from './psnFacts.js';
 import './playstation.css';
 
 const count=(value:number|null)=>value===null?'—':value.toLocaleString('ru-RU');
@@ -22,7 +22,7 @@ export function TrophySummary({profile}:{profile:PsnProfile}){
 
 function SnapshotNote({profile}:{profile:PsnProfile}){
   const date=profile.updatedAt?new Date(profile.updatedAt).toLocaleDateString('ru-RU'):null;
-  return <p className="ps-snapshot">{profile.state==='saved'?'Сохранённый снимок':profile.state==='fresh'?'Обновлено':'Синхронизация недоступна'}{date&&<> · <time dateTime={profile.updatedAt!}>{date}</time></>}</p>;
+  return <p className="ps-snapshot">{profile.state==='saved'?'Сохранённый снимок':profile.state==='fresh'?'Обновлено':'Синхронизация недоступна'}{date?<><span> · </span><time dateTime={profile.updatedAt!}>{date}</time><span> · {snapshotAgeLabel(profile.updatedAt)}</span></>:<span> · Дата неизвестна</span>}</p>;
 }
 
 function GameCover({game,version}:{game:PsnGame;version:PsnVersion}){
@@ -33,14 +33,14 @@ export function PlayStationScene({open}:{open:(id?:string)=>void}){
   const {psnProfile,loading}=useLiveData();
   const games=useMemo(()=>featuredPsnGames(psnProfile.games),[psnProfile.games]);
   return <section className="scene playstation-scene" id="view-playstation" aria-labelledby="playstation-title">
-    <img className="ps-static-card" src="/art/card-back.png" alt="" aria-hidden="true" />
+    <img className="ps-static-card" src="/art/card-back-display-v1.webp" alt="" aria-hidden="true" />
     <div className="ps-console-floor" aria-hidden="true"/>
     <img className="ps-console" src={`${import.meta.env.BASE_URL}art/ps5-slim.webp`} width="1448" height="1086" alt="PlayStation 5 Slim и DualSense с красной боковой подсветкой" decoding="async"/>
     <div className="ps-scene-copy"><h2 id="playstation-title">PlayStation<span>.</span></h2><p className="ps-id">PSN · {psnProfile.psnId}</p><p className="subtle">Игры и трофеи</p><button className="outline" onClick={()=>open()}>Вся библиотека <span>↗</span></button></div>
-    <div className="ps-scene-trophies"><TrophySummary profile={psnProfile}/><SnapshotNote profile={psnProfile}/></div>
+    <div className="ps-content"><div className="ps-scene-trophies"><TrophySummary profile={psnProfile}/><SnapshotNote profile={psnProfile}/></div>
     <div className="ps-featured"><div className="ps-featured-heading"><h3>В библиотеке</h3><button onClick={()=>open()}>Все игры <span>↗</span></button></div>
       {loading?<p className="ps-loading" role="status">Загружаю библиотеку…</p>:games.length?<div className="ps-featured-grid">{games.map(game=><button className="ps-featured-game" key={game.id} onClick={()=>open(game.id)} aria-label={`${game.title} — раскрыть игру`}><GameCover game={game} version={game.versions[0]}/><span className="ps-game-title">{game.title}<span aria-hidden="true">↗</span></span></button>)}</div>:<p className="ps-loading">Библиотека пока недоступна. Попробуй зайти позже.</p>}
-    </div>
+    </div></div>
   </section>;
 }
 

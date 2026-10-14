@@ -1,4 +1,4 @@
-import { CHAPTER_SPAN, CHAPTERS, phaseAt, advancePhase, travellerPose, deckCardPose } from './motionFacts.js';
+import { CHAPTER_SPAN, CHAPTERS, phaseAt, advancePhase, travellerPose, deckCardPose, aboutScrollRange, aboutScrollOffset } from './motionFacts.js';
 
 export function mountArtMotion(root, drawSilk) {
   'use strict';
@@ -31,6 +31,13 @@ export function mountArtMotion(root, drawSilk) {
   const ease=t=>{t=clamp(t);return t*t*t*(t*(t*6-15)+10)};
   const interval=(v,a,b)=>ease((v-a)/(b-a));
   let reduced=root.dataset.quality==='off', active=-1, raf=0, shown=0, previous=0, navigationUntil=0, viewportPosition=scrollY/(innerHeight*CHAPTER_SPAN);
+  let aboutExtent=0;
+  function measureAbout(){
+    aboutExtent=!reduced&&innerWidth<=760?aboutScrollRange(aboutCopy.offsetTop,aboutCopy.offsetHeight,innerHeight):0;
+    root.style.setProperty('--about-overflow',`${aboutExtent}px`);
+    queue();
+  }
+  const aboutObserver=new ResizeObserver(measureAbout);aboutObserver.observe(aboutCopy);
   // A deterministic development-only timeline makes individual transition frames inspectable.
   let reviewPhase=null, reviewPanel=null;
   if(import.meta.env.DEV && new URLSearchParams(location.search).has('motion-review')){
@@ -85,7 +92,7 @@ export function mountArtMotion(root, drawSilk) {
     shown=reviewPhase===null?advancePhase(shown,target,dt,timestamp<navigationUntil?2.2:.7):target;
     if(Math.abs(shown-target)<.0002)shown=target;
     const g=shown;
-    const tail=mobile?Math.max(0,scrollY-last*h*CHAPTER_SPAN):0;
+    const tail=mobile?aboutScrollOffset(scrollY,h,aboutExtent):0;
     aboutCopy.style.transform=`translateY(${-tail}px)`;
     setActive(clamp(Math.round(g),0,last));
     body.dataset.phase=g.toFixed(3);
@@ -114,6 +121,7 @@ export function mountArtMotion(root, drawSilk) {
     traveller.style.width=`${pose.width}px`;
     traveller.style.left=`${pose.x*100}%`;traveller.style.top=`${pose.y*100}%`;
     traveller.style.transform=`translate(-50%,-50%) rotate(${pose.rotate}deg) scale(${pose.scale})`;
+    traveller.style.setProperty('--faceit-scale',String(pose.scale));
     flipper.style.transform=`rotateY(${pose.flip}deg)`;
     travellerFront.style.visibility=pose.flip<90?'visible':'hidden';
     travellerBack.style.visibility=pose.flip>90?'visible':'hidden';
@@ -147,16 +155,17 @@ export function mountArtMotion(root, drawSilk) {
     });
     active=-1;
     if(preserve)root.querySelector(`#${off?'view-':''}${names[current]}`).scrollIntoView({behavior:'instant'});
+    measureAbout();
     queue();
   }
   listen(root,'click',e=>{const link=e.target.closest('a[href^="#"]');if(link&&names.some(name=>link.hash===`#${name}`))navigationUntil=performance.now()+2500;});
-  listen(root,'ankuzo:quality-change',e=>{const off=e.detail==='off';if(off!==reduced)setMode(off)});
+  listen(root,'ankuzo:quality-change',e=>{const off=e.detail==='off';if(off!==reduced)setMode(off);else queue()});
   listen(menu,'click',()=>{const open=menu.getAttribute('aria-expanded')!=='true';menu.setAttribute('aria-expanded',String(open));nav.classList.toggle('open',open)});
   listen(nav,'click',e=>{if(e.target.closest('a')){menu.setAttribute('aria-expanded','false');nav.classList.remove('open')}});
   listen(document,'keydown',e=>{if(e.key==='Escape'){menu.setAttribute('aria-expanded','false');nav.classList.remove('open')}});
 
   listen(root.querySelector('dialog'),'close',queue);
-  listen(window,'scroll',queue,{passive:true});listen(window,'resize',()=>{if(reduced)setMode(true,false);else {window.scrollTo({top:viewportPosition*innerHeight*CHAPTER_SPAN,behavior:'instant'});queue();}});
+  listen(window,'scroll',queue,{passive:true});listen(window,'resize',()=>{measureAbout();if(reduced)setMode(true,false);else {window.scrollTo({top:viewportPosition*innerHeight*CHAPTER_SPAN,behavior:'instant'});queue();}});
   listen(window,'pageshow',queue);document.fonts.ready.then(queue);
   listen(root.querySelector('.skip'),'click',()=>{if(!reduced)root.dispatchEvent(new Event('ankuzo:static-request'));root.querySelector('#view-games').focus()});
   setMode(reduced,false);
@@ -169,5 +178,5 @@ export function mountArtMotion(root, drawSilk) {
   }
   shown=phaseAt(scrollY,innerHeight);
   render();
-  return ()=>{disposed=true;life.abort();cancelAnimationFrame(raf);reviewPanel?.remove();root.classList.remove('motion-off');history.scrollRestoration=restoration;};
+  return ()=>{disposed=true;life.abort();aboutObserver.disconnect();cancelAnimationFrame(raf);reviewPanel?.remove();root.classList.remove('motion-off');history.scrollRestoration=restoration;};
 }

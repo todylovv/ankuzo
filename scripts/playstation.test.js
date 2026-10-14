@@ -1,6 +1,18 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { phaseAt, CHAPTER_SPAN } from '../src/art/motionFacts.js';
+import * as psnFacts from '../src/art/psnFacts.js';
+
+test('snapshot age distinguishes unknown, today and old saved data',()=>{
+  assert.equal(typeof psnFacts.snapshotAgeLabel,'function');
+  const now=Date.parse('2026-10-14T06:36:44Z');
+  assert.equal(psnFacts.snapshotAgeLabel('2026-07-17T06:36:44Z',now),'89 дней назад');
+  assert.equal(psnFacts.snapshotAgeLabel('2026-10-13T06:36:44Z',now),'1 день назад');
+  assert.equal(psnFacts.snapshotAgeLabel('2026-10-12T06:36:44Z',now),'2 дня назад');
+  assert.equal(psnFacts.snapshotAgeLabel('2026-10-14T05:36:44Z',now),'сегодня');
+  assert.equal(psnFacts.snapshotAgeLabel(null,now),'Дата неизвестна');
+  assert.equal(psnFacts.snapshotAgeLabel('bad',now),'Дата неизвестна');
+});
 
 test('PlayStation adds a full stop before About and the route reaches chapter five',()=>{
   assert.equal(phaseAt(CHAPTER_SPAN*1000*3,1000),3);

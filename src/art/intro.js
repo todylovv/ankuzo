@@ -67,7 +67,7 @@ export function startIntro() {
   }, { signal: life.signal });
   waitForIntro([
     app, scene.ready, document.fonts?.ready ?? Promise.resolve(),
-    preload('/art/character.png'), preload('/art/card-back.png'),
+    preload('/art/character-display-v1.webp'), preload('/art/card-back-display-v1.webp'),
   ], {
     minMs: staticGraphics ? 0 : 4600,
     timeoutMs: 12000,

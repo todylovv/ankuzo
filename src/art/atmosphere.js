@@ -1,10 +1,22 @@
+import { renderBudget } from './renderPolicy.js';
 /* Cards, suspended threads and energy live behind the content on one bounded canvas. */
 export function mountAtmosphere(root) {
   const canvas = root.querySelector('.velvet-field'), ctx = canvas.getContext('2d');
   if (!ctx) return () => {};
   const life = new AbortController();
-  const texture = new Image(); texture.src = '/art/card-back.png';
-  let raf = 0, disposed = false, w = 0, h = 0, last = 0;
+  const texture = new Image(); texture.src = '/art/card-back-display-v1.webp';
+  let raf = 0, disposed = false, w = 0, h = 0, last = 0, lastDpr = 0;
+  const sprites=new Map();
+  function clearSprites(){for(const sprite of sprites.values()){sprite.canvas.width=1;sprite.canvas.height=1;}sprites.clear();}
+  function blurredSprite(card,width,height,mobile){
+    if(sprites.has(card))return sprites.get(card);
+    const blur=mobile?card.blur*.65:card.blur,padding=blur*3;
+    const layer=document.createElement('canvas');layer.width=Math.ceil((width+padding*2)*lastDpr);layer.height=Math.ceil((height+padding*2)*lastDpr);
+    const paint=layer.getContext('2d');if(!paint)return null;
+    paint.setTransform(lastDpr,0,0,lastDpr,0,0);paint.filter=`blur(${blur}px)`;
+    paint.drawImage(texture,108,123,808,1272,padding,padding,width,height);
+    const sprite={canvas:layer,padding,width:width+padding*2,height:height+padding*2};sprites.set(card,sprite);return sprite;
+  }
   let pointerX = 0, pointerY = 0, targetX = 0, targetY = 0;
   const cards = [
     { x:.035,y:.31,size:.048,angle:-.38,depth:.12,alpha:.22 },
@@ -41,8 +53,10 @@ export function mountAtmosphere(root) {
       ctx.restore();
     }
     ctx.save();ctx.translate(x,y);ctx.rotate(angle);ctx.scale(warp,1);ctx.globalAlpha=alpha;
-    ctx.filter=card.blur?`blur(${mobile?card.blur*.65:card.blur}px)`:'none';
-    ctx.drawImage(texture,108,123,808,1272,-width/2,-height/2,width,height);
+    const sprite=card.blur?blurredSprite(card,width,height,mobile):null;
+    ctx.filter='none';
+    if(sprite)ctx.drawImage(sprite.canvas,-width/2-sprite.padding,-height/2-sprite.padding,sprite.width,sprite.height);
+    else ctx.drawImage(texture,108,123,808,1272,-width/2,-height/2,width,height);
     if(card.tied){
       ctx.strokeStyle='#c93661';ctx.lineWidth=.7;
       ctx.beginPath();ctx.moveTo(-width*.49,-height*.23);ctx.quadraticCurveTo(0,-height*.20,width*.49,-height*.23);ctx.stroke();
@@ -54,8 +68,8 @@ export function mountAtmosphere(root) {
     raf=0;if(disabled())return;
     const mobile=innerWidth<=760;
     if(time-last<(mobile?48:32)){raf=requestAnimationFrame(draw);return;}last=time;
-    const dpr=Math.min(devicePixelRatio||1,mobile?1.25:1.5);
-    if(w!==innerWidth||h!==innerHeight){w=innerWidth;h=innerHeight;canvas.width=Math.round(w*dpr);canvas.height=Math.round(h*dpr);}
+    const dpr=Math.min(renderBudget(innerWidth,innerHeight,devicePixelRatio||1).ratio,mobile?1.25:1.5);
+    if(w!==innerWidth||h!==innerHeight||lastDpr!==dpr){w=innerWidth;h=innerHeight;lastDpr=dpr;canvas.width=Math.round(w*dpr);canvas.height=Math.round(h*dpr);clearSprites();}
     ctx.setTransform(dpr,0,0,dpr,0,0);ctx.clearRect(0,0,w,h);
     const seconds=time/1000,g=Number(root.dataset.phase)||0;
     pointerX+=(targetX-pointerX)*.035;pointerY+=(targetY-pointerY)*.035;
@@ -67,5 +81,5 @@ export function mountAtmosphere(root) {
   function resume(){cancelAnimationFrame(raf);raf=0;if(!disabled())raf=requestAnimationFrame(draw);}
   const observer=new MutationObserver(resume);observer.observe(root,{attributes:true,attributeFilter:['class']});
   document.addEventListener('visibilitychange',resume,{signal:life.signal});resume();
-  return ()=>{disposed=true;cancelAnimationFrame(raf);observer.disconnect();life.abort();texture.src='';};
+  return ()=>{disposed=true;cancelAnimationFrame(raf);observer.disconnect();life.abort();clearSprites();texture.src='';};
 }

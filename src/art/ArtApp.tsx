@@ -26,6 +26,7 @@ function ArtArchive() {
   const [query, setQuery] = useState('');
   const [platform, setPlatform] = useState('all');
   const [copyStatus, setCopyStatus] = useState('');
+  const [deckChoice, setDeckChoice] = useState(0);
   const deck = selectDeck(live.recentlyPlayed, live.mostPlayed);
   const selected = deck[1] ?? deck[0];
   const stats = live.playerStats;
@@ -120,7 +121,7 @@ function ArtArchive() {
       <button className="menu-button" aria-controls="chapter-nav" aria-expanded="false">Меню <span>☰</span></button>
       <nav id="chapter-nav" aria-label="Главы"><a href="#home" aria-current="page">Начало</a><a href="#games">Игры</a><a href="#stats">Статы</a><a href="#playstation">PlayStation</a><a href="#about">Обо мне</a></nav>
       <details className="quality-control">
-        <summary>Графика: <span className="quality-label">Авто</span><span className="quality-dot" aria-hidden="true"> ◉</span></summary>
+        <summary><span className="quality-prefix">Графика:</span> <span className="quality-label">Авто</span><span className="quality-dot" aria-hidden="true"> ◉</span></summary>
         <div className="quality-popover">
           <fieldset><legend>Качество графики</legend>
             <label><input type="radio" name="graphics" value="off" aria-label="Без анимаций" /><span>Без анимаций<small>Обычная прокрутка, без движения</small></span></label>
@@ -136,10 +137,10 @@ function ArtArchive() {
       <canvas className="velvet-field" aria-hidden="true" /><div className="ambient" aria-hidden="true" /><div className="ghost" aria-hidden="true">22</div>
       <section className="scene entrance" id="view-home" aria-labelledby="home-title">
         <div className="hero-copy"><h1 id="home-title">Ankuzo<span>.</span></h1><p className="subtle">цифровой архив / игры / я</p><a className="outline" href="#games" data-jump="1">Смотреть архив <span>↗</span></a></div>
-        <img className="character" src="/art/character.png" alt="Ankuzo в белой маске: левый рог целый, правый сломан" width="1024" height="1536" fetchPriority="high" />
+        <img className="character" src="/art/character-display-v1.webp" alt="Ankuzo в белой маске: левый рог целый, правый сломан" width="1024" height="1536" fetchPriority="high" />
       </section>
       <section className="scene archive" id="view-games" tabIndex={-1} aria-labelledby="games-title">
-        <div className="archive-copy"><h2 id="games-title">Моя<br />колода<span>.</span></h2><p className="subtle">{live.loading ? 'Загружаю библиотеку…' : recent ? 'Играл недавно · за 2 недели' : 'Из моей библиотеки'}</p><button className="outline" onClick={() => openArchive()}>Весь архив <span>↗</span></button></div>
+        <div className="archive-copy"><h2 id="games-title">Моя <br />колода<span>.</span></h2><p className="subtle">{live.loading ? 'Загружаю библиотеку…' : recent ? 'Играл недавно · за 2 недели' : 'Из моей библиотеки'}</p><button className="outline" onClick={() => openArchive()}>Весь архив <span>↗</span></button></div>
         <div className="deck" aria-label="Игры из библиотеки">
           {deck.map((game, i) => <button className="game-card" key={i} onClick={() => openArchive(game?.title)} aria-label={game ? `${game.title} — открыть в архиве` : 'Открыть архив'}>
             <span className="corner" aria-hidden="true">{ranks[i]}<br /><b>{suits[i]}</b></span>
@@ -147,10 +148,11 @@ function ArtArchive() {
             <span className="game-copy"><strong>{game?.title ?? (live.loading ? 'Загрузка…' : 'Из моей колоды')}</strong><small>{game ? `${Math.round(recent ? game.hours2w ?? 0 : game.hours)} ч` : '♠'}</small></span><span className="card-foot" aria-hidden="true">{suits[i]}</span>
           </button>)}
         </div>
+        <div className="deck-picker"><label><span>Игра в колоде</span><select aria-label="Выбрать игру из колоды" disabled={!deck.some(Boolean)} value={deckChoice} onChange={event=>setDeckChoice(Number(event.target.value))}>{deck.some(Boolean)?deck.map((game,i)=>game&&<option key={i} value={i}>{game.title}</option>):<option value="0">{live.loading ? 'Загрузка…' : 'Нет игр в колоде'}</option>}</select></label><button disabled={!deck[deckChoice]} onClick={()=>openArchive(deck[deckChoice]?.title)}>Открыть <span aria-hidden="true">↗</span></button></div>
       </section>
       <section className="scene statistics" id="view-stats" aria-labelledby="stats-title">
         <div className="stats-copy"><h2 id="stats-title">Всё осталось<br />в часах<span>.</span></h2><div className="hours">{metric(stats.totalHours, 'steam')}</div><p className="subtle hours-label">часов в Steam</p>
-          <dl className="numbers"><div><dt>игр PC / PS5</dt><dd>{metric(stats.libraryGames, 'steam')}</dd></div><div><dt>трофеев PlayStation</dt><dd>{metric(stats.achievements, 'psn')}</dd></div><div><dt>ELO FACEIT</dt><dd>{metric(faceit.elo, 'faceit')}</dd></div></dl>
+          <dl className="numbers"><div><dt>игр PC + PS5 с трофеями</dt><dd>{metric(stats.libraryGames, 'steam')}</dd></div><div><dt>трофеев PlayStation</dt><dd>{metric(stats.achievements, 'psn')}</dd></div><div><dt>ELO FACEIT</dt><dd>{metric(faceit.elo, 'faceit')}</dd></div></dl>
           <button className="data-details" onClick={() => setPanel('stats')}>Статистика и обновления <span>↗</span></button>
         </div>
         <div className="static-faceit">{faceitCard}</div>
@@ -171,7 +173,7 @@ function ArtArchive() {
           <p className="copy-status" aria-live="polite">{copyStatus}</p>
         </div>
       </section>
-      <div className="traveller" inert aria-hidden="true"><div className="flipper"><i className="traveller-edge edge-left" /><i className="traveller-edge edge-right" /><div className="traveller-front"><span>22<br />♠</span><b aria-hidden="true">♠</b><span>22<br />♠</span>{faceitCard}<div className="traveller-game" aria-hidden="true">{selected?.image && <img src={safeExternalUrl(selected.image)} alt="" onError={event => { event.currentTarget.style.visibility = 'hidden'; }} />}<span className="corner">{ranks[1]}<br /><b>{suits[1]}</b></span><span className="game-copy"><strong>{selected?.title}</strong><small>{selected ? `${Math.round(recent ? selected.hours2w ?? 0 : selected.hours)} ч` : suits[1]}</small></span><span className="card-foot">{suits[1]}</span></div></div><div className="traveller-back"><img src="/art/card-back.png" alt="" width="1024" height="1536" /></div></div></div>
+      <div className="traveller" inert aria-hidden="true"><div className="flipper"><i className="traveller-edge edge-left" /><i className="traveller-edge edge-right" /><div className="traveller-front"><span>22<br />♠</span><b aria-hidden="true">♠</b><span>22<br />♠</span>{faceitCard}<div className="traveller-game" aria-hidden="true">{selected?.image && <img src={safeExternalUrl(selected.image)} alt="" onError={event => { event.currentTarget.style.visibility = 'hidden'; }} />}<span className="corner">{ranks[1]}<br /><b>{suits[1]}</b></span><span className="game-copy"><strong>{selected?.title}</strong><small>{selected ? `${Math.round(recent ? selected.hours2w ?? 0 : selected.hours)} ч` : suits[1]}</small></span><span className="card-foot">{suits[1]}</span></div></div><div className="traveller-back"><img src="/art/card-back-display-v1.webp" alt="" width="1024" height="1536" /></div></div></div>
       <svg className="thread" viewBox="0 0 1000 1000" preserveAspectRatio="none" aria-hidden="true"><defs><filter id="glow"><feGaussianBlur stdDeviation="3" /></filter></defs><path className="thread-glow" /><path className="thread-main" /><path className="thread-light" /></svg><div className="thread-bead" aria-hidden="true" /><canvas className="silk" aria-hidden="true" />
     </main>
     <div className="scroll-track" aria-hidden="true"><div id="home" /><div id="games" /><div id="stats" /><div id="playstation" /><div id="about" /></div>
@@ -179,15 +181,15 @@ function ArtArchive() {
     <dialog className={`archive-dialog${panel === 'playstation' ? ' ps-dialog' : ''}`} ref={dialog} onClose={closePanel} aria-labelledby="panel-title">
       <div className="panel-heading"><h2 id="panel-title">{panel === 'playstation' ? 'PlayStation' : panel === 'archive' ? 'Весь архив' : 'За цифрами'}<span>.</span></h2><button className="close-panel" aria-label="Закрыть" onClick={() => dialog.current?.close()}>×</button></div>
       {panel === 'playstation' ? <PlayStationCatalog initialGame={psGame} key={psGame} /> : panel === 'archive' ? <>
-        <div className="archive-controls"><label>Найти игру<input value={query} onChange={event => setQuery(event.target.value)} placeholder="Название" type="search" /></label><label>Платформа<select value={platform} onChange={event => setPlatform(event.target.value)}><option value="all">Все платформы</option><option value="PC">PC · Steam</option><option value="PS5">PlayStation 5</option></select></label></div>
-        <p className="archive-summary" aria-live="polite">{live.loading ? 'Загружаю библиотеку…' : `Найдено: ${library.length} · PC ${live.archiveStats.pcCount} / PS5 ${live.archiveStats.ps5Count}`}</p>
+        <div className="archive-controls"><label>Найти игру<input value={query} onChange={event => setQuery(event.target.value)} placeholder="Название" type="search" /></label><label>Платформа<select value={platform} onChange={event => setPlatform(event.target.value)}><option value="all">Все платформы</option><option value="PC">PC · Steam</option><option value="PS5">PS5 с трофеями</option></select></label></div>
+        <p className="archive-summary" aria-live="polite">{live.loading ? 'Загружаю библиотеку…' : `Найдено: ${library.length} · PC ${live.archiveStats.pcCount} / PS5 с трофеями ${live.archiveStats.ps5Count}`}</p>
         <div className="library-grid">{library.map(game => <article className="library-game" key={`${game.platform}-${game.id}`}>
           <div className="library-art">{game.image && <img src={safeExternalUrl(game.image)} alt="" loading="lazy" onError={event => { event.currentTarget.style.visibility = 'hidden'; }} />}</div><h3>{game.title}</h3><p>{game.platform} · {game.platform === 'PC' ? `${game.hours.toLocaleString('ru-RU')} ч` : 'В коллекции'}</p>
           {game.platform === 'PC' && /^\d+$/.test(game.id) && <a href={`https://store.steampowered.com/app/${game.id}/`} target="_blank" rel="noopener noreferrer">В Steam ↗</a>}
         </article>)}</div>
         {!live.loading && library.length === 0 && <p className="empty-state">{live.archiveGames.length ? 'По этому запросу игр нет. Попробуй другое название или платформу.' : 'Библиотека пока недоступна. Попробуй обновить страницу позже.'}</p>}
       </> : <>
-        <dl className="detail-numbers"><div><dt>PC / Steam</dt><dd>{metric(live.archiveStats.pcCount, 'steam')} игр</dd></div><div><dt>PlayStation 5</dt><dd>{metric(stats.psGames, 'psn')} игр</dd></div><div><dt>Матчей FACEIT</dt><dd>{metric(faceit.matches, 'faceit')}</dd></div><div><dt>ADR / HS</dt><dd>{available('faceit') ? `${faceit.adr} / ${faceit.hs}%` : '—'}</dd></div></dl>
+        <dl className="detail-numbers"><div><dt>PC / Steam</dt><dd>{metric(live.archiveStats.pcCount, 'steam')} игр</dd></div><div><dt>PS5 с данными о трофеях</dt><dd>{metric(stats.psGames, 'psn')} игр</dd></div><div><dt>Матчей FACEIT</dt><dd>{metric(faceit.matches, 'faceit')}</dd></div><div><dt>Winrate FACEIT</dt><dd>{metric(faceit.winRate, 'faceit')}{available('faceit') ? '%' : ''}</dd></div><div><dt>K/D FACEIT</dt><dd>{available('faceit') ? faceit.kd.toFixed(2) : '—'}</dd></div><div><dt>ADR / HS</dt><dd>{available('faceit') ? `${faceit.adr} / ${faceit.hs}%` : '—'}</dd></div></dl>
         <h3>Пики ELO по сезонам</h3>{faceit.seasonPeaks.length ? <ul className="season-list">{faceit.seasonPeaks.map(season => <li key={season.label}><span>{season.label}</span><strong>{season.elo}</strong></li>)}</ul> : <p className="archive-summary">История ELO пока недоступна.</p>}
         <h3>Обновления</h3><ul className="source-list">{live.sources.map(source => <li key={source.id}><strong>{source.label}</strong><span>{sourceLabels[source.state]}{source.updatedAt && Number.isFinite(Date.parse(source.updatedAt)) ? ` · ${new Date(source.updatedAt).toLocaleString('ru-RU')}` : ''}{source.hasData && source.state === 'unavailable' ? ' · показаны сохранённые данные' : ''}</span></li>)}</ul>
       </>}

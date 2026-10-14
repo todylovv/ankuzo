@@ -1,6 +1,15 @@
 const keyOf=value=>String(value??'').replace(/[™®]/g,'').normalize('NFKD').replace(/\p{M}/gu,'').toLowerCase().replace(/[^\p{L}\p{N}]+/gu,'');
 const numberOrNull=value=>typeof value==='number'&&Number.isFinite(value)&&value>=0?Math.round(value):null;
 const safeImage=value=>{try{const url=new URL(value);return url.protocol==='https:'?url.href:''}catch{return ''}};
+export function snapshotAgeLabel(value,now=Date.now()){
+  const time=typeof value==='string'?Date.parse(value):NaN;
+  if(!Number.isFinite(time))return 'Дата неизвестна';
+  const days=Math.max(0,Math.floor((now-time)/86400000));
+  if(days===0)return 'сегодня';
+  const end=days%10,teen=days%100;
+  const word=end===1&&teen!==11?'день':end>=2&&end<=4&&(teen<12||teen>14)?'дня':'дней';
+  return `${days} ${word} назад`;
+}
 export function buildPsnSnapshot(input){
   const raw=input&&typeof input==='object'?input:{};
   const grouped=new Map();

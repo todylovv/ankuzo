@@ -44,3 +44,5 @@
 /* Keep the console scene quiet; travelling geometry remains separate. */
 .art-root[data-chapter=playstation] .webgl-field,.art-root[data-chapter=playstation] .velvet-field{opacity:.38}
 .art-root[data-chapter=playstation] .ambient{opacity:.5}
+/* Snapshot age and touch targets remain readable in both catalog and scene. */
+@media(max-width:760px){.ps-scene-copy .outline{font-size:12px;min-height:44px}.ps-featured-heading button{min-height:44px;font-size:12px}.ps-id,.ps-scene-copy .subtle,.ps-snapshot,.ps-account small,.ps-trophy-total small,.ps-trophy-types dt,.ps-results,.ps-cover-progress,.ps-platform{font-size:12px}.ps-game-toggle .ps-game-title,.ps-featured .ps-game-title,.ps-game-detail,.ps-detail-note,.ps-progress-caption{font-size:12px}.ps-version-picker button{min-height:44px;font-size:12px}}

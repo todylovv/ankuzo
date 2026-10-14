@@ -82,7 +82,7 @@ export async function mountFullScene(root: HTMLElement, onFailure: () => void, s
   if (signal?.aborted) { cleanup(); throw new DOMException('Cancelled', 'AbortError'); }
   const loader = new THREE.TextureLoader();
   let cardTexture: THREE.Texture;
-  try { cardTexture = await loader.loadAsync('/art/card-back.png'); if (disposed) cardTexture.dispose(); else textures.push(cardTexture); }
+  try { cardTexture = await loader.loadAsync('/art/card-back-display-v1.webp'); if (disposed) cardTexture.dispose(); else textures.push(cardTexture); }
   catch (error) { cleanup(); throw error; }
   if (disposed) throw new DOMException('Cancelled', 'AbortError');
   try {
@@ -202,7 +202,7 @@ export async function mountFullScene(root: HTMLElement, onFailure: () => void, s
       if(previous && now-previous<1000)intervals.push(now-previous);
       if(!warmAt)warmAt=now;
       if(previous && now-warmAt>3000)pressure.push(now-previous);
-      if(pressure.length>=90){const next=nextRenderScale(renderScale,pressure);pressure.length=0;if(next!==renderScale){renderScale=next;resize();}}
+      if(pressure.length>=12&&pressure.reduce((sum,n)=>sum+n,0)>=1500){const next=nextRenderScale(renderScale,pressure);pressure.length=0;if(next!==renderScale){renderScale=next;resize();}}
 
       const delta = previous ? Math.min((now - previous) / 1000, .05) : 0; previous = now; elapsed += delta;
       if (w !== innerWidth || h !== innerHeight) resize();

@@ -1,5 +1,6 @@
 import { travellerPose } from './motionFacts.js';
-import { connectThread, fibreOffset } from './silkGeometry.js';
+import { connectThread, fibreOffset, silkStrokeRuns } from './silkGeometry.js';
+import { silkPixelRatio } from './renderPolicy.js';
 /* Tails and wraps share physical edge anchors on the currently visible card face. */
 export function mountSilk(root) {
   'use strict';
@@ -103,7 +104,7 @@ export function mountSilk(root) {
   const front=flipper.querySelector('.traveller-front'),back=flipper.querySelector('.traveller-back');
   bindCard(front);bindCard(back,true);
   const movingFront=attach(front),movingBack=attach(back),character=root.querySelector('.character');
-  let cw=0,ch=0;
+  let cw=0,ch=0,cdpr=0;
   const mix=(a,b,t)=>a+(b-a)*t;
   const clamp=n=>Math.max(0,Math.min(1,n));
   const ease=n=>{n=clamp(n);return n*n*(3-2*n)};
@@ -135,18 +136,17 @@ export function mountSilk(root) {
     ctx.globalAlpha=alpha*.22*(1-fadeHead*.65);ctx.lineCap='round';ctx.lineJoin='round';
     ctx.beginPath();points.forEach((p,i)=>i?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1]));
     ctx.strokeStyle='#ff1738';ctx.lineWidth=mobile?3:4;ctx.shadowColor='#ff1738';ctx.shadowBlur=8;ctx.stroke();ctx.shadowBlur=0;
-    for(let i=1;i<points.length;i++){
-      const a=points[i-1],b=points[i],t=i/(points.length-1);
-      ctx.globalAlpha=alpha*(1-fadeHead*(1-range(t,0,.22)));
-      ctx.beginPath();ctx.moveTo(a[0],a[1]);ctx.lineTo(b[0],b[1]);ctx.lineWidth=mobile?1.6:2.15;ctx.strokeStyle='#dc2547';ctx.stroke();
-      ctx.beginPath();ctx.moveTo(a[0],a[1]-.3);ctx.lineTo(b[0],b[1]-.3);ctx.lineWidth=mobile?.45:.6;ctx.strokeStyle='#f3a7c3';ctx.stroke();
+    for(const run of silkStrokeRuns(points,fadeHead)){
+      ctx.globalAlpha=alpha*run.alpha;
+      ctx.beginPath();run.points.forEach((p,i)=>i?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1]));ctx.lineWidth=mobile?1.6:2.15;ctx.strokeStyle='#dc2547';ctx.stroke();
+      ctx.beginPath();run.points.forEach((p,i)=>i?ctx.lineTo(p[0],p[1]-.3):ctx.moveTo(p[0],p[1]-.3));ctx.lineWidth=mobile?.45:.6;ctx.strokeStyle='#f3a7c3';ctx.stroke();
     }
     ctx.restore();
   }
   const draw=(g,w,h)=>{
     energyPaths=[];glowDirty=true;
-    const dpr=Math.min(devicePixelRatio||1,2),mobile=w<=760;
-    if(cw!==w||ch!==h){cw=w;ch=h;for(const layer of [canvas,leadCanvas]){layer.width=Math.round(w*dpr);layer.height=Math.round(h*dpr);layer.style.width=w+'px';layer.style.height=h+'px'}glowDirty=true;}
+    const dpr=silkPixelRatio(w,devicePixelRatio||1,root.dataset.quality),mobile=w<=760;
+    if(cw!==w||ch!==h||cdpr!==dpr){cw=w;ch=h;cdpr=dpr;for(const layer of [canvas,leadCanvas]){layer.width=Math.round(w*dpr);layer.height=Math.round(h*dpr);layer.style.width=w+'px';layer.style.height=h+'px'}glowDirty=true;}
     ctx.setTransform(dpr,0,0,dpr,0,0);ctx.clearRect(0,0,w,h);
     leadCtx.setTransform(dpr,0,0,dpr,0,0);leadCtx.clearRect(0,0,w,h);
     const deckEdges=g<1.70?anchors.map(edges):[];
