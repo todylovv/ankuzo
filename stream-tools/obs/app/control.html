@@ -12,7 +12,7 @@
   <main class="workspace">
     <section class="preview-section" aria-label="Предпросмотр">
       <div class="section-intro"><h1>Твоя сцена<span>.</span></h1><p>Надписи и таймер — под твоим контролем.</p></div>
-      <div class="scene-picker"><label for="scene-selector">Настраиваемая сцена</label><select id="scene-selector"><option value="starting">Начало стрима</option><option value="break">Перерыв</option><option value="overlay">Игровой оверлей</option><option value="mapcover">Миникарта и чат</option><option value="follow">Фоллоу и подписки</option></select><span id="scene-scope">Отдельные надписи и таймер для каждой сцены.</span></div>
+      <div class="scene-picker"><label for="scene-selector">Настраиваемая сцена</label><select id="scene-selector"><option value="starting">Начало стрима</option><option value="break">Перерыв</option><option value="overlay">Игровой оверлей</option><option value="mapcover">Миникарта и чат</option><option value="follow">Оповещения</option></select><span id="scene-scope">Отдельные надписи и таймер для каждой сцены.</span></div>
       <div class="preview-frame"><iframe id="preview" title="Предпросмотр заставки Ankuzo" src="scene.html" tabindex="-1"></iframe></div>
       <div class="preview-caption"><span id="preview-kind">Предпросмотр · 16:9</span><span id="connection" role="status">Подключаемся…</span></div>
       <a class="layout-shortcut" id="layout-link" href="layout.html" target="_blank" rel="noopener" hidden>Макет стрима и размещение в OBS <span aria-hidden="true">↗</span></a>
@@ -21,7 +21,7 @@
         <div id="source-format" class="source-format" hidden><label for="source-mode">Размер источника</label><select id="source-mode"><option value="widget">По размеру элемента</option><option value="canvas">Весь холст — старый формат</option></select></div>
         <p class="source-size">В свойствах «Браузера»: <strong id="source-dimensions" aria-live="polite">1920 × 1080</strong> px · 60 FPS</p>
         <p id="source-guidance" class="setup-hint" hidden>Для существующего источника замени URL и укажи размеры выше. Затем: ПКМ по источнику → Трансформировать → Сбросить преобразование. Перемещай и масштабируй виджет мышью в OBS. При изменении пропорций обнови ширину и высоту источника; ссылка остаётся прежней.</p>
-
+        
         <div class="url-row"><button id="copy-url" class="copy-primary" type="button" disabled>Скопировать ссылку</button><button id="show-url" type="button" aria-expanded="false" aria-controls="url-details" disabled>Показать ссылку</button></div>
         <div id="url-details" class="url-details" hidden><label for="scene-url">Личная ссылка для OBS</label><input id="scene-url" type="text" readonly autocomplete="off" spellcheck="false" aria-describedby="link-privacy"></div>
         <p id="link-feedback" class="link-feedback" role="status" aria-live="polite">Готовим ссылку…</p>
@@ -33,7 +33,7 @@
           <p>Все старые ссылки начала, перерыва, оверлея, миникарты, счётчика мата и фоллоу перестанут работать. После замены обнови ссылки всех источников в OBS.</p>
           <div class="url-row"><button id="cancel-replace" type="button">Оставить текущую</button><button id="confirm-replace" class="replace-button" type="button">Заменить</button></div>
         </div>
-
+      
 </details>
 </section>
       <p class="local-note">Настройки сохраняются на сервере. Таймер запускается только по твоей команде.</p>

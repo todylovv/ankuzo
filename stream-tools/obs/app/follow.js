@@ -15,7 +15,12 @@
     clear(); active = event.id;
     const elapsed = Math.max(0, Date.now() + (demo ? 0 : offset) - event.startsAt), duration = event.endsAt - event.startsAt;
     if (elapsed >= duration) { active = ''; return; }
-    const premium=event.kind==='subscription';root.className=premium?'premium tier-'+event.tier:'';
+    const premium=event.kind==='subscription',donation=event.kind==='donation',faceUp=premium||donation;root.className=donation?'donation':premium?'premium tier-'+event.tier:'';
+    $('donation-amount').hidden=$('donation-text').hidden=!donation;
+    $('donation-amount').textContent=donation?new Intl.NumberFormat('ru-RU',{style:'currency',currency:event.currency,maximumFractionDigits:2}).format(Number(event.amount)):'';
+    $('donation-text').textContent=donation?event.donationText||'': '';
+    document.querySelector('.spade').textContent=donation?'♦':'♠';
+    for(const corner of document.querySelectorAll('.corner'))corner.lastChild.textContent=donation?'♦':'♠';
     $('subscription-detail').hidden=!premium;$('subscription-detail').textContent=event.detail||'';
     root.hidden = false; $('caption').textContent = event.message; $('nickname').textContent = event.name;
     $('nickname').style.fontSize = '40px';
@@ -31,25 +36,29 @@
     if (motion) {
       animate(card, [
         { transform: 'translateY(32px) rotateY(-720deg) rotateZ(-20deg) scale(.68)', offset: 0, easing: 'cubic-bezier(.15,.65,.2,1)' },
-        { transform: premium?'translateY(-5px) rotateY(554deg) rotateZ(2deg) scale(1.02)':'translateY(-5px) rotateY(14deg) rotateZ(2deg) scale(1.02)', offset: at(1700), easing: 'cubic-bezier(.2,.8,.2,1)' },
-        { transform: premium?'translateY(0) rotateY(540deg) rotateZ(0deg) scale(1)':'translateY(0) rotateY(0deg) rotateZ(-5deg) scale(1)', offset: at(2100) },
-        { transform: premium?'translateY(0) rotateY(540deg) rotateZ(0deg) scale(1)':'translateY(0) rotateY(0deg) rotateZ(-5deg) scale(1)', offset: 1 - 380 / duration },
-        { transform: premium?'translateY(-12px) rotateY(540deg) rotateZ(0deg) scale(.96)':'translateY(-12px) rotateY(0deg) rotateZ(-5deg) scale(.96)', offset: 1 }
+        { transform: faceUp?'translateY(-5px) rotateY(554deg) rotateZ(2deg) scale(1.02)':'translateY(-5px) rotateY(14deg) rotateZ(2deg) scale(1.02)', offset: at(1700), easing: 'cubic-bezier(.2,.8,.2,1)' },
+        { transform: faceUp?'translateY(0) rotateY(540deg) rotateZ(0deg) scale(1)':'translateY(0) rotateY(0deg) rotateZ(-5deg) scale(1)', offset: at(2100) },
+        { transform: faceUp?'translateY(0) rotateY(540deg) rotateZ(0deg) scale(1)':'translateY(0) rotateY(0deg) rotateZ(-5deg) scale(1)', offset: 1 - 380 / duration },
+        { transform: faceUp?'translateY(-12px) rotateY(540deg) rotateZ(0deg) scale(.96)':'translateY(-12px) rotateY(0deg) rotateZ(-5deg) scale(.96)', offset: 1 }
       ]);
-      animate($(premium?'premium-glint':'glint'), [{ opacity: 0, transform: 'translateX(0) skewX(-20deg)', offset: 0 }, { opacity: 0, transform: 'translateX(0) skewX(-20deg)', offset: at(1600) }, { opacity: .9, offset: at(1850) }, { opacity: 0, transform: 'translateX(350%) skewX(-20deg)', offset: at(2400) }, { opacity: 0, offset: 1 }]);
-      if(premium){
+      animate($(faceUp?'premium-glint':'glint'), [{ opacity: 0, transform: 'translateX(0) skewX(-20deg)', offset: 0 }, { opacity: 0, transform: 'translateX(0) skewX(-20deg)', offset: at(1600) }, { opacity: .9, offset: at(1850) }, { opacity: 0, transform: 'translateX(350%) skewX(-20deg)', offset: at(2400) }, { opacity: 0, offset: 1 }]);
+      if(premium||donation){
         for(const [id,direction] of [['fan-left',-1],['fan-right',1]]){
-          const spread=`translate(${direction*94}px,21px) rotate(${direction*24}deg) scale(.88)`;
+          const spread=donation?`translate(${direction*77}px,22px) rotate(${direction*25}deg) scale(.85)`:`translate(${direction*94}px,21px) rotate(${direction*24}deg) scale(.88)`;
           animate($(id),[{opacity:0,transform:'translate(0,30px) rotate(0deg) scale(.62)',offset:0},{opacity:0,transform:'translate(0,30px) rotate(0deg) scale(.62)',offset:at(380)},{opacity:1,transform:spread,offset:at(1800),easing:'cubic-bezier(.18,.8,.2,1)'},{opacity:1,transform:spread,offset:1-380/duration},{opacity:0,transform:`translate(${direction*40}px,0) rotate(${direction*8}deg) scale(.75)`,offset:1}]);
         }
         animate($('royal-thread'),[{opacity:0,transform:'scale(.7)',offset:0},{opacity:0,transform:'scale(.7)',offset:at(700)},{opacity:.65,transform:'scale(1)',offset:at(2200)},{opacity:.65,transform:'scale(1)',offset:1}]);
       }
     }
+    if(donation&&motion){
+      animate($('donation-rays'),[{opacity:0,transform:'translateY(8px) scale(.86)',offset:0},{opacity:0,transform:'translateY(8px) scale(.86)',offset:at(700)},{opacity:.8,transform:'translateY(0) scale(1)',offset:at(1800)},{opacity:.3,transform:'translateY(-4px) scale(1.025)',offset:at(2900)},{opacity:0,transform:'translateY(-8px) scale(1.04)',offset:at(3800)},{opacity:0,offset:1}]);
+      animate($('donation-amount'),[{opacity:0,transform:'translateY(13px) scale(.94)',offset:0},{opacity:0,transform:'translateY(13px) scale(.94)',offset:at(1650)},{opacity:1,transform:'translateY(0) scale(1)',offset:at(2250),easing:'cubic-bezier(.16,1,.3,1)'},{opacity:1,transform:'translateY(0) scale(1)',offset:1}]);
+    }
     for (const [node, delay] of [[thread, motion ? 1400 : 0], [copy, motion ? 1650 : 0]]) {
       animate(node, [{ opacity: 0, transform: motion ? 'translateY(10px)' : 'none', offset: 0 }, { opacity: 0, transform: motion ? 'translateY(10px)' : 'none', offset: at(delay) }, { opacity: 1, transform: 'translateY(0)', offset: at(delay + 350) }, { opacity: 1, transform: 'translateY(0)', offset: 1 }]);
     }
     if (audio?.available && settings.volume > 0 && elapsed < 1200) {
-      if (audioVersion !== audio.version) { sound.src = new URL('api/follow/audio?kind='+(premium?'subscription':'follow')+'&v=' + encodeURIComponent(audio.version), location.href).href; audioVersion = audio.version; }
+      if (audioVersion !== audio.version) { sound.src = new URL('api/follow/audio?kind='+(donation?'donation':premium?'subscription':'follow')+'&v=' + encodeURIComponent(audio.version), location.href).href; audioVersion = audio.version; }
       sound.volume = settings.volume; sound.currentTime = 0;
       sound.play().then(() => notify({ type: 'follow-audio', ok: true })).catch(() => notify({ type: 'follow-audio', ok: false }));
     }
@@ -58,7 +67,7 @@
   function schedule() {
     clearTimeout(wake); if (demo) return;
     const time = Date.now() + offset, event = state.events.find(event => event.startsAt <= time && event.endsAt > time);
-    const profile=event?.kind==='subscription'?state.subscription:state;
+    const profile=event?.kind==='donation'?state.donation:event?.kind==='subscription'?state.subscription:state;
     if(event&&!profile?.settings.enabled){clear();return;}
     if (event) { if (active !== event.id) play(event, profile.audio,profile.settings); }
     else { clear(); const next = state.events.find(event => event.startsAt > time); if (next) wake = setTimeout(schedule, Math.max(1, next.startsAt - time)); }
@@ -71,7 +80,7 @@
       clearTimeout(wake); demo = true;
       state.settings = { volume: Math.min(1, Math.max(0, Number(value.settings?.volume) || 0)) };
       const duration = Math.min(15, Math.max(6, Number(value.settings?.duration) || 8)) * 1000;
-      play({ id: 'preview:' + Date.now(), name: value.name, kind:value.kind==='subscription'?'subscription':'follow',tier:['1000','2000','3000'].includes(value.tier)?value.tier:'1000',detail:String(value.detail||'').slice(0,100), message: String(value.settings?.message || 'Спасибо за фоллоу').slice(0, 60), motion: value.settings?.motion !== false, startsAt: Date.now(), endsAt: Date.now() + duration }, value.audio);
+      play({ id: 'preview:' + Date.now(), name: value.name, kind:['subscription','donation'].includes(value.kind)?value.kind:'follow',amount:String(value.amount||'500'),currency:['RUB','USD','EUR','BYN','KZT','UAH','BRL','TRY'].includes(value.currency)?value.currency:'RUB',donationText:String(value.donationText||'').slice(0,500),tier:['1000','2000','3000'].includes(value.tier)?value.tier:'1000',detail:String(value.detail||'').slice(0,100), message: String(value.settings?.message || 'Спасибо за фоллоу').slice(0, 60), motion: value.settings?.motion !== false, startsAt: Date.now(), endsAt: Date.now() + duration }, value.audio);
     });
     notify({ type: 'follow-preview-ready' });
   } else {

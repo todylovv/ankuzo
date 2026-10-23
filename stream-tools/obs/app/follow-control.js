@@ -2,8 +2,9 @@
   'use strict';
   const $ = id => document.getElementById(id), base = new URL('.', location.href);
   base.username = ''; base.password = '';
-  let kind=new URLSearchParams(location.search).get('kind')==='subscription'?'subscription':'follow',uploadBusy=false;
-  const activeProfile=()=>kind==='subscription'?state.subscription:state;
+  const requestedKind=new URLSearchParams(location.search).get('kind');
+  let kind=['subscription','donation'].includes(requestedKind)?requestedKind:'follow',uploadBusy=false;
+  const activeProfile=()=>kind==='donation'?state.donation:kind==='subscription'?state.subscription:state;
   let state = null, dirty = false, ready = false, initialExample = false, busy = false, link = '';
   const text = (id, message, error = false) => { $(id).textContent = message; $(id).classList.toggle('error', error); };
   async function api(route, body) {
@@ -14,6 +15,7 @@
   function render(next, fill = false) {
     state = next;const selected=activeProfile();
     if (fill) { for (const id of ['enabled', 'motion']) $(id).checked = selected.settings[id]; for (const id of ['message', 'duration']) $(id).value = selected.settings[id]; $('volume').value = Math.round(selected.settings.volume * 100); $('volume-value').textContent = $('volume').value + '%'; }
+    renderDonation(next.donationalerts);
     $('audio-name').textContent = selected.audio.available ? selected.audio.name : 'Свой MP3, WAV или OGG · до 5 МБ'; $('remove-audio').hidden = !selected.audio.available;
     $('client-id').value = next.clientId; $('callback-url').value = next.callbackUrl;
     const labels = { connected: 'Twitch подключён · ' + next.account, connecting: 'Подключаемся к событиям Twitch…', reconnecting: 'Восстанавливаем связь с Twitch…', reauthorize: 'Нужно заново разрешить доступ Twitch' };
@@ -41,9 +43,10 @@
     if (event.data?.type === 'follow-preview-ready') { ready = true; if (state && !initialExample) { initialExample = true; preview(false); } }
     if (event.data?.type === 'follow-audio' && !event.data.ok) text('preview-note', 'Браузер не воспроизвёл звук. Проверь файл и нажми пример ещё раз.', true);
   });
-  function example(){const eventType=$('example-type').value,tier=$('example-tier').value,count=Math.min(1200,Math.max(1,Number($('example-count').value)||1));return {eventType,tier,months:eventType==='resub'?count:1,total:eventType==='gift'?count:1,detail:eventType==='gift'?`Подарено: ${count} · Tier ${Number(tier)/1000}`:eventType==='resub'?`Месяцев вместе: ${count} · Tier ${Number(tier)/1000}`:`Новая подписка · Tier ${Number(tier)/1000}`};}
+  function example(){if(kind==='donation')return {amount:$('example-amount').value,currency:$('example-currency').value,donationText:$('example-message').value};const eventType=$('example-type').value,tier=$('example-tier').value,count=Math.min(1200,Math.max(1,Number($('example-count').value)||1));return {eventType,tier,months:eventType==='resub'?count:1,total:eventType==='gift'?count:1,detail:eventType==='gift'?`Подарено: ${count} · Tier ${Number(tier)/1000}`:eventType==='resub'?`Месяцев вместе: ${count} · Tier ${Number(tier)/1000}`:`Новая подписка · Tier ${Number(tier)/1000}`};}
   function mode(){
-    $('alert-kind').value=kind;document.body.classList.toggle('subscription-mode',kind==='subscription');$('example-fields').hidden=kind!=='subscription';$('profile-title').textContent=kind==='subscription'?'Платная подписка':'Фоллоу';$('kind-note').textContent=kind==='subscription'?'Три карты, золотая нить, уровень и месяцы. Свои настройки и звук. OBS-ссылка общая.':'Одна карта и красная нить. Свои настройки и звук. OBS-ссылка общая.';
+    $('donation-example').hidden=kind!=='donation';$('da-panel').hidden=kind!=='donation';$('twitch-panel').hidden=kind==='donation';
+    $('alert-kind').value=kind;document.body.classList.toggle('subscription-mode',kind==='subscription');$('example-fields').hidden=kind!=='subscription';$('profile-title').textContent=kind==='donation'?'Донат':kind==='subscription'?'Платная подписка':'Фоллоу';$('kind-note').textContent=kind==='donation'?'Рубиновый туз, раскрытие колоды и появление суммы. Свой звук. OBS-ссылка общая.':kind==='subscription'?'Три карты, золотая нить, уровень и месяцы. Свои настройки и звук. OBS-ссылка общая.':'Одна карта и красная нить. Свои настройки и звук. OBS-ссылка общая.';
   }
   $('alert-kind').addEventListener('change',async event=>{
     const next=event.target.value;if(busy||uploadBusy){event.target.value=kind;return;}
@@ -97,6 +100,22 @@
   $('show-url').addEventListener('click', () => { $('url-details').hidden = !$('url-details').hidden; $('show-url').setAttribute('aria-expanded', String(!$('url-details').hidden)); });
   $('copy-url').addEventListener('click', async () => { try { await navigator.clipboard.writeText(link); text('link-feedback', 'Скопировано. Размер: 560 × 440, 60 FPS.'); } catch { $('url-details').hidden = false; $('show-url').setAttribute('aria-expanded', 'true'); $('scene-url').select(); text('link-feedback', 'Скопируй выделенную ссылку вручную.'); } });
   $('copy-callback').addEventListener('click', async () => { try { await navigator.clipboard.writeText($('callback-url').value); $('copy-callback').textContent = 'Адрес скопирован'; } catch { $('callback-url').select(); $('copy-callback').textContent = 'Скопируй выделенный адрес'; } });
+  function renderDonation(next){
+    if(!next)return;
+    $('da-client').value=next.clientId;$('da-callback').value=next.callbackUrl;
+    const labels={connected:'DonationAlerts подключён · '+next.account,connecting:'Подключаемся к донатам…',reconnecting:'Восстанавливаем связь…',reauthorize:'Нужно заново разрешить доступ'};
+    $('da-status').textContent=labels[next.connection]||(next.account?'Аккаунт '+next.account+' подключён':'DonationAlerts ещё не подключён');
+    $('da-help').textContent=next.error||(next.connection==='connected'?'Новые донаты появятся в OBS автоматически.':next.configured?'Нажми «Подключить DonationAlerts» и разреши просмотр новых донатов.':'Сначала сохрани приложение в настройке ниже. Это нужно один раз.');
+    $('da-dot').className='connection-dot '+next.connection;$('da-connect').hidden=!next.configured||next.connection==='connected';$('da-disconnect').hidden=!next.account;
+    if(!next.configured)$('da-details').open=true;
+  }
+  $('da-form').addEventListener('submit',async event=>{
+    event.preventDefault();$('da-save').disabled=true;
+    try{renderDonation(await api('donationalerts/app',{clientId:$('da-client').value.trim(),clientSecret:$('da-secret').value.trim()}));$('da-secret').value='';$('da-details').open=false;text('da-feedback','Сохранено. Подключи аккаунт выше.');$('da-connect').focus();}
+    catch(error){text('da-feedback',error.message,true);}finally{$('da-save').disabled=false;}
+  });
+  $('da-disconnect').addEventListener('click',async()=>{ $('da-disconnect').disabled=true;try{renderDonation(await api('donationalerts/disconnect',{}));}catch(error){text('da-status',error.message,true);}finally{$('da-disconnect').disabled=false;} });
+  $('da-copy').addEventListener('click',async()=>{try{await navigator.clipboard.writeText($('da-callback').value);$('da-copy').textContent='Адрес скопирован';}catch{$('da-callback').select();$('da-copy').textContent='Скопируй выделенный адрес';}});
   void load(); void loadLink();
-  setInterval(() => { if (!document.hidden && !busy && !uploadBusy && !dirty && !$('app-details').open) void load(); }, 10000);
+  setInterval(() => { if (!document.hidden && !busy && !uploadBusy && !dirty && !(kind==='donation'?$('da-details'):$('app-details')).open) void load(); }, 10000);
 })();

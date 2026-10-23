@@ -2,6 +2,8 @@
 const fs = require('node:fs');
 const path = require('node:path');
 const { randomBytes } = require('node:crypto');
+const {createDonationAlerts,donationData}=require('./donationalerts.cjs');
+const DONATION_DEFAULTS={enabled:true,duration:12,message:'Спасибо за поддержку',motion:true,volume:.7};
 const SCOPE = 'moderator:read:followers';
 const SUB_SCOPE = 'channel:read:subscriptions';
 const SUB_DEFAULTS = { enabled:true,duration:10,message:'Спасибо за подписку',motion:true,volume:.8 };
@@ -43,7 +45,9 @@ function createFollow({ directory = null, origin = '', now = Date.now, fetchImpl
   let settings = directory ? validateSettings(read('follow-settings.json')) : { ...DEFAULTS };
   let subscriptionSettings=directory?validateSettings(read('subscription-settings.json'),SUB_DEFAULTS):{...SUB_DEFAULTS};
   let subscriptionAudio=directory?read('subscription-audio.json'):{},subscriptionBytes=null,subscriptionConnection='disconnected';
-  const profile=kind=>kind==='subscription'?{settings:subscriptionSettings,audio:subscriptionAudio}:{settings,audio};
+  let donationSettings=directory?validateSettings(read('donation-settings.json'),DONATION_DEFAULTS):{...DONATION_DEFAULTS};
+  let donationAudio=directory?read('donation-audio.json'):{},donationBytes=null;
+  const profile=kind=>kind==='donation'?{settings:donationSettings,audio:donationAudio}:kind==='subscription'?{settings:subscriptionSettings,audio:subscriptionAudio}:{settings,audio};
   let credentials = directory ? read('follow-private.json') : {};
   let audio = directory ? read('follow-audio.json') : {}, audioBytes = null;
   let events = [], closed = false, connection = 'disconnected', lastError = '', dropped = 0;
@@ -52,7 +56,7 @@ function createFollow({ directory = null, origin = '', now = Date.now, fetchImpl
   const later = (fn, ms) => { const id = setTimeout(fn, ms); id.unref?.(); return id; };
   const snapshot = () => {
     events = events.filter(event => event.endsAt > now());
-    return { settings: { ...settings }, audio: { available: Boolean(audio.version), version: audio.version || '' }, subscription:{settings:{...subscriptionSettings},audio:{available:Boolean(subscriptionAudio.version),version:subscriptionAudio.version||''}}, events: events.map(event => ({ ...event })), serverNow: now() };
+    return { donation:{settings:{...donationSettings},audio:{available:Boolean(donationAudio.version),version:donationAudio.version||''}}, settings: { ...settings }, audio: { available: Boolean(audio.version), version: audio.version || '' }, subscription:{settings:{...subscriptionSettings},audio:{available:Boolean(subscriptionAudio.version),version:subscriptionAudio.version||''}}, events: events.map(event => ({ ...event })), serverNow: now() };
   };
   function broadcast() {
     const message = 'data: ' + JSON.stringify(snapshot()) + '\n\n';
@@ -61,9 +65,9 @@ function createFollow({ directory = null, origin = '', now = Date.now, fetchImpl
   function remember(id){seen.set(id,now());while(seen.size>500)seen.delete(seen.keys().next().value);}
   function enqueue({ id, name,kind='follow',...metadata }) {
     snapshot();
-    if (!['follow','subscription'].includes(kind))return null;
+    if (!['follow','subscription','donation'].includes(kind))return null;
     const selected=profile(kind).settings;
-    let paid={};if(kind==='subscription'){try{paid=paidData(metadata);}catch{return null;}}
+    let paid={};if(kind==='donation'){try{paid=donationData(metadata);}catch{return null;}}if(kind==='subscription'){try{paid=paidData(metadata);}catch{return null;}}
     if (!selected.enabled || typeof id !== 'string' || !id || typeof name !== 'string') return null;
     name = name.replace(/[\x00-\x1f\x7f]/g, '').slice(0, 64).trim();
     if (!name || seen.has(id)) return null;
@@ -73,7 +77,8 @@ function createFollow({ directory = null, origin = '', now = Date.now, fetchImpl
     const event = { id: randomBytes(12).toString('base64url'), name, startsAt, endsAt: startsAt + selected.duration * 1000, message: selected.message, motion: selected.motion,kind,...paid };
     events.push(event); broadcast(); return { ...event };
   }
-  function status() { return {subscription:{settings:{...subscriptionSettings},audio:{available:Boolean(subscriptionAudio.version),version:subscriptionAudio.version||'',name:subscriptionAudio.name||''}},subscriptionAuthorized:Boolean(credentials.scopes?.includes(SUB_SCOPE)),subscriptionConnection, settings: { ...settings }, audio: { available: Boolean(audio.version), version: audio.version || '', name: audio.name || '' }, configured: Boolean(credentials.clientId && credentials.clientSecret), clientId: credentials.clientId || '', account: credentials.user?.login || null, connection, error: lastError, dropped, callbackUrl: callbackUrl() }; }
+  const donations=createDonationAlerts({read:name=>directory?read(name):{},save,origin,now,fetchImpl,WebSocketImpl,schedule,onDonation:enqueue,onDisconnect(){events=events.filter(event=>event.kind!=='donation');broadcast();}});
+  function status() { return {donationalerts:donations.status(),donation:{settings:{...donationSettings},audio:{available:Boolean(donationAudio.version),version:donationAudio.version||'',name:donationAudio.name||''}},subscription:{settings:{...subscriptionSettings},audio:{available:Boolean(subscriptionAudio.version),version:subscriptionAudio.version||'',name:subscriptionAudio.name||''}},subscriptionAuthorized:Boolean(credentials.scopes?.includes(SUB_SCOPE)),subscriptionConnection, settings: { ...settings }, audio: { available: Boolean(audio.version), version: audio.version || '', name: audio.name || '' }, configured: Boolean(credentials.clientId && credentials.clientSecret), clientId: credentials.clientId || '', account: credentials.user?.login || null, connection, error: lastError, dropped, callbackUrl: callbackUrl() }; }
   const callbackUrl = () => `${origin}${origin ? '/obs' : ''}/api/follow/twitch/callback`;
   async function request(url, options) {
     const response = await fetchImpl(url, { ...options, signal: AbortSignal.timeout(12000) });
@@ -208,10 +213,10 @@ function createFollow({ directory = null, origin = '', now = Date.now, fetchImpl
       if (!viewer && !admin) { json(res, 401, { error: 'Нужен вход в пульт.' }); return true; }
       try {
         const kind=new URL(req.url,'http://localhost').searchParams.get('kind')||'follow';
-        if(!['follow','subscription'].includes(kind)){json(res,400,{error:'Неверный тип оповещения.'});return true;}
+        if(!['follow','subscription','donation'].includes(kind)){json(res,400,{error:'Неверный тип оповещения.'});return true;}
         const audio=profile(kind).audio;
         if (!audio.version) { json(res, 404, { error: 'Звук не загружен.' }); return true; }
-        const bytes = directory ? fs.readFileSync(path.join(directory, kind+'-audio.bin')) : kind==='subscription'?subscriptionBytes:audioBytes;
+        const bytes = directory ? fs.readFileSync(path.join(directory, kind+'-audio.bin')) : kind==='donation'?donationBytes:kind==='subscription'?subscriptionBytes:audioBytes;
         let start = 0, finish = bytes.length - 1, code = 200;
         if (req.headers.range) {
           const match = /^bytes=(\d*)-(\d*)$/.exec(req.headers.range);
@@ -245,13 +250,14 @@ function createFollow({ directory = null, origin = '', now = Date.now, fetchImpl
         try { body = JSON.parse(raw); } catch { throw new Error('Неверный JSON.'); }
         if (!body || typeof body !== 'object' || Array.isArray(body)) throw new Error('Неверный запрос.');
       }
+      if(await donations.handle(route,req,res,body,json))return true;
       const kind=body?.kind??'follow';
-      if(!['follow','subscription'].includes(kind))throw new Error('Неверный тип оповещения.');
+      if(!['follow','subscription','donation'].includes(kind))throw new Error('Неверный тип оповещения.');
       const selected=profile(kind);
       if (route === 'status' && req.method === 'GET') json(res, 200, status());
       else if (route === 'audio' && req.method === 'POST') {
         if (body.remove === true) {
-          save(kind+'-audio.json', {});if(kind==='subscription'){subscriptionAudio={};subscriptionBytes=null;}else{audio={};audioBytes=null;}
+          save(kind+'-audio.json', {});if(kind==='donation'){donationAudio={};donationBytes=null;}else if(kind==='subscription'){subscriptionAudio={};subscriptionBytes=null;}else{audio={};audioBytes=null;}
           if (directory) { try { fs.unlinkSync(path.join(directory, kind+'-audio.bin')); } catch (e) { if (e.code !== 'ENOENT') throw e; } }
         } else {
           if (typeof body.data !== 'string' || !/^[A-Za-z0-9+/]*={0,2}$/.test(body.data) || body.data.length % 4) throw new Error('Неверный аудиофайл.');
@@ -266,17 +272,17 @@ function createFollow({ directory = null, origin = '', now = Date.now, fetchImpl
           if (directory) {
             const file = path.join(directory, kind+'-audio.bin'), temp = file + '.tmp';
             fs.writeFileSync(temp, bytes, { mode: 0o600 }); fs.renameSync(temp, file);
-          } else if(kind==='subscription')subscriptionBytes=bytes;else audioBytes=bytes;
-          save(kind+'-audio.json',next);if(kind==='subscription')subscriptionAudio=next;else audio=next;
+          } else if(kind==='donation')donationBytes=bytes;else if(kind==='subscription')subscriptionBytes=bytes;else audioBytes=bytes;
+          save(kind+'-audio.json',next);if(kind==='donation')donationAudio=next;else if(kind==='subscription')subscriptionAudio=next;else audio=next;
         }
         broadcast(); json(res, 200, status());
       }
       else if (route === 'settings' && req.method === 'POST') {
-        const {kind:ignored,...input}=body;const next=validateSettings(input,selected.settings);save(kind+'-settings.json',next);if(kind==='subscription')subscriptionSettings=next;else settings=next;
+        const {kind:ignored,...input}=body;const next=validateSettings(input,selected.settings);save(kind+'-settings.json',next);if(kind==='donation')donationSettings=next;else if(kind==='subscription')subscriptionSettings=next;else settings=next;
         if(!next.enabled)events=events.filter(event=>event.kind!==kind); broadcast(); json(res, 200, status());
       } else if (route === 'test' && req.method === 'POST') {
         if (!selected.settings.enabled) throw new Error('Сначала включи оповещения.');
-        const metadata=kind==='subscription'?paidData(body):{};
+        const metadata=kind==='donation'?donationData(body):kind==='subscription'?paidData(body):{};
         const event = enqueue({kind,...metadata, id: 'test:' + randomBytes(16).toString('hex'), name: typeof body.name === 'string' ? body.name : 'Новый_зритель' });
         if (!event) throw new Error('Очередь заполнена.'); json(res, 200, { queued: true });
       } else if (route === 'twitch/app' && req.method === 'POST') {
@@ -306,20 +312,20 @@ function createFollow({ directory = null, origin = '', now = Date.now, fetchImpl
         res.writeHead(303, { Location: `${origin ? '/obs' : ''}/follow-control.html?connected=1`, 'Cache-Control': 'no-store' }); res.end();
       } else if (route === 'twitch/disconnect' && req.method === 'POST') {
         const next = { clientId: credentials.clientId, clientSecret: credentials.clientSecret };
-        save('follow-private.json', next); stop(); credentials = next; states.clear(); events = []; broadcast(); json(res, 200, status());
+        save('follow-private.json', next); stop(); credentials = next; states.clear(); events = events.filter(event=>event.kind==='donation'); broadcast(); json(res, 200, status());
       } else json(res, 404, { error: 'Неизвестный запрос.' });
     } catch (error) {
       const safe = !error.status && /^[А-ЯЁ]/.test(error.message) ? error.message : 'Не удалось выполнить запрос. Вернись в пульт и попробуй снова.';
-      if (route === 'twitch/callback') {
+      if (route === 'twitch/callback'||route==='donationalerts/callback') {
         const prefix = origin ? '/obs' : '';
         const escaped = safe.replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[char]);
         res.writeHead(400, { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-store' });
-        res.end(`<!doctype html><html lang="ru"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Подключение Twitch</title><link rel="stylesheet" href="${prefix}/control.css"><main class="workspace"><section class="controls"><h1>Подключение Twitch</h1><p>${escaped}</p><a class="scene-link" href="${prefix}/follow-control.html">Вернуться в пульт ↗</a></section></main></html>`);
+        res.end(`<!doctype html><html lang="ru"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Подключение оповещений</title><link rel="stylesheet" href="${prefix}/control.css"><main class="workspace"><section class="controls"><h1>Подключение оповещений</h1><p>${escaped}</p><a class="scene-link" href="${prefix}/follow-control.html">Вернуться в пульт ↗</a></section></main></html>`);
       } else json(res, 400, { error: safe });
     }
     return true;
   }
-  function close() { if (closed) return; closed = true; stop(); clearTimeout(maintenance); for (const res of clients) res.end(); clients.clear(); states.clear(); }
+  function close() { if (closed) return; closed = true; stop(); donations.close(); clearTimeout(maintenance); for (const res of clients) res.end(); clients.clear(); states.clear(); }
   return { enqueue, snapshot, handle, close };
 }
 module.exports = { createFollow };

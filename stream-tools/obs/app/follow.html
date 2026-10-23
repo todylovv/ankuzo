@@ -1,11 +1,12 @@
-<!doctype html><html lang="ru"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="dark light"><title>Ankuzo · новый фоллоу</title><link rel="stylesheet" href="follow.css"><script src="follow.js" defer></script></head><body>
-<main id="stage" aria-label="Оповещение о фоллоу">
+<!doctype html><html lang="ru"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="dark light"><title>Ankuzo · оповещения</title><link rel="stylesheet" href="follow.css"><script src="follow.js" defer></script></head><body>
+<main id="stage" aria-label="Оповещение стрима">
   <section id="alert" hidden>
+    <svg id="donation-rays" class="donation-rays" viewBox="0 0 560 270" fill="none" aria-hidden="true"><g stroke="#e5ac8b" stroke-width="1"><path d="M86 66l3-7 3 7-3 7zM469 166l3-7 3 7-3 7zM447 48l4-9 4 9-4 9zM110 193l4-9 4 9-4 9z"/><path d="M151 41v8m-4-4h8M409 214v8m-4-4h8M465 100v5m-2.5-2.5h5"/></g><g fill="#f47b91"><circle cx="80" cy="133" r="1.8"/><circle cx="416" cy="29" r="1.6"/><circle cx="477" cy="211" r="1.3"/><circle cx="142" cy="223" r="1.4"/></g></svg>
     <div id="fan-left" class="fan-card fan-left" aria-hidden="true"></div><div id="fan-right" class="fan-card fan-right" aria-hidden="true"></div><svg id="royal-thread" class="royal-thread" viewBox="0 0 440 230" fill="none" aria-hidden="true"><path d="M24 168C-14 64 126 5 267 25S480 142 404 182"/><path d="M21 168l5-10 6 10-6 10zM402 182l5-10 6 10-6 10z"/></svg><div class="card-space"><div id="card" class="card">
       <div class="face ornament"><span class="glint" id="glint"></span></div>
       <div class="face reverse"><span id="premium-glint" class="glint"></span><span class="corner">A<br>♠</span><span class="spade">♠</span><span class="twenty">22</span><span class="corner bottom">A<br>♠</span></div>
     </div></div>
     <svg id="thread" class="thread" viewBox="0 0 440 54" fill="none" aria-hidden="true"><path class="thread-shadow" d="M10 34C75 46 116 4 184 20S263 57 303 30 361 6 430 20"/><path d="M10 34C75 46 116 4 184 20S263 57 303 30 361 6 430 20"/><path class="thread-light" d="M172 18c14 1 21 3 33 7"/></svg>
-    <div class="copy" id="copy"><p id="caption">Спасибо за фоллоу</p><p id="nickname">Новый_зритель</p><p id="subscription-detail" hidden></p><span class="footer-mark" aria-hidden="true">◆</span></div>
+    <div class="copy" id="copy"><p id="caption">Спасибо за фоллоу</p><p id="nickname">Новый_зритель</p><p id="subscription-detail" hidden></p><p id="donation-amount" hidden></p><p id="donation-text" hidden></p><span class="footer-mark" aria-hidden="true">◆</span></div>
   </section>
 </main><audio id="sound" preload="none"></audio></body></html>
