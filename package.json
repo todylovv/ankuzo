@@ -9,7 +9,10 @@
     "lint": "oxlint",
     "preview": "vite preview",
     "update-data": "node scripts/update-data.js",
-    "test": "node --test scripts/*.test.js"
+    "test": "node --test scripts/*.test.js",
+    "test:obs": "npm --prefix stream-tools/obs test",
+    "test:music": "npm --prefix stream-tools/music test",
+    "test:all": "npm test && npm run test:obs && npm run test:music"
   },
   "dependencies": {
     "@react-three/drei": "^10.7.8",

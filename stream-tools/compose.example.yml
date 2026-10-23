@@ -1,0 +1,66 @@
+# Example only. Keep existing production containers/data until migration is planned.
+# Edge authentication and private configuration are supplied outside Git.
+services:
+  ankuzo-obs-scene:
+    image: node:22-alpine
+    working_dir: /app
+    command: [node, server.cjs]
+    restart: unless-stopped
+    env_file: runtime.env
+    volumes:
+      - ./obs/app:/app:ro
+      - ./obs/data:/data
+    ports: ["127.0.0.1:17222:17222"]
+    networks: [edge]
+
+  ankuzo-speech-accuracy:
+    profiles: [speech]
+    build: ./speech
+    restart: unless-stopped
+    environment:
+      SPEECH_MODEL: small
+      SPEECH_THREADS: "3"
+      SPEECH_BEAM: "3"
+      OMP_NUM_THREADS: "3"
+    volumes:
+      - ./speech/models:/models
+    cpus: 3
+    mem_limit: 2500m
+    pids_limit: 128
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    read_only: true
+    tmpfs: ["/tmp:rw,size=128m"]
+    networks: [edge]
+
+  ankuzo-music:
+    build: ./music
+    restart: unless-stopped
+    environment:
+      DATA_DIR: /data
+      ANKUZO_MUSIC_CONFIG: /run/music-config.json
+    volumes:
+      - ./music.config.json:/run/music-config.json:ro
+      - ./music/data:/data
+    ports: ["127.0.0.1:17224:17223"]
+    networks: [edge]
+
+  ankuzo-music-vk:
+    profiles: [vk]
+    build:
+      context: ./music
+      dockerfile: Dockerfile.vk
+    restart: unless-stopped
+    user: "1000:1000"
+    volumes:
+      - ./music.config.json:/run/music-config.json:ro
+      - ./music/vk-profile:/profile
+    shm_size: 512m
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    networks: [edge]
+
+networks:
+  edge:
+    name: edge
+    external: true

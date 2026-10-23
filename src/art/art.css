@@ -174,3 +174,6 @@
  .art-root .ps-content{overflow-x:hidden}.art-root .ps-content .ps-trophy-summary{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px}.art-root .ps-content .ps-account{min-width:0}.art-root .ps-content .ps-trophy-total{border:0;padding:0}
  .art-root .ps-content .ps-trophy-types{grid-column:1/-1;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;padding-top:14px}.art-root .ps-content .ps-trophy-types>div{grid-template-columns:auto;justify-items:center;row-gap:3px}.art-root .ps-content .ps-trophy-types dd{grid-column:1;grid-row:2}.art-root .ps-content .ps-trophy-types dt{grid-column:1;grid-row:3;font-size:12px}.art-root .ps-content .ps-trophy{grid-column:1;grid-row:1;height:24px}.art-root .ps-content .ps-game-title{display:flex;min-height:36px;font-size:12px}
 }
+
+/* Starting-screen smoke: its own background layer, calm behind the copy. */
+.smoke-field{position:absolute;inset:0;width:100%;height:100%;z-index:0;pointer-events:none}.smoke-background .ambient{display:none}.smoke-background .stage{background:radial-gradient(ellipse at 90% 20%,#39071966,transparent 58%),radial-gradient(ellipse at 70% 100%,#4c0b2366,transparent 62%),#050506}.motion-off .smoke-field{display:none}

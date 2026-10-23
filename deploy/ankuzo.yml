@@ -4,6 +4,9 @@
 # the shared `edge` network on port 3000.
 services:
   ankuzo:
+    pids_limit: 64
+    memswap_limit: 256m
+    mem_limit: 128m
     build:
       context: ..
       dockerfile: deploy/Dockerfile

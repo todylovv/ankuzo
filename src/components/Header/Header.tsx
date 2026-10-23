@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { FaDiscord, FaGithub, FaSteam } from "react-icons/fa";
+import { FaDiscord, FaSteam } from "react-icons/fa";
 import { IoClose } from "react-icons/io5";
 import { navItems, type SocialLink } from "../../data/links";
 import { useLiveData } from "../../data/useLiveData";
@@ -10,7 +10,6 @@ import styles from "./Header.module.scss";
 const socialIcon = {
   discord: FaDiscord,
   steam: FaSteam,
-  github: FaGithub,
 } as const;
 
 function SocialButton({ item }: { item: SocialLink }) {

@@ -176,8 +176,6 @@ export type LiveData = {
   sources: DataSourceStatus[];
 };
 
-const GITHUB_URL = "https://github.com/todylovv";
-
 const LiveDataContext = createContext<LiveData | null>(null);
 
 const fallbackFaceit: FaceitLive = {
@@ -601,7 +599,6 @@ export function LiveDataProvider({ children }: { children: ReactNode }) {
         const headerSocials: SocialLink[] = [
           { id: "discord", href: "#discord", label: "Discord" },
           { id: "steam", href: steamUrl, label: "Steam" },
-          { id: "github", href: GITHUB_URL, label: "GitHub" },
         ];
 
         const faceitLive: FaceitLive = {

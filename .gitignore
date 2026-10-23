@@ -26,3 +26,17 @@ premium-audit.json
 *.njsproj
 *.sln
 *.sw?
+
+# Private runtime state for stream tools (source/config examples remain tracked).
+.env
+.env.*
+!.env.example
+**/runtime.env
+/stream-tools/music.config.json
+/stream-tools/**/config.json
+/stream-tools/**/data/
+/stream-tools/**/models/
+/stream-tools/**/vk-profile/
+**/__pycache__/
+*.pyc
+*.pcm

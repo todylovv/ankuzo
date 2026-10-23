@@ -82,8 +82,7 @@
   font-size: 13px;
 }
 
-.steam,
-.github {
+.steam {
   width: 36px;
   height: 36px;
   border-radius: 50%;
@@ -250,4 +249,4 @@
   .about .menu { width: 44px; height: 44px; }
 }
 
-@media (max-width: 760px) { .social, .steam, .github { width: 44px; height: 44px; } }
+@media (max-width: 760px) { .social, .steam { width: 44px; height: 44px; } }

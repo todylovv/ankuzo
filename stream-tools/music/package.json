@@ -1,0 +1,14 @@
+{
+  "name": "ankuzo-music",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "node server.mjs",
+    "test": "node --test test/*.test.mjs",
+    "check": "node --check server.mjs && node --check lib/queue.mjs && node --check lib/media.mjs && node --check lib/twitch.mjs && node --check public/control.js && node --check public/overlay.js && node --check lib/yandex.mjs && node --check lib/vk.mjs && node --check vk-connector.cjs && node --check lib/covers.mjs && node --check lib/background.mjs"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}

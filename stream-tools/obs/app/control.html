@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark"><title>Ankuzo — пульт сцены</title>
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-head-32.png?v=20261022"><link rel="icon" type="image/png" sizes="64x64" href="/favicon-head-64.png?v=20261022"><link rel="apple-touch-icon" sizes="180x180" href="/favicon-head-180.png?v=20261022"><link rel="stylesheet" href="control.css">
+  <script src="timer.js" defer></script><script src="control.js" defer></script>
+  <link rel="stylesheet" href="speech.css"><script src="speech-control.js" defer></script>
+</head>
+<body>
+  <header class="page-header"><a class="wordmark" href="./">Ankuzo<span>.</span></a><span class="header-label">Пульт сцены</span><nav class="stream-nav" aria-label="Разделы пульта"><a href="/obs/" aria-current="page">OBS</a><a href="/obs/music/">Музыка</a></nav><a class="scene-link" href="scene.html" target="_blank" rel="noopener">Открыть заставку <span aria-hidden="true">↗</span></a></header>
+  <main class="workspace">
+    <section class="preview-section" aria-label="Предпросмотр">
+      <div class="section-intro"><h1>Твоя сцена<span>.</span></h1><p>Надписи и таймер — под твоим контролем.</p></div>
+      <div class="scene-picker"><label for="scene-selector">Настраиваемая сцена</label><select id="scene-selector"><option value="starting">Начало стрима</option><option value="break">Перерыв</option><option value="overlay">Игровой оверлей</option><option value="mapcover">Миникарта и чат</option><option value="follow">Фоллоу и подписки</option></select><span id="scene-scope">Отдельные надписи и таймер для каждой сцены.</span></div>
+      <div class="preview-frame"><iframe id="preview" title="Предпросмотр заставки Ankuzo" src="scene.html" tabindex="-1"></iframe></div>
+      <div class="preview-caption"><span id="preview-kind">Предпросмотр · 16:9</span><span id="connection" role="status">Подключаемся…</span></div>
+      <a class="layout-shortcut" id="layout-link" href="layout.html" target="_blank" rel="noopener" hidden>Макет стрима и размещение в OBS <span aria-hidden="true">↗</span></a>
+      <section class="obs-setup" aria-labelledby="obs-title">
+        <h2 id="obs-title">Подключить к OBS</h2>
+        <div id="source-format" class="source-format" hidden><label for="source-mode">Размер источника</label><select id="source-mode"><option value="widget">По размеру элемента</option><option value="canvas">Весь холст — старый формат</option></select></div>
+        <p class="source-size">В свойствах «Браузера»: <strong id="source-dimensions" aria-live="polite">1920 × 1080</strong> px · 60 FPS</p>
+        <p id="source-guidance" class="setup-hint" hidden>Для существующего источника замени URL и укажи размеры выше. Затем: ПКМ по источнику → Трансформировать → Сбросить преобразование. Перемещай и масштабируй виджет мышью в OBS. При изменении пропорций обнови ширину и высоту источника; ссылка остаётся прежней.</p>
+
+        <div class="url-row"><button id="copy-url" class="copy-primary" type="button" disabled>Скопировать ссылку</button><button id="show-url" type="button" aria-expanded="false" aria-controls="url-details" disabled>Показать ссылку</button></div>
+        <div id="url-details" class="url-details" hidden><label for="scene-url">Личная ссылка для OBS</label><input id="scene-url" type="text" readonly autocomplete="off" spellcheck="false" aria-describedby="link-privacy"></div>
+        <p id="link-feedback" class="link-feedback" role="status" aria-live="polite">Готовим ссылку…</p>
+        <button id="retry-link" type="button" hidden>Повторить загрузку</button>
+        <details id="obs-details" class="compact-details"><summary>Подключение и доступ</summary><p>Скопируй ссылку и вставь в источник «Браузер» в OBS. Входить в аккаунт там не нужно.</p><p class="setup-hint">В настройках источника: <strong id="obs-source-configuration">1920 × 1080 · 60 FPS</strong>. «Локальный файл» — выключен.</p>
+        <p id="link-privacy" class="setup-hint">Ссылка открывает только заставку. Не публикуй её: любой, у кого она есть, сможет смотреть сцену. Управление остаётся под паролем.</p>
+        <button id="replace-link" class="link-action" type="button" aria-expanded="false" aria-controls="replace-confirm" disabled>Заменить ссылку</button>
+        <div id="replace-confirm" class="replace-confirm" hidden>
+          <p>Все старые ссылки начала, перерыва, оверлея, миникарты, счётчика мата и фоллоу перестанут работать. После замены обнови ссылки всех источников в OBS.</p>
+          <div class="url-row"><button id="cancel-replace" type="button">Оставить текущую</button><button id="confirm-replace" class="replace-button" type="button">Заменить</button></div>
+        </div>
+
+</details>
+</section>
+      <p class="local-note">Настройки сохраняются на сервере. Таймер запускается только по твоей команде.</p>
+    </section>
+    <aside class="controls" aria-label="Управление сценой">
+      <section class="timer-controls" id="timer-panel" aria-labelledby="timer-heading">
+        <div class="section-heading"><h2 id="timer-heading">Таймер</h2><label class="switch"><input id="show-timer" type="checkbox"><span>В кадре</span></label></div>
+        <div class="clock-row"><output id="control-time">05:00</output><span id="timer-status">Готов к запуску</span></div>
+        <div class="transport"><button id="toggle-timer" class="primary" type="button">Запустить</button><button id="reset-timer" type="button">Сбросить</button><button id="add-time" type="button" aria-label="Добавить одну минуту">+1 мин</button></div>
+        <p class="timer-hint" id="timer-hint">Запуск автоматически покажет таймер в кадре.</p>
+      </section>
+      <form id="settings-form" novalidate>
+        <h2>Содержание</h2>
+        <div id="title-field"><label id="title-label" for="title">Текст заставки</label><input id="title" name="title" type="text" maxlength="80" required value="Скоро начнём" placeholder="Например, Перерыв на чай"></div>
+        <div id="subtitle-field" hidden><label id="subtitle-label" for="subtitle">Текст под заголовком</label><input id="subtitle" name="subtitle" type="text" maxlength="80" placeholder="Например, Скоро вернусь"></div>
+        <div id="countdown-fields">
+        <label for="timer-label">Подпись таймера</label><input id="timer-label" name="timerLabel" type="text" maxlength="80" required value="До начала эфира" placeholder="Например, До следующего рейда">
+        <div class="field-pair"><div><label for="minutes">Длительность, мин.</label><input id="minutes" name="minutes" type="number" min="1" max="120" step="0.5" required value="5" inputmode="decimal"></div><div><label for="finish-text">Когда время вышло</label><input id="finish-text" name="finishedText" type="text" maxlength="80" required value="Начинаем"></div></div>
+        <p class="field-hint">Изменение длительности сбросит отсчёт. 1,5 мин. = 01:30.</p>
+        </div>
+        <div id="overlay-fields" hidden>
+          <div class="overlay-switches"><label class="switch"><input id="overlay-visible" type="checkbox" checked><span>Оверлей в кадре</span></label><label class="switch"><input id="overlay-show-cards" type="checkbox" checked><span>Карты</span></label><label class="switch"><input id="overlay-show-subtitle" type="checkbox" checked><span>Подпись под ником</span></label></div>
+          <label class="switch"><input id="overlay-background" type="checkbox"><span>Тёмная подложка под ником</span></label>
+          <label for="overlay-appearance">Когда показывать</label><select id="overlay-appearance"><option value="always">Постоянно</option><option value="periodic">Появляться периодически</option></select>
+          <div id="overlay-schedule-fields" hidden><div class="field-pair overlay-pair"><div><label for="overlay-interval">Каждые, мин.</label><input id="overlay-interval" type="number" min="0.5" max="60" step="0.5" value="5" required inputmode="decimal"></div><div><label for="overlay-duration">Показывать, сек.</label><input id="overlay-duration" type="number" min="3" max="120" value="15" required inputmode="numeric"></div></div><p class="field-hint">Интервал считается между появлениями. После включения или изменения времени первый показ начнётся сразу.</p></div>
+          <p class="field-hint" id="overlay-cycle-status" role="status">Оверлей показывается постоянно.</p>
+          <div data-source-placement>
+          <label for="overlay-position">Размещение</label><select id="overlay-position"><option value="bottom-left">Слева внизу</option><option value="bottom-center">По центру внизу</option><option value="bottom-right">Справа внизу</option><option value="top-left">Слева вверху</option><option value="top-right">Справа вверху</option></select>
+          </div>
+          <div class="field-pair overlay-pair"><div><label for="overlay-size">Размер</label><select id="overlay-size"><option value="small">Маленький</option><option value="standard">Обычный</option><option value="large">Крупный</option></select></div><div><label for="overlay-opacity">Непрозрачность, %</label><input id="overlay-opacity" type="number" min="40" max="100" value="100" required inputmode="numeric"></div></div>
+          <div data-source-placement>
+          <div class="field-pair overlay-pair"><div><label for="overlay-x">Отступ по X, px</label><input id="overlay-x" type="number" min="0" max="300" value="40" required inputmode="numeric"></div><div><label for="overlay-y">Отступ по Y, px</label><input id="overlay-y" type="number" min="0" max="250" value="36" required inputmode="numeric"></div></div>
+          <p class="field-hint">X — от бокового края, Y — от верхнего или нижнего. При размещении по центру X не используется.</p>
+          </div>
+        </div>
+        <div id="mapcover-fields" hidden>
+          <label class="switch"><input id="cover-visible" type="checkbox" checked><span>Закрывать миникарту</span></label>
+          <p class="field-hint">Основа закрывает радар и во время переворота.</p>
+          <div class="field-pair overlay-pair cover-geometry-row"><div><label for="cover-shape">Форма</label><select id="cover-shape"><option value="square">Квадрат</option><option value="circle">Круг</option><option value="rectangle">Прямоугольник</option></select></div><div><label id="cover-width-label" for="cover-width">Сторона, px</label><input id="cover-width" type="number" min="120" max="800" value="360" required inputmode="numeric"></div></div>
+          <div id="cover-height-field" hidden><label for="cover-height">Высота, px</label><input id="cover-height" type="number" min="120" max="800" value="360" required inputmode="numeric"></div>
+          <div data-source-placement>
+          <div class="field-pair overlay-pair"><div><label for="cover-x">Слева, px</label><input id="cover-x" type="number" min="0" max="1560" value="0" required inputmode="numeric"></div><div><label for="cover-y">Сверху, px</label><input id="cover-y" type="number" min="0" max="750" value="0" required inputmode="numeric"></div></div>
+          <p class="field-hint">X/Y — на холсте 1920 × 1080. Подгони по радару с запасом.</p>
+          </div>
+          <label class="switch cover-chat-switch"><input id="cover-chat" type="checkbox" checked><span>Сообщения Twitch поверх</span></label>
+          <div id="cover-chat-fields"><div class="field-pair overlay-pair"><div><label for="cover-lines">Сообщений</label><select id="cover-lines"><option value="1">Одно</option><option value="2">Два</option></select></div><div><label for="cover-chat-duration">Видны, сек.</label><input id="cover-chat-duration" type="number" min="5" max="60" value="15" required inputmode="numeric"></div></div><p class="field-hint">Чат ankuzo на обороте. Для текста лучше размер от 300 × 280 px.</p><button id="cover-chat-preview" class="cover-preview-button" type="button">Показать пример в предпросмотре</button><p class="field-hint">Пример виден только здесь.</p><p id="cover-chat-status" class="field-hint" role="status">Подключаем чат…</p></div>
+        </div>
+        <label for="motion">Анимация</label><select id="motion" name="motion"><option value="full">Полная атмосфера</option><option value="light">Лёгкий режим</option><option value="off">Без движения</option></select>
+        <button type="submit" class="apply-button">Применить к сцене <span aria-hidden="true">↗</span></button>
+        <p id="feedback" class="feedback" role="status" aria-live="polite"></p>
+      </form>
+    </aside>
+    <details id="speech-disclosure" class="speech-disclosure"><summary><strong>Счётчик мата</strong><span id="speech-compact-count" class="compact-count">0</span><span id="speech-compact-status">Микрофон выключен</span></summary><section id="speech-panel" class="speech-panel" aria-labelledby="speech-title">
+      <div class="speech-heading"><div><h2 id="speech-title">Счётчик мата<span>.</span></h2><p>Твой микрофон → сервер → счётчик и реакция в OBS.</p></div><div class="speech-counter-actions"><div class="speech-total"><output id="speech-count" aria-label="Всего матерных слов">0</output><span>за этот стрим</span></div><div class="speech-reset-action"><button id="speech-reset" type="button" aria-controls="speech-reset-confirm" aria-expanded="false" aria-describedby="speech-reset-hint" disabled>Сбросить счётчик</button><p id="speech-reset-hint" class="speech-note" hidden>Останови микрофон и дождись обработки речи.</p></div></div></div>
+      <div id="speech-reset-confirm" class="replace-confirm" role="region" aria-label="Подтверждение сброса счётчика" hidden><p>Сбросить счётчик мата до нуля? Журнал последних срабатываний тоже очистится.</p><div class="speech-buttons"><button id="speech-reset-cancel" type="button">Отмена</button><button id="speech-reset-do" type="button" class="replace-button">Да, сбросить</button></div><p id="speech-reset-feedback" class="speech-feedback" role="alert" hidden></p></div>
+      <div class="speech-columns">
+        <div class="speech-capture">
+          <h3>Микрофон</h3><p id="speech-health" class="speech-note" role="status">Проверяем распознавание…</p>
+          <label for="speech-device">Устройство на этом компьютере</label><select id="speech-device" aria-describedby="speech-mic-help"><option value="">Микрофон по умолчанию</option></select>
+          <p id="speech-mic-help" class="speech-note">Выбери тот же микрофон, что и в OBS. Названия появятся после разрешения доступа.</p><p class="speech-note">Режим повышенной точности: собираем фразы по 6–8 секунд, чтобы лучше понимать русский. Счётчик обновляется после распознавания, с задержкой.</p>
+          <div class="speech-buttons"><button id="speech-start" class="copy-primary" type="button" disabled>Подключить микрофон</button><button id="speech-stop" type="button" disabled>Остановить</button><button id="speech-devices" type="button">Обновить устройства</button></div>
+          <label for="speech-level">Уровень микрофона</label><meter id="speech-level" min="0" max="1" value="0">0</meter>
+          <p id="speech-status" class="speech-feedback" role="status" aria-live="polite">Микрофон выключен. Звук не отправляется.</p>
+          <p class="speech-note">Оставь эту вкладку открытой. Кнопка «Остановить» отключит передачу звука. Отключение микрофона в OBS не отключает его здесь; фильтры OBS тоже не применяются.</p>
+          <details class="speech-details"><summary>Что сохраняется</summary><p class="speech-note">Аудио не записывается на диск и не отправляется сторонним сервисам. Последняя распознанная фраза видна только в пульте и хранится в памяти до следующей фразы или перезапуска. В журнале сохраняются только время и найденные матерные слова: последние 100 срабатываний. Общий счётчик сохраняется до нового стрима.</p></details>
+          <p class="speech-last"><span>Последняя фраза</span><output id="speech-last-text">Появится после подключения микрофона.</output></p><p id="speech-latency" class="speech-note"></p>
+        </div>
+        <form id="speech-rules" class="speech-rules" novalidate>
+          <h3>Реакция на частый мат</h3><p class="speech-note">Пока вместо мема — временная плашка «Полегче». Сам мем выберешь позже.</p>
+          <label class="switch"><input id="speech-enabled" type="checkbox" checked><span>Показывать реакцию</span></label><label class="switch"><input id="speech-show-counter" type="checkbox" checked><span>Счётчик в кадре</span></label>
+          <div class="field-pair overlay-pair"><div><label for="speech-threshold">Слов для реакции</label><input id="speech-threshold" type="number" min="2" max="30" value="5" inputmode="numeric" aria-describedby="speech-rule-feedback"></div><div><label for="speech-window">За сколько секунд</label><input id="speech-window" type="number" min="5" max="120" value="15" inputmode="numeric" aria-describedby="speech-rule-feedback"></div></div>
+          <div class="field-pair overlay-pair"><div><label for="speech-cooldown">Пауза между реакциями, сек.</label><input id="speech-cooldown" type="number" min="10" max="600" value="30" inputmode="numeric" aria-describedby="speech-rule-feedback"></div><div><label for="speech-duration">Показывать, сек.</label><input id="speech-duration" type="number" min="2" max="20" value="5" inputmode="numeric" aria-describedby="speech-rule-feedback"></div></div>
+          <button type="submit" class="apply-button">Сохранить правило <span aria-hidden="true">↗</span></button><p id="speech-rule-feedback" class="speech-feedback" role="status" aria-live="polite"></p>
+        </form>
+      </div>
+      <div class="speech-output"><div><h3>Добавить в OBS</h3><p class="speech-note">Отдельный прозрачный источник «Браузер», 1920 × 1080. Счётчик справа вверху, реакция — по центру. Личная ссылка открывает только картинку; журнал и микрофон остаются под паролем.</p><button id="speech-copy" type="button">Скопировать ссылку счётчика</button><p id="speech-link-feedback" class="speech-feedback" role="status"></p><div id="speech-link-manual" hidden><label for="speech-url">Личная ссылка для ручного копирования</label><input id="speech-url" readonly autocomplete="off" spellcheck="false"></div><button id="speech-preview-test" type="button">Проверить плашку здесь</button><p class="speech-note">Проверка видна только в окне справа. В эфир не отправляется.</p></div><iframe id="speech-preview" title="Предпросмотр счётчика и временной реакции" src="rage.html?preview=1"></iframe></div>
+      <div class="speech-log-heading"><h3>Последние срабатывания</h3></div><p id="speech-log-empty" class="speech-note">Срабатываний пока нет. После распознавания мата здесь появятся время и найденные слова.</p><ol id="speech-events" class="speech-events" aria-label="Журнал распознавания мата"></ol>
+    </section></details>
+  </main>
+  <footer class="page-footer"><span>ПО НИТИ</span><span>ankuzo.online</span></footer>
+</body>
+</html>

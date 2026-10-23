@@ -1,0 +1,12 @@
+import {test} from 'node:test';import assert from 'node:assert/strict';import {mkdtempSync,rmSync} from 'node:fs';import {tmpdir} from 'node:os';import {join} from 'node:path';
+import {Queue} from '../lib/queue.mjs';import {Media} from '../lib/media.mjs';import {Background} from '../lib/background.mjs';
+const tracks=[{url:'https://music.yandex.ru/album/12/track/1',title:'Background',duration:30,trackId:'1',radioSessionId:'session'}];
+test('changing background while its cover loads does not reject the media worker',async()=>{
+ const directory=mkdtempSync(join(tmpdir(),'music-cover-race-'));try{const q=new Queue();q.backgroundSet({kind:'likes',tracks});const item=q.backgroundEnsure(0);q.ready(item.id,{duration:30,filename:'test.mp3'});let release;const media=new Media({directory,yandex:{cover:()=>new Promise(resolve=>{release=resolve;})}});const work=media.backfillCovers(q);q.backgroundSet({kind:'track',tracks});release(null);await assert.doesNotReject(work);}finally{rmSync(directory,{recursive:true,force:true});}
+});
+test('slow listening feedback never blocks background preparation',async()=>{
+ const q=new Queue();q.backgroundSet({kind:'likes',tracks});q.backgroundEvents.push({type:'started',trackId:'1',radioSessionId:'session',seconds:1});let release;const pending=new Promise(resolve=>{release=resolve;});let prepared=false;const bg=new Background({queue:q,yandex:{feedback:()=>pending},media:{work:async()=>{prepared=true;}}});const work=bg.tick();await new Promise(resolve=>setTimeout(resolve,10));try{assert.equal(prepared,true);}finally{release();await work;bg.close();}
+});
+test('restart preserves background cursor, queued order order, and independent settlement data',()=>{
+ const directory=mkdtempSync(join(tmpdir(),'music-background-restart-'));try{const file=join(directory,'state.json');const q=new Queue({file});q.backgroundSet({kind:'likes',tracks});const bg=q.backgroundEnsure(0);q.ready(bg.id,{duration:30,filename:'bg.mp3'});q.play();const a=q.add({url:'https://youtu.be/BaW_jenozKc',redemptionId:'a'}),b=q.add({url:'https://youtu.be/BaW_jenozKc',redemptionId:'b'});q.move(b.id,a.id);const restored=new Queue({file});assert.equal(restored.snapshot().current.id,bg.id);assert.equal(restored.snapshot().playing,false);assert.deepEqual(restored.snapshot().items.map(x=>x.redemptionId),['b','a']);assert.equal(restored.snapshot().background.enabled,true);}finally{rmSync(directory,{recursive:true,force:true});}
+});

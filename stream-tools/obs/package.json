@@ -1,0 +1,11 @@
+{
+  "name": "ankuzo-obs",
+  "version": "1.0.0",
+  "private": true,
+  "type": "commonjs",
+  "engines": { "node": ">=22" },
+  "scripts": {
+    "start": "node app/server.cjs",
+    "test": "node --test tests/*.cjs"
+  }
+}

@@ -1,0 +1,5 @@
+FROM mcr.microsoft.com/playwright:v1.62.1-noble
+WORKDIR /connector
+RUN npm install --omit=dev --ignore-scripts playwright@1.62.1
+COPY vk-connector.cjs ./
+CMD ["node","vk-connector.cjs"]

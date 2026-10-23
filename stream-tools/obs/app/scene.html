@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <title>Ankuzo — скоро начнём</title>
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-head-32.png?v=20261022"><link rel="icon" type="image/png" sizes="64x64" href="/favicon-head-64.png?v=20261022"><link rel="apple-touch-icon" sizes="180x180" href="/favicon-head-180.png?v=20261022">
+  <link rel="stylesheet" href="scene.css">
+  <script src="timer.js" defer></script>
+  <script src="scene.js" defer></script>
+  <script src="smoke.js" defer></script>
+</head>
+<body>
+  <main class="stage timer-hidden" id="stage" aria-label="Заставка Ankuzo">
+    <div class="atmosphere" aria-hidden="true"></div>
+    <div class="smoke" aria-hidden="true"></div>
+    <canvas class="smoke-canvas" id="smoke-canvas" aria-hidden="true"></canvas>
+    <div class="vignette" aria-hidden="true"></div>
+    <div class="brand-mark" aria-hidden="true"><span>✦</span><b>22</b><span>✦</span></div>
+    <div class="top-rule" aria-hidden="true"></div>
+    <div class="hanging-card card-one" aria-hidden="true"><div class="card-art"></div></div>
+    <div class="hanging-card card-two" aria-hidden="true"><div class="card-art"></div></div>
+    <div class="hanging-card card-three" aria-hidden="true"><div class="card-art"></div></div>
+    <svg class="threads" viewBox="0 0 1920 1080" fill="none" aria-hidden="true">
+      <defs>
+        <path id="thread-path" d="M-80 748 C170 1036 520 998 820 836 C1040 717 1135 690 1310 736 C1485 782 1720 890 1890 738 C2060 586 1897 380 1852 205 C1810 42 1840-54 1928-105"/>
+        <linearGradient id="thread-silk" x1="0" y1="980" x2="1900" y2="190" gradientUnits="userSpaceOnUse">
+          <stop stop-color="#6c1433" stop-opacity=".2"/>
+          <stop offset=".2" stop-color="#c52a59" stop-opacity=".7"/>
+          <stop offset=".48" stop-color="#ee5180"/>
+          <stop offset=".7" stop-color="#d32b61" stop-opacity=".86"/>
+          <stop offset="1" stop-color="#961741" stop-opacity=".25"/>
+        </linearGradient>
+        <linearGradient id="thread-edge" x1="200" y1="900" x2="1830" y2="500" gradientUnits="userSpaceOnUse">
+          <stop stop-color="#ffc1d2" stop-opacity="0"/>
+          <stop offset=".42" stop-color="#ffb2cc" stop-opacity=".68"/>
+          <stop offset=".72" stop-color="#ffc6d8" stop-opacity=".3"/>
+          <stop offset="1" stop-color="#ff9cbd" stop-opacity="0"/>
+        </linearGradient>
+        <radialGradient id="thread-glint"><stop stop-color="#ffe9f1" stop-opacity=".95"/><stop offset=".22" stop-color="#ffafcd" stop-opacity=".8"/><stop offset="1" stop-color="#eb306c" stop-opacity="0"/></radialGradient>
+        <filter id="thread-bloom" x="-20%" y="-20%" width="140%" height="140%" color-interpolation-filters="sRGB"><feGaussianBlur stdDeviation="2.2"/></filter>
+      </defs>
+      <use href="#thread-path" class="thread-shadow"/>
+      <use href="#thread-path" class="thread-halo"/>
+      <use href="#thread-path" class="thread-body"/>
+      <use href="#thread-path" class="thread-edge"/>
+      <g class="thread-spark">
+        <ellipse rx="39" ry="5" fill="url(#thread-glint)" opacity=".3" filter="url(#thread-bloom)"/>
+        <ellipse rx="22" ry="1.4" fill="url(#thread-glint)"/>
+        <animateMotion dur="23s" begin="-6s" repeatCount="indefinite" rotate="auto"><mpath href="#thread-path"/></animateMotion>
+      </g>
+    </svg>
+    <div class="head-wrap" aria-hidden="true"><img class="head" src="assets/head.png" alt="" width="256" height="256" fetchpriority="high"></div>
+    <div class="motes" id="motes" aria-hidden="true"></div>
+    <section class="copy">
+      <h1>Ankuzo<span>.</span></h1>
+      <p class="scene-title" id="scene-title">Скоро начнём</p>
+      <div class="timer-block" id="timer-block" hidden>
+        <p class="timer-caption" id="timer-caption">До начала эфира</p>
+        <div class="timer-display" id="timer-display" role="timer" aria-label="Осталось времени">05:00</div>
+        <p class="finished-text" id="finished-text" hidden>Начинаем</p>
+        <div class="timer-rule" aria-hidden="true"><span>✦</span></div>
+      </div>
+    </section>
+    <footer class="scene-footer"><span>twitch.tv/ankuzo</span><div class="footer-rule" aria-hidden="true"><span>✦</span></div><span>ankuzo.online</span></footer>
+  </main>
+</body>
+</html>

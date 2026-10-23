@@ -1,0 +1,10 @@
+{
+  "adminKey": "REPLACE_WITH_THE_SAME_RANDOM_CONTROL_KEY",
+  "origin": "https://ankuzo.online",
+  "twitch": {
+    "clientId": "",
+    "clientSecret": "",
+    "expectedLogin": "ankuzo",
+    "existingScopes": []
+  }
+}

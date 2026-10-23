@@ -4,6 +4,7 @@ import { filterArchive, formatMetric, safeExternalUrl, selectDeck } from '../dat
 import { mountArtMotion } from './motion.js';
 import { mountSilk } from './silk.js';
 import { mountAtmosphere } from './atmosphere.js';
+import { mountSmokeBackground } from './smokeField';
 import { mountQuality } from './quality.js';
 import './art.css';
 import { DiscordCard } from './DiscordCard';
@@ -56,9 +57,10 @@ function ArtArchive() {
     const stopQuality = mountQuality(el);
     const silk = mountSilk(el);
     const stopAtmosphere = mountAtmosphere(el);
+    const stopSmoke = mountSmokeBackground(el);
     const stop = mountArtMotion(el, silk.draw);
     document.dispatchEvent(new Event('ankuzo:app-ready'));
-    return () => { stop(); silk.dispose(); stopAtmosphere(); stopQuality(); };
+    return () => { stop(); silk.dispose(); stopAtmosphere(); stopSmoke(); stopQuality(); };
   }, []);
 
   useEffect(() => {
@@ -125,8 +127,8 @@ function ArtArchive() {
         <div className="quality-popover">
           <fieldset><legend>Качество графики</legend>
             <label><input type="radio" name="graphics" value="off" aria-label="Без анимаций" /><span>Без анимаций<small>Обычная прокрутка, без движения</small></span></label>
-            <label><input type="radio" name="graphics" value="motion" aria-label="Анимации" /><span>Анимации<small>Переходы, нить и движение карт</small></span></label>
-            <label><input type="radio" name="graphics" value="full" aria-label="Полные эффекты" /><span>Полные эффекты<small>Все карты, глубина и аура — и на телефоне</small></span></label>
+            <label><input type="radio" name="graphics" value="motion" aria-label="Анимации" /><span>Анимации<small>Дым, переходы, нить и движение карт</small></span></label>
+            <label><input type="radio" name="graphics" value="full" aria-label="Полные эффекты" /><span>Полные эффекты<small>Все карты, глубина и красный дым</small></span></label>
           </fieldset>
           <button type="button" data-quality-auto aria-pressed="true">Автовыбор <span aria-hidden="true">↗</span></button>
           <p role="status" />
@@ -168,7 +170,7 @@ function ArtArchive() {
             <button onClick={() => openPsn()}><strong>PlayStation</strong><span>{stats.psnId} ↗</span></button>
             <a href="https://tmspk.gg/3Vi7A7Y9" target="_blank" rel="noopener noreferrer"><strong>TeamSpeak</strong><span>Ankuzo ↗</span></a>
           </div>
-          <div className="more-links"><a href="https://github.com/todylovv" target="_blank" rel="noopener noreferrer">GitHub ↗</a><a href="https://www.twitch.tv/ankuzo" target="_blank" rel="noopener noreferrer">Twitch ↗</a><a href="https://story.ankuzo.online/" target="_blank" rel="noopener noreferrer">Вне роли ↗</a></div>
+          <div className="more-links"><a href="https://www.twitch.tv/ankuzo" target="_blank" rel="noopener noreferrer">Twitch ↗</a><a href="https://story.ankuzo.online/" target="_blank" rel="noopener noreferrer">Вне роли ↗</a></div>
           {live.nowPlaying.title !== 'Ничего не играет' && <p className="music-note">{live.nowPlaying.playing ? 'Слушаю' : 'Последний трек'}: {live.nowPlaying.artist} — {live.nowPlaying.title}</p>}
           <p className="copy-status" aria-live="polite">{copyStatus}</p>
         </div>

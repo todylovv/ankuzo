@@ -5,3 +5,7 @@ _unpacked
 _extract.mjs
 _to_react.mjs
 *.local
+
+stream-tools
+.env
+.env.*

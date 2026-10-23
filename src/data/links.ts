@@ -13,7 +13,7 @@ export const navItems: NavItem[] = [
 ];
 
 export type SocialLink = {
-  id: "discord" | "steam" | "github";
+  id: "discord" | "steam";
   href: string;
   label: string;
 };
@@ -21,7 +21,6 @@ export type SocialLink = {
 export const headerSocials: SocialLink[] = [
   { id: "discord", href: "#discord", label: "Discord" },
   { id: "steam", href: "#steam", label: "Steam" },
-  { id: "github", href: "https://github.com/todylovv", label: "GitHub" },
 ];
 
 export type ProfileCardData = {
