@@ -3,9 +3,16 @@
   "version": "1.0.0",
   "private": true,
   "type": "commonjs",
-  "engines": { "node": ">=22" },
+  "engines": {
+    "node": ">=22"
+  },
   "scripts": {
     "start": "node app/server.cjs",
-    "test": "node --test tests/*.cjs"
+    "test": "node --test tests/*.cjs",
+    "build:voice-metadata": "node scripts/build-voice-metadata.cjs"
+  },
+  "devDependencies": {
+    "esbuild": "0.28.2",
+    "music-metadata": "12.2.3"
   }
 }

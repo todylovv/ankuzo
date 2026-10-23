@@ -24,7 +24,7 @@ const publicFiles = new Map([
   ['/rage.js', ['rage.js', 'text/javascript']], ['/rage.css', ['rage.css', 'text/css']],
 ]);
 for (const [name, type] of [
-  ['head.png', 'image/png'], ['backstage.png', 'image/png'], ['atmosphere.png', 'image/png'], ['card-back-display-v1.webp', 'image/webp'], ['mapcover-seal-v1.png','image/png'],['mapcover-seal-circle-v1.png','image/png'],
+  ['donation-seal-v1.webp','image/webp'], ['head.png', 'image/png'], ['backstage.png', 'image/png'], ['atmosphere.png', 'image/png'], ['card-back-display-v1.webp', 'image/webp'], ['mapcover-seal-v1.png','image/png'],['mapcover-seal-circle-v1.png','image/png'],
   ['bodoni-0.woff2', 'font/woff2'], ['bodoni-1.woff2', 'font/woff2'],
   ['onest-cyrillic.woff2', 'font/woff2'], ['onest-latin.woff2', 'font/woff2'],
 ]) publicFiles.set('/assets/' + name, ['assets/' + name, type]);
@@ -74,7 +74,7 @@ function createServer({ persist = true, controlKey = process.env.ANKUZO_CONTROL_
   const server = http.createServer(async (req, res) => {
     res.setHeader('X-Content-Type-Options', 'nosniff');
     res.setHeader('Referrer-Policy', 'no-referrer');
-    res.setHeader('Content-Security-Policy', "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'; frame-src 'self'; frame-ancestors 'self'; object-src 'none'; base-uri 'none'; form-action 'self'");
+    res.setHeader('Content-Security-Policy', "default-src 'self'; media-src 'self' blob:; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'; frame-src 'self'; frame-ancestors 'self'; object-src 'none'; base-uri 'none'; form-action 'self'");
     const host = publicHost || `127.0.0.1:${res.socket.localPort}`;
     if (req.headers.host !== host) return json(res, 403, { error: 'Use the local 127.0.0.1 address.' });
     const requestUrl = new URL(req.url, `http://${host}`);
@@ -87,7 +87,7 @@ function createServer({ persist = true, controlKey = process.env.ANKUZO_CONTROL_
       const match = pathname.match(/^\/view\/([A-Za-z0-9_-]{43})(\/.*)$/);
       if (!match || !viewerAccess.accepts(match[1])) return json(res, 401, { error: 'OBS link is invalid or has been replaced.' });
       pathname = match[2];
-      if (!['GET', 'HEAD'].includes(req.method) || !(viewerFiles.has(pathname) || pathname === '/api/state' || pathname === '/api/chat' || pathname === '/api/speech-overlay' || pathname === '/api/follow/stream' || pathname === '/api/follow/audio')) {
+      if (!['GET', 'HEAD'].includes(req.method) || !(viewerFiles.has(pathname) || pathname === '/api/state' || pathname === '/api/chat' || pathname === '/api/speech-overlay' || pathname === '/api/follow/stream' || pathname === '/api/follow/audio' || pathname==='/api/follow/voice')) {
         return json(res, 403, { error: 'This link only allows viewing the scene.' });
       }
     } else if ((edgeAuth || pathname === '/api/obs-link') && !admin) {

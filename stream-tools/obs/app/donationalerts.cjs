@@ -9,7 +9,7 @@ const clean=value=>String(value??'').replace(/[\x00-\x1f\x7f\u202a-\u202e\u2066-
 function donationData(value){
  const amount=String(value.amount??'');
  if(!/^\d{1,10}(?:\.\d{1,2})?$/.test(amount)||Number(amount)<=0||!['RUB','USD','EUR','BYN','KZT','UAH','BRL','TRY'].includes(value.currency))throw new Error('Проверь сумму и валюту доната.');
- return {amount:Number(amount).toFixed(2),currency:value.currency,donationText:clean(value.donationText).slice(0,500)};
+ return {amount:Number(amount).toFixed(2),currency:value.currency,donationText:clean(value.donationText).slice(0,500),messageType:value.messageType==='audio'?'audio':'text',...(value.voiceUnavailable?{voiceUnavailable:true}:{})};
 }
 function createDonationAlerts({read,save,origin,now,fetchImpl,WebSocketImpl,schedule,onDonation,onDisconnect}){
  let credentials=read('donationalerts-private.json'),closed=false,epoch=0,socket=null,retry=null,heartbeat=null,watchdog=null,renewal=null,expiry=null;
@@ -93,9 +93,9 @@ function createDonationAlerts({read,save,origin,now,fetchImpl,WebSocketImpl,sche
       const publication=frame.result.data,data=publication?.data??publication;
       if(!data||data.name!=='donation'||!Number.isSafeInteger(data.id)||data.id<1||['update','delete','remove'].includes(data.reason))continue;
       const id=String(user.id)+':'+data.id;if(seen.has(id))continue;
-      let metadata;try{metadata=donationData({amount:data.amount,currency:data.currency,donationText:data.message_type==='audio'?'Аудиосообщение':data.message});}catch{continue;}
+      let metadata;try{metadata=donationData({amount:data.amount,currency:data.currency,messageType:data.message_type,donationText:data.message_type==='audio'?'Аудиосообщение':data.message});}catch{continue;}
       try{const ids=[...seen,id].slice(-1000);save('donationalerts-seen.json',{ids});seen.clear();for(const item of ids)seen.add(item);}catch{error='Не удалось сохранить номер доната. Проверь место на сервере.';continue;}
-      onDonation({kind:'donation',id:'da:'+id,name:clean(data.username).slice(0,64)||'Анонимный зритель',...metadata});
+      onDonation({kind:'donation',id:'da:'+id,messageType:data.message_type==='audio'?'audio':'text',...(data.message_type==='audio'?{voiceUrl:data.message}:{}),name:clean(data.username).slice(0,64)||'Анонимный зритель',...metadata});
      }
     }
    });

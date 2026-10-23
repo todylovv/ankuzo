@@ -5,16 +5,19 @@
   const requestedKind=new URLSearchParams(location.search).get('kind');
   let kind=['subscription','donation'].includes(requestedKind)?requestedKind:'follow',uploadBusy=false;
   const activeProfile=()=>kind==='donation'?state.donation:kind==='subscription'?state.subscription:state;
+  let exampleVoice=null,voiceFileEpoch=0;
   let state = null, dirty = false, ready = false, initialExample = false, busy = false, link = '';
   const text = (id, message, error = false) => { $(id).textContent = message; $(id).classList.toggle('error', error); };
   async function api(route, body) {
     const response = await fetch(new URL('api/follow/' + route, base), { cache: 'no-store', signal: AbortSignal.timeout(route==='audio'?30000:15000), ...(body === undefined ? {} : { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Ankuzo-Control': '1' }, body: JSON.stringify(body) }) });
     const data = await response.json(); if (!response.ok) throw new Error(data.error || 'Не удалось выполнить запрос.'); return data;
   }
-  function values() { return {kind, enabled: $('enabled').checked, message: $('message').value.trim(), duration: Number($('duration').value), motion: $('motion').checked, volume: Number($('volume').value) / 100 }; }
+  function values() { return {kind, enabled: $('enabled').checked, message: $('message').value.trim(), duration: Number($('duration').value), motion: $('motion').checked, volume: Number($('volume').value) / 100,...(kind==='donation'?{voiceEnabled:$('voice-enabled').checked,voiceVolume:Number($('voice-volume').value)/100}:{}) }; }
   function render(next, fill = false) {
     state = next;const selected=activeProfile();
     if (fill) { for (const id of ['enabled', 'motion']) $(id).checked = selected.settings[id]; for (const id of ['message', 'duration']) $(id).value = selected.settings[id]; $('volume').value = Math.round(selected.settings.volume * 100); $('volume-value').textContent = $('volume').value + '%'; }
+    if(fill&&kind==='donation'){$('voice-enabled').checked=selected.settings.voiceEnabled;$('voice-volume').value=Math.round(selected.settings.voiceVolume*100);$('voice-volume-value').textContent=$('voice-volume').value+'%';}
+    text('voice-feedback',next.voiceError||'',Boolean(next.voiceError));
     renderDonation(next.donationalerts);
     $('audio-name').textContent = selected.audio.available ? selected.audio.name : 'Свой MP3, WAV или OGG · до 5 МБ'; $('remove-audio').hidden = !selected.audio.available;
     $('client-id').value = next.clientId; $('callback-url').value = next.callbackUrl;
@@ -34,19 +37,22 @@
   async function load() { try { render(await api('status'), !state); if (!dirty) text('settings-feedback', 'Настройки сохранены на сервере.'); } catch { text('settings-feedback', 'Не удалось загрузить настройки. Обнови страницу.', true); } }
   function preview(withSound = true) {
     if (!ready || !state) return;
-    const settings = values(),metadata=example(); if (!withSound) settings.volume = 0;
-    $('preview').contentWindow.postMessage({ type: 'follow-preview', name: $('test-name').value.trim() || 'Новый_зритель',kind,...metadata, settings, audio: activeProfile().audio }, location.origin);
+    if(kind==='donation'&&$('example-message-type').value==='audio'&&!exampleVoice){text('preview-note','Прикрепи запись для примера ниже типа сообщения.',true);return;}
+    const settings = values(),metadata=example(); if (!withSound){settings.volume = 0;settings.voiceVolume=0;}
+    $('preview').contentWindow.postMessage({ type: 'follow-preview', name: $('test-name').value.trim() || 'Новый_зритель',kind,...metadata,...(kind==='donation'&&$('example-message-type').value==='audio'&&exampleVoice?{voicePreview:{url:exampleVoice.url,durationMs:exampleVoice.durationMs}}:{}), settings, audio: activeProfile().audio }, location.origin);
     text('preview-note', withSound && activeProfile().audio.available ? 'Пример со звуком. Зрители не увидят.' : 'Только здесь — зрители не увидят.');
   }
   addEventListener('message', event => {
     if (event.origin !== location.origin || event.source !== $('preview').contentWindow) return;
     if (event.data?.type === 'follow-preview-ready') { ready = true; if (state && !initialExample) { initialExample = true; preview(false); } }
+    if(event.data?.type==='follow-voice'&&!event.data.ok)text('preview-note','Не удалось проиграть запись. Проверь файл и разрешение звука браузера.',true);
     if (event.data?.type === 'follow-audio' && !event.data.ok) text('preview-note', 'Браузер не воспроизвёл звук. Проверь файл и нажми пример ещё раз.', true);
   });
-  function example(){if(kind==='donation')return {amount:$('example-amount').value,currency:$('example-currency').value,donationText:$('example-message').value};const eventType=$('example-type').value,tier=$('example-tier').value,count=Math.min(1200,Math.max(1,Number($('example-count').value)||1));return {eventType,tier,months:eventType==='resub'?count:1,total:eventType==='gift'?count:1,detail:eventType==='gift'?`Подарено: ${count} · Tier ${Number(tier)/1000}`:eventType==='resub'?`Месяцев вместе: ${count} · Tier ${Number(tier)/1000}`:`Новая подписка · Tier ${Number(tier)/1000}`};}
+  function example(){if(kind==='donation')return {amount:$('example-amount').value,currency:$('example-currency').value,donationText:$('example-message-type').value==='audio'?'Аудиосообщение':$('example-message').value};const eventType=$('example-type').value,tier=$('example-tier').value,count=Math.min(1200,Math.max(1,Number($('example-count').value)||1));return {eventType,tier,months:eventType==='resub'?count:1,total:eventType==='gift'?count:1,detail:eventType==='gift'?`Подарено: ${count} · Tier ${Number(tier)/1000}`:eventType==='resub'?`Месяцев вместе: ${count} · Tier ${Number(tier)/1000}`:`Новая подписка · Tier ${Number(tier)/1000}`};}
   function mode(){
+    $('donation-voice-settings').hidden=kind!=='donation';$('motion-label').textContent=kind==='donation'?'Раскрытие печати':'Вращение карты';
     $('donation-example').hidden=kind!=='donation';$('da-panel').hidden=kind!=='donation';$('twitch-panel').hidden=kind==='donation';
-    $('alert-kind').value=kind;document.body.classList.toggle('subscription-mode',kind==='subscription');$('example-fields').hidden=kind!=='subscription';$('profile-title').textContent=kind==='donation'?'Донат':kind==='subscription'?'Платная подписка':'Фоллоу';$('kind-note').textContent=kind==='donation'?'Рубиновый туз, раскрытие колоды и появление суммы. Свой звук. OBS-ссылка общая.':kind==='subscription'?'Три карты, золотая нить, уровень и месяцы. Свои настройки и звук. OBS-ссылка общая.':'Одна карта и красная нить. Свои настройки и звук. OBS-ссылка общая.';
+    $('alert-kind').value=kind;document.body.classList.toggle('subscription-mode',kind==='subscription');$('example-fields').hidden=kind!=='subscription';$('profile-title').textContent=kind==='donation'?'Донат':kind==='subscription'?'Платная подписка':'Фоллоу';$('kind-note').textContent=kind==='donation'?'Красная печать раскрывается вокруг суммы. Текст или запись зрителя — под ником. OBS-ссылка общая.':kind==='subscription'?'Три карты, золотая нить, уровень и месяцы. Свои настройки и звук. OBS-ссылка общая.':'Одна карта и красная нить. Свои настройки и звук. OBS-ссылка общая.';
   }
   $('alert-kind').addEventListener('change',async event=>{
     const next=event.target.value;if(busy||uploadBusy){event.target.value=kind;return;}
@@ -55,8 +61,22 @@
   });
   $('example-type').addEventListener('change',()=>{const value=$('example-type').value;$('example-count-field').hidden=value==='new';$('example-count-label').textContent=value==='gift'?'Подписок в подарок':'Месяцев вместе';$('example-count').value=value==='gift'?'5':'12';});
   mode();
+  $('example-message-type').addEventListener('change',()=>{const audio=$('example-message-type').value==='audio';$('example-voice-field').hidden=!audio;$('example-text-field').hidden=audio;});
+  $('example-voice-file').addEventListener('change',async()=>{
+    const version=++voiceFileEpoch,file=$('example-voice-file').files[0];if(exampleVoice)URL.revokeObjectURL(exampleVoice.url);exampleVoice=null;
+    if(!file)return;if(file.size>5*1024*1024){text('example-voice-note','Размер записи — до 5 МБ.',true);return;}
+    const url=URL.createObjectURL(file),probe=new Audio(url);text('example-voice-note','Читаем запись…');
+    try{
+      const duration=await new Promise((resolve,reject)=>{const timeout=setTimeout(()=>reject(new Error('Не удалось прочитать длительность записи.')),7000);probe.onloadedmetadata=()=>{clearTimeout(timeout);resolve(probe.duration);};probe.onerror=()=>{clearTimeout(timeout);reject(new Error('Браузер не поддерживает эту запись.'));};});
+      if(!Number.isFinite(duration)||duration<=0||duration>120)throw new Error('Длительность записи — до двух минут.');
+      const data=await new Promise((resolve,reject)=>{const reader=new FileReader();reader.onload=()=>resolve(String(reader.result).split(',')[1]);reader.onerror=()=>reject(new Error('Не удалось прочитать файл.'));reader.readAsDataURL(file);});
+      if(version!==voiceFileEpoch){URL.revokeObjectURL(url);return;}
+      exampleVoice={url,durationMs:Math.ceil(duration*1000),data};text('example-voice-note',file.name+' · '+Math.ceil(duration)+' сек. Нажми «Показать пример».');
+    }catch(error){URL.revokeObjectURL(url);if(version===voiceFileEpoch)text('example-voice-note',error.message,true);}
+    finally{probe.onloadedmetadata=probe.onerror=null;probe.removeAttribute('src');probe.load();}
+  });
   $('preview-play').addEventListener('click', () => preview());
-  $('settings-form').addEventListener('input', event => {if(!['enabled','message','duration','motion','volume'].includes(event.target.id))return; dirty = true; $('volume-value').textContent = $('volume').value + '%'; text('settings-feedback', 'Есть изменения — примени их к OBS.'); });
+  $('settings-form').addEventListener('input', event => {if(!['enabled','message','duration','motion','volume','voice-enabled','voice-volume'].includes(event.target.id))return; dirty = true;$('voice-volume-value').textContent=$('voice-volume').value+'%'; $('volume-value').textContent = $('volume').value + '%'; text('settings-feedback', 'Есть изменения — примени их к OBS.'); });
   async function save() {
     if (!$('settings-form').reportValidity() || busy) return false;
     busy = true;$('alert-kind').disabled=true; $('save-settings').disabled = true;
@@ -88,7 +108,7 @@
   $('broadcast-test').addEventListener('click', async () => {
     if (dirty && !await save()) return;
     $('broadcast-test').disabled = true;
-    try { await api('test', {kind,...example(), name: $('test-name').value.trim() || 'Новый_зритель' }); text('test-feedback', 'Тест в очереди OBS. Он появится после текущего оповещения.'); }
+    try { if(kind==='donation'&&$('example-message-type').value==='audio'&&!exampleVoice)throw new Error('Прикрепи запись для теста.');await api('test', {kind,...example(),...(kind==='donation'&&$('example-message-type').value==='audio'?{voiceData:exampleVoice.data}:{}), name: $('test-name').value.trim() || 'Новый_зритель' }); text('test-feedback', 'Тест в очереди OBS. Он появится после текущего оповещения.'); }
     catch (error) { text('test-feedback', error.message, true); }
     finally { $('broadcast-test').disabled = !activeProfile()?.settings.enabled; }
   });

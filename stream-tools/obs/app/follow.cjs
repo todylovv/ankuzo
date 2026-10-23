@@ -3,7 +3,8 @@ const fs = require('node:fs');
 const path = require('node:path');
 const { randomBytes } = require('node:crypto');
 const {createDonationAlerts,donationData}=require('./donationalerts.cjs');
-const DONATION_DEFAULTS={enabled:true,duration:12,message:'Спасибо за поддержку',motion:true,volume:.7};
+const {createVoiceStore}=require('./donation-voice.cjs');
+const DONATION_DEFAULTS={enabled:true,duration:12,message:'Спасибо за поддержку',motion:true,volume:.7,voiceEnabled:true,voiceVolume:1};
 const SCOPE = 'moderator:read:followers';
 const SUB_SCOPE = 'channel:read:subscriptions';
 const SUB_DEFAULTS = { enabled:true,duration:10,message:'Спасибо за подписку',motion:true,volume:.8 };
@@ -20,7 +21,7 @@ const TOKEN_URL = 'https://id.twitch.tv/oauth2/token';
 const WS_URL = 'wss://eventsub.wss.twitch.tv/ws';
 const DEFAULTS = { enabled: true, duration: 8, message: 'Спасибо за фоллоу', motion: true, volume: .6 };
 
-function createFollow({ directory = null, origin = '', now = Date.now, fetchImpl = fetch, WebSocketImpl = WebSocket, schedule = true } = {}) {
+function createFollow({ directory = null, origin = '', now = Date.now, fetchImpl = fetch, WebSocketImpl = WebSocket, schedule = true, voiceLoader } = {}) {
   const read = name => { try { return JSON.parse(fs.readFileSync(path.join(directory, name), 'utf8')); } catch (e) { if (e.code !== 'ENOENT') throw e; return {}; } };
   const save = (name, value) => {
     if (!directory) return;
@@ -32,11 +33,11 @@ function createFollow({ directory = null, origin = '', now = Date.now, fetchImpl
     if (!input || typeof input !== 'object' || Array.isArray(input)) throw new Error('Неверные настройки.');
     const next = { ...previous };
     for (const key of Object.keys(input)) {
-      if (!Object.hasOwn(DEFAULTS, key)) throw new Error('Неизвестная настройка.');
+      if (!Object.hasOwn(previous, key)) throw new Error('Неизвестная настройка.');
       const value = input[key];
-      if (['enabled', 'motion'].includes(key) && typeof value !== 'boolean') throw new Error('Неверный переключатель.');
+      if (['enabled', 'motion','voiceEnabled'].includes(key) && typeof value !== 'boolean') throw new Error('Неверный переключатель.');
       if (key === 'duration' && (!Number.isInteger(value) || value < 6 || value > 15)) throw new Error('Длительность: от 6 до 15 секунд.');
-      if (key === 'volume' && (typeof value !== 'number' || !Number.isFinite(value) || value < 0 || value > 1)) throw new Error('Громкость: от 0 до 100%.');
+      if (['volume','voiceVolume'].includes(key) && (typeof value !== 'number' || !Number.isFinite(value) || value < 0 || value > 1)) throw new Error('Громкость: от 0 до 100%.');
       if (key === 'message' && (typeof value !== 'string' || value.length > 60 || !value.trim() || /[\x00-\x1f]/.test(value))) throw new Error('Подпись: от 1 до 60 символов.');
       next[key] = key === 'message' ? value.trim() : value;
     }
@@ -47,6 +48,7 @@ function createFollow({ directory = null, origin = '', now = Date.now, fetchImpl
   let subscriptionAudio=directory?read('subscription-audio.json'):{},subscriptionBytes=null,subscriptionConnection='disconnected';
   let donationSettings=directory?validateSettings(read('donation-settings.json'),DONATION_DEFAULTS):{...DONATION_DEFAULTS};
   let donationAudio=directory?read('donation-audio.json'):{},donationBytes=null;
+  const voices=createVoiceStore({fetchImpl,now});let donationDelivery=Promise.resolve(),voiceError='',donationGeneration=0;
   const profile=kind=>kind==='donation'?{settings:donationSettings,audio:donationAudio}:kind==='subscription'?{settings:subscriptionSettings,audio:subscriptionAudio}:{settings,audio};
   let credentials = directory ? read('follow-private.json') : {};
   let audio = directory ? read('follow-audio.json') : {}, audioBytes = null;
@@ -74,11 +76,27 @@ function createFollow({ directory = null, origin = '', now = Date.now, fetchImpl
     remember(id);
     if (events.length >= 30) { dropped++; return null; }
     const startsAt = Math.max(now(), (events.at(-1)?.endsAt || 0) + 500);
-    const event = { id: randomBytes(12).toString('base64url'), name, startsAt, endsAt: startsAt + selected.duration * 1000, message: selected.message, motion: selected.motion,kind,...paid };
+    const voice=kind==='donation'&&metadata.voice?.id&&voices.get(metadata.voice.id)?metadata.voice:null;
+    const voiceSlot=voice&&selected.voiceEnabled&&selected.voiceVolume>0?1800+voice.durationMs+800:0;
+    const event = { id: randomBytes(12).toString('base64url'), name, startsAt, endsAt: startsAt + Math.max(selected.duration * 1000,voiceSlot), message: selected.message, motion: selected.motion,kind,...paid,...(voice?{voice:{id:voice.id,durationMs:voice.durationMs}}:{}) };
+    if(voice)voices.retain(voice.id,event.endsAt+30000);
     events.push(event); broadcast(); return { ...event };
   }
-  const donations=createDonationAlerts({read:name=>directory?read(name):{},save,origin,now,fetchImpl,WebSocketImpl,schedule,onDonation:enqueue,onDisconnect(){events=events.filter(event=>event.kind!=='donation');broadcast();}});
-  function status() { return {donationalerts:donations.status(),donation:{settings:{...donationSettings},audio:{available:Boolean(donationAudio.version),version:donationAudio.version||'',name:donationAudio.name||''}},subscription:{settings:{...subscriptionSettings},audio:{available:Boolean(subscriptionAudio.version),version:subscriptionAudio.version||'',name:subscriptionAudio.name||''}},subscriptionAuthorized:Boolean(credentials.scopes?.includes(SUB_SCOPE)),subscriptionConnection, settings: { ...settings }, audio: { available: Boolean(audio.version), version: audio.version || '', name: audio.name || '' }, configured: Boolean(credentials.clientId && credentials.clientSecret), clientId: credentials.clientId || '', account: credentials.user?.login || null, connection, error: lastError, dropped, callbackUrl: callbackUrl() }; }
+  const donations=createDonationAlerts({read:name=>directory?read(name):{},save,origin,now,fetchImpl,WebSocketImpl,schedule,onDonation:acceptDonation,onDisconnect(){donationGeneration++;events=events.filter(event=>event.kind!=='donation');voices.close();broadcast();}});
+  function acceptDonation(input){
+    const generation=donationGeneration;
+    donationDelivery=donationDelivery.then(async()=>{
+      if(closed||generation!==donationGeneration||!donationSettings.enabled)return;
+      const item={...input};delete item.voiceUrl;
+      if(input.messageType==='audio'&&donationSettings.voiceEnabled&&donationSettings.voiceVolume>0){
+        try{const audio=await (voiceLoader||voices.load)(input.voiceUrl);if(closed||generation!==donationGeneration)return;item.voice=voices.put(audio);voiceError='';}
+        catch{item.voiceUnavailable=true;voiceError='Не удалось загрузить последнее аудиосообщение. Текст и остальные оповещения работают.';}
+      }
+      if(closed||generation!==donationGeneration)return;
+      const queued=enqueue(item);if(!queued&&item.voice)voices.remove(item.voice.id);
+    }).catch(()=>{voiceError='Не удалось обработать аудиосообщение.';});
+  }
+  function status() { return {voiceError,donationalerts:donations.status(),donation:{settings:{...donationSettings},audio:{available:Boolean(donationAudio.version),version:donationAudio.version||'',name:donationAudio.name||''}},subscription:{settings:{...subscriptionSettings},audio:{available:Boolean(subscriptionAudio.version),version:subscriptionAudio.version||'',name:subscriptionAudio.name||''}},subscriptionAuthorized:Boolean(credentials.scopes?.includes(SUB_SCOPE)),subscriptionConnection, settings: { ...settings }, audio: { available: Boolean(audio.version), version: audio.version || '', name: audio.name || '' }, configured: Boolean(credentials.clientId && credentials.clientSecret), clientId: credentials.clientId || '', account: credentials.user?.login || null, connection, error: lastError, dropped, callbackUrl: callbackUrl() }; }
   const callbackUrl = () => `${origin}${origin ? '/obs' : ''}/api/follow/twitch/callback`;
   async function request(url, options) {
     const response = await fetchImpl(url, { ...options, signal: AbortSignal.timeout(12000) });
@@ -209,6 +227,18 @@ function createFollow({ directory = null, origin = '', now = Date.now, fetchImpl
   async function handle(req, res, { pathname, viewer, admin, validMutation, json }) {
     if (!pathname.startsWith('/api/follow/')) return false;
     const route = pathname.slice('/api/follow/'.length);
+    if(route==='voice'&&['GET','HEAD'].includes(req.method)){
+      if(!viewer&&!admin){json(res,401,{error:'Нужен вход в пульт.'});return true;}
+      const id=new URL(req.url,'http://localhost').searchParams.get('id'),item=typeof id==='string'&&/^[A-Za-z0-9_-]{24}$/.test(id)?voices.get(id):null;
+      if(!item){json(res,404,{error:'Аудиосообщение больше недоступно.'});return true;}
+      const bytes=item.bytes;let start=0,finish=bytes.length-1,code=200;
+      if(req.headers.range){const match=/^bytes=(\d*)-(\d*)$/.exec(req.headers.range);
+        if(!match||(!match[1]&&!match[2])){res.writeHead(416,{'Content-Range':`bytes */${bytes.length}`});res.end();return true;}
+        start=match[1]?Number(match[1]):Math.max(0,bytes.length-Number(match[2]));finish=match[1]&&match[2]?Math.min(finish,Number(match[2])):finish;
+        if(start>finish||start>=bytes.length){res.writeHead(416,{'Content-Range':`bytes */${bytes.length}`});res.end();return true;}code=206;
+      }
+      res.writeHead(code,{'Content-Type':item.mime,'Content-Length':finish-start+1,'Cache-Control':'no-store','Accept-Ranges':'bytes',...(code===206?{'Content-Range':`bytes ${start}-${finish}/${bytes.length}`}:{})});res.end(req.method==='HEAD'?undefined:bytes.subarray(start,finish+1));return true;
+    }
     if (route === 'audio' && ['GET', 'HEAD'].includes(req.method)) {
       if (!viewer && !admin) { json(res, 401, { error: 'Нужен вход в пульт.' }); return true; }
       try {
@@ -245,7 +275,7 @@ function createFollow({ directory = null, origin = '', now = Date.now, fetchImpl
     try {
       let body;
       if (req.method === 'POST') {
-        const limit = route === 'audio' ? 7 * 1024 * 1024 : 8192;
+        const limit = ['audio','test'].includes(route) ? 7 * 1024 * 1024 : 8192;
         let raw = ''; for await (const chunk of req) { raw += chunk; if (Buffer.byteLength(raw) > limit) { json(res, 413, { error: 'Слишком большой запрос.' }); return true; } }
         try { body = JSON.parse(raw); } catch { throw new Error('Неверный JSON.'); }
         if (!body || typeof body !== 'object' || Array.isArray(body)) throw new Error('Неверный запрос.');
@@ -279,12 +309,16 @@ function createFollow({ directory = null, origin = '', now = Date.now, fetchImpl
       }
       else if (route === 'settings' && req.method === 'POST') {
         const {kind:ignored,...input}=body;const next=validateSettings(input,selected.settings);save(kind+'-settings.json',next);if(kind==='donation')donationSettings=next;else if(kind==='subscription')subscriptionSettings=next;else settings=next;
-        if(!next.enabled)events=events.filter(event=>event.kind!==kind); broadcast(); json(res, 200, status());
+        if(!next.enabled){if(kind==='donation')for(const event of events)if(event.kind===kind&&event.voice)voices.remove(event.voice.id);events=events.filter(event=>event.kind!==kind);} broadcast(); json(res, 200, status());
       } else if (route === 'test' && req.method === 'POST') {
         if (!selected.settings.enabled) throw new Error('Сначала включи оповещения.');
         const metadata=kind==='donation'?donationData(body):kind==='subscription'?paidData(body):{};
+        if(body.voiceData!==undefined){
+          if(kind!=='donation'||typeof body.voiceData!=='string'||!/^[A-Za-z0-9+/]*={0,2}$/.test(body.voiceData)||body.voiceData.length%4)throw new Error('Неверный файл аудиосообщения.');
+          metadata.voice=voices.put(await voices.fromBuffer(Buffer.from(body.voiceData,'base64')));metadata.messageType='audio';metadata.donationText='Аудиосообщение';
+        }
         const event = enqueue({kind,...metadata, id: 'test:' + randomBytes(16).toString('hex'), name: typeof body.name === 'string' ? body.name : 'Новый_зритель' });
-        if (!event) throw new Error('Очередь заполнена.'); json(res, 200, { queued: true });
+        if (!event){if(metadata.voice)voices.remove(metadata.voice.id);throw new Error('Очередь заполнена.');} json(res, 200, { queued: true });
       } else if (route === 'twitch/app' && req.method === 'POST') {
         if (typeof body.clientId !== 'string' || !/^[a-zA-Z0-9]{8,100}$/.test(body.clientId) || typeof body.clientSecret !== 'string' || !/^[a-zA-Z0-9_-]{8,200}$/.test(body.clientSecret)) throw new Error('Проверь Client ID и Client Secret.');
         const next = { clientId: body.clientId, clientSecret: body.clientSecret };
@@ -325,7 +359,7 @@ function createFollow({ directory = null, origin = '', now = Date.now, fetchImpl
     }
     return true;
   }
-  function close() { if (closed) return; closed = true; stop(); donations.close(); clearTimeout(maintenance); for (const res of clients) res.end(); clients.clear(); states.clear(); }
+  function close() { if (closed) return; closed = true; stop(); donations.close(); voices.close(); clearTimeout(maintenance); for (const res of clients) res.end(); clients.clear(); states.clear(); }
   return { enqueue, snapshot, handle, close };
 }
 module.exports = { createFollow };
